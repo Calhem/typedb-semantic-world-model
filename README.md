@@ -10,12 +10,14 @@ from a robot to a video understanding pipeline to an agent's long-term memory.
 ## Status (2026-11-09)
 | Phase | State |
 |---|---|
-| **1. Research and architecture** | **Complete, under review.** No ontology implemented |
+| 1. Research and architecture | Complete ([docs/phase-1](docs/phase-1/README.md)) |
+| **1B. Research validation and architectural review** | **Complete, under review** ([docs/phase-1b](docs/phase-1b/README.md)). No ontology implemented |
 | 2. Minimal core ontology | Not started; scope to be agreed after review |
 | 3-7. Profiles, evaluation, reference applications | Not started |
 
-Start with **[docs/phase-1/README.md](docs/phase-1/README.md)**: the critique, recommendation, open decisions and
-plan. **[docs/phase-1/verification-status.md](docs/phase-1/verification-status.md)** lists which findings are
+Start with the **[Phase 1B executive summary](docs/phase-1b/07-executive-summary.md)** and
+**[decision register](docs/phase-1b/06-decision-register.md)**. Phase 1 ([docs/phase-1/README.md](docs/phase-1/README.md))
+is kept unchanged; its corrections are in [changes-to-phase-1.md](docs/phase-1b/changes-to-phase-1.md). **[docs/phase-1/verification-status.md](docs/phase-1/verification-status.md)** lists which findings are
 measured and which rest on assumptions still to verify.
 
 ## Research objectives

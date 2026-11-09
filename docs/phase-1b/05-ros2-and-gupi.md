@@ -86,7 +86,7 @@ decide otherwise.
 **Scoring.** Exact or normalised match where possible; otherwise a judge model with a published rubric, plus a
 human spot check of 20% (you, or someone independent). Unsupported-assertion rate reported separately.
 
-**Budget constraint (V, memory of your decision):** no paid API calls. Within the Claude subscription, answering
+**Budget constraint (your standing decision for GUPI):** no paid API calls. Within the Claude subscription, answering
 runs as manual sessions, which limits the size to roughly 100-200 questions. That gives intervals around ±7-10
 points. It is enough to detect a large effect, not a small one. The report must say so.
 

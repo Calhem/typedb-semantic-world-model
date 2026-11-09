@@ -1,5 +1,8 @@
 # Phase 1: research and architecture (for review)
 
+> **Update 2026-11-09:** Phase 1B reviewed this phase against primary sources. Corrections are listed in
+> [../phase-1b/changes-to-phase-1.md](../phase-1b/changes-to-phase-1.md); this page is otherwise unchanged.
+
 **Status (2026-11-09): stopped for review. No TypeQL ontology written.** Which findings are measured and which are
 assumptions: [verification-status.md](verification-status.md). The only code is a capability probe, run in
 throwaway databases. The existing Visual Explorer and GUPI repositories were read, not changed.
