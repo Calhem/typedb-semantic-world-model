@@ -354,9 +354,8 @@ class WorldModel:
         c = f"${var}"
         parts, params = [f"{c} isa {q.label(type)};" if type else f"{c} isa claim;"], {}
         if subject is not None:
-            # An existence check (double negation): binding the player here would stop a second `links` in the same
-            # query from matching it again, because TypeDB matches distinct role players per `links` constraint.
-            parts.append(f"not {{ not {{ {c} links ($kr: $subj); $subj has wm-id == $sid; }}; }};")
+            # Bound positively so the query starts from the subject (an indexed lookup), not from every claim.
+            parts.append(f"$subj has wm-id == $sid; {c} links ($kr: $subj);")
             params["sid"] = subject
         if at is not None:
             parts.append(f"{{ not {{ {c} has valid-from-latest $asl0; }}; }} or "
@@ -394,9 +393,19 @@ class WorldModel:
                 recorded_at=q.opt(r, "rec"), initial_status=q.opt(r, "ist"), clock=q.opt(r, "clk") or "wall",
                 description=q.opt(r, "desc"))
         roles = {}
-        for r in q.rows(tx, head + " $c has wm-id $cid; $c links ($role: $x); $x has wm-id $xid;", params):
-            roles.setdefault(q.opt(r, "cid"), {}).setdefault(r.get("role").get_label().split(":")[-1], set()).add(
-                q.opt(r, "xid"))
+        if subject is None:
+            for r in q.rows(tx, head + " $c has wm-id $cid; $c links ($role: $x); $x has wm-id $xid;", params):
+                roles.setdefault(q.opt(r, "cid"), {}).setdefault(r.get("role").get_label().split(":")[-1], set()).add(
+                    q.opt(r, "xid"))
+        else:
+            # TypeDB matches distinct role players per `links` constraint, so the subject (bound by $kr) is not matched
+            # again by the second one: its role comes from $kr, the other players from the optional block.
+            for r in q.rows(tx, head + " $c has wm-id $cid; try { $c links ($role: $x); $x has wm-id $xid; };",
+                            params):
+                mine = roles.setdefault(q.opt(r, "cid"), {})
+                mine.setdefault(r.get("kr").get_label().split(":")[-1], set()).add(subject)
+                if r.get("role") is not None:
+                    mine.setdefault(r.get("role").get_label().split(":")[-1], set()).add(q.opt(r, "xid"))
         for cid, rs in roles.items():
             if cid in claims:
                 claims[cid].roles = {role: sorted(ids) for role, ids in rs.items()}

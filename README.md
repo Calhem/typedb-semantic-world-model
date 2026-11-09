@@ -12,8 +12,8 @@ from a robot to a video understanding pipeline to an agent's long-term memory.
 |---|---|
 | 1. Research and architecture | Complete ([docs/phase-1](docs/phase-1/README.md)) |
 | 1B. Research validation and architectural review | Complete ([docs/phase-1b](docs/phase-1b/README.md)) |
-| **1C. Preparation: semantics, environments, baselines** | **Complete, under review** ([docs/phase-1c](docs/phase-1c/README.md)). No ontology implemented |
-| **M1. Executable foundational core** | **Implemented on branch `feature/m1-foundational-core`, 25 tests passing; under review** ([docs/m1](docs/m1/README.md)) |
+| 1C. Preparation: semantics, environments, baselines | Complete ([docs/phase-1c](docs/phase-1c/README.md)) |
+| **M1. Executable foundational core** | **Implemented and reviewed: core 0.2.0, 41 tests passing** ([docs/m1](docs/m1/README.md)) |
 | M2-M4. Temporal and evidential semantics, profiles, cross-domain validation | Not started |
 
 Start with **[Phase 1C's outstanding decisions](docs/phase-1c/07-outstanding-decisions.md)**, then the
@@ -40,7 +40,8 @@ unknown until observed); real TypeDB operations only; every claim of advantage t
 | **GUPI agent memory** | Whether a shared profile keeps [GUPI](https://github.com/Calhem/typedb-gupi-agent-memory)'s evidence and time model while improving coherence and interoperability | GUPI research is paused; a parity check only, until an independent answer set exists |
 
 ## Repository
-- `schema/`, `src/worldmodel/`, `tests/`: the world model (TypeQL schema modules, Python interface, tests).
+- `schema/`, `src/worldmodel/`, `tests/`: the world model (TypeQL schema modules, Python interface, tests);
+  `scripts/bench_query_paths.py`: selective vs full query benchmark.
 - `docs/phase-1/`: framework comparison, core ontology proposal, modules and profiles, TypeDB capability
   assessment, competency questions, experiment protocols, ROS 2 design, recommendation and decisions.
 - `environments/`: isolated PostgreSQL 18, TypeDB and ROS 2 environments with smoke tests.
