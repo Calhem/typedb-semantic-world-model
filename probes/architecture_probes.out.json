@@ -1,0 +1,68 @@
+{
+ "A1 two instances of one relation type with identical role players": [
+  [
+   "ok",
+   null
+  ],
+  [
+   "ok",
+   null
+  ],
+  [
+   "rows",
+   2
+  ]
+ ],
+ "A2 abstract attribute with subtypes of different value types, owned polymorphically": [
+  [
+   "ok",
+   null
+  ],
+  [
+   "rejected",
+   "[INF11] Type-inference was unable to find compatible types for the pair of variables '_anonymous' & '_anonymous' across a 'has' constraint. Types were: - _anonymous: [measurement] - _anonymous: [magnitude-number] Caused:"
+  ]
+ ],
+ "A3 relation (claim) as role player of another relation (attribution of a claim)": [
+  [
+   "ok",
+   null
+  ],
+  [
+   "ok",
+   null
+  ],
+  [
+   "rows",
+   2
+  ]
+ ],
+ "A4 an entity type playing a role defined on an abstract supertype relation, queried via the supertype": [
+  [
+   "ok",
+   null
+  ],
+  [
+   "ok",
+   null
+  ],
+  [
+   "rows",
+   4
+  ]
+ ],
+ "A2b same, but owning each concrete subtype; query through the abstract parent": [
+  [
+   "ok",
+   null
+  ],
+  [
+   "ok",
+   null
+  ],
+  [
+   "rows",
+   3
+  ]
+ ]
+}
