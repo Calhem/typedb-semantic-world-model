@@ -43,6 +43,20 @@ def tagged_rows(tx, body, params=None):
 
 typeql.rows = tagged_rows
 model.q.rows = tagged_rows
+_documents = typeql.documents
+
+
+def tagged_documents(tx, body, params=None):
+    t = time.perf_counter()
+    out = _documents(tx, body, params)
+    if recording[0]:
+        kind = "quality params (fetch)" if "$c.lower" in body else "main (fetch)" if "fetch {" in body else "other"
+        log[kind].append((time.perf_counter() - t, len(out)))
+    return out
+
+
+typeql.documents = tagged_documents
+model.q.documents = tagged_documents
 
 
 def main():

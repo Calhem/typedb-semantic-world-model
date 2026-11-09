@@ -75,3 +75,20 @@ def opt(row, var):
     if concept.is_attribute():
         return from_driver(concept.get_value())
     return concept
+
+
+def documents(tx, body, params=None):
+    return list(run(tx, body, params).as_concept_documents())
+
+
+def parse_datetime(text):
+    """A datetime-tz as `fetch` returns it ('2026-11-09T10:00:00.123456000+00:00'), to microseconds in UTC: the same
+    value `from_driver` gives for the same attribute through concept rows."""
+    if text is None:
+        return None
+    match = re.match(r"^(.*T\d\d:\d\d:\d\d)(?:\.(\d+))?(Z|[+-]\d\d:\d\d)$", text)
+    if not match:
+        raise ValueError(f"unexpected datetime format: {text!r}")
+    base, fraction, zone = match.groups()
+    micro = (fraction or "0")[:6].ljust(6, "0")
+    return datetime.fromisoformat(f"{base}.{micro}{'+00:00' if zone == 'Z' else zone}").astimezone(timezone.utc)

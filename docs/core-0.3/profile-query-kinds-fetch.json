@@ -1,0 +1,37 @@
+{
+ "questions": 60,
+ "value_at_median_ms": 41.4,
+ "typedb_read_share": 0.912,
+ "by_kind": {
+  "acceptances": {
+   "queries_per_question": 3.13,
+   "mean_ms": 1.27,
+   "mean_rows": 0,
+   "share_of_read_time": 0.114
+  },
+  "chain": {
+   "queries_per_question": 3.13,
+   "mean_ms": 0.8,
+   "mean_rows": 0.36,
+   "share_of_read_time": 0.072
+  },
+  "main (fetch)": {
+   "queries_per_question": 3.13,
+   "mean_ms": 2.88,
+   "mean_rows": 2.27,
+   "share_of_read_time": 0.257
+  },
+  "roles": {
+   "queries_per_question": 3.13,
+   "mean_ms": 3.44,
+   "mean_rows": 4.53,
+   "share_of_read_time": 0.308
+  },
+  "supersessions": {
+   "queries_per_question": 3.13,
+   "mean_ms": 2.8,
+   "mean_rows": 1.1,
+   "share_of_read_time": 0.25
+  }
+ }
+}

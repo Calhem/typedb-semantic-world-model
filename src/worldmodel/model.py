@@ -423,32 +423,36 @@ class WorldModel:
 
     def _level(self, tx, world, depth, vlim, klim, type, subject, at, perspective):
         head, params = self._filters(world, type, subject, klim, vlim, at)
-        recs = {}
         # Type inference rejects a disjunction branch that cannot apply to a fixed type, so pick the content id pattern.
+        recs = {}
         if type == "event":
             content_id = "$c has wm-id $ck;"
         elif type is not None:
             content_id = "$c has proposition-key $ck;"
         else:
             content_id = "{ $c has proposition-key $ck; } or { $c has wm-id $ck; };"
-        # Optional blocks must also be possible for the content type, or inference rejects the query.
-        quality = ("try { $c has lower $lo; }; try { $c has upper $up; }; try { $c has coverage-level $cv; };"
-                   if type in (None, "has-quality") else "")
-        for r in q.rows(tx, head + f""" $who has wm-id $wid; $c isa! $t; {content_id}
-            $a has stance $st, has polarity $pol, has basis $bs, has end-basis $eb;
-            try {{ $a has valid-from-earliest $sfe; }}; try {{ $a has valid-from-latest $sfl; }};
-            try {{ $a has valid-to-earliest $tte; }}; try {{ $a has valid-to-latest $ttl; }};
-            try {{ $a has credence $cr; }}; {quality}""", params):
-            aid = q.opt(r, "aid")
-            sfe, sfl, tte, ttl = (q.opt(r, v) for v in ("sfe", "sfl", "tte", "ttl"))
-            par = {n: q.opt(r, v) for n, v in (("lower", "lo"), ("upper", "up"), ("coverage-level", "cv"))
-                   if q.opt(r, v) is not None}
-            recs[aid] = AttestationRecord(
-                id=aid, content=q.opt(r, "ck"), ctype=r.get("t").get_label(), roles={}, params=par,
-                attester=q.opt(r, "wid"), world=world, stance=q.opt(r, "st"), polarity=q.opt(r, "pol"),
-                basis=q.opt(r, "bs"), start=Window(sfe, sfl) if sfe is not None else None,
-                end=Window(tte, ttl) if tte is not None else None, end_basis=q.opt(r, "eb"),
-                recorded_at=q.opt(r, "rec"), credence=q.opt(r, "cr"), depth=depth)
+        # Attributes are read with one `fetch` stage rather than one `try` block each: same values, about 3x faster
+        # (docs/core-0.3, experiment-main-query.json). Absent attributes come back as null.
+        for d in q.documents(tx, head + f""" $who has wm-id $wid; $c isa! $t; {content_id}
+            fetch {{ "aid": $aid, "wid": $wid, "t": $t, "ck": $ck, "rec": $rec, "st": $a.stance, "pol": $a.polarity,
+                     "bs": $a.basis, "eb": $a.end-basis, "sfe": $a.valid-from-earliest, "sfl": $a.valid-from-latest,
+                     "tte": $a.valid-to-earliest, "ttl": $a.valid-to-latest, "cr": $a.credence }};""", params):
+            sfe, sfl, tte, ttl = (q.parse_datetime(d[k]) for k in ("sfe", "sfl", "tte", "ttl"))
+            recs[d["aid"]] = AttestationRecord(
+                id=d["aid"], content=d["ck"], ctype=d["t"]["label"], roles={}, params={}, attester=d["wid"],
+                world=world, stance=d["st"], polarity=d["pol"], basis=d["bs"],
+                start=Window(sfe, sfl) if sfe is not None else None,
+                end=Window(tte, ttl) if tte is not None else None, end_basis=d["eb"],
+                recorded_at=q.parse_datetime(d["rec"]), credence=d["cr"], depth=depth)
+        # Fetching `$c.lower` is rejected unless every possible type of $c can own it, so quality parameters are
+        # fetched separately, only when the content can be has-quality.
+        if type in (None, "has-quality"):
+            for d in q.documents(tx, head + """ $c isa has-quality;
+                fetch { "aid": $aid, "lower": $c.lower, "upper": $c.upper, "coverage-level": $c.coverage-level };""",
+                                 params):
+                if d["aid"] in recs:
+                    recs[d["aid"]].params = {k: d[k] for k in ("lower", "upper", "coverage-level") if d[k] is not None}
+            self.stats["queries"] += 1
         roles = {}
         if subject is None:
             role_q = head + " $c links ($role: $x); $x has wm-id $xid;"

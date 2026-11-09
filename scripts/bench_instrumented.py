@@ -2,7 +2,7 @@
 
     uv run --python 3.13 --project <checkout> python -I scripts/bench_instrumented.py <checkout> [bench args...]
 
-Wraps `worldmodel.typeql.rows` (every read query, including streaming the answers) and `WorldModel.value_at` in the
+Wraps `worldmodel.typeql.rows` and, where present, `typeql.documents` (every read query, including streaming the answers) and `WorldModel.value_at` in the
 checkout's own package, then runs its `scripts/bench_query_paths.py`. For each question it records total time and the
 time spent inside TypeDB reads (query execution, network and driver decoding); the rest is Python processing.
 Prints the bench's JSON followed by an `instrumented` JSON object. Used to compare Milestone 1 (main) and Core 0.3 under
@@ -38,6 +38,18 @@ def timed_rows(*a, **kw):
 
 typeql.rows = timed_rows
 model.q.rows = timed_rows
+if hasattr(typeql, "documents"):            # Core 0.3 reads attributes through `fetch` documents: a TypeDB read too
+    _documents = typeql.documents
+
+    def timed_documents(*a, **kw):
+        t = time.perf_counter()
+        try:
+            return _documents(*a, **kw)
+        finally:
+            db_time[0] += time.perf_counter() - t
+
+    typeql.documents = timed_documents
+    model.q.documents = timed_documents
 _value_at = model.WorldModel.value_at
 
 
