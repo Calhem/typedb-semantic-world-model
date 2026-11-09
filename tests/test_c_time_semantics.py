@@ -44,3 +44,25 @@ def test_an_ended_account_disputes_an_ongoing_one_begun_earlier(wm, world):
     wm.accept(b)
     assert wm.holds(world, "classified-as", roles, M(3)).holds is True               # both say so
     assert wm.holds(world, "classified-as", roles, M(7)).status == Status.DISPUTED    # A: ended in June; B: until Aug
+
+
+def test_ended_accounts_are_not_dropped_by_the_selective_filter(wm, world):
+    """Regression for defect D6: the TypeQL pre-filter once skipped attestations that ended before t, which removed
+    their "does not hold" and turned a dispute into an assertion on the selective path only."""
+    from worldmodel import WorldModel
+    for kind, n in (("physical-object", "track-9"), ("social-object", "matcher")):
+        wm.add_entity(kind, n, id=n)
+    wm.attest(world, "located-at", {"located": "box", "place": "shelf-3"}, start=T("08:00"), end=T("08:30"))
+    a = wm.attest(world, "located-at", {"located": "track-9", "place": "shelf-3"}, start=T("07:00"),
+                  until_superseded=True, attester="A")
+    wm.accept(a)
+    link = wm.attest(world, "same-as", {"same": ["box", "track-9"]}, until_superseded=True, attester="matcher")
+    wm.accept(link)
+    full = WorldModel.open(wm.database, driver=wm.driver)
+    full.selective = False
+    wm.selective = True
+    roles = {"located": "box", "place": "shelf-3"}
+    for model in (wm, full):
+        assert model.holds(world, "located-at", roles, T("09:00")).status == Status.DISPUTED
+    assert wm.holds(world, "located-at", roles, T("09:00")) == full.holds(world, "located-at", roles, T("09:00"))
+    assert wm.value_at(world, "located-at", "box", T("09:00")) == full.value_at(world, "located-at", "box", T("09:00"))

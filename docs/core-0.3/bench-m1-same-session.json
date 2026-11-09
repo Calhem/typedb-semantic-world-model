@@ -1,0 +1,32 @@
+/private/tmp/claude-501/-Users-callumhemsley--claude-spares-spare-BItl3f/3a43515d-c2ce-4926-b678-2840c238dc15/scratchpad/m1-main/.venv/lib/python3.15/site-packages/typedb/common/promise.py:32: SyntaxWarning: "\ " is an invalid escape sequence. Such sequences will not work in the future. Did you mean "\\ "? A raw string is also an option.
+  once the ``Promise`` is ``resolve``\ d.
+{
+ "dataset": {
+  "objects": 200,
+  "places": 30,
+  "moves": 1000,
+  "queries": 60,
+  "seed": 11
+ },
+ "ingest": {
+  "seconds": 41.1,
+  "move_ms_median": 31.1,
+  "move_ms_p95": 60.1
+ },
+ "claims_in_actual_world": 2200,
+ "selective": {
+  "ms_median": 23.2,
+  "ms_p95": 31.7,
+  "claims_per_question": 3.7,
+  "typeql_queries_per_question": 12.5
+ },
+ "full": {
+  "ms_median": 1908.3,
+  "ms_p95": 2206.0,
+  "claims_per_question": 2255.5,
+  "typeql_queries_per_question": 6.3
+ },
+ "identical_answers": true,
+ "database_bytes": 9067111,
+ "bytes_per_claim": 4121
+}
