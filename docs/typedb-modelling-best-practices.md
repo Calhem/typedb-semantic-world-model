@@ -6,7 +6,8 @@ in the last section, marked as such. Started 2026-11-09; keep it current as new 
 
 Evidence keys: `P1-n` Phase 1 probes (`probes/typedb_capabilities.py`), `P1B-x` Phase 1B probes
 (`probes/phase_1b_probes.py`), `A-n` architecture probes (`probes/architecture_probes.py`,
-`probes/architecture_snippet_check.py`), `M1` Milestone 1 code and tests.
+`probes/architecture_snippet_check.py`), `B-n` v0.2 probes (`probes/architecture_v02_probes.py`), `M1` Milestone 1
+code and tests.
 
 ## Types and identity
 | Practice | Why (verified behaviour) | Evidence |
@@ -25,6 +26,8 @@ Evidence keys: `P1-n` Phase 1 probes (`probes/typedb_capabilities.py`), `P1B-x` 
 | Query "any participant" with a role variable: `$e links ($r: $x)` | works across subtypes | M1 |
 | Use `@card(1..1)` on `plays` or `relates` for "exactly one" (e.g. one world per claim); it is checked at commit | `CNT5` on violation | M1 |
 | Removing a role from a type is refused while data uses it: plan profile removal as a migration | `SVL51` | P1B-D |
+| A role allows **at most one player per relation instance** unless declared otherwise: give symmetric or multi-player roles an explicit `@card` (e.g. `relates same @card(2..2)`) | two players on an undeclared role were rejected with `CNT5` (`@card(0..1)`) | B2, M1 |
+| One role can take players of several relation types (a `content` role played by propositions and by event descriptions); filter with `$c isa <type>` in the query | queried by any, by proposition or by event | B2 |
 
 ## Attributes and values
 | Practice | Why | Evidence |
@@ -45,6 +48,7 @@ Evidence keys: `P1-n` Phase 1 probes (`probes/typedb_capabilities.py`), `P1B-x` 
 | Use different variable names in the positive and negated branches of a disjunction | `REP44` "must be bound" | M1 |
 | Optional data: `try { ... };` blocks; absent values come back as `None` | works in reads | M1 |
 | Recursive functions (`fun f(...) -> { ... }` with `let $x in f(...)`) work for transitive closures and can take a scoping argument (e.g. a world) | — | P1-7, M1 |
+| Compare attributes of two matched instances directly for interval logic, e.g. range overlap `$la <= $ub; $lb <= $ua;` | finds exactly the overlapping pairs | B3 |
 
 ## Operations
 | Practice | Why | Evidence |
@@ -54,7 +58,8 @@ Evidence keys: `P1-n` Phase 1 probes (`probes/typedb_capabilities.py`), `P1B-x` 
 
 ## Design trade-offs observed (not yet best practice)
 These are preferences supported by analysis, not verified rules.
-- Keeping content (propositions) separate from stance (attestations) adds one hop per question; Milestone 1's
-  selective path suggests the cost is small, but it is unmeasured (architecture proposal v0.1, Q8).
+- Keeping content (propositions) separate from stance (attestations) adds one hop per question. Measured once on
+  1,200 location facts (B1, two runs): median 20.6 ms (one hop) vs 22.9 ms (two hops), identical answers; p95 noisy
+  (one-hop showed outliers of ~300 ms in both runs). Indicative only; larger worlds untested.
 - Application code still decides review status, precedence and time windows. TypeQL can express the certain-interval
   cases (P1B-C), but moving more logic into functions is untested at scale.

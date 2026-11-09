@@ -1,0 +1,37 @@
+{
+ "B2 polymorphic content": {
+  "any content": 3,
+  "proposition content": 1,
+  "event content": 2,
+  "actors of co-referring descriptions": [
+   "bob",
+   "carol"
+  ]
+ },
+ "B3 range compatibility in TypeQL": {
+  "compatible pairs (ranges overlap)": [
+   "m1~m2"
+  ],
+  "expected": [
+   "m1~m2"
+  ]
+ },
+ "B1 two-hop retrieval": {
+  "identical_answers": true,
+  "one-hop": {
+   "facts": 1200,
+   "located_at_instances": 1200,
+   "ingest_s": 3.2,
+   "ms_median": 20.56,
+   "ms_p95": 301.84
+  },
+  "two-hop": {
+   "facts": 1200,
+   "located_at_instances": 1092,
+   "ingest_s": 4.2,
+   "ms_median": 22.85,
+   "ms_p95": 28.6
+  }
+ },
+ "leftover": []
+}
