@@ -28,7 +28,7 @@
 | 1 | Approve the semantics in 02 (answer statuses AD18, persistence AD6, observed absence AD6a, frames AD5a, identity AD7, confidence AD8) | approve, with default horizons left to profile authors and frozen before sealed runs |
 | 2 | Approve or change the **thresholds** (04 §4.4); they are then frozen as `preregistration-v1` | approve as proposed |
 | 3 | **Withheld material:** who authors, how many authors, where sealed packages live, whether model-authored material is allowed (05 §5.6) | two human authors; packages in a private location you control; model-authored only as a disclosed, weaker tier |
-| 4 | **GUPI paid stage:** approve about **$1.75 (cap $5)** for `gpt-4o-mini` answers and `gpt-4o` judging on 447 held-out + 53 development questions, and provide `OPENAI_API_KEY` | approve; optionally add `gpt-4o` answers (about $8 more) |
+| 4 | **GUPI paid stage:** approve about **$1.82 (cap $5; from real token counts, 03a)** for `gpt-4o-mini` answers and `gpt-4o` judging on 447 held-out + 53 development questions, and provide `OPENAI_API_KEY` | approve; optionally add `gpt-4o` answers (about $8 more) |
 | 5 | Re-run all probes on **TypeDB 3.14.2** before Phase 2 (AD16) | yes |
 | 6 | Phase 2 scope: specification document + neutral fixture format + A, B and C for the core only, on development questions | yes; no ROS adapter until Phase 2's core passes |
 | 7 | Still open from Phase 1: D2 name, D5 licence, D8 outage spool | decide before publishing a specification |
