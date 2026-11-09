@@ -46,8 +46,10 @@ def _window(value):
 
 
 class WorldModel:
-    def __init__(self, driver, database, clock=utcnow):
+    def __init__(self, driver, database, clock=utcnow, selective=True):
         self.driver, self.database, self.clock = driver, database, clock
+        self.selective = selective             # filter questions in TypeDB (False: load whole worlds, the reference)
+        self.stats = {"queries": 0, "claims": 0}
         self._last_recorded = None
         self._claim_types = None
 
@@ -156,6 +158,8 @@ class WorldModel:
         if type not in self.claim_types():
             raise ValueError(f"{type!r} is not a claim type in the installed schema")
         start, end = _window(start), _window(end)
+        if start is not None and start.latest is None:
+            raise ValueError("a start window needs both bounds (a missing start means: from the start of the world)")
         if end is not None and until_ceased:
             raise ValueError("give either an end or until_ceased, not both")
         basis = "stated" if end is not None else ("until-ceased" if until_ceased else "unknown")
@@ -343,13 +347,44 @@ class WorldModel:
             current = q.opt(rows[0], "bid")
             chain.append((current, vlim, klim))
 
-    def _claims_in(self, tx, world):
+    @staticmethod
+    def _claim_filter(type=None, subject=None, at=None, var="c"):
+        """TypeQL patterns that select claims `$<var>` in the database: by type, by a role player, and (with `at`) only
+        claims that could hold at valid time `at` (started by then and not certainly ended before it)."""
+        c = f"${var}"
+        parts, params = [f"{c} isa {q.label(type)};" if type else f"{c} isa claim;"], {}
+        if subject is not None:
+            # An existence check (double negation): binding the player here would stop a second `links` in the same
+            # query from matching it again, because TypeDB matches distinct role players per `links` constraint.
+            parts.append(f"not {{ not {{ {c} links ($kr: $subj); $subj has wm-id == $sid; }}; }};")
+            params["sid"] = subject
+        if at is not None:
+            parts.append(f"{{ not {{ {c} has valid-from-latest $asl0; }}; }} or "
+                         f"{{ {c} has valid-from-latest $asl1; $asl1 <= $at; }};")
+            parts.append(f"not {{ {c} has valid-to-latest $ael; $ael <= $at; }};")
+            params["at"] = at
+        return " ".join(parts), params
+
+    def _claims_in(self, tx, world, type=None, subject=None, klim=None, vlim=None, at=None):
+        """Claims scoped to `world`, filtered in TypeQL by type, role player, transaction-time limit `klim`,
+        inherited valid-time limit `vlim` (the claim must start before it) and valid time `at`."""
+        filt, params = self._claim_filter(type, subject, at)
+        params["world"] = world
+        extra = ""
+        if klim is not None:
+            extra += " $c has recorded-at $krec; $krec <= $klim;"
+            params["klim"] = klim
+        if vlim is not None:
+            extra += (" { not { $c has valid-from-earliest $vse0; }; } or"
+                      " { $c has valid-from-earliest $vse1; $vse1 < $vlim; };")
+            params["vlim"] = vlim
+        head = f"match $w isa world, has wm-id == $world; scope (world: $w, member: $c); {filt}{extra}"
         claims = {}
-        for r in q.rows(tx, """match $w isa world, has wm-id == $world; scope (world: $w, member: $c);
+        for r in q.rows(tx, head + """
             $c isa! $t, has wm-id $cid, has recorded-at $rec, has initial-status $ist, has end-basis $eb;
             try { $c has valid-from-earliest $sfe; }; try { $c has valid-from-latest $sfl; };
             try { $c has valid-to-earliest $tte; }; try { $c has valid-to-latest $ttl; };
-            try { $c has clock $clk; }; try { $c has description $desc; };""", {"world": world}):
+            try { $c has clock $clk; }; try { $c has description $desc; };""", params):
             sfe, sfl, tte, ttl = (q.opt(r, v) for v in ("sfe", "sfl", "tte", "ttl"))
             cid = q.opt(r, "cid")
             claims[cid] = ClaimRecord(
@@ -358,59 +393,97 @@ class WorldModel:
                 end=Window(tte, ttl) if tte is not None else None, end_basis=q.opt(r, "eb"),
                 recorded_at=q.opt(r, "rec"), initial_status=q.opt(r, "ist"), clock=q.opt(r, "clk") or "wall",
                 description=q.opt(r, "desc"))
-        for r in q.rows(tx, """match $w isa world, has wm-id == $world; scope (world: $w, member: $c);
-            $c isa claim, has wm-id $cid; $c links ($role: $x); $x has wm-id $xid;""", {"world": world}):
-            role = r.get("role").get_label().split(":")[-1]
-            claims[q.opt(r, "cid")].roles.setdefault(role, []).append(q.opt(r, "xid"))
+        roles = {}
+        for r in q.rows(tx, head + " $c has wm-id $cid; $c links ($role: $x); $x has wm-id $xid;", params):
+            roles.setdefault(q.opt(r, "cid"), {}).setdefault(r.get("role").get_label().split(":")[-1], set()).add(
+                q.opt(r, "xid"))
+        for cid, rs in roles.items():
+            if cid in claims:
+                claims[cid].roles = {role: sorted(ids) for role, ids in rs.items()}
+        self.stats["queries"] += 2
         return claims
 
-    def _cessations_in(self, tx, world):
-        return [(q.opt(r, "cid"), Window(q.opt(r, "e"), q.opt(r, "l")), q.opt(r, "rec")) for r in q.rows(tx, """
-            match $w isa world, has wm-id == $world; scope (world: $w, member: $s);
+    def _cessations_in(self, tx, world, type=None, subject=None, at=None):
+        filt, params = self._claim_filter(type, subject, at)
+        params["world"] = world
+        self.stats["queries"] += 1
+        return [(q.opt(r, "cid"), Window(q.opt(r, "e"), q.opt(r, "l")), q.opt(r, "rec")) for r in q.rows(tx, f"""
+            match $w isa world, has wm-id == $world; scope (world: $w, member: $s); {filt}
             $s isa cessation (ended: $c), has recorded-at $rec, has valid-to-earliest $e; $c has wm-id $cid;
-            try { $s has valid-to-latest $l; };""", {"world": world})]
+            try {{ $s has valid-to-latest $l; }};""", params)]
 
-    def _reviews_in(self, tx, world):
+    def _reviews_in(self, tx, world, type=None, subject=None, at=None):
         """Reviews made in `world` (of claims from this world or any base world)."""
-        return [(q.opt(r, "cid"), q.opt(r, "vd"), q.opt(r, "rec")) for r in q.rows(tx, """
-            match $w isa world, has wm-id == $world; scope (world: $w, member: $v);
-            $v isa review (reviewed: $c), has verdict $vd, has recorded-at $rec; $c has wm-id $cid;""", {"world": world})]
+        filt, params = self._claim_filter(type, subject, at)
+        params["world"] = world
+        self.stats["queries"] += 1
+        return [(q.opt(r, "cid"), q.opt(r, "vd"), q.opt(r, "rec")) for r in q.rows(tx, f"""
+            match $w isa world, has wm-id == $world; scope (world: $w, member: $v); {filt}
+            $v isa review (reviewed: $c), has verdict $vd, has recorded-at $rec; $c has wm-id $cid;""", params)]
 
-    def visible_claims(self, world, as_of=None):
-        """Claims visible in `world` as known at transaction time `as_of`.
+    def _load(self, world, as_of=None, types=None, subjects=None, at=None):
+        """Claims visible in `world` as known at `as_of`, optionally only those of `types`, involving one of
+        `subjects`, and able to hold at valid time `at`. All filters run in TypeDB; with none, every claim is loaded.
 
-        Own records count if recorded by `as_of`. Records of each base world count if recorded by that level's
-        knowledge limit; base claims also need to start before the valid-time limit, and base cessations to fall
+        Visibility: own records count if recorded by `as_of`. Records of each base world count if recorded by that
+        level's knowledge limit; base claims must also start before the valid-time limit and base cessations fall
         before it. Reviews apply from the world that made them and from the worlds it inherits.
         """
+        visible = {}
         with self.driver.transaction(self.database, READ) as tx:
             chain = self._world_chain(tx, world, as_of)
-            visible = {}
             for depth, (w, vlim, klim) in enumerate(chain):
-                for cid, c in self._claims_in(tx, w).items():
-                    if klim is not None and c.recorded_at > klim:
-                        continue
-                    if vlim is not None and c.start is not None and c.start.earliest >= vlim:
-                        continue
-                    c.depth = depth
-                    visible.setdefault(cid, c)
+                for type in (types or [None]):
+                    for subj in (subjects or [None]):
+                        for cid, c in self._claims_in(tx, w, type, subj, klim, vlim, at).items():
+                            c.depth = depth
+                            visible.setdefault(cid, c)
             for depth, (w, vlim, klim) in enumerate(chain):
-                for cid, win, rec in self._cessations_in(tx, w):
-                    if cid in visible and (klim is None or rec <= klim) and (vlim is None or win.earliest < vlim):
-                        visible[cid].cessations.append((win, rec, w))
-                for cid, verdict, rec in self._reviews_in(tx, w):
-                    if cid in visible and (klim is None or rec <= klim):
-                        visible[cid].reviews.append((verdict, rec))
+                for type in (types or [None]):
+                    for subj in (subjects or [None]):
+                        for cid, win, rec in self._cessations_in(tx, w, type, subj, at):
+                            entry = (win, rec, w)
+                            if (cid in visible and (klim is None or rec <= klim) and (vlim is None or win.earliest < vlim)
+                                    and entry not in visible[cid].cessations):
+                                visible[cid].cessations.append(entry)
+                        for cid, verdict, rec in self._reviews_in(tx, w, type, subj, at):
+                            if cid in visible and (klim is None or rec <= klim) and (verdict, rec) not in visible[cid].reviews:
+                                visible[cid].reviews.append((verdict, rec))
+        self.stats["claims"] += len(visible)
         return visible
 
+    def visible_claims(self, world, as_of=None):
+        """Every claim visible in `world` as known at `as_of` (the full, unfiltered load)."""
+        return self._load(world, as_of)
+
     def identity(self, world, as_of=None, claims=None):
-        claims = claims if claims is not None else self.visible_claims(world, as_of)
+        claims = claims if claims is not None else self._load(world, as_of, types=["same-as"])
         return Identity([c for c in claims.values() if c.type == "same-as"], as_of)
+
+    def _identity_of(self, world, ids, as_of):
+        """Identity closure for `ids`, loading only the same-as claims that touch the growing group (selective)."""
+        known, frontier, same = set(ids), sorted(set(ids)), {}
+        while frontier:
+            same.update(self._load(world, as_of, types=["same-as"], subjects=frontier))
+            ident = Identity(same.values(), as_of)
+            group = {m for i in ids for m in ident.members(i)}
+            frontier = sorted(group - known)
+            known |= group
+        return Identity(same.values(), as_of)
+
+    def _view(self, world, as_of, type, subject_ids, at=None):
+        """(claims, identity) for a question about `subject_ids`: selective by default, the full load otherwise."""
+        if not self.selective:
+            claims = self.visible_claims(world, as_of)
+            return claims, self.identity(world, as_of, claims)
+        ident = self._identity_of(world, subject_ids, as_of)
+        members = sorted({m for s in subject_ids for m in ident.members(s)})
+        return self._load(world, as_of, types=[type], subjects=members, at=at), ident
 
     def _accepted_holding(self, world, type, key_role, subject, t, as_of):
         """Accepted claims of `type` about the subject (identity-aware) that certainly hold at t."""
-        claims = self.visible_claims(world, as_of)
-        subjects = set(self.identity(world, as_of, claims).members(subject))
+        claims, ident = self._view(world, as_of, type, [subject], at=t)
+        subjects = set(ident.members(subject))
         return [c for c in claims.values() if c.type == type and subjects & set(c.roles.get(key_role, []))
                 and status_at(c, as_of) == "accepted" and truth_at(c, t, as_of) is True]
 
@@ -438,11 +511,14 @@ class WorldModel:
         inherited claims for the same subject and type at times the variant's own claims cover.
         """
         key_role, value_role = (key_role, value_role) if key_role else FUNCTIONAL[type]
-        claims = self.visible_claims(world, as_of)
-        ident = self.identity(world, as_of, claims)
+        claims, ident = self._view(world, as_of, type, [subject], at=t)
         subjects = set(ident.members(subject))
         about = [c for c in claims.values() if c.type == type and subjects & set(c.roles.get(key_role, []))]
         if not about:
+            if self.selective:     # nothing could hold at t; was anything about the subject recorded at all?
+                anything, _ = self._view(world, as_of, type, [subject])
+                if any(c.type == type and subjects & set(c.roles.get(key_role, [])) for c in anything.values()):
+                    return Answer(Status.UNKNOWN)
             return Answer(Status.NOT_YET_KNOWN)
         holding = self._effective(about, ident, t, as_of)
         if type not in FUNCTIONAL and holding:
@@ -461,8 +537,16 @@ class WorldModel:
     def holds(self, world, type, roles, t, as_of=None):
         """Does this relationship hold at t? ASSERTED true/false from claims and cessations; INFERRED false when a
         functional relationship certainly has another value; DISPUTED when accepted claims disagree."""
-        claims = self.visible_claims(world, as_of)
-        ident = self.identity(world, as_of, claims)
+        ids = sorted({x for v in roles.values() for x in ([v] if isinstance(v, str) else v)})
+        key = FUNCTIONAL[type][0] if type in FUNCTIONAL and FUNCTIONAL[type][0] in roles else next(iter(sorted(roles)))
+        anchor = sorted([roles[key]] if isinstance(roles[key], str) else roles[key])
+        if self.selective:
+            ident = self._identity_of(world, ids, as_of)
+            members = sorted({m for a in anchor for m in ident.members(a)})
+            claims = self._load(world, as_of, types=[type], subjects=members)
+        else:
+            claims = self.visible_claims(world, as_of)
+            ident = self.identity(world, as_of, claims)
         want = {r: {ident.canonical(x) for x in ([v] if isinstance(v, str) else v)} for r, v in roles.items()}
 
         def matches(c):

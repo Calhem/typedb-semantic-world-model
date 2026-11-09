@@ -1,6 +1,7 @@
 """Test fixtures. Live tests use a real TypeDB server (WM_TYPEDB_ADDRESS, default 127.0.0.1:1735, the isolated
 `wm-typedb` container from environments/compose.yaml) and a throwaway database per test, deleted afterwards."""
 
+import os
 import uuid
 from datetime import datetime, timedelta, timezone
 
@@ -39,6 +40,7 @@ def driver():
 def wm(driver):
     name = f"wm-test-{uuid.uuid4().hex[:10]}"
     model = WorldModel.create(name, driver=driver, clock=FakeClock())
+    model.selective = os.environ.get("WM_SELECTIVE", "1") != "0"     # WM_SELECTIVE=0 runs the full-load reference path
     try:
         yield model
     finally:
