@@ -273,6 +273,56 @@ class WorldModel:
         return self.record_event(world, roles, start=at, kind=kind, ends=[c.id for c in before],
                                  effects=[{"type": "located-at", "roles": {"located": thing, "place": to}}])
 
+    # ---- existence ---------------------------------------------------------------------------------------------
+    def declare_existence(self, world, thing, start=None, end=None, status="accepted"):
+        """The thing exists in `world` from `start` (its creation; None: from the start of the world) until `end` or
+        a recorded destruction. status="proposed" records uncertain existence (a hypothesis)."""
+        return self.assert_fact(world, "existence", {"existent": thing}, start=start, end=end,
+                                until_ceased=end is None, status=status)
+
+    def create_thing(self, world, kind, name, at, alt_names=(), status="accepted", id=None):
+        """Register a new thing and record that it came into existence in `world` at `at` (a time or window)."""
+        rid = self.add_entity(kind, name, alt_names=alt_names, id=id)
+        self.declare_existence(world, rid, start=at, status=status)
+        return rid
+
+    def destroy(self, world, thing, at, reason=None):
+        """The thing stops existing in `world` at `at`. Ends its existence and every accepted fact about it that
+        holds just before `at` in that world (identity links excepted). Returns the ended claim ids."""
+        just_before = _window(at).earliest - timedelta(microseconds=1)
+        claims = self.visible_claims(world)
+        ident = self.identity(world, None, claims)
+        me = set(ident.members(thing))
+        ended = [c.id for c in self._effective(claims.values(), ident, just_before, None)
+                 if c.type not in ("same-as", "event") and any(me & set(ids) for ids in c.roles.values())]
+        for cid in ended:
+            self.cease(world, cid, at, reason=reason or f"{thing} destroyed")
+        return sorted(ended)
+
+    def exists(self, world, thing, t, as_of=None):
+        """Does the thing exist in `world` at t? ASSERTED from existence claims (before creation and after destruction:
+        false); INFERRED true if it takes part in a fact holding at t; otherwise UNKNOWN, or NOT_YET_KNOWN when the
+        world holds nothing about it. Proposed existence claims are returned as alternatives."""
+        claims = self.visible_claims(world, as_of)
+        ident = self.identity(world, as_of, claims)
+        me = set(ident.members(thing))
+        mine = [c for c in claims.values() if c.type != "same-as" and any(me & set(ids) for ids in c.roles.values())]
+        ex = [c for c in mine if c.type == "existence"]
+        alternatives = tuple(sorted(c.id for c in ex if status_at(c, as_of) == "proposed"))
+        accepted = [c for c in ex if status_at(c, as_of) == "accepted"]
+        yes = tuple(sorted(c.id for c in accepted if truth_at(c, t, as_of) is True))
+        no = tuple(sorted(c.id for c in accepted if truth_at(c, t, as_of) is False))
+        if yes and no:
+            return Answer(Status.DISPUTED, None, support=yes + no, alternatives=alternatives)
+        if yes or no:
+            return Answer(Status.ASSERTED, bool(yes), support=yes or no, alternatives=alternatives)
+        involved = tuple(sorted(c.id for c in self._effective(mine, ident, t, as_of) if c.type != "existence"))
+        if involved:
+            return Answer(Status.INFERRED, True, support=involved, alternatives=alternatives)
+        if not mine:
+            return Answer(Status.NOT_YET_KNOWN, alternatives=alternatives)
+        return Answer(Status.UNKNOWN, alternatives=alternatives)
+
     # ---- reading -------------------------------------------------------------------------------------------------
     def _world_chain(self, tx, world, as_of):
         """[(world id, valid-time limit, knowledge limit)] from the world itself up through its base worlds.
@@ -493,11 +543,18 @@ class WorldModel:
     def certainly_before(a, b):
         return certainly_before(a["record"], b["record"])
 
-    def find(self, name):
-        """Referent ids whose name or alt-name equals `name`. Several matches are returned, never resolved."""
+    def find(self, name, world=None, as_of=None):
+        """Referent ids whose name or alt-name equals `name`. Several matches are returned, never resolved.
+
+        Without `world`, this searches the global identity register. With `world`, only things the world says
+        anything about (an existence claim or any fact visible there) are returned, so things from other worlds
+        never appear in its answers."""
         with self.driver.transaction(self.database, READ) as tx:
             ids = {q.opt(r, "id") for r in q.rows(tx, """match $x isa referent, has wm-id $id;
                 { $x has name == $n; } or { $x has alt-name == $n; };""", {"n": name})}
+        if world is not None:
+            mentioned = {x for c in self.visible_claims(world, as_of).values() for v in c.roles.values() for x in v}
+            ids &= mentioned
         return sorted(ids)
 
     def parts(self, world, whole, t, as_of=None):
