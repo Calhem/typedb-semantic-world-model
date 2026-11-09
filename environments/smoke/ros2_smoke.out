@@ -1,0 +1,65 @@
+
+== versions
+ROS_DISTRO=lyrical
+10.5.0
+Python 3.14.4
+PRETTY_NAME="Ubuntu 26.04.1 LTS"
+
+== launch Gazebo (headless) + TurtleBot3 + Nav2 (AMCL on the sandbox map)
+/navigate_to_pose
+
+== topics present
+/amcl_pose
+/clock
+/map
+/odom
+/scan
+/tf
+/tf_static
+
+== sensor and clock rates (sim time)
+average rate: 4.992
+	min: 0.197s max: 0.205s std dev: 0.00225s window: 20
+average rate: 27.786
+	min: 0.026s max: 0.045s std dev: 0.00301s window: 20
+
+== one Detection3D-compatible message type is available
+std_msgs/Header header
+ObjectHypothesisWithPose[] results
+BoundingBox3D bbox
+string id
+
+== set initial pose, wait for map -> base_link
+At time 29.16000000
+- Translation: [-1.964, -0.524, 0.010]
+
+== record 15 s of /scan /odom /tf /clock /amcl_pose (MCAP)
+
+== send a NavigateToPose goal (1.5 m ahead), up to 150 s
+Goal accepted with ID: 0edccefa212d492fac63736d3a9f729f
+    error_code: 0
+Goal finished with status: SUCCEEDED
+recorder log:
+[INFO] [1794234155.846607172] [rosbag2_recorder]: Topics discovery stopped.
+[INFO] [1794234162.977906676] [rosbag2_cpp]: Writing remaining messages from cache to the bag. It may take a while
+[INFO] [1794234162.984709884] [rosbag2_recorder]: Recording stopped
+[WARN] [1794234162.984872176] [rosbag2_recorder]: Number of messages lost on the transport layer: 3
+[INFO] [1794234162.987401967] [rosbag2_recorder]: Event publisher thread: Exited
+
+== bag info
+Storage id:        mcap
+Duration:          6.114147253s
+Messages:          2517
+Topic information: Topic: /amcl_pose | Type: geometry_msgs/msg/PoseWithCovarianceStamped | Count: 5 | Serialization Format: cdr
+                   Topic: /clock | Type: rosgraph_msgs/msg/Clock | Count: 1992 | Serialization Format: cdr
+                   Topic: /odom | Type: nav_msgs/msg/Odometry | Count: 174 | Serialization Format: cdr
+                   Topic: /scan | Type: sensor_msgs/msg/LaserScan | Count: 36 | Serialization Format: cdr
+                   Topic: /tf | Type: tf2_msgs/msg/TFMessage | Count: 310 | Serialization Format: cdr
+
+== shutdown
+[ERROR] lines in launch log: 0
+tf start-up messages (before AMCL publishes map): 55
+SMOKE DONE
+real 56.84
+user 0.02
+sys 0.04

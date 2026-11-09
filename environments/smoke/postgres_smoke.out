@@ -1,0 +1,45 @@
+== version
+                                                         version                                                          
+--------------------------------------------------------------------------------------------------------------------------
+ PostgreSQL 18.6 (Debian 18.6-1.pgdg13+2) on aarch64-unknown-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+(1 row)
+
+        server_version         
+-------------------------------
+ 18.6 (Debian 18.6-1.pgdg13+2)
+(1 row)
+
+CREATE SCHEMA
+SET
+CREATE EXTENSION
+== temporal primary key: one location per object at any valid time
+CREATE TABLE
+CREATE TABLE
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+== expected ERROR: overlapping valid time for the same object
+== expected ERROR: temporal foreign key outside the referent's lifetime
+ERROR:  conflicting key value violates exclusion constraint "located_at_pkey"
+DETAIL:  Key (obj, valid_at)=(box, ["2026-11-09 10:05:00+00","2026-11-09 10:08:00+00")) conflicts with existing key (obj, valid_at)=(box, ["2026-11-09 10:03:00+00","2026-11-09 10:06:00+00")).
+== as-of query: where was the box at 10:04 and at 10:15?
+ERROR:  insert or update on table "located_at" violates foreign key constraint "located_at_obj_valid_at_fkey"
+DETAIL:  Key (obj, valid_at)=(box, ["2026-11-09 09:00:00+00","2026-11-09 09:30:00+00")) is not present in table "referent".
+   t   |  place  
+-------+---------
+ 10:04 | shelf-3
+ 10:15 | dock
+(2 rows)
+
+== cleanup
+RESET
+NOTICE:  drop cascades to 3 other objects
+DETAIL:  drop cascades to extension btree_gist
+drop cascades to table smoke.referent
+drop cascades to table smoke.located_at
+DROP SCHEMA
+ leftover_smoke_schemas 
+------------------------
+                      0
+(1 row)
+

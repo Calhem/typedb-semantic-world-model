@@ -1,0 +1,41 @@
+# Experimental environments for the semantic world model (Phase 1C).
+# Isolated from the other projects on this machine: own compose project name, own volumes, own ports.
+#   docker compose -f environments/compose.yaml up -d postgres typedb
+#   docker compose -f environments/compose.yaml build ros2      # then see environments/README.md
+# Ports (127.0.0.1 only): 5435 PostgreSQL, 1735 TypeDB driver, 8006 TypeDB HTTP.
+# Passwords are local development defaults; override with WM_POSTGRES_PASSWORD. Nothing here is for production.
+name: wm-env
+
+services:
+  postgres:
+    image: postgres:18.6-trixie@sha256:e3d24f6906d0760bf4da0dae872415391ededefad23fd471c47dc53b0ddf3c42
+    container_name: wm-postgres
+    environment:
+      POSTGRES_USER: wm
+      POSTGRES_PASSWORD: ${WM_POSTGRES_PASSWORD:-wm-local-dev}
+      POSTGRES_DB: wm
+    ports: ["127.0.0.1:5435:5432"]
+    volumes: ["wm-postgres-data:/var/lib/postgresql"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U wm -d wm"]
+      interval: 5s
+      retries: 20
+
+  typedb:
+    image: typedb/typedb:3.14.1@sha256:d39d4f29eb571ee856cb221e8175b76dcb96dfa39939ebde5360cffa0e5bb680
+    container_name: wm-typedb
+    ports: ["127.0.0.1:1735:1729", "127.0.0.1:8006:8000"]
+    volumes: ["wm-typedb-data:/var/lib/typedb/data"]
+
+  ros2:
+    build: {context: ros2}
+    image: wm-ros2:lyrical
+    container_name: wm-ros2
+    profiles: ["ros2"]
+    environment: {ROS_DOMAIN_ID: "57", ROS_LOCALHOST_ONLY: "1"}
+    volumes: ["../:/work"]
+    command: ["sleep", "infinity"]
+
+volumes:
+  wm-postgres-data:
+  wm-typedb-data:
