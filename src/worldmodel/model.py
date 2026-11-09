@@ -9,7 +9,7 @@ Division of labour (v0.2 §8.1):
 
 import os
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from typedb.driver import Credentials, DriverOptions, DriverTlsConfig, TransactionType, TypeDB
@@ -415,8 +415,9 @@ class WorldModel:
             parts.append("{ not { $a has valid-from-earliest $v0; }; } or { $a has valid-from-earliest $v1; $v1 < $vlim; };")
             params["vlim"] = vlim
         if at is not None:
+            # Only attestations that start after t are skipped: they say nothing about t. Attestations that ended
+            # before t are kept, because an end says the content does not hold, which can dispute other accounts.
             parts.append("{ not { $a has valid-from-latest $s0; }; } or { $a has valid-from-latest $s1; $s1 <= $at; };")
-            parts.append("not { $a has valid-to-latest $e0; $e0 <= $at; };")
             params["at"] = at
         return "match " + " ".join(parts), params
 
@@ -552,6 +553,15 @@ class WorldModel:
                 deciding.setdefault(self._class(a, ident), []).append((a, v))
         out = {}
         for cls, items in deciding.items():
+            # A stated end says the content stopped holding, but only until the content is attested to start again:
+            # drop an ended attestation's "does not hold" when a usable positive attestation of the same content
+            # started after that end and by t. Genuine conflicts (an account begun before the end) still dispute.
+            restarts = [a.start for a, v in items if a.polarity and a.start is not None]
+            items = [(a, v) for a, v in items if not (
+                v is False and a.polarity and a.end is not None and a.end.latest is not None
+                and any(st.earliest >= a.end.latest and st.latest <= t for st in restarts))]
+            if not items:
+                continue
             depth = min(a.depth for a, _ in items)
             near = [(a, v) for a, v in items if a.depth == depth]
             vals = {v for _, v in near}
@@ -658,3 +668,204 @@ class WorldModel:
                              "world_depth": a.depth})
         far = datetime.min.replace(tzinfo=timezone.utc)
         return sorted(rows, key=lambda r: (r["start"].earliest if r["start"] else far, r["recorded_at"], r["attestation"]))
+
+    # ---- events, occurrences and moves -----------------------------------------------------------------------------
+    def record_event(self, world, roles, start, end=None, kind=None, ends=(), effects=(), attester=SYSTEM, id=None):
+        """An event description, its occurrence attested by `attester` over [start, end], and how it changed the world.
+
+        kind: optional category classifying the description. ends: attestations it ended (each superseded by its
+        attester with an end at the event's end). effects: dicts {type, roles} for new facts from the event's end,
+        holding until superseded. Returns (event id, [effect attestation ids])."""
+        start = _window(start)
+        end = _window(end) or start
+        eid = self.describe_event(roles, id=id)
+        self.attest(world, event=eid, start=start, end=end, attester=attester)
+        if kind:
+            self.attest(world, "classified-as", {"classified": eid, "class": kind}, start=start, until_superseded=True,
+                        attester=attester)
+        for aid in ends:
+            self.end(world, aid, end, reason=f"ended by event {eid}")
+        new = [self.attest(world, e["type"], e["roles"], start=end, until_superseded=True, attester=attester)
+               for e in effects]
+        return eid, new
+
+    def move(self, world, thing, to, at, actor=None, kind=None, as_of=None, attester=SYSTEM):
+        """The thing was moved to `to` at `at`: ends the attester's location attestations holding just before, and
+        records the movement (origin, destination) with the new location as its effect."""
+        just_before = _window(at).earliest - timedelta(microseconds=1)
+        atts, ident = self._view(world, as_of, attester, "located-at", [thing], at=just_before)
+        me = set(ident.members(thing))
+        before = [a for a in atts.values() if a.ctype == "located-at" and me & set(a.roles.get("located", []))
+                  and a.attester == attester and usable(a, attester, as_of) and verdict(a, just_before) is True]
+        origin = sorted({p for a in before for p in a.roles.get("place", [])})
+        roles = {"patient": thing, "destination": to}
+        if origin:
+            roles["origin"] = origin
+        if actor:
+            roles["actor"] = actor
+        return self.record_event(world, roles, start=at, kind=kind, ends=[a.id for a in before], attester=attester,
+                                 effects=[{"type": "located-at", "roles": {"located": thing, "place": to}}])
+
+    def events(self, world, participant=None, as_of=None, perspective=SYSTEM):
+        """Event descriptions whose occurrence is usable for the perspective, ordered by start window."""
+        if participant is not None:
+            atts, ident = self._view(world, as_of, perspective, "event", [participant])
+            who = set(ident.members(participant))
+        else:
+            atts, who = self._load(world, as_of, types=["event"], perspective=perspective), None
+        evs = [a for a in atts.values() if a.ctype == "event" and a.polarity and usable(a, perspective, as_of)
+               and (who is None or any(who & set(ids) for ids in a.roles.values()))]
+        kinds = {}
+        if evs:
+            for a in self._load(world, as_of, types=["classified-as"], subjects=sorted({e.content for e in evs}),
+                                perspective=perspective).values():
+                if usable(a, perspective, as_of) and a.polarity:
+                    for x in a.roles.get("classified", []):
+                        kinds.setdefault(x, set()).update(a.roles.get("class", []))
+        far = datetime.min.replace(tzinfo=timezone.utc)
+        evs.sort(key=lambda a: (a.start.earliest if a.start else far, a.start.latest if a.start else far, a.id))
+        return [{"event": a.content, "attestation": a.id, "attester": a.attester, "roles": a.roles,
+                 "kinds": sorted(kinds.get(a.content, [])), "start": a.start, "end": a.end, "record": a} for a in evs]
+
+    @staticmethod
+    def certainly_before(a, b):
+        return certainly_before(a["record"], b["record"])
+
+    def descriptions(self, world, occurrence, as_of=None, perspective=SYSTEM):
+        """Event descriptions that the perspective accepts as describing `occurrence` (or anything accepted as the
+        same occurrence). Without such links a description describes no known occurrence."""
+        ident = self.identity(world, as_of, perspective, ids=[occurrence])
+        occ = ident.members(occurrence)
+        links = self._load(world, as_of, types=["describes"], subjects=occ, perspective=perspective)
+        return sorted({d for a in links.values() if a.polarity and usable(a, perspective, as_of)
+                       for d in a.roles.get("description", [])})
+
+    def occurrence(self, world, occurrence, as_of=None, perspective=SYSTEM):
+        """A merged view of an occurrence: its accepted descriptions, and for each role every participant with the
+        descriptions (and sources) that name it. Conflicts stay visible and traceable; nothing is merged in storage."""
+        descs = self.descriptions(world, occurrence, as_of, perspective)
+        out = {"occurrence": occurrence, "descriptions": descs, "participants": {}}
+        if descs:
+            for a in self._load(world, as_of, types=["event"], subjects=None, perspective=perspective).values():
+                if a.content in descs:
+                    for role, ids in a.roles.items():
+                        for x in ids:
+                            out["participants"].setdefault(role, {}).setdefault(x, set()).add((a.content, a.attester))
+        out["participants"] = {r: {x: sorted(v) for x, v in m.items()} for r, m in out["participants"].items()}
+        return out
+
+    # ---- existence ---------------------------------------------------------------------------------------------
+    def declare_existence(self, world, thing, start=None, end=None, attester=SYSTEM, **kw):
+        """The thing exists in `world` from `start` (its creation; None: from the start of the world) until `end` or
+        until superseded. By another attester, unreviewed, this is uncertain existence."""
+        return self.attest(world, "existence", {"existent": thing}, start=start, end=end,
+                           until_superseded=end is None, attester=attester, **kw)
+
+    def create_thing(self, world, kind, name, at, alt_names=(), attester=SYSTEM, id=None):
+        """Register a new particular and attest that it came into existence in `world` at `at`."""
+        rid = self.add_entity(kind, name, alt_names=alt_names, id=id)
+        self.declare_existence(world, rid, start=at, attester=attester)
+        return rid
+
+    def destroy(self, world, thing, at, reason=None):
+        """The thing stops existing in `world` at `at`. The system's own attestations about it that hold just before
+        are ended (superseded); others' accepted ones are denied by the system from `at` (so they are disputed, not
+        silently overruled). Returns the attestations ended or denied."""
+        t = _window(at).earliest - timedelta(microseconds=1)
+        atts, ident = self._view(world, None, SYSTEM, None, [thing], at=t)
+        me = set(ident.members(thing))
+        touched = []
+        for cls, (val, support, _) in self._judge(list(atts.values()), ident, t, SYSTEM, None).items():
+            if val is not True or cls[0] in ("event", "same-as"):
+                continue
+            for a in support:
+                if not any(me & set(ids) for ids in a.roles.values()):
+                    continue
+                if a.attester == SYSTEM:
+                    self.end(world, a.id, at, reason=reason or f"{thing} destroyed")
+                else:
+                    self.attest(world, a.ctype, a.roles, params=a.params or None, start=at, until_superseded=True,
+                                polarity=False)
+                touched.append(a.id)
+        return sorted(touched)
+
+    def exists(self, world, thing, t, as_of=None, perspective=SYSTEM):
+        """ASSERTED/STIPULATED from existence attestations (before creation and after destruction: false); INFERRED
+        true if the thing takes part in content holding at t; otherwise UNKNOWN, or NOT_YET_KNOWN."""
+        atts, ident = self._view(world, as_of, perspective, None, [thing])
+        me = set(ident.members(thing))
+        mine = [a for a in atts.values() if a.ctype != "same-as" and any(me & set(ids) for ids in a.roles.values())]
+        ex = [a for a in mine if a.ctype == "existence"]
+        alternatives = tuple(sorted(a.id for a in ex if acceptance_state(a, perspective, as_of) == "unreviewed"
+                                    and not superseded(a, as_of)))
+        judged = self._judge(ex, ident, t, perspective, as_of)
+        for val, support, _ in judged.values():
+            ev = tuple(a.evidence() for a in support)
+            ids = tuple(sorted(a.id for a in support))
+            if val == "disputed":
+                return Answer(Status.DISPUTED, None, support=ids, alternatives=alternatives, evidence=ev)
+            return Answer(answer_status(support), val, support=ids, alternatives=alternatives, evidence=ev)
+        others = [a for cls, (val, sup, _) in self._judge([a for a in mine if a.ctype != "existence"], ident, t,
+                                                          perspective, as_of).items() if val is True for a in sup]
+        if others:
+            return Answer(Status.INFERRED, True, support=tuple(sorted(a.id for a in others)),
+                          alternatives=alternatives, evidence=tuple(a.evidence() for a in others))
+        if not mine:
+            return Answer(Status.NOT_YET_KNOWN, alternatives=alternatives)
+        return Answer(Status.UNKNOWN, alternatives=alternatives)
+
+    # ---- listings -----------------------------------------------------------------------------------------------
+    def facts_about(self, world, subject, t, as_of=None, perspective=SYSTEM):
+        """Every content (other than events and identity links) involving the subject that holds at t."""
+        atts, ident = self._view(world, as_of, perspective, None, [subject], at=t)
+        me = set(ident.members(subject))
+        rel = [a for a in atts.values() if a.ctype not in ("event", "same-as")
+               and any(me & set(ids) for ids in a.roles.values())]
+        out = []
+        for cls, (val, support, _) in self._judge(rel, ident, t, perspective, as_of).items():
+            if val is True:
+                out.append({"type": cls[0], "roles": {r: list(ids) for r, ids in cls[1]}, "params": dict(cls[2]),
+                            "support": sorted(a.id for a in support), "status": answer_status(support)})
+        return sorted(out, key=lambda f: (f["type"], str(f["roles"])))
+
+    def find(self, name, world=None, as_of=None, perspective=SYSTEM):
+        """Ids whose name or alt-name equals `name` (every match). With `world`, only things that world's visible
+        attestations mention, so hypothetical things never appear in other worlds' answers."""
+        with self.driver.transaction(self.database, READ) as tx:
+            ids = {q.opt(r, "id") for r in q.rows(tx, """match $x has wm-id $id;
+                { $x isa particular; } or { $x isa concept; };
+                { $x has name == $n; } or { $x has alt-name == $n; };""", {"n": name})}
+        if world is not None:
+            ids &= {x for a in self.visible(world, as_of, perspective).values() for v in a.roles.values() for x in v}
+        return sorted(ids)
+
+    def parts(self, world, whole, t, as_of=None, perspective=SYSTEM):
+        """Transitive parts at t (application closure over the part-of content that holds for the perspective)."""
+        return self._closure(world, "part-of", "whole", "part", whole, t, as_of, perspective)
+
+    def dependencies(self, world, dependent, t, as_of=None, perspective=SYSTEM):
+        return self._closure(world, "depends-on", "dependent", "dependee", dependent, t, as_of, perspective)
+
+    def _closure(self, world, type, from_role, to_role, start, t, as_of, perspective):
+        atts = self._load(world, as_of, types=[type], perspective=perspective)
+        ident = Identity([], perspective, as_of)
+        edges = {}
+        for cls, (val, _, _) in self._judge(list(atts.values()), ident, t, perspective, as_of).items():
+            if val is True:
+                roles = dict(cls[1])
+                for a in roles.get(from_role, ()):
+                    edges.setdefault(a, set()).update(roles.get(to_role, ()))
+        seen, todo = set(), [start]
+        while todo:
+            for n in edges.get(todo.pop(), ()):
+                if n not in seen:
+                    seen.add(n)
+                    todo.append(n)
+        return sorted(seen)
+
+    def parts_in_database(self, world, whole):
+        """Transitive parts computed by the TypeDB function `parts_in` (world-scoped; time and acceptance ignored)."""
+        with self.driver.transaction(self.database, READ) as tx:
+            return sorted({q.opt(r, "pid") for r in q.rows(tx, """match $x isa particular, has wm-id == $whole;
+                $w isa world, has wm-id == $world; let $p in parts_in($x, $w); $p has wm-id $pid;""",
+                {"whole": whole, "world": world})})
