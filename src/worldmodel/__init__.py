@@ -1,6 +1,7 @@
-"""A small, evidence-aware semantic world model on TypeDB 3 (Milestone 1: foundational core)."""
+"""A small, evidence-aware semantic world model on TypeDB 3 (Core 0.3: World Ontology v0.2)."""
 
-from .model import FUNCTIONAL, WorldModel, connect
-from .semantics import Answer, Status, Window
+from .keys import proposition_key
+from .model import SYSTEM, WorldModel, connect
+from .semantics import Window
 
-__all__ = ["WorldModel", "connect", "Answer", "Status", "Window", "FUNCTIONAL"]
+__all__ = ["WorldModel", "connect", "Window", "SYSTEM", "proposition_key"]

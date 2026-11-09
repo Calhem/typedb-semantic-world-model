@@ -1,0 +1,138 @@
+# Semantic world model, core module 0.3.0 (World Ontology v0.2 baseline, docs/architecture/world-ontology-v0.2.md).
+# TypeDB 3.14.1.
+#
+# Four layers (v0.2 §1): reality vocabulary (particulars, occurrences, concepts, reference systems, worlds);
+# content (propositions, event descriptions); stance (attestations, supersession); judgement (acceptance).
+#
+# TypeDB enforces here: kinds and the roles they may play; one attester, one content and one world per attestation;
+# one holder and one target per acceptance; unique ids and unique proposition keys; allowed values. Everything about
+# truth at a time, perspectives, inheritance and answer statuses is application logic (src/worldmodel/semantics.py).
+
+define
+
+# ---- identity, names, bookkeeping --------------------------------------------------------------------------------
+attribute wm-id, value string;
+attribute name, value string;
+attribute alt-name, value string;                    # `alias` is reserved in TypeQL
+attribute description, value string;
+attribute module-name, value string;
+attribute module-version, value string;
+attribute proposition-key, value string;            # structural identity of content (v0.2 §4.2); computed by one function
+
+# ---- time --------------------------------------------------------------------------------------------------------
+attribute time-point @abstract, value datetime-tz;
+attribute valid-from-earliest sub time-point;
+attribute valid-from-latest sub time-point;
+attribute valid-to-earliest sub time-point;
+attribute valid-to-latest sub time-point;
+attribute recorded-at sub time-point;               # transaction time, set by the writer
+attribute branch-at sub time-point;                 # valid time at which a variant world diverges
+attribute knowledge-at sub time-point;              # transaction time of the base knowledge a variant inherits
+attribute end-basis, value string @values("stated", "unknown", "until-superseded");
+
+# ---- stance and judgement ------------------------------------------------------------------------------------------
+attribute stance, value string @values("asserts", "believes", "doubts", "hypothesises", "stipulates");
+attribute polarity, value boolean;                  # true: the content holds; false: it does not (denial)
+attribute basis, value string @values("observation", "testimony", "inference", "stipulation");
+attribute credence, value double @range(0.0..1.0);
+attribute verdict, value string @values("accepted", "rejected", "retracted");
+attribute reason, value string;
+attribute world-kind, value string @values("actual", "hypothetical", "simulated");
+
+# ---- quality values ------------------------------------------------------------------------------------------------
+attribute lower, value double;
+attribute upper, value double;
+attribute coverage-level, value double @range(0.0..1.0);
+
+entity schema-module, owns module-name @key, owns module-version;
+
+# ---- reality vocabulary ------------------------------------------------------------------------------------------
+# Particulars: identity is timeless and world-independent; existence is a proposition (v0.2 §3.1).
+entity particular @abstract,
+  owns wm-id @key, owns name, owns alt-name, owns description,
+  plays existence:existent, plays same-as:same,
+  plays classified-as:classified, plays classified-as:context,
+  plays has-quality:bearer,
+  plays part-of:part, plays part-of:whole,
+  plays member-of:member, plays member-of:group,
+  plays depends-on:dependent, plays depends-on:dependee,
+  plays event:actor, plays event:patient, plays event:instrument, plays event:location,
+  plays event:origin, plays event:destination;
+
+entity physical-object sub particular,                         # persons, robots, rocks, boxes...; agency is a capacity
+  plays located-at:located, plays attestation:attester, plays acceptance:holder;
+entity social-object sub particular,                           # organisations, services, the system's reasoner
+  plays attestation:attester, plays acceptance:holder;
+entity place sub particular, plays located-at:place, plays located-at:located;
+entity information-object sub particular;
+entity occurrence sub particular, plays describes:occurrence; # something that happens; identity only (v0.2 §3.2)
+
+# Abstract entities.
+entity concept @abstract, owns wm-id @key, owns name, owns description,
+  plays classified-as:class, plays has-quality:value;
+entity category sub concept;                                   # kinds as described, event kinds, state values, "agent"
+entity social-role sub concept;                                     # social or operational roles
+entity quality-kind sub concept, plays has-quality:quality;
+
+entity reference-system @abstract, owns wm-id @key, owns name, owns description;
+entity clock sub reference-system, plays attestation:clock;
+entity spatial-frame sub reference-system;
+entity unit sub reference-system, plays has-quality:unit;
+
+entity world, owns wm-id @key, owns name, owns world-kind, owns description,
+  plays attestation:context, plays branching:base, plays branching:variant;
+
+# A variant inherits a snapshot of its base: content attested there by knowledge-at, valid before branch-at.
+relation branching, relates base, relates variant, owns branch-at, owns knowledge-at, owns recorded-at;
+
+# ---- content -----------------------------------------------------------------------------------------------------
+# A proposition is timeless content; one instance per canonical key. Time, world and holder are on attestations.
+relation proposition @abstract,
+  owns proposition-key @key,
+  plays attestation:content, plays initiates:outcome, plays terminates:outcome;
+
+relation existence sub proposition, relates existent;
+relation located-at sub proposition, relates located, relates place;
+relation part-of sub proposition, relates part, relates whole;
+relation member-of sub proposition, relates member, relates group;
+relation depends-on sub proposition, relates dependent, relates dependee;
+relation classified-as sub proposition, relates classified, relates class, relates context;
+relation has-quality sub proposition, relates bearer, relates quality, relates value, relates unit,
+  owns lower, owns upper, owns coverage-level;
+relation same-as sub proposition, relates same @card(2..2);
+relation describes sub proposition, relates description, relates occurrence;
+relation initiates sub proposition, relates event, relates outcome;
+relation terminates sub proposition, relates event, relates outcome;
+
+# An event description: one source's account of an occurrence. Identified by wm-id, not by a key: two pickups of the
+# same box by the same person are two descriptions. Its occurrence interval is on the attestation of it.
+relation event,
+  owns wm-id @key, owns description,
+  relates actor, relates patient, relates instrument, relates location, relates origin, relates destination,
+  plays attestation:content, plays describes:description, plays classified-as:classified,
+  plays initiates:event, plays terminates:event;
+
+# ---- stance -------------------------------------------------------------------------------------------------------
+relation attestation,
+  relates attester @card(1..1), relates content @card(1..1), relates context @card(1..1), relates clock @card(0..1),
+  owns wm-id @key, owns stance, owns polarity, owns basis, owns credence, owns description,
+  owns valid-from-earliest, owns valid-from-latest, owns valid-to-earliest, owns valid-to-latest,
+  owns end-basis, owns recorded-at,
+  plays acceptance:accepted, plays supersession:old, plays supersession:new;
+
+# The same attester replaces an earlier attestation (a change of mind, an end now known).
+relation supersession, relates old @card(1..1), relates new @card(1..1), owns recorded-at;
+
+# ---- judgement ----------------------------------------------------------------------------------------------------
+# A perspective's decision about an attestation. World-independent: the attestation already names its world.
+relation acceptance,
+  relates holder @card(1..1), relates accepted @card(1..1),
+  owns wm-id @key, owns verdict, owns recorded-at, owns reason;
+
+# ---- database-side reasoning ----------------------------------------------------------------------------------------
+# Transitive parts of a whole among part-of propositions attested in one world (status and time are applied in Python).
+fun parts_in($whole: particular, $w: world) -> { particular }:
+  match
+    { $c isa part-of (whole: $whole, part: $p); attestation (content: $c, context: $w); } or
+    { $c isa part-of (whole: $whole, part: $m); attestation (content: $c, context: $w); let $p in parts_in($m, $w); };
+  return { $p };

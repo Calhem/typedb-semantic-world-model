@@ -16,7 +16,7 @@ code and tests.
 | Give every entity and relation you need to reference a stable id attribute with `@key` | uniqueness is enforced on commit; duplicates are rejected | M1 tests |
 | If some relation content must be unique, compute a canonical key string and put `@key` on it | TypeDB otherwise allows two relation instances with identical role players | A1, A snippet (`CNT9`) |
 | Coordinate attribute and type names across schema modules | there are no namespaces; a second definition of the same name with a different value type is rejected (`DEX14`) | P1-4 |
-| Avoid TypeQL reserved words as labels (e.g. `alias`) | rejected with `DEX31` | M1 |
+| Avoid TypeQL reserved words as labels: `alias` and `role` are reserved (so a role concept type needs another name, e.g. `social-role`) | rejected with `DEX31` | M1, Core 0.3 schema |
 
 ## Relations and roles
 | Practice | Why | Evidence |
