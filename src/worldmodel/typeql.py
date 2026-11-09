@@ -65,8 +65,11 @@ def rows(tx, body, params=None):
 
 
 def opt(row, var):
-    """Value of an optional variable in a concept row (None if the `try` block did not match)."""
-    concept = row.get(var)
+    """Value of an optional variable in a concept row (None if its `try` block did not match or is not in the query)."""
+    try:
+        concept = row.get(var)
+    except Exception:          # the variable is not part of this query (e.g. an omitted optional block)
+        return None
     if concept is None:
         return None
     if concept.is_attribute():

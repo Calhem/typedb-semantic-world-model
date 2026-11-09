@@ -41,12 +41,15 @@ code and tests.
 | Practice | Why | Evidence |
 |---|---|---|
 | Pass values as parameters with a `given` header; compare attributes with `has attr == $param` | `has attr $param` declares the variable as an attribute and conflicts with a value parameter (`REP35`) | M1 |
+| Never give a parameter the same name as a matched variable (e.g. `$old` as both a thing and a value) | `REP1` | M1, Core 0.3 Stage B |
 | Do not reuse one variable name for two different things (e.g. a thing and a value) in one query | `REP1` | M1 |
 | Name each role player's type in insert/match patterns when several types own the same key attribute | otherwise type inference may consider an incompatible type and reject the query (`INF4`) | M1 |
 | Bind the filtering player positively to make the query start from it: `$s has wm-id == $id; $c links ($r: $s);` | an existence check (`not { not { ... } }`) gave the same answers but was evaluated after scanning all candidates: 515 ms vs 23.8 ms per question on 2,200 claims | M1 bench |
 | A second `links` constraint in the same query does not match a player already bound by the first; recover that player's role from the first binding and the others with `try { $c links ($role: $x); }` | the subject's own role disappeared from results | M1 |
 | Use different variable names in the positive and negated branches of a disjunction | `REP44` "must be bound" | M1 |
 | Optional data: `try { ... };` blocks; absent values come back as `None` | works in reads | M1 |
+| When a variable's type is fixed by the query (e.g. `$c isa same-as`), every disjunction branch **and every `try` block** must be possible for that type: build the pattern for the type instead of relying on pruning | an impossible branch (`{ $c has wm-id $x; }` for a proposition) or `try { $c has lower $v; }` for a type that cannot own `lower` is rejected with `INF11`, not skipped | Core 0.3 Stage B |
+| In the Python driver, `row.get(var)` raises if `var` is not in the query; wrap optional reads | "Cannot get concept from a concept row by variable" | Core 0.3 Stage B |
 | Recursive functions (`fun f(...) -> { ... }` with `let $x in f(...)`) work for transitive closures and can take a scoping argument (e.g. a world) | — | P1-7, M1 |
 | Compare attributes of two matched instances directly for interval logic, e.g. range overlap `$la <= $ub; $lb <= $ua;` | finds exactly the overlapping pairs | B3 |
 
