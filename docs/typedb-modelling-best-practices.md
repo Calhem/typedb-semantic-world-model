@@ -7,7 +7,7 @@ in the last section, marked as such. Started 2026-11-09; keep it current as new 
 Evidence keys: `P1-n` Phase 1 probes (`probes/typedb_capabilities.py`), `P1B-x` Phase 1B probes
 (`probes/phase_1b_probes.py`), `A-n` architecture probes (`probes/architecture_probes.py`,
 `probes/architecture_snippet_check.py`), `B-n` v0.2 probes (`probes/architecture_v02_probes.py`), `M1` Milestone 1
-code and tests.
+code and tests, `C03` Core 0.3 code, tests and Stage D measurements (`docs/core-0.3/`).
 
 ## Types and identity
 | Practice | Why (verified behaviour) | Evidence |
@@ -53,6 +53,23 @@ code and tests.
 | Recursive functions (`fun f(...) -> { ... }` with `let $x in f(...)`) work for transitive closures and can take a scoping argument (e.g. a world) | — | P1-7, M1 |
 | Compare attributes of two matched instances directly for interval logic, e.g. range overlap `$la <= $ub; $lb <= $ua;` | finds exactly the overlapping pairs | B3 |
 
+## Content and stance (proposition / attestation) patterns
+| Practice | Why | Evidence |
+|---|---|---|
+| Store content as a keyed relation and each stance as a separate n-ary relation (`attestation (attester, content, context)`) pointing at it | one content, many holders; denials share content; selection through the two hops measured at about 2 ms per query on 2,200 facts | B1, C03 experiment |
+| Pick the content-id pattern by content type (`proposition-key` for propositions, `wm-id` for event descriptions) rather than a disjunction | with a fixed type, the impossible branch is rejected (`INF11`) | C03 Stage B |
+| Bind the subject positively and recover its role from that binding; read other players with `try { $c links ($role: $x); }` | two `links` constraints never match the same player | M1, C03 |
+
+## Query selectivity and temporal filtering
+| Practice | Why | Evidence |
+|---|---|---|
+| Read many optional attributes of matched instances with a `fetch` stage, not one `try` block each | on the same selection and results: five `try` blocks 7.6 ms per query vs `fetch` 2.5 ms (ids alone 1.9 ms) | C03 experiment (`experiment-main-query.json`) |
+| Measure where time goes before optimising: wrap the read helper and split TypeDB time from Python time | Core 0.3's 2× regression was 91 % TypeDB reads; the main query was 51 % of read time | C03 (`bench-instrumented-*.json`, `profile-query-kinds.json`) |
+| **Do not pre-filter in TypeQL by "ended before t"** when an end carries meaning: an attestation that ended says the content stopped holding, which can dispute other accounts | dropping such rows changed answers on the selective path only; the equivalence test caught it; a regression test fails with the old filter | C03 D6 (`test_c_time_semantics.py`) |
+| Pre-filtering "starts after t" is safe: such rows say nothing about t | equivalence tests pass on both paths | C03 |
+| Keep a full-load reference path and an equivalence test comparing whole answers (including evidence) with the selective path | it found both D6 and the ended-interval defect D5 | M1, C03 |
+| Count queries per question as well as latency: in tiny worlds, many small selective queries can be slower than one full load | test suite: selective about 62 s vs full about 48 s on small worlds; on 2,200 facts selective is 80× faster | C03 |
+
 ## Operations
 | Practice | Why | Evidence |
 |---|---|---|
@@ -64,5 +81,7 @@ These are preferences supported by analysis, not verified rules.
 - Keeping content (propositions) separate from stance (attestations) adds one hop per question. Measured once on
   1,200 location facts (B1, two runs): median 20.6 ms (one hop) vs 22.9 ms (two hops), identical answers; p95 noisy
   (one-hop showed outliers of ~300 ms in both runs). Indicative only; larger worlds untested.
+- In Core 0.3 the hop itself is cheap. The cost is per-row attribute reading and the extra rows a stance layer keeps
+  (superseded attestations and their restatements). Whether a lighter "end" record would halve those rows is untested.
 - Application code still decides review status, precedence and time windows. TypeQL can express the certain-interval
   cases (P1B-C), but moving more logic into functions is untested at scale.

@@ -15,7 +15,8 @@ from a robot to a video understanding pipeline to an agent's long-term memory.
 | 1C. Preparation: semantics, environments, baselines | Complete ([docs/phase-1c](docs/phase-1c/README.md)) |
 | **M1. Executable foundational core** | **Implemented and reviewed: core 0.2.0, 41 tests passing** ([docs/m1](docs/m1/README.md)) |
 | World Ontology v0.1 | Proposal reviewed; D2 preferred ([docs/architecture/world-ontology-v0.1.md](docs/architecture/world-ontology-v0.1.md)) |
-| **World Ontology v0.2** | **Proposal under review** ([docs/architecture/world-ontology-v0.2.md](docs/architecture/world-ontology-v0.2.md)); Milestone 2 paused |
+| World Ontology v0.2 | **Frozen baseline** ([docs/architecture/world-ontology-v0.2.md](docs/architecture/world-ontology-v0.2.md)) |
+| **Core 0.3** | **Stages A-D complete on `feature/core-0.3`, under review** ([docs/core-0.3](docs/core-0.3/README.md)) |
 | M2-M4. Temporal and evidential semantics, profiles, cross-domain validation | Paused pending the ontology review |
 
 Start with **[Phase 1C's outstanding decisions](docs/phase-1c/07-outstanding-decisions.md)**, then the
