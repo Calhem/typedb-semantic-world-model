@@ -1,0 +1,131 @@
+# Semantic world model, core module, version 0.2.0 (Milestone 1, after the architectural review). TypeDB 3.14.1.
+#
+# What this file enforces (TypeDB): kinds of thing, which roles each kind may play, one world per claim, value ranges,
+# unique ids. What it does NOT decide (application, src/worldmodel): whether a claim holds at a time, status at a
+# transaction time, identity closure, world inheritance. See docs/m1/README.md.
+#
+# Design rules carried from research (Phase 1B/1C):
+#  - Types say what a thing IS, at a robust coarse level. Labels, roles and categories are `classified-as` claims.
+#  - Every contingent fact is a subtype of the abstract `claim` relation: the relation IS the claim (AD4).
+#  - Claims are never edited. Endings are `cessation` records; decisions are `review` records; both carry recorded-at.
+#  - A missing end means UNKNOWN, unless the author explicitly states the fact lasts until a recorded cessation.
+
+define
+
+# ---- identity, labels, bookkeeping -------------------------------------------------------------------------------
+attribute wm-id, value string;                      # minted by the system; stable; never reused
+attribute name, value string;
+attribute alt-name, value string;                    # other names a thing is known by (not unique)
+attribute description, value string;
+attribute module-name, value string;
+attribute module-version, value string;
+
+# ---- time (valid time windows, transaction time) -----------------------------------------------------------------
+attribute time-point @abstract, value datetime-tz;
+attribute valid-from-earliest sub time-point;       # the claim starts somewhere in [earliest, latest]
+attribute valid-from-latest sub time-point;
+attribute valid-to-earliest sub time-point;         # ... and ends somewhere in [earliest, latest]
+attribute valid-to-latest sub time-point;
+attribute recorded-at sub time-point;               # transaction time: set by the writer, never by callers
+attribute branch-at sub time-point;                 # valid time at which a variant world diverges
+attribute knowledge-at sub time-point;              # transaction time of the base-world knowledge a variant inherits
+attribute clock, value string;                      # clock domain of the valid times: "wall", "sim:<id>", "media:<id>"
+attribute end-basis, value string @values("stated", "unknown", "until-ceased");
+
+# ---- decisions -------------------------------------------------------------------------------------------------
+attribute initial-status, value string @values("accepted", "proposed");
+attribute verdict, value string @values("accepted", "rejected", "retracted");
+attribute decided-by, value string;
+attribute reason, value string;
+attribute world-kind, value string @values("actual", "simulated", "hypothetical");
+
+# ---- schema modules (introspection of what is installed) ---------------------------------------------------------
+entity schema-module, owns module-name @key, owns module-version;
+
+# ---- worlds -----------------------------------------------------------------------------------------------------
+entity world,
+  owns wm-id @key, owns name, owns world-kind, owns description,
+  plays scope:world, plays branching:base, plays branching:variant;
+
+# A variant world (hypothetical or simulated) inherits a SNAPSHOT of its base world: the base's claims, cessations and
+# reviews recorded by knowledge-at, restricted to valid time before branch-at. Later base knowledge is never pulled in.
+relation branching, relates base, relates variant, owns branch-at, owns knowledge-at, owns recorded-at;
+
+# Every claim, cessation and review belongs to exactly one world.
+relation scope, relates world, relates member;
+
+# ---- things (endurants and concepts) ------------------------------------------------------------------------------
+entity referent @abstract,
+  owns wm-id @key, owns name, owns alt-name, owns description,
+  plays classified-as:classified, plays has-state:bearer,
+  plays part-of:part, plays part-of:whole,
+  plays depends-on:dependent, plays depends-on:dependee,
+  plays member-of:member,
+  plays same-as:same, plays existence:existent,
+  plays event:actor, plays event:patient, plays event:instrument, plays event:location,
+  plays event:origin, plays event:destination;
+
+entity physical-object sub referent, plays located-at:located;
+entity agent sub referent, plays located-at:located, plays member-of:group;
+entity place sub referent, plays located-at:place, plays located-at:located;
+# Abstract concepts: categories, roles, kinds, states, social groups' types. Classified things point at concepts.
+entity concept sub referent, plays classified-as:class, plays has-state:state;
+
+# ---- claims ------------------------------------------------------------------------------------------------------
+relation claim @abstract,
+  owns wm-id @key,
+  owns valid-from-earliest, owns valid-from-latest, owns valid-to-earliest, owns valid-to-latest,
+  owns end-basis, owns clock, owns recorded-at, owns initial-status, owns description,
+  plays scope:member @card(1..1),
+  plays cessation:ended, plays review:reviewed, plays consequence:result;
+
+# Generic, domain-neutral relationships. Domain profiles subtype these or `claim` itself.
+relation located-at sub claim, relates located, relates place;          # functional in `located`
+relation part-of sub claim, relates part, relates whole;
+relation member-of sub claim, relates member, relates group;
+relation depends-on sub claim, relates dependent, relates dependee;
+relation classified-as sub claim, relates classified, relates class;    # labels, roles, kinds as concepts
+relation has-state sub claim, relates bearer, relates state;            # persistent conditions, e.g. damaged, open
+relation same-as sub claim, relates same @card(2..2);                   # identity; default status: proposed
+# The thing exists in this claim's world over the valid time: start = creation, end = destruction. A registered
+# identity alone says nothing about existence in any world.
+relation existence sub claim, relates existent;
+
+# Events: perdurants with participants. An event IS the claim that it occurred; its valid time is when it happened.
+# Participant roles (DUL-style). Profiles specialise them, e.g. `relation pickup sub event, relates picker as actor`.
+# "Any participant" is queried with a role variable: `$e isa event, links ($r: $x)`.
+relation event sub claim,
+  relates actor, relates patient, relates instrument, relates location, relates origin, relates destination,
+  plays consequence:cause, plays classified-as:classified;          # an event's kind is a concept, e.g. "movement"
+
+# ---- knowledge updates ---------------------------------------------------------------------------------------------
+# A claim stops holding: when, recorded when, and (optionally) because of which event.
+# Scoped to a world, so a hypothetical world can end a fact it inherited without ending it in the actual world.
+relation cessation, relates ended, owns wm-id @key,
+  owns valid-to-earliest, owns valid-to-latest, owns recorded-at, owns reason,
+  plays scope:member @card(1..1);
+
+# An event produced a claim (for example, a movement produced a new location).
+relation consequence, relates cause, relates result;
+
+# A decision about a claim, made in one world. The latest review recorded by time T sets the claim's status at T in
+# that world and in worlds that inherit it; a variant's review never changes the base world.
+relation review, relates reviewed, owns wm-id @key,
+  owns verdict, owns recorded-at, owns decided-by, owns reason,
+  plays scope:member @card(1..1);
+
+# ---- database-side reasoning ---------------------------------------------------------------------------------------
+# Transitive parts and dependencies among the claims scoped to one world. Valid time, status and inheritance from
+# base worlds are NOT considered here: the Python layer applies them (WorldModel.parts / dependencies).
+fun parts_in($whole: referent, $w: world) -> { referent }:
+  match
+    { $c isa part-of (whole: $whole, part: $p); scope (world: $w, member: $c); } or
+    { $c isa part-of (whole: $whole, part: $m); scope (world: $w, member: $c); let $p in parts_in($m, $w); };
+  return { $p };
+
+fun dependencies_in($dependent: referent, $w: world) -> { referent }:
+  match
+    { $c isa depends-on (dependent: $dependent, dependee: $p); scope (world: $w, member: $c); } or
+    { $c isa depends-on (dependent: $dependent, dependee: $m); scope (world: $w, member: $c);
+      let $p in dependencies_in($m, $w); };
+  return { $p };
