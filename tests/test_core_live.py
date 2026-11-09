@@ -27,7 +27,7 @@ def warehouse(wm):
 
 # ---- schema and TypeDB-enforced constraints ----------------------------------------------------------------------
 def test_schema_installed_and_introspectable(wm):
-    assert wm.modules() == {"core": "0.1.0"}
+    assert wm.modules() == {"core": "0.2.0"}
     assert {"located-at", "part-of", "member-of", "depends-on", "classified-as", "has-state", "same-as",
             "event"} <= wm.claim_types()
 
@@ -112,7 +112,7 @@ def test_classification_by_concepts_keeps_competing_labels(wm, warehouse):
                         until_ceased=True, status="proposed")
     a = wm.holds(w, "classified-as", {"classified": "box-17"}, T("10:30"))
     assert a.status == Status.UNKNOWN and a.alternatives == tuple(sorted((c1, c2)))   # hypotheses, not facts
-    wm.review(c1, "accepted", decided_by="operator")
+    wm.review(w, c1, "accepted", decided_by="operator")
     assert wm.holds(w, "classified-as", {"classified": "box-17", "class": "parcel"}, T("10:30")).holds is True
 
 
@@ -165,7 +165,7 @@ def test_conflicting_accepted_claims_are_disputed_not_resolved(wm, warehouse):
     other = wm.assert_fact(w, "located-at", {"located": "box-17", "place": "dock"}, start=T("10:00"), until_ceased=True)
     a = wm.value_at(w, "located-at", "box-17", T("10:30"))
     assert a.status == Status.DISPUTED and a.values == ("dock", "shelf-3") and set(a.support) == {loc, other}
-    wm.review(other, "rejected", decided_by="operator", reason="camera mismatch")
+    wm.review(w, other, "rejected", decided_by="operator", reason="camera mismatch")
     assert wm.value_at(w, "located-at", "box-17", T("10:30")).values == ("shelf-3",)
 
 
@@ -198,10 +198,10 @@ def test_identity_merges_only_after_acceptance_and_can_be_undone(wm, warehouse):
     link = wm.assert_fact(w, "same-as", {"same": ["box-17", track]}, status="proposed")
     a = wm.value_at(w, "located-at", "box-17", T("10:30"))
     assert a.values == ("shelf-3",)                                       # proposed link not used
-    wm.review(link, "accepted", decided_by="operator")
+    wm.review(w, link, "accepted", decided_by="operator")
     merged = wm.clock.now
     assert wm.value_at(w, "located-at", "box-17", T("10:30")).status == Status.DISPUTED   # two places, one box
-    wm.review(link, "rejected", decided_by="operator", reason="different box")
+    wm.review(w, link, "rejected", decided_by="operator", reason="different box")
     assert wm.value_at(w, "located-at", "box-17", T("10:30")).values == ("shelf-3",)
     assert wm.value_at(w, "located-at", "box-17", T("10:30"), as_of=merged).status == Status.DISPUTED
 
@@ -212,6 +212,6 @@ def test_proposed_identity_links_are_never_chained(wm, warehouse):
         wm.add_entity("physical-object", n, id=n)
     ab = wm.assert_fact(w, "same-as", {"same": ["a", "b"]}, status="proposed")
     wm.assert_fact(w, "same-as", {"same": ["b", "c"]}, status="proposed")
-    wm.review(ab, "accepted", decided_by="operator")
+    wm.review(w, ab, "accepted", decided_by="operator")
     ident = wm.identity(w)
     assert ident.members("a") == ["a", "b"] and ident.canonical("c") == "c"

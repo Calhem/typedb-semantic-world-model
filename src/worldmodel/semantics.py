@@ -81,6 +81,8 @@ def truth_at(claim, t, as_of):
     Before the start the claim is silent (it does not say the fact was false earlier).
     """
     if claim.start is not None and t < claim.start.latest:
+        if claim.type == "existence" and t < claim.start.earliest:
+            return False                  # an existence claim's start is the thing's creation
         return None
     end, basis = effective_end(claim, as_of)
     if end is not None:

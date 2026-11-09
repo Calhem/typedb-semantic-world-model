@@ -19,7 +19,7 @@ from .semantics import Answer, ClaimRecord, Identity, Status, Window, certainly_
 
 READ, WRITE, SCHEMA = TransactionType.READ, TransactionType.WRITE, TransactionType.SCHEMA
 SCHEMA_DIR = Path(__file__).resolve().parents[2] / "schema"
-MODULES = {"core": ("0.1.0", ["core/0001-core.tql"])}
+MODULES = {"core": ("0.2.0", ["core/0001-core.tql"])}
 FUNCTIONAL = {"located-at": ("located", "place")}       # claim type -> (key role, value role): one value at a time
 ENTITY_KINDS = ("physical-object", "agent", "place", "concept")
 
@@ -107,8 +107,14 @@ class WorldModel:
     def _mint(prefix):
         return f"{prefix}:{uuid.uuid4().hex[:16]}"
 
-    def create_world(self, name, kind="actual", base=None, branch_at=None, id=None):
-        """A world (actual, simulated or hypothetical). A variant world names its base and the branch time."""
+    def create_world(self, name, kind="actual", base=None, branch_at=None, knowledge_at=None, id=None):
+        """A world (actual, simulated or hypothetical).
+
+        A variant world names its base, the valid time it branches at (`branch_at`) and the base-world knowledge it
+        inherits (`knowledge_at`, a transaction time; default: now). It sees a fixed snapshot: base claims, cessations
+        and reviews recorded by `knowledge_at`, restricted to valid time before `branch_at`. Later corrections in the
+        base are never pulled in; to adopt them, branch again.
+        """
         wid = id or self._mint("world")
         with self.driver.transaction(self.database, WRITE) as tx:
             q.run(tx, "insert $w isa world, has wm-id == $id, has name == $n, has world-kind == $k;",
@@ -116,9 +122,13 @@ class WorldModel:
             if base is not None:
                 if branch_at is None:
                     raise ValueError("a variant world needs branch_at")
+                rec = self._now()
+                if knowledge_at is not None and knowledge_at > rec:
+                    raise ValueError("knowledge_at cannot be later than now: a snapshot cannot include future knowledge")
                 q.run(tx, """match $b isa world, has wm-id == $b_id; $v isa world, has wm-id == $v_id;
-                             insert branching (base: $b, variant: $v), has branch-at == $at, has recorded-at == $rec;""",
-                      {"b_id": base, "v_id": wid, "at": branch_at, "rec": self._now()})
+                             insert branching (base: $b, variant: $v), has branch-at == $at, has knowledge-at == $kat,
+                             has recorded-at == $rec;""",
+                      {"b_id": base, "v_id": wid, "at": branch_at, "kat": knowledge_at or rec, "rec": rec})
             tx.commit()
         return wid
 
@@ -216,18 +226,20 @@ class WorldModel:
             tx.commit()
         return sid
 
-    def review(self, claim_id, verdict, decided_by, reason=None):
-        """Accept, reject or retract a claim. Recorded at the current transaction time; never edited."""
-        params = {"c_id": claim_id, "id": self._mint("review"), "v": verdict, "by": decided_by, "rec": self._now()}
+    def review(self, world, claim_id, verdict, decided_by, reason=None):
+        """Accept, reject or retract a claim, in `world`. Recorded at the current transaction time; never edited.
+        A review made in a variant world applies there (and in its own variants), never in the base world."""
+        params = {"world": world, "c_id": claim_id, "id": self._mint("review"), "v": verdict, "by": decided_by,
+                  "rec": self._now()}
         extra = ""
         if reason:
             extra, params["why"] = ", has reason == $why", reason
         with self.driver.transaction(self.database, WRITE) as tx:
-            rows = list(q.run(tx, f"""match $c isa claim, has wm-id == $c_id;
-                insert review (reviewed: $c), has wm-id == $id, has verdict == $v, has decided-by == $by,
-                has recorded-at == $rec{extra};""", params).as_concept_rows())
+            rows = list(q.run(tx, f"""match $w isa world, has wm-id == $world; $c isa claim, has wm-id == $c_id;
+                insert $rv isa review (reviewed: $c), has wm-id == $id, has verdict == $v, has decided-by == $by,
+                has recorded-at == $rec{extra}; scope (world: $w, member: $rv);""", params).as_concept_rows())
             if not rows:
-                raise ValueError(f"claim {claim_id!r} not found")
+                raise ValueError(f"world {world!r} or claim {claim_id!r} not found")
             tx.commit()
 
     def record_event(self, world, roles, start, end=None, kind=None, ends=(), effects=(), id=None):
@@ -263,18 +275,23 @@ class WorldModel:
 
     # ---- reading -------------------------------------------------------------------------------------------------
     def _world_chain(self, tx, world, as_of):
-        """[(world id, inherited-before time or None)] from the world itself up its base worlds."""
-        chain, limit, current = [(world, None)], None, world
+        """[(world id, valid-time limit, knowledge limit)] from the world itself up through its base worlds.
+
+        Limits are cumulative: a grandparent is seen through the parent's snapshot and then the variant's, so the
+        earliest branch time and the earliest knowledge time along the path apply.
+        """
+        chain, vlim, klim, current = [(world, None, as_of)], None, as_of, world
         while True:
             rows = q.rows(tx, """match $v isa world, has wm-id == $world; $br isa branching (base: $b, variant: $v),
-                has branch-at $at, has recorded-at $rec; $b has wm-id $bid;""", {"world": current})
-            rows = [r for r in rows if as_of is None or q.opt(r, "rec") <= as_of]
+                has branch-at $at, has knowledge-at $kat, has recorded-at $rec; $b has wm-id $bid;""", {"world": current})
+            rows = [r for r in rows if klim is None or q.opt(r, "rec") <= klim]
             if not rows:
                 return chain
-            at = q.opt(rows[0], "at")
-            limit = at if limit is None else min(limit, at)
+            at, kat = q.opt(rows[0], "at"), q.opt(rows[0], "kat")
+            vlim = at if vlim is None else min(vlim, at)
+            klim = kat if klim is None else min(klim, kat)
             current = q.opt(rows[0], "bid")
-            chain.append((current, limit))
+            chain.append((current, vlim, klim))
 
     def _claims_in(self, tx, world):
         claims = {}
@@ -287,7 +304,7 @@ class WorldModel:
             cid = q.opt(r, "cid")
             claims[cid] = ClaimRecord(
                 id=cid, type=r.get("t").get_label(), world=world, roles={},
-                start=Window(sfe, sfl if sfl is not None else None) if sfe is not None else None,
+                start=Window(sfe, sfl) if sfe is not None else None,
                 end=Window(tte, ttl) if tte is not None else None, end_basis=q.opt(r, "eb"),
                 recorded_at=q.opt(r, "rec"), initial_status=q.opt(r, "ist"), clock=q.opt(r, "clk") or "wall",
                 description=q.opt(r, "desc"))
@@ -295,37 +312,45 @@ class WorldModel:
             $c isa claim, has wm-id $cid; $c links ($role: $x); $x has wm-id $xid;""", {"world": world}):
             role = r.get("role").get_label().split(":")[-1]
             claims[q.opt(r, "cid")].roles.setdefault(role, []).append(q.opt(r, "xid"))
-        for r in q.rows(tx, """match $v isa review (reviewed: $c), has verdict $vd, has recorded-at $rec;
-            $c has wm-id $cid; scope (world: $w, member: $c); $w has wm-id == $world;""", {"world": world}):
-            claims[q.opt(r, "cid")].reviews.append((q.opt(r, "vd"), q.opt(r, "rec")))
         return claims
 
     def _cessations_in(self, tx, world):
-        out = []
-        for r in q.rows(tx, """match $w isa world, has wm-id == $world; scope (world: $w, member: $s);
+        return [(q.opt(r, "cid"), Window(q.opt(r, "e"), q.opt(r, "l")), q.opt(r, "rec")) for r in q.rows(tx, """
+            match $w isa world, has wm-id == $world; scope (world: $w, member: $s);
             $s isa cessation (ended: $c), has recorded-at $rec, has valid-to-earliest $e; $c has wm-id $cid;
-            try { $s has valid-to-latest $l; };""", {"world": world}):
-            out.append((q.opt(r, "cid"), Window(q.opt(r, "e"), q.opt(r, "l")), q.opt(r, "rec")))
-        return out
+            try { $s has valid-to-latest $l; };""", {"world": world})]
+
+    def _reviews_in(self, tx, world):
+        """Reviews made in `world` (of claims from this world or any base world)."""
+        return [(q.opt(r, "cid"), q.opt(r, "vd"), q.opt(r, "rec")) for r in q.rows(tx, """
+            match $w isa world, has wm-id == $world; scope (world: $w, member: $v);
+            $v isa review (reviewed: $c), has verdict $vd, has recorded-at $rec; $c has wm-id $cid;""", {"world": world})]
 
     def visible_claims(self, world, as_of=None):
-        """Claims visible in `world` at transaction time `as_of`: its own, plus base-world claims that began before
-        the branch time. Cessations apply from the world that recorded them (inherited ones only before the branch)."""
+        """Claims visible in `world` as known at transaction time `as_of`.
+
+        Own records count if recorded by `as_of`. Records of each base world count if recorded by that level's
+        knowledge limit; base claims also need to start before the valid-time limit, and base cessations to fall
+        before it. Reviews apply from the world that made them and from the worlds it inherits.
+        """
         with self.driver.transaction(self.database, READ) as tx:
             chain = self._world_chain(tx, world, as_of)
             visible = {}
-            for depth, (w, limit) in enumerate(chain):
+            for depth, (w, vlim, klim) in enumerate(chain):
                 for cid, c in self._claims_in(tx, w).items():
-                    if as_of is not None and c.recorded_at > as_of:
+                    if klim is not None and c.recorded_at > klim:
                         continue
-                    if limit is not None and c.start is not None and c.start.earliest >= limit:
+                    if vlim is not None and c.start is not None and c.start.earliest >= vlim:
                         continue
                     c.depth = depth
                     visible.setdefault(cid, c)
-            for depth, (w, limit) in enumerate(chain):
+            for depth, (w, vlim, klim) in enumerate(chain):
                 for cid, win, rec in self._cessations_in(tx, w):
-                    if cid in visible and (as_of is None or rec <= as_of) and (limit is None or win.earliest < limit):
+                    if cid in visible and (klim is None or rec <= klim) and (vlim is None or win.earliest < vlim):
                         visible[cid].cessations.append((win, rec, w))
+                for cid, verdict, rec in self._reviews_in(tx, w):
+                    if cid in visible and (klim is None or rec <= klim):
+                        visible[cid].reviews.append((verdict, rec))
         return visible
 
     def identity(self, world, as_of=None, claims=None):
@@ -338,6 +363,23 @@ class WorldModel:
         subjects = set(self.identity(world, as_of, claims).members(subject))
         return [c for c in claims.values() if c.type == type and subjects & set(c.roles.get(key_role, []))
                 and status_at(c, as_of) == "accepted" and truth_at(c, t, as_of) is True]
+
+    @staticmethod
+    def _effective(claims, ident, t, as_of):
+        """Accepted claims that certainly hold at t, after world precedence: for a functional type, a claim from a
+        nearer world (the variant itself before its base) overrides inherited claims about the same subject."""
+        holding = [c for c in claims if status_at(c, as_of) == "accepted" and truth_at(c, t, as_of) is True]
+        nearest = {}
+        for c in holding:
+            if c.type in FUNCTIONAL:
+                for x in c.roles.get(FUNCTIONAL[c.type][0], []):
+                    k = (c.type, ident.canonical(x))
+                    nearest[k] = min(nearest.get(k, c.depth), c.depth)
+        def kept(c):
+            if c.type not in FUNCTIONAL:
+                return True
+            return all(c.depth == nearest[(c.type, ident.canonical(x))] for x in c.roles.get(FUNCTIONAL[c.type][0], []))
+        return [c for c in holding if kept(c)]
 
     def value_at(self, world, type, subject, t, as_of=None, key_role=None, value_role=None):
         """The value(s) of a relationship for `subject` at valid time t, as known at transaction time `as_of`.
@@ -352,9 +394,8 @@ class WorldModel:
         about = [c for c in claims.values() if c.type == type and subjects & set(c.roles.get(key_role, []))]
         if not about:
             return Answer(Status.NOT_YET_KNOWN)
-        accepted = [c for c in about if status_at(c, as_of) == "accepted"]
-        holding = [c for c in accepted if truth_at(c, t, as_of) is True]
-        if holding:
+        holding = self._effective(about, ident, t, as_of)
+        if type not in FUNCTIONAL and holding:
             nearest = min(c.depth for c in holding)
             holding = [c for c in holding if c.depth == nearest]
         alternatives = tuple(sorted(c.id for c in about if status_at(c, as_of) == "proposed"
@@ -378,10 +419,16 @@ class WorldModel:
             return all(want[r] <= {ident.canonical(x) for x in c.roles.get(r, [])} for r in want)
 
         about = [c for c in claims.values() if c.type == type and matches(c)]
+        if type in FUNCTIONAL:                       # include the subject's other values, for precedence
+            key = FUNCTIONAL[type][0]
+            peers = [c for c in claims.values() if c.type == type and key in want
+                     and want[key] <= {ident.canonical(x) for x in c.roles.get(key, [])}]
+        else:
+            peers = about
+        effective = {c.id for c in self._effective(peers, ident, t, as_of)}
         accepted = [c for c in about if status_at(c, as_of) == "accepted"]
-        truths = {c.id: truth_at(c, t, as_of) for c in accepted}
-        yes = tuple(sorted(i for i, v in truths.items() if v is True))
-        no = tuple(sorted(i for i, v in truths.items() if v is False))
+        yes = tuple(sorted(c.id for c in accepted if c.id in effective))
+        no = tuple(sorted(c.id for c in accepted if truth_at(c, t, as_of) is False))
         alternatives = tuple(sorted(c.id for c in about if status_at(c, as_of) == "proposed"))
         if yes and no:
             return Answer(Status.DISPUTED, None, support=yes + no, alternatives=alternatives)
