@@ -14,7 +14,8 @@ from a robot to a video understanding pipeline to an agent's long-term memory.
 | 1B. Research validation and architectural review | Complete ([docs/phase-1b](docs/phase-1b/README.md)) |
 | 1C. Preparation: semantics, environments, baselines | Complete ([docs/phase-1c](docs/phase-1c/README.md)) |
 | **M1. Executable foundational core** | **Implemented and reviewed: core 0.2.0, 41 tests passing** ([docs/m1](docs/m1/README.md)) |
-| M2-M4. Temporal and evidential semantics, profiles, cross-domain validation | Not started |
+| **World Ontology v0.1** | **Proposal under review** ([docs/architecture/world-ontology-v0.1.md](docs/architecture/world-ontology-v0.1.md)); Milestone 2 paused |
+| M2-M4. Temporal and evidential semantics, profiles, cross-domain validation | Paused pending the ontology review |
 
 Start with **[Phase 1C's outstanding decisions](docs/phase-1c/07-outstanding-decisions.md)**, then the
 [Phase 1B executive summary](docs/phase-1b/07-executive-summary.md). Phase 1 ([docs/phase-1/README.md](docs/phase-1/README.md))
@@ -40,6 +41,8 @@ unknown until observed); real TypeDB operations only; every claim of advantage t
 | **GUPI agent memory** | Whether a shared profile keeps [GUPI](https://github.com/Calhem/typedb-gupi-agent-memory)'s evidence and time model while improving coherence and interoperability | GUPI research is paused; a parity check only, until an independent answer set exists |
 
 ## Repository
+- `docs/architecture/`: the ontology architecture proposal; `docs/typedb-modelling-best-practices.md`: verified
+  TypeDB modelling constraints.
 - `schema/`, `src/worldmodel/`, `tests/`: the world model (TypeQL schema modules, Python interface, tests);
   `scripts/bench_query_paths.py`: selective vs full query benchmark.
 - `docs/phase-1/`: framework comparison, core ontology proposal, modules and profiles, TypeDB capability
