@@ -1,0 +1,74 @@
+[
+ {
+  "probe": "A0 define struct-valued attribute",
+  "result": "accepted"
+ },
+ {
+  "probe": "A1 one-brace literal",
+  "result": "rejected",
+  "detail": "[TQL0] [TQL03] TypeQL Error: There is a syntax error parsing error: expected comparator, expression_base, or var Near 1:34: --> insert $t isa thing, has position {x: 1.0, y: 2.0, z: 0.5}; ^ Caused: Error in usage of TypeQL. Caused: [QEX1] Failed to parse TypeQL query. Caused: [TSV11] Query failed."
+ },
+ {
+  "probe": "A2 single-field literal",
+  "result": "rejected",
+  "detail": "[TQL0] [TQL03] TypeQL Error: There is a syntax error parsing error: expected comparator, expression_base, or var Near 1:34: --> insert $t isa thing, has position {x: 1.0}; ^ Caused: Error in usage of TypeQL. Caused: [QEX1] Failed to parse TypeQL query. Caused: [TSV11] Query failed."
+ },
+ {
+  "probe": "A3 constructor literal",
+  "result": "rejected",
+  "detail": "[TQL0] [TQL03] TypeQL Error: There is a syntax error parsing error: expected identifier Near 1:43: --> insert $t isa thing, has position point3(x: 1.0, y: 2.0, z: 0.5); ^ Caused: Error in usage of TypeQL. Caused: [QEX1] Failed to parse TypeQL query. Caused: [TSV11] Query failed."
+ },
+ {
+  "probe": "B1 change an instance's type from box to package in place",
+  "result": "rejected",
+  "detail": "[INF11] Type-inference was unable to find compatible types for the pair of variables 'x' & 'package' across a 'isa' constraint. Types were: - x: [box] - package: [package] Caused: [QUA1] Type inference error while compiling query annotations. Caused: [QEX8] Error analysing query. Near 1:48 ----- -->"
+ },
+ {
+  "probe": "B2 type of obj-1 afterwards",
+  "result": "accepted",
+  "types": [
+   "box"
+  ]
+ },
+ {
+  "probe": "C1 where was the box, three-valued, in TypeQL",
+  "cases": {
+   "10:03": {
+    "TRUE at": [
+     "shelf-3"
+    ],
+    "FALSE at": []
+   },
+   "10:07": {
+    "TRUE at": [],
+    "FALSE at": []
+   },
+   "10:10": {
+    "TRUE at": [],
+    "FALSE at": [
+     "shelf-3"
+    ]
+   },
+   "10:15": {
+    "TRUE at": [],
+    "FALSE at": [
+     "shelf-3"
+    ]
+   }
+  },
+  "expected": {
+   "10:03": "TRUE shelf-3",
+   "10:07": "neither (end window)",
+   "10:10": "FALSE shelf-3",
+   "10:15": "neither: dock claim has no certain end-start pair, so UNKNOWN, not TRUE"
+  }
+ },
+ {
+  "probe": "D1 remove the profile's role from the core type while data uses it",
+  "result": "rejected",
+  "detail": "[SVL51] Cannot unset 'plays stored-in:stored' of 'endurant' when it has existing matching instances. Caused: [COW4] Concept write failed due to a schema validation error. Caused: [UEX12] Undefining plays failed. Caused: [QEX4] Failed to execute undefine query. Near 1:10 ----- --> undefine plays stor"
+ },
+ {
+  "leftover_probe_databases": []
+ }
+]
