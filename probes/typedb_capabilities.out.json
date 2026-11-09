@@ -1,0 +1,100 @@
+[
+ {
+  "probe": 1,
+  "name": "a profile defined in a second, separate define on top of the core",
+  "expect": "accepted",
+  "result": "accepted",
+  "as_expected": true
+ },
+ {
+  "probe": 2,
+  "name": "a relation playing a role in another relation (evidence for a relation)",
+  "expect": "accepted",
+  "rows": 1,
+  "result": "accepted",
+  "as_expected": true
+ },
+ {
+  "probe": 3,
+  "name": "one instance with two unrelated types (multiple classification)",
+  "expect": "rejected",
+  "result": "rejected",
+  "error": "[INF11] Type-inference was unable to find compatible types for the pair of variables 'x' & 'agent' across a 'isa' constraint. Types were: - x: [physical-object] - agent: [agent] Caused: [QUA1] Type inference error while compiling query annotations. Caused: [QEX8] Error analysing query. Near 1:32 ----- --> insert $x isa physical-object, isa agent, has wm-id \"x\"; ^ -----",
+  "as_expected": true
+ },
+ {
+  "probe": 4,
+  "name": "two profiles defining the same attribute name with different value types (no namespaces)",
+  "expect": "rejected",
+  "result": "rejected",
+  "error": "[DEX14] Defining 'value string' for type 'mass' failed since a different 'mass value double' is already defined. Try redefine instead? Caused: [QEX2] Failed to execute define query. Near 1:24 ----- --> define attribute mass, value string; ^ ----- Caused: [TSV10] Aborting transaction due to failed schema query.",
+  "as_expected": true
+ },
+ {
+  "probe": 5,
+  "name": "an attribute owning an attribute (metadata on a value)",
+  "expect": "rejected",
+  "result": "rejected",
+  "error": "[DEX11] Invalid define - the type 'reading' of kind 'attribute', which cannot have: 'owns confidence' Caused: [QEX2] Failed to execute define query. Near 1:41 ----- --> define attribute reading, value double, owns confidence; ^ ----- Caused: [TSV10] Aborting transaction due to failed schema query.",
+  "as_expected": true
+ },
+ {
+  "probe": 6,
+  "name": "a struct value type (e.g. a 3D point)",
+  "expect": "accepted",
+  "result": "accepted",
+  "as_expected": true
+ },
+ {
+  "probe": 13,
+  "name": "using a struct as an attribute's value and inserting one",
+  "expect": "rejected",
+  "result": "rejected",
+  "error": "[TQL0] [TQL03] TypeQL Error: There is a syntax error parsing error: expected identifier Near 1:43: --> insert $t isa thing, has position point3(x: 1.0, y: 2.0, z: 0.5); ^ Caused: Error in usage of TypeQL. Caused: [QEX1] Failed to parse TypeQL query. Caused: [TSV11] Query failed.",
+  "as_expected": true
+ },
+ {
+  "probe": 7,
+  "name": "a recursive function (transitive part-of) defined by a profile",
+  "expect": "accepted",
+  "rows": 2,
+  "result": "accepted",
+  "as_expected": true
+ },
+ {
+  "probe": 8,
+  "name": "schema introspection: list a profile's types by query (for conformance checks)",
+  "expect": "accepted",
+  "rows": 3,
+  "result": "accepted",
+  "as_expected": true
+ },
+ {
+  "probe": 9,
+  "name": "removing a profile's types again (undefine)",
+  "expect": "accepted",
+  "result": "accepted",
+  "as_expected": true
+ },
+ {
+  "probe": 10,
+  "name": "a profile adding a role to a core type (the profile changes the core type)",
+  "expect": "accepted",
+  "result": "accepted",
+  "as_expected": true
+ },
+ {
+  "probe": 11,
+  "name": "a datetime-tz with sub-second precision and a duration value",
+  "expect": "accepted",
+  "result": "accepted",
+  "as_expected": true
+ },
+ {
+  "probe": 12,
+  "name": "ingest 2000 records (5 concepts each), 100 per transaction, then 50 point lookups",
+  "records_per_s": 1585,
+  "lookup_ms_median": 1.4,
+  "lookup_ms_p95": 2.1
+ }
+]
