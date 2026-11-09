@@ -507,8 +507,8 @@ class WorldModel:
     def value_at(self, world, type, subject, t, as_of=None, key_role=None, value_role=None):
         """The value(s) of a relationship for `subject` at valid time t, as known at transaction time `as_of`.
 
-        For functional types (located-at) more than one value is DISPUTED. Claims from a variant world override
-        inherited claims for the same subject and type at times the variant's own claims cover.
+        For functional types (located-at) more than one value is DISPUTED, and a nearer world's claim overrides
+        inherited ones. Other types can hold several values; a variant removes an inherited one by ceasing it.
         """
         key_role, value_role = (key_role, value_role) if key_role else FUNCTIONAL[type]
         claims, ident = self._view(world, as_of, type, [subject], at=t)
@@ -520,10 +520,7 @@ class WorldModel:
                 if any(c.type == type and subjects & set(c.roles.get(key_role, [])) for c in anything.values()):
                     return Answer(Status.UNKNOWN)
             return Answer(Status.NOT_YET_KNOWN)
-        holding = self._effective(about, ident, t, as_of)
-        if type not in FUNCTIONAL and holding:
-            nearest = min(c.depth for c in holding)
-            holding = [c for c in holding if c.depth == nearest]
+        holding = self._effective(about, ident, t, as_of)      # precedence applies to functional types only
         alternatives = tuple(sorted(c.id for c in about if status_at(c, as_of) == "proposed"
                                     and truth_at(c, t, as_of) is True))
         values = sorted({ident.canonical(v) for c in holding for v in c.roles.get(value_role, [])})

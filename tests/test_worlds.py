@@ -108,3 +108,19 @@ def test_entity_facts_in_a_variant_never_answer_in_the_base(wm, base):
     wm.assert_fact(h, "located-at", {"located": "ghost-crate", "place": "dock"}, start=T("12:30"), until_ceased=True)
     assert wm.value_at(w, "located-at", "ghost-crate", T("13:00")).status == Status.NOT_YET_KNOWN
     assert wm.facts_about(w, "ghost-crate", T("13:00")) == []
+
+
+def test_non_functional_inherited_facts_stay_until_ceased(wm, base):
+    w, _ = base
+    for c in ("fragile", "heavy"):
+        wm.add_entity("concept", c, id=c)
+    fragile = wm.assert_fact(w, "has-state", {"bearer": "box", "state": "fragile"}, start=T("09:00"), until_ceased=True)
+    h = wm.create_world("what-if", kind="hypothetical", base=w, branch_at=T("12:00"))
+    wm.assert_fact(h, "has-state", {"bearer": "box", "state": "heavy"}, start=T("12:30"), until_ceased=True)
+    a = wm.value_at(h, "has-state", "box", T("13:00"), key_role="bearer", value_role="state")
+    assert a.values == ("fragile", "heavy")                          # both: has-state is not functional
+    assert wm.holds(h, "has-state", {"bearer": "box", "state": "fragile"}, T("13:00")).holds is True
+    wm.cease(h, fragile, T("12:45"))
+    a = wm.value_at(h, "has-state", "box", T("13:00"), key_role="bearer", value_role="state")
+    assert a.values == ("heavy",)
+    assert wm.value_at(w, "has-state", "box", T("13:00"), key_role="bearer", value_role="state").values == ("fragile",)
