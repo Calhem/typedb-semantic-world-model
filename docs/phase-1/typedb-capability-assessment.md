@@ -4,8 +4,8 @@
 Evidence comes from three sources, and each row says which one:
 - **probe:** run for this assessment by `probes/typedb_capabilities.py` against a TypeDB 3.14.1 server, in throwaway
   databases (`wm-probe-*`) that were deleted afterwards. Raw output: `probes/typedb_capabilities.out.json`.
-- **GUPI:** measured in ../typedb-gupi-agent-memory (final report, Phase 4 performance).
-- **explorer:** the vehicle explorer (this machine's typedb-noodlelab-visual-explorer).
+- **GUPI:** measured in [GUPI](https://github.com/Calhem/typedb-gupi-agent-memory) (final report, Phase 4 performance).
+- **explorer:** the [vehicle explorer](https://github.com/Calhem/typedb-noodlelab-visual-explorer).
 
 ## Probe results
 
@@ -23,7 +23,7 @@ Evidence comes from three sources, and each row says which one:
 | 9 | Removing a profile's type again (`undefine`) | accepted (when no data uses it) | Profiles can be uninstalled from an empty database; with data, removal is a migration. |
 | 10 | A profile adding a role to a *core* type (`entity endurant plays located-in:located`) | accepted | Works, but the profile **changes the core type** in that database. "Same core" must mean "core types keep their meaning", tested, not "core types are byte-identical". |
 | 11 | `datetime-tz` with nanoseconds, and a `duration` | accepted | Sensor time stamps fit. |
-| 12 | Ingest 2,000 small records (an observation, two objects, a part-of and a support relation: 5 concepts), 100 per transaction; 50 point lookups | **1,198 and 1,585 records/s** in two runs; lookup median 1.4-1.5 ms, p95 2.1-3.4 ms | Indicative only (one laptop, Docker, local network). Ample for semantic events (tens per second), far too slow and too heavy for raw sensor streams. |
+| 12 | Ingest 2,000 small records (an observation, two objects, a part-of and a support relation: 5 concepts), 100 per transaction; 50 point lookups | **1,198 and 1,585 records/s** in two runs (only the second is saved); lookup median 1.4-1.5 ms, p95 2.1-3.4 ms | Indicative only (one laptop, Docker, local network). Ample for semantic events (tens per second), far too slow and too heavy for raw sensor streams. |
 
 Resource figures (explorer machine, Docker): the TypeDB 3.14.1 image is 218 MB; the explorer's server with its
 vehicle model used 211 MiB of memory at rest; GUPI's server, after its research runs, 1.66 GiB. These are server
@@ -51,7 +51,7 @@ footprints before any application load, and they vary with cached data.
 | No embedded mode: a separate server process (≈0.2-1.7 GB here) | Not suitable for microcontrollers; marginal on small companion computers | Run on the robot's main computer, a base station, or remotely; measure |
 | No rules (3.x): reasoning is query-time functions, much of it ends up in Python (GUPI) | Inference cost is paid per query; logic splits between TypeQL and code | Say where each step runs (the explorer already labels this) |
 | No OWL / RDF import or export | Interoperability with SOSA, PROV, OWL-Time, SOMA is a mapping job, not a load | Write mappings for the few concepts we reuse, tested in both directions |
-| Planner bug QPL1 (explorer) and other 3.14.1 friction (cyber-intel notes) | Some query shapes need workarounds | Keep logging friction in ../typedb-cyber-intel/notes/typedb-feedback.md |
+| Planner bug QPL1 ([explorer write-up](https://github.com/Calhem/typedb-noodlelab-visual-explorer/blob/main/docs/typedb-issues/qpl1-is-disjunction.md)) and other 3.14.1 friction found in earlier projects | Some query shapes need workarounds | Keep logging friction for the TypeDB team |
 
 ## Honest summary
 TypeDB's advantage here is **modelling fidelity**: n-ary events, facts about facts, typed roles and a checked schema

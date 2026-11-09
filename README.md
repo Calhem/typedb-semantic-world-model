@@ -1,15 +1,50 @@
 # Semantic World Model (research)
 
-A Noodlelab research project: a small, evidence-aware semantic world ontology for TypeDB 3.x, intended to be shared
-by a ROS 2 robot, a video understanding pipeline (Visual World Explorer) and an agent memory (GUPI).
+**An experimental Noodlelab research project. Nothing here is a product, a standard or a finished ontology.**
 
-**Status (2026-11-09): Phase 1 (research and architecture) complete, stopped for review.** No ontology has been
-implemented. Start with [docs/phase-1/README.md](docs/phase-1/README.md).
+The question we are investigating: can one **small, evidence-aware semantic core**, held in
+[TypeDB](https://typedb.com) 3.x, give quite different applications a shared way to represent their environment?
+That means what exists, what happened, when, where, who knows it, and on what evidence. The applications range
+from a robot to a video understanding pipeline to an agent's long-term memory.
 
-- `docs/phase-1/`: framework comparison, ontology proposal, profiles, TypeDB assessment, competency questions,
-  experiment protocols, ROS 2 design, recommendation and open decisions.
-- `probes/typedb_capabilities.py`: checks what TypeDB 3.14.1 accepts on the points the design depends on; it uses
-  throwaway databases only. Run it through any container that has the TypeDB Python driver, for example
-  `docker exec -i noodlelab-api python - < probes/typedb_capabilities.py`.
+## Status (2026-11-09)
+| Phase | State |
+|---|---|
+| **1. Research and architecture** | **Complete, under review.** No ontology implemented |
+| 2. Minimal core ontology | Not started; scope to be agreed after review |
+| 3-7. Profiles, evaluation, reference applications | Not started |
 
-Any vehicle, robot or scenario in this project is invented. No licence chosen yet (decision D5).
+Start with **[docs/phase-1/README.md](docs/phase-1/README.md)**: the critique, recommendation, open decisions and
+plan. **[docs/phase-1/verification-status.md](docs/phase-1/verification-status.md)** lists which findings are
+measured and which rest on assumptions still to verify.
+
+## Research objectives
+1. **Lightweight semantic infrastructure:** a compact core with optional domain modules, so a constrained
+   application loads only what it needs. The cost of the model and the cost of the database are measured separately.
+2. **Meaningful world understanding:** important entities, events, identities, times and evidence, rather than an
+   exhaustive list of everything observed.
+3. **A reusable foundation:** substantially different applications share the core through *World Ontology Profiles*
+   (a pinned set of modules plus the questions it must answer).
+
+Principles: semantic correctness before size; evidence before assertion; no invented continuity (a fact's end is
+unknown until observed); real TypeDB operations only; every claim of advantage tested against a simpler baseline.
+
+## The three reference applications
+| Application | What it tests | State |
+|---|---|---|
+| **ROS 2 robotics integration** | A robot builds and queries a persistent semantic record of its environment, outside its real-time control, from simulated or recorded (rosbag2) data. Simulators give independent ground truth | Designed ([ros2-reference-application.md](docs/phase-1/ros2-reference-application.md)); proposed as the first real test |
+| **Visual World Explorer (VWE)** | A short video becomes a coherent, queryable world model with a grounded explanation | A new application, not yet built. (Not the same as the [Noodlelab Visual Explorer](https://github.com/Calhem/typedb-noodlelab-visual-explorer), a 3D vehicle explorer) |
+| **GUPI agent memory** | Whether a shared profile keeps [GUPI](https://github.com/Calhem/typedb-gupi-agent-memory)'s evidence and time model while improving coherence and interoperability | GUPI research is paused; a parity check only, until an independent answer set exists |
+
+## Repository
+- `docs/phase-1/`: framework comparison, core ontology proposal, modules and profiles, TypeDB capability
+  assessment, competency questions, experiment protocols, ROS 2 design, recommendation and decisions.
+- `probes/typedb_capabilities.py`: checks what TypeDB 3.14.1 accepts on the points the design depends on, in
+  throwaway databases only (`wm-probe-*`). Output: `probes/typedb_capabilities.out.json`. Run it with any Python
+  that has `typedb-driver` 3.x and can reach a server, for example
+  `docker exec -i <container> python - < probes/typedb_capabilities.py` (`TYPEDB_ADDRESS` sets the server;
+  `admin`/`password` are TypeDB's local development defaults).
+
+## Notes
+Every robot, vehicle, person and scenario in this project is invented. Licence not yet chosen (decision D5 in the
+Phase 1 README); until then, all rights are reserved by the author.

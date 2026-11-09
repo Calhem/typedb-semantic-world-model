@@ -1,6 +1,7 @@
 # Phase 1: research and architecture (for review)
 
-**Status (2026-11-09): stopped for review. No TypeQL ontology written.** The only code is a capability probe, run in
+**Status (2026-11-09): stopped for review. No TypeQL ontology written.** Which findings are measured and which are
+assumptions: [verification-status.md](verification-status.md). The only code is a capability probe, run in
 throwaway databases. The existing Visual Explorer and GUPI repositories were read, not changed.
 
 | Deliverable | Document |
@@ -12,6 +13,7 @@ throwaway databases. The existing Visual Explorer and GUPI repositories were rea
 | Competency questions (22) | [competency-questions.md](competency-questions.md) |
 | Experiment protocols | [experiment-protocols.md](experiment-protocols.md) |
 | ROS 2 reference application | [ros2-reference-application.md](ros2-reference-application.md) |
+| What is verified, assumed or incomplete | [verification-status.md](verification-status.md) |
 | Critique, recommendation, open decisions, plan | this page |
 
 ## What I found in the existing work
@@ -66,9 +68,9 @@ throwaway databases. The existing Visual Explorer and GUPI repositories were rea
 **Proceed, narrowed.** Build a small evidence-aware core (≈20 types) in a new, independent repository, prove it on
 synthetic scenarios against a simple baseline, then on ROS 2 simulation, and only then on video and GUPI.
 
-- **Repository:** independent (this one, typedb-semantic-world-model). VWE, the ROS 2 adapter and GUPI consume its
+- **Repository:** independent (this one; public on GitHub since 2026-11-09, decision D1). VWE, the ROS 2 adapter and GUPI consume its
   modules. The ontology has its own versioning, tests and licence. GUPI is paused and the vehicle explorer has its own
-  roadmap, so neither should host it. Nothing is published to GitHub until you decide visibility.
+  roadmap, so neither should host it.
 - **Order:** core → three scenarios + baseline → ROS 2 → GUPI parity → video. ROS 2 moves ahead of video because its
   relationships are explicit (no extraction bottleneck) and simulation gives independent ground truth.
 
@@ -86,7 +88,7 @@ changes.
 ## Unresolved decisions (for you)
 | # | Decision | Options | My recommendation |
 |---|---|---|---|
-| D1 | Repository and visibility | new public repo / new private repo / keep local | New repo; visibility is your call (public suits an open specification) |
+| D1 | Repository and visibility | new public repo / new private repo / keep local | **Decided 2026-11-09: new public repository** |
 | D2 | Name | "semantic world model" / "world ontology" / other | Avoid bare "world model" (now means learned video-prediction models) |
 | D3 | Foundational stance | DOLCE-style descriptive / BFO realist | Descriptive, 3D, with a BFO mapping for science |
 | D4 | Every contingent fact a claim? | always / profile may declare static facts | Profiles may declare static facts; measured in Exp. 6 |
@@ -108,5 +110,4 @@ changes.
 | 6 | Visual World Explorer (new app), one 20-60 s video, independent annotation | end-to-end demo + evaluation |
 | 7 | Generalisation, held-out domains, specification draft | — |
 
-Every phase: preregister, commit and push each validated step (once the remote exists), report results including
-failures.
+Every phase: preregister, commit and push each validated step, report results including failures.
