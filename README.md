@@ -11,12 +11,13 @@ from a robot to a video understanding pipeline to an agent's long-term memory.
 | Phase | State |
 |---|---|
 | 1. Research and architecture | Complete ([docs/phase-1](docs/phase-1/README.md)) |
-| **1B. Research validation and architectural review** | **Complete, under review** ([docs/phase-1b](docs/phase-1b/README.md)). No ontology implemented |
+| 1B. Research validation and architectural review | Complete ([docs/phase-1b](docs/phase-1b/README.md)) |
+| **1C. Preparation: semantics, environments, baselines** | **Complete, under review** ([docs/phase-1c](docs/phase-1c/README.md)). No ontology implemented |
 | 2. Minimal core ontology | Not started; scope to be agreed after review |
 | 3-7. Profiles, evaluation, reference applications | Not started |
 
-Start with the **[Phase 1B executive summary](docs/phase-1b/07-executive-summary.md)** and
-**[decision register](docs/phase-1b/06-decision-register.md)**. Phase 1 ([docs/phase-1/README.md](docs/phase-1/README.md))
+Start with **[Phase 1C's outstanding decisions](docs/phase-1c/07-outstanding-decisions.md)**, then the
+[Phase 1B executive summary](docs/phase-1b/07-executive-summary.md). Phase 1 ([docs/phase-1/README.md](docs/phase-1/README.md))
 is kept unchanged; its corrections are in [changes-to-phase-1.md](docs/phase-1b/changes-to-phase-1.md). **[docs/phase-1/verification-status.md](docs/phase-1/verification-status.md)** lists which findings are
 measured and which rest on assumptions still to verify.
 
@@ -41,6 +42,8 @@ unknown until observed); real TypeDB operations only; every claim of advantage t
 ## Repository
 - `docs/phase-1/`: framework comparison, core ontology proposal, modules and profiles, TypeDB capability
   assessment, competency questions, experiment protocols, ROS 2 design, recommendation and decisions.
+- `environments/`: isolated PostgreSQL 18, TypeDB and ROS 2 environments with smoke tests.
+- `evaluations/gupi-lme/`: the GUPI LongMemEval answer-baseline harness.
 - `probes/typedb_capabilities.py`: checks what TypeDB 3.14.1 accepts on the points the design depends on, in
   throwaway databases only (`wm-probe-*`). Output: `probes/typedb_capabilities.out.json`. Run it with any Python
   that has `typedb-driver` 3.x and can reach a server, for example
