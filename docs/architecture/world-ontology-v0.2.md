@@ -34,44 +34,38 @@ The world model has **four layers**, and nothing crosses between them except by 
    context ⟨world, perspective, knowledge time, valid time, policies⟩.
 
 ```mermaid
-flowchart TB
-  subgraph R["1. Reality vocabulary"]
-    direction LR
-    PO["physical-object"]
-    SO["social-object"]
-    PL["place"]
-    IO["information-object"]
-    EV["event (described occurrence)"]
-    CO["concept: category / role / quality-kind"]
-    RS["reference-system: spatial-frame / clock / unit"]
-    W["world: actual / hypothetical / simulated"]
+flowchart LR
+  subgraph R["1 · Reality vocabulary"]
+    direction TB
+    K["Particulars (kinds)<br/>physical-object · social-object<br/>place · information-object"]
+    EV["Event descriptions<br/>occurrences with participants"]
+    AB["Abstract entities<br/>concept: category · role · quality-kind<br/>reference-system: frame · clock · unit<br/>world: actual · hypothetical · simulated"]
   end
-  subgraph C["2. Content"]
-    PR["proposition (timeless, keyed):<br/>existence, located-at, positioned-in, part-of, constitution,<br/>member-of, depends-on, classified-as, has-quality,<br/>same-as, causes, initiates, terminates, absence-of,<br/>clock-alignment, frame-transform, + profile types"]
+  subgraph C["2 · Content"]
+    PR["Propositions: timeless, keyed<br/>existence · located-at · positioned-in<br/>part-of · constitution · member-of<br/>depends-on · classified-as · has-quality<br/>same-as · causes · initiates · terminates<br/>absence-of · clock-alignment · frame-transform<br/>+ profile types"]
   end
-  subgraph S["3. Stance and evidence"]
-    AT["attestation<br/>(attester, content, world;<br/>stance, polarity, basis,<br/>valid interval, credence)"]
-    OB["observation (+ coverage)"]
-    EVD["evidence (supports / undermines)"]
-    DE["derivation (rule, premises)"]
-    SU["supersession (same attester)"]
+  subgraph S["3 · Stance and evidence"]
+    direction TB
+    AT["Attestation<br/>attester · content · world<br/>stance · polarity · basis<br/>valid interval · credence"]
+    OB["Observation + coverage"]
+    LK["evidence · derivation · supersession"]
   end
-  subgraph J["4. Judgement"]
-    AC["acceptance (holder, attestation, verdict, recorded-at)"]
-    PO2["persistence-policy, resolution-policy (cited)"]
-    QA["query answer (computed, never stored)"]
+  subgraph J["4 · Judgement"]
+    direction TB
+    AC["Acceptance<br/>holder · attestation · verdict · τ"]
+    PL["Policies<br/>persistence · resolution"]
+    QA["Query answer for ⟨w, p, τ, t, Π⟩<br/>computed, never stored"]
   end
-  PR -- "roles played by" --> PO & SO & PL & IO & EV & CO
-  AT -- content --> PR & EV
-  AT -- context --> W
-  AT -- attester --> PO & SO
-  OB --> EVD --> AT
-  DE --> AT
-  SU --> AT
-  AC --> AT
+  K -->|play roles in| PR
+  EV -->|play roles in| PR
+  AB -->|parameters of| PR
+  PR -->|content of| AT
+  EV -->|occurrence attested by| AT
+  OB --> LK --> AT
+  AT --> AC
   AT --> QA
   AC --> QA
-  PO2 --> QA
+  PL --> QA
 ```
 
 ---
