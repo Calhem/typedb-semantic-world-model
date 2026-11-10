@@ -7,7 +7,8 @@ in the last section, marked as such. Started 2026-11-09; keep it current as new 
 Evidence keys: `P1-n` Phase 1 probes (`probes/typedb_capabilities.py`), `P1B-x` Phase 1B probes
 (`probes/phase_1b_probes.py`), `A-n` architecture probes (`probes/architecture_probes.py`,
 `probes/architecture_snippet_check.py`), `B-n` v0.2 probes (`probes/architecture_v02_probes.py`), `M1` Milestone 1
-code and tests, `C03` Core 0.3 code, tests and Stage D measurements (`docs/core-0.3/`).
+code and tests, `C03` Core 0.3 code, tests and Stage D measurements (`docs/core-0.3/`), `C04P` Core 0.4 planning probes
+(`probes/core04_feasibility.py`; exploratory schema, throwaway databases).
 
 ## Types and identity
 | Practice | Why (verified behaviour) | Evidence |
@@ -27,6 +28,10 @@ code and tests, `C03` Core 0.3 code, tests and Stage D measurements (`docs/core-
 | Use `@card(1..1)` on `plays` or `relates` for "exactly one" (e.g. one world per claim); it is checked at commit | `CNT5` on violation | M1 |
 | Removing a role from a type is refused while data uses it: plan profile removal as a migration | `SVL51` | P1B-D |
 | A role allows **at most one player per relation instance** unless declared otherwise: give symmetric or multi-player roles an explicit `@card` (e.g. `relates same @card(2..2)`) | two players on an undeclared role were rejected with `CNT5` (`@card(0..1)`) | B2, M1 |
+| A query on a general role finds players of roles specialised from it: `$e isa event (actor: $x)` returns a profile's `pickup:picker` players | role inheritance works for matching | C04P P3 |
+| But labels come back specialised: `isa!` gives the subtype (`pickup`) and `links ($r: $x)` gives `pickup:picker`; application code that compares labels must map them to their core supertype and core role | otherwise profile subtypes are silently missed | C04P P3b, P3c |
+| A type may own a second `@key` attribute (e.g. a proposition's `proposition-key` and `wm-id`), and both are enforced | duplicate second key rejected with `CNT9` | C04P P8 |
+| A proposition (relation) can play a role in another proposition (e.g. the outcome of `initiates`) | works | C04P P2 |
 | One role can take players of several relation types (a `content` role played by propositions and by event descriptions); filter with `$c isa <type>` in the query | queried by any, by proposition or by event | B2 |
 
 ## Attributes and values
@@ -51,6 +56,7 @@ code and tests, `C03` Core 0.3 code, tests and Stage D measurements (`docs/core-
 | When a variable's type is fixed by the query (e.g. `$c isa same-as`), every disjunction branch **and every `try` block** must be possible for that type: build the pattern for the type instead of relying on pruning | an impossible branch (`{ $c has wm-id $x; }` for a proposition) or `try { $c has lower $v; }` for a type that cannot own `lower` is rejected with `INF11`, not skipped | Core 0.3 Stage B |
 | In the Python driver, `row.get(var)` raises if `var` is not in the query; wrap optional reads | "Cannot get concept from a concept row by variable" | Core 0.3 Stage B |
 | Recursive functions (`fun f(...) -> { ... }` with `let $x in f(...)`) work for transitive closures and can take a scoping argument (e.g. a world) | — | P1-7, M1 |
+| A function's declared return type must cover every type that can play the returned role; when a role is played by unrelated types (e.g. `causes:effect` by events and occurrences), narrow inside the match (`$x isa event;`) | otherwise the schema commit fails (`FIN4`) | C04P P5 |
 | Compare attributes of two matched instances directly for interval logic, e.g. range overlap `$la <= $ub; $lb <= $ua;` | finds exactly the overlapping pairs | B3 |
 
 ## Content and stance (proposition / attestation) patterns
