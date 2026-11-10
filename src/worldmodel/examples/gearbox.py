@@ -44,6 +44,9 @@ STEPS = {"o-disassembly": (datetime(2026, 11, 5, 13, 0, tzinfo=timezone.utc),
          "o-reassembly": (datetime(2026, 11, 5, 14, 15, tzinfo=timezone.utc),       # overlaps the relubrication
                           datetime(2026, 11, 5, 15, 15, tzinfo=timezone.utc))}
 CAUSAL_PLAN_AT = datetime(2026, 11, 5, 12, 0, tzinfo=timezone.utc)
+# LABS-1.011: a second, similar repair two weeks later
+REPLACEMENT_2 = (datetime(2026, 11, 20, 10, 0, tzinfo=timezone.utc), datetime(2026, 11, 20, 10, 15, tzinfo=timezone.utc))
+TEST_RUN_2 = (datetime(2026, 11, 20, 11, 0, tzinfo=timezone.utc), datetime(2026, 11, 20, 11, 30, tzinfo=timezone.utc))
 
 PLACES = [("workshop", "Workshop W1", "the building's ground-floor workshop"),
           ("bay-1", "Bay 1", "assembly bay in the workshop"),
@@ -329,5 +332,38 @@ def extend_causality(wm, ids):
     wm.accept(late)
     ids.update({"causal_claims": claims, "known_before_denial": known_before_denial, "causal_plan": plan,
                 "late_claim": late, "repair_steps": steps})
+    return ids
+
+
+def extend_second_repair(wm, ids):
+    """LABS-1.011 additions: a second, similar repair on 2026-11-20 (its own occurrences and descriptions, the same
+    kinds, actor and instruments), and a second description of the first test run (a QA log). A causal claim names
+    particular occurrences or descriptions, so a claim about the first repair says nothing about the second.
+    After extend_causality."""
+    w = ids["world"]
+    wm.add_entity("physical-object", "Bearing 4", description="spare bearing, fitted on 11-20", id="bearing-4")
+    wm.add_entity("social-object", "QA lead", id="qa-lead")
+    for o, n in (("o-bearing-replacement-2", "second bearing replacement"), ("o-test-run-2", "second test run")):
+        wm.add_entity("occurrence", n, id=o)
+    second = {}
+    for occ, roles, span, kinds, eid in (
+            ("o-bearing-replacement-2", {"actor": "technician", "patient": "bearing-4", "instrument": "bearing-press",
+                                         "location": "bay-1"}, REPLACEMENT_2, ["replacement", "action"],
+             "ev-worklog-replacement-2"),
+            ("o-test-run-2", {"actor": "technician", "patient": "gbx-100", "instrument": "test-rig", "location": "bay-1"},
+             TEST_RUN_2, ["test", "action"], "ev-test-run-2")):
+        second[occ] = wm.account(w, roles, *span, kind=kinds, occurrence=occ, attester="technician", id=eid)
+        for a in wm.account_attestations(w, eid, attester="technician"):
+            wm.accept(a)
+    claim_2 = wm.claim_cause(w, "o-bearing-replacement-2", "o-test-run-2", attester="technician")
+    known_before_claim_2_accepted = wm._now()
+    wm.accept(claim_2)
+    # a second description of the first test run, by QA; the system accepts it and its describes link
+    qa = wm.account(w, {"actor": "qa-lead", "patient": "gbx-100", "instrument": "test-rig"}, *TEST_RUN, kind="test",
+                    occurrence="o-test-run", attester="qa-lead", id="ev-qa-test-log")
+    for a in wm.account_attestations(w, qa, attester="qa-lead"):
+        wm.accept(a)
+    ids.update({"second_repair": second, "second_claim": claim_2,
+                "known_before_claim_2_accepted": known_before_claim_2_accepted, "qa_log": qa})
     return ids
 

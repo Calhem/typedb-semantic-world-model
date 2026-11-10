@@ -232,14 +232,56 @@ class DynamicsMixin:
         with self.driver.transaction(self.database, READ) as tx:
             return self._kinds_of(tx, [i])[i]
 
+    def occurrence_status(self, world, occurrence, t, as_of=None, perspective=SYSTEM):
+        """Whether the occurrence happened, for the perspective (LABS-1.011): judged only from attestations of its own
+        existence (existence(existent: occurrence)), never from accepted descriptions, describes links or causal
+        claims. `status` is accepted, denied, disputed or "not established". Each description that some source links
+        to it is reported separately: its source, whether the perspective accepts the account (the description's own
+        attestation) and the describes link. An accepted account of a denied occurrence is representable and reported
+        as such."""
+        existence = [e for e in self._claims(world, occurrence, ("existence",), t, as_of, perspective)
+                     if occurrence in e["roles"].get("existent", [])]
+        verdicts = {self._verdict_label(e) for e in existence}
+        status = ("disputed" if "disputed" in verdicts or {"accepted", "denied"} <= verdicts else
+                  "accepted" if "accepted" in verdicts else "denied" if "denied" in verdicts else "not established")
+        events = [a for a in self._load(world, as_of, types=["event"], perspective=perspective).values()]
+        descs = []
+        for link in self._claims(world, occurrence, ("describes",), t, as_of, perspective):
+            if occurrence not in link["roles"].get("occurrence", []):
+                continue
+            for d in link["roles"].get("description", []):
+                recs = [a for a in events if a.content == d]
+                account = ("accepted" if any(a.polarity and usable(a, perspective, as_of) for a in recs) else
+                           "unreviewed" if any(acceptance_state(a, perspective, as_of) == "unreviewed" for a in recs)
+                           else "rejected" if recs else "none")
+                descs.append({"description": d, "account": account,
+                              "account_by": sorted({a.attester for a in recs}),
+                              "describes": self._verdict_label(link),
+                              "describes_by": sorted({x["attester"] for x in link["attestations"]})})
+        return {"occurrence": occurrence, "status": status,
+                "existence": [{"judgement": self._verdict_label(e), "status": e["status"],
+                               "attestations": e["attestations"]} for e in existence],
+                "descriptions": sorted(descs, key=lambda x: x["description"])}
+
     def causes_of(self, world, effect, t, as_of=None, perspective=SYSTEM):
         """Every causal claim about what caused `effect` (an occurrence or an event description), judged for the
         perspective. Claims stated about the effect itself are direct; claims stated about another description of the
         same happening (or about the occurrence a description describes) are lifted, but only through describes links
         the perspective accepts, and they keep their own provenance (plan 9.3). Each claim is reported with its level
         (description / occurrence / mixed), the occurrences its cause is accepted as, its judgement (accepted,
-        disputed, denied, unreviewed, rejected) and its sources. Nothing is inferred from order or chained."""
+        disputed, denied, unreviewed, rejected) and its sources. Nothing is inferred from order or chained.
+
+        Occurrence check (LABS-1.011): each claim also reports the status (occurrence_status) of every occurrence it
+        involves, and `applies`: False when one of them is denied, None when one is disputed, True otherwise. A claim
+        about a denied occurrence stays visible as its source's account (its own judgement is unchanged), but it does
+        not answer what caused the happening, and a lifted claim never makes a denied occurrence accepted."""
         occurrence = self.is_a(self._kind_of_id(effect), "occurrence")
+        statuses = {}
+
+        def status_of(o):
+            if o not in statuses:
+                statuses[o] = self.occurrence_status(world, o, t, as_of, perspective)["status"]
+            return statuses[o]
         lifted = (self.descriptions(world, effect, as_of, perspective) if occurrence
                   else self.occurrences_of(world, effect, as_of, perspective))
         out, seen = [], set()
@@ -255,12 +297,17 @@ class DynamicsMixin:
                 effect_is_occ = self.is_a(self._kind_of_id(target), "occurrence")
                 level = ("occurrence" if cause_is_occ and effect_is_occ else
                          "description" if not cause_is_occ and not effect_is_occ else "mixed")
+                cause_occs = [cause] if cause_is_occ else self.occurrences_of(world, cause, as_of, perspective)
+                effect_occs = [target] if effect_is_occ else self.occurrences_of(world, target, as_of, perspective)
+                involved = {o: status_of(o) for o in sorted(set(cause_occs) | set(effect_occs))}
+                applies = (False if "denied" in involved.values() else None if "disputed" in involved.values()
+                           else True)
                 out.append({"cause": cause, "effect": target, "level": level, "lifted": target != effect,
+                            "occurrences": involved, "applies": applies,
                             "lifted_via": None if target == effect else
                             ({"description": target, "occurrence": effect} if occurrence
                              else {"description": effect, "occurrence": target}),
-                            "cause_occurrences": [cause] if cause_is_occ else
-                            self.occurrences_of(world, cause, as_of, perspective),
+                            "cause_occurrences": cause_occs,
                             "judgement": self._verdict_label(entry), "status": entry["status"],
                             "claimed_by": sorted({x["attester"] for x in entry["attestations"]}),
                             "attestations": entry["attestations"]})
