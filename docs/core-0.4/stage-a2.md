@@ -1,8 +1,7 @@
 # Core 0.4 Stage A2: spatial reasoning across frames (LABS-1.007, LABS-1.008)
 
-**Status (2026-11-10): implemented on `feature/core-0.4-a2-spatial`. The architecture was approved under LABS-1.008,
-and the traversal and orientation corrections it required are applied (see "LABS-1.008 corrections"). Awaiting
-review; not merged. Stages B and C not started.** Base: `main` at cb1e201 (Stage A1 merged). Plan: [core-0.4-plan.md](../plans/core-0.4-plan.md), Stage A
+**Status (2026-11-10): merged into `main` (LABS-1.009) after the LABS-1.008 corrections and the LABS-1.009
+verification; known limitations are recorded below. Stages B and C not started.** Base: `main` at cb1e201 (Stage A1 merged). Plan: [core-0.4-plan.md](../plans/core-0.4-plan.md), Stage A
 and 9.6. Ontology: World Ontology v0.2 §3.5 (C8), §5.3; no new spatial ontology.
 
 ## Run it
@@ -233,6 +232,20 @@ New A2 questions (A2 world with extensions, 463.9 KB): `where` 43-60 ms (32-35 q
 | D-A2-5 | `holds` unchanged; `where` is the position-specific query interface | parameters are not part of `holds`' question | **provisionally accepted (LABS-1.008)** |
 | D-A2-7 | The angular tolerance is a per-question policy parameter (`angle_tolerance`), default 1e-9 rad; the shared constraint check (holds, variant overrides) uses the default | Core 0.4 orientations carry no stated uncertainty; a stored per-claim angular uncertainty would be a schema addition | please confirm (LABS-1.008) |
 | D-A2-6 | `extend_spatial` keeps the A2 additions out of the A1 world builder | the A1 tests and output stay valid unchanged | — |
+
+## Known limitations at merge (LABS-1.009)
+| Area | Limitation | Effect |
+|---|---|---|
+| Uncertainty | Range propagation through rotations is conservative (8-corner bounding box) | ranges widen along rotated chains; a widened range can overlap where the true region would not, so a conflict can be missed (never invented) |
+| Uncertainty | Orientations are exact values; the angular tolerance is a per-question policy (default 1e-9 rad), not a stored per-claim uncertainty | small sensor differences dispute unless the caller states a tolerance |
+| Uncertainty | Overlap means "can both be true", not agreement; nothing is reconciled | answers list every candidate; there is no single best estimate |
+| Uncertainty | A truncated search yields unverified candidates only (UNKNOWN) | very large frame graphs need a higher `limit` for verified answers |
+| Performance | Each spatial question loads every judged transform of the world (6 queries, constant) | time grows with the number of transforms: 28 ms at 8, 84 ms at 128 stored transforms |
+| Performance | `where` makes about 32-35 queries; `composition` makes one judged read per node (212 for the gearbox, ~350 ms; an A1 design) | not optimised (no general optimisation authorised) |
+| Performance | The A0 performance risks remain tracked (selective p95 and ingestion over threshold in some rounds; noise of the same size) | unchanged by A2 |
+| Model | Positions and transforms are content parameters, so each new value is a new proposition (U-3 open) | proposition count grows with frequent pose updates |
+| Model | `holds` cannot single out one position (D-A2-5); `where` is the position interface | documented |
+| Scope | No shapes or extents, motion (Stage B), measurement activities or units (Stage C), agency, profiles or frontend | by design |
 
 ## Risks and what remains absent
 **Risks:**
