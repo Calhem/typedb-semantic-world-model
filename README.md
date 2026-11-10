@@ -17,7 +17,8 @@ from a robot to a video understanding pipeline to an agent's long-term memory.
 | World Ontology v0.1 | Proposal reviewed; D2 preferred ([docs/architecture/world-ontology-v0.1.md](docs/architecture/world-ontology-v0.1.md)) |
 | World Ontology v0.2 | **Frozen baseline** ([docs/architecture/world-ontology-v0.2.md](docs/architecture/world-ontology-v0.2.md)) |
 | **Core 0.3** | **Merged into `main` (2026-11-10): World Ontology v0.2 implemented, 78 tests** ([docs/core-0.3](docs/core-0.3/README.md)) |
-| Core 0.4 Stage A0 | On branch `feature/core-0.4-a0`, awaiting review (LABS-1.002): proposition ids, profile subtypes and roles, functional slots as data; 103 tests ([docs/core-0.4](docs/core-0.4/README.md)) |
+| **Core 0.4 Stage A0** | **Merged into `main` (2026-11-10, c9750d2):** proposition ids, profile subtypes and roles, functional constraints as data, and four corrections; 128 tests ([docs/core-0.4](docs/core-0.4/README.md)) |
+| Core 0.4 Stage A1 | On branch `feature/core-0.4-a1-physical`, awaiting review (LABS-1.006): physical structure and a reference world (a gearbox in a workshop); 142 tests ([docs/core-0.4/stage-a1.md](docs/core-0.4/stage-a1.md)) |
 | Next | World-representation layer (composition, causality, space and frames, quantities, agency, domain extensions); not started |
 
 Start with **[Phase 1C's outstanding decisions](docs/phase-1c/07-outstanding-decisions.md)**, then the
