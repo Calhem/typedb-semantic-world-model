@@ -3,7 +3,7 @@
 from datetime import datetime, timezone
 
 from conftest import T
-from worldmodel.semantics import AttestationRecord, Identity, Window, acceptance_state, usable, verdict
+from worldmodel.semantics import AttestationRecord, Identity, Replacement, Window, acceptance_state, usable, verdict
 
 REC = datetime(2030, 1, 1, tzinfo=timezone.utc)
 LATER = datetime(2031, 1, 1, tzinfo=timezone.utc)
@@ -50,7 +50,7 @@ def test_stipulations_are_constitutive_and_supersession_hides():
     s.acceptances.append(("system", "rejected", REC))
     assert acceptance_state(s, "system", None) == "accepted"
     a = att()
-    a.superseded_by.append(("b", LATER))
+    a.superseded_by.append(Replacement("b", LATER, "system", "asserts"))   # the system replaced its own claim
     assert usable(a, "system", REC) and not usable(a, "system", None)
     assert not usable(att(stance="hypothesises"), "system", None)
 

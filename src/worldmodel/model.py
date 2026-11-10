@@ -16,8 +16,8 @@ from typedb.driver import Credentials, DriverOptions, DriverTlsConfig, Transacti
 
 from . import typeql as q
 from .keys import as_ids, check_id, proposition_key
-from .semantics import (Answer, AttestationRecord, Identity, Status, Window, acceptance_state, answer_status,
-                        certainly_before, superseded, usable, verdict)
+from .semantics import (Answer, AttestationRecord, Identity, Replacement, Status, Window, acceptance_state,
+                        answer_status, certainly_before, superseded, usable, verdict)
 
 READ, WRITE, SCHEMA = TransactionType.READ, TransactionType.WRITE, TransactionType.SCHEMA
 SCHEMA_DIR = Path(__file__).resolve().parents[2] / "schema"
@@ -256,14 +256,17 @@ class WorldModel:
 
     def attest(self, world, type=None, roles=None, *, event=None, params=None, start=None, end=None,
                until_superseded=False, polarity=True, stance=None, basis=None, attester=SYSTEM, credence=None,
-               clock=None, id=None):
+               clock=None, supersedes=None, id=None):
         """Record that `attester` takes a stance on a content in `world` over a valid interval. Returns its id.
 
         Content: a proposition (`type`, `roles`, `params`; stored once) or an event description (`event` id).
         start/end: datetime, (earliest, latest) or Window; start None = from the start of the world. A missing end is
         UNKNOWN unless `until_superseded` (the attester commits that it holds until it records otherwise).
         Defaults: stance `stipulates` in hypothetical and simulated worlds, `asserts` otherwise; basis follows stance.
+        supersedes: the id of an earlier attestation by the same attester that this one replaces (a correction).
         """
+        if supersedes is not None and self._attestation(supersedes)["attester"] != attester:
+            raise ValueError("an attestation can only be superseded by its own attester (E3)")
         kind = self.world_kind(world)
         stance = stance or ("stipulates" if kind in VARIANT_KINDS else "asserts")
         if stance == "stipulates" and kind not in VARIANT_KINDS:
@@ -301,11 +304,16 @@ class WorldModel:
             if clock is not None:
                 clock_match, clock_link = "$k isa clock, has wm-id == $clock;", ", clock: $k"
                 values["clock"] = clock
-            rows = list(q.run(tx, f"""match $w isa world, has wm-id == $world; {content} {clock_match}
+            old_match, old_link = "", ""
+            if supersedes is not None:
+                old_match = "$old isa attestation, has wm-id == $old_id;"
+                old_link = " supersession (old: $old, new: $n), has recorded-at == $rec;"
+                values["old_id"] = supersedes
+            rows = list(q.run(tx, f"""match $w isa world, has wm-id == $world; {content} {clock_match} {old_match}
                 $who has wm-id == $attester; {{ $who isa physical-object; }} or {{ $who isa social-object; }};
-                insert attestation (attester: $who, content: $c, context: $w{clock_link}), has wm-id == $id,
+                insert $n isa attestation (attester: $who, content: $c, context: $w{clock_link}), has wm-id == $id,
                 has stance == $st, has polarity == $pol, has basis == $bs, has end-basis == $eb,
-                has recorded-at == $rec{attrs};""", values).as_concept_rows())
+                has recorded-at == $rec{attrs};{old_link}""", values).as_concept_rows())
             if not rows:
                 raise ValueError(f"world {world!r}, attester {attester!r}, content or clock not found")
             tx.commit()
@@ -471,11 +479,18 @@ class WorldModel:
             has recorded-at $vrec; $h has wm-id == $persp;""", {**params, "persp": perspective}):
             if klim is None or q.opt(r, "vrec") <= klim:
                 recs[q.opt(r, "aid")].acceptances.append((perspective, q.opt(r, "vd"), q.opt(r, "vrec")))
-        supers = [(q.opt(r, "aid"), q.opt(r, "nid"), q.opt(r, "srec"), q.opt(r, "nw"), q.opt(r, "nse"))
+        supers = [(q.opt(r, "aid"), q.opt(r, "nid"), q.opt(r, "srec"), q.opt(r, "nw"), q.opt(r, "nse"),
+                   q.opt(r, "nwid"), q.opt(r, "nst"))
                   for r in q.rows(tx, head + """ $su isa supersession (old: $a, new: $n), has recorded-at $srec;
-                  $n has wm-id $nid; $n isa attestation (context: $nwo); $nwo has wm-id $nw;
+                  $n has wm-id $nid, has stance $nst; $n isa attestation (context: $nwo, attester: $nwho);
+                  $nwo has wm-id $nw; $nwho has wm-id $nwid;
                   try { $n has valid-from-earliest $nse; };""", params)]
-        self.stats["queries"] += 4
+        new_acc = [(q.opt(r, "nid"), q.opt(r, "vd"), q.opt(r, "vrec"))
+                   for r in q.rows(tx, head + """ $su isa supersession (old: $a, new: $n); $n has wm-id $nid;
+                   $nacc isa acceptance (holder: $nh, accepted: $n), has verdict $vd, has recorded-at $vrec;
+                   $nh has wm-id == $persp;""", {**params, "persp": perspective})] if supers else []
+        self.stats["queries"] += 4 + (1 if supers else 0)
+        supers = [(*row, [(perspective, v, rec) for nid, v, rec in new_acc if nid == row[1]]) for row in supers]
         return recs, supers
 
     def _load(self, world, as_of=None, types=None, subjects=None, at=None, perspective=SYSTEM):
@@ -497,12 +512,16 @@ class WorldModel:
                                     if acc not in visible[aid].acceptances:
                                         visible[aid].acceptances.append(acc)
                         supers.extend(sup)
-        for old, new, rec, new_world, new_start in set(supers):
-            if old in visible and new_world in levels:
-                _, vlim, klim = levels[new_world]
-                ok = (klim is None or rec <= klim) and (vlim is None or new_start is None or new_start < vlim)
-                if ok and (new, rec) not in visible[old].superseded_by:
-                    visible[old].superseded_by.append((new, rec))
+        seen = set()
+        for old, new, rec, new_world, new_start, new_attester, new_stance, accs in supers:
+            if (old, new) in seen or old not in visible or new_world not in levels:
+                continue
+            seen.add((old, new))
+            _, vlim, klim = levels[new_world]
+            if (klim is None or rec <= klim) and (vlim is None or new_start is None or new_start < vlim):
+                visible[old].superseded_by.append(Replacement(
+                    new, rec, new_attester, new_stance,
+                    [acc for acc in accs if klim is None or acc[2] <= klim]))
         self.stats["attestations"] += len(visible)
         return visible
 
@@ -587,7 +606,7 @@ class WorldModel:
     @staticmethod
     def _alternatives(atts, t, perspective, as_of):
         return tuple(sorted(a.id for a in atts if acceptance_state(a, perspective, as_of) == "unreviewed"
-                            and not superseded(a, as_of) and verdict(a, t) is not None))
+                            and not superseded(a, perspective, as_of) and verdict(a, t) is not None))
 
     def value_at(self, world, type, subject, t, as_of=None, perspective=SYSTEM, key_role=None, value_role=None):
         """The value(s) of a relationship for `subject` at valid time t, for a perspective, as known at `as_of`."""
@@ -668,7 +687,7 @@ class WorldModel:
         for a in atts.values():
             if (type is None or a.ctype == type) and any(me & set(ids) for ids in a.roles.values()):
                 rows.append({**a.evidence(), "content": a.content, "type": a.ctype, "roles": a.roles,
-                             "state": acceptance_state(a, perspective, as_of), "superseded": superseded(a, as_of),
+                             "state": acceptance_state(a, perspective, as_of), "superseded": superseded(a, perspective, as_of),
                              "world_depth": a.depth})
         far = datetime.min.replace(tzinfo=timezone.utc)
         return sorted(rows, key=lambda r: (r["start"].earliest if r["start"] else far, r["recorded_at"], r["attestation"]))
@@ -801,7 +820,7 @@ class WorldModel:
         mine = [a for a in atts.values() if a.ctype != "same-as" and any(me & set(ids) for ids in a.roles.values())]
         ex = [a for a in mine if a.ctype == "existence"]
         alternatives = tuple(sorted(a.id for a in ex if acceptance_state(a, perspective, as_of) == "unreviewed"
-                                    and not superseded(a, as_of)))
+                                    and not superseded(a, perspective, as_of)))
         judged = self._judge(ex, ident, t, perspective, as_of)
         for val, support, _ in judged.values():
             ev = tuple(a.evidence() for a in support)

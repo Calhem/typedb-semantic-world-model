@@ -38,6 +38,17 @@ class Window:
 
 
 @dataclass
+class Replacement:
+    """A visible supersession of an attestation: the replacing attestation's id, when the supersession was recorded,
+    and what a perspective needs to judge it (its attester, stance and the perspective's acceptances of it)."""
+    id: str
+    recorded_at: datetime
+    attester: str
+    stance: str
+    acceptances: list = field(default_factory=list)   # [(holder, verdict, recorded_at)]
+
+
+@dataclass
 class AttestationRecord:
     id: str
     content: str                       # proposition key, or event-description id
@@ -56,12 +67,13 @@ class AttestationRecord:
     credence: float | None = None
     depth: int = 0                     # 0: the asked world; n: inherited from the n-th base world
     acceptances: list = field(default_factory=list)   # [(holder, verdict, recorded_at)]
-    superseded_by: list = field(default_factory=list)  # [(new attestation id, recorded_at)] visible in this context
+    superseded_by: list = field(default_factory=list)  # [Replacement] visible in this context
 
     def evidence(self):
         return {"attestation": self.id, "attester": self.attester, "stance": self.stance, "basis": self.basis,
                 "polarity": self.polarity, "world": self.world, "start": self.start, "end": self.end,
-                "recorded_at": self.recorded_at}
+                "recorded_at": self.recorded_at,
+                "superseded_by_source": sorted(r.id for r in self.superseded_by)}
 
 
 def acceptance_state(a, perspective, as_of):
@@ -84,13 +96,18 @@ def acceptance_state(a, perspective, as_of):
     return "accepted" if a.attester == perspective else "unreviewed"
 
 
-def superseded(a, as_of):
-    return any(as_of is None or rec <= as_of for _, rec in a.superseded_by)
+def superseded(a, perspective, as_of):
+    """Superseded *for this perspective*: its source has replaced it (a supersession recorded by `as_of`) **and** the
+    replacement is part of the perspective's view (its own, accepted by it, or a stipulation). A source's revision is
+    not another perspective's acceptance: until a perspective accepts the replacement it keeps the original, and if it
+    rejects the replacement it keeps the original for good."""
+    return any((as_of is None or r.recorded_at <= as_of) and acceptance_state(r, perspective, as_of) == "accepted"
+               for r in a.superseded_by)
 
 
 def usable(a, perspective, as_of):
-    """Supports answers for the perspective: accepted, not superseded, and a supporting stance."""
-    return (a.stance in SUPPORTING_STANCES and not superseded(a, as_of)
+    """Supports answers for the perspective: accepted, not superseded for it, and a supporting stance."""
+    return (a.stance in SUPPORTING_STANCES and not superseded(a, perspective, as_of)
             and acceptance_state(a, perspective, as_of) == "accepted")
 
 
@@ -152,7 +169,7 @@ class Identity:
             x, y = a.roles["same"][:2]
             if usable(a, perspective, as_of):
                 self._union(x, y)
-            elif acceptance_state(a, perspective, as_of) == "unreviewed" and not superseded(a, as_of):
+            elif acceptance_state(a, perspective, as_of) == "unreviewed" and not superseded(a, perspective, as_of):
                 self.proposed.append((a.id, x, y))
 
     def _find(self, x):

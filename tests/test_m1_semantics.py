@@ -4,7 +4,7 @@ until_ceased is now `until-superseded`; cessations are supersessions; reviews ar
 from datetime import datetime, timezone
 
 from conftest import T
-from worldmodel.semantics import AttestationRecord, Identity, Window, acceptance_state, usable, verdict
+from worldmodel.semantics import AttestationRecord, Identity, Replacement, Window, acceptance_state, usable, verdict
 
 REC = datetime(2030, 1, 1, tzinfo=timezone.utc)
 
@@ -32,7 +32,7 @@ def test_stated_end_window():
 
 def test_cessation_counts_only_once_recorded():
     a = att(Window.at(T("10:00")), basis="until-superseded")
-    a.superseded_by.append(("b", REC.replace(year=2031)))
+    a.superseded_by.append(Replacement("b", REC.replace(year=2031), "system", "asserts"))
     assert usable(a, "system", REC) and not usable(a, "system", None)
 
 
