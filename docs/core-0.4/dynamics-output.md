@@ -4,8 +4,8 @@
 
 ### Q1 What happened to the gearbox? (accepted event descriptions naming gbx-100, in time order)
 - 11-04 09:00..11-04 09:30 ev-inspection-report [action, inspection] by inspector; describes ['o-inspection']
-- 11-05 13:00..11-05 16:00 ev-repair [process, repair] by technician; describes ['o-repair']
 - 11-05 13:00..11-05 13:45 ev-disassembly [action, disassembly] by technician; describes ['o-disassembly']
+- 11-05 13:00..11-05 16:00 ev-repair [process, repair] by technician; describes ['o-repair']
 - 11-05 14:15..11-05 15:15 ev-reassembly [action, reassembly] by technician; describes ['o-reassembly']
 - 11-05 15:30..11-05 16:00 ev-test-run [action, test] by technician; describes ['o-test-run']
 - 11-05 16:00..11-05 16:00 ev-sign-off [sign-off] by inspector; describes ['o-sign-off']
@@ -31,6 +31,10 @@
 - began: has-quality {'bearer': ['gbx-100'], 'quality': ['condition'], 'value': ['operational']} [ASSERTED] stated by ['technician']; claimed events: [('ev-test-run', 'accepted', ['technician'])]
 - began: positioned-in {'frame': ['f-workshop'], 'positioned': ['gbx-100']} [ASSERTED] stated by ['cam-2']; claimed events: []
 - ended: has-quality {'bearer': ['gbx-100'], 'quality': ['condition'], 'value': ['faulty']} [ASSERTED] stated by ['inspector']; claimed events: [('ev-test-run', 'accepted', ['technician'])]
+- all transitions of gbx-100 in (11-03 12:00, 11-06 12:00] (LABS-1.015 contract):
+  - has-quality{'bearer': ['gbx-100'], 'quality': ['condition']}: ASSERTED [['operational']] -> ASSERTED [['faulty']]; world-state transition at 11-04 09:30 (certain); explained by no accepted effect claim
+  - has-quality{'bearer': ['gbx-100'], 'quality': ['condition']}: ASSERTED [['faulty']] -> ASSERTED [['operational']]; world-state transition at 11-05 16:00 (certain); explained by ['ev-test-run (initiates, unique)', 'ev-test-run (terminates, unique)']
+  - positioned-in{'frame': ['f-workshop'], 'positioned': ['gbx-100']}: UNKNOWN [] -> ASSERTED [{'x-max': 3.65, 'x-min': 3.55, 'y-max': 3.15, 'y-min': 3.05, 'z-max': 0.94, 'z-min': 0.9}]; judgement transition at 11-06 11:00 (certain); explained by no accepted effect claim
 
 ### Q4 Who performed the relevant actions?
 - technician: ev-disassembly [action, disassembly] 11-05 13:00..11-05 13:45 -> ['o-disassembly']
@@ -41,13 +45,13 @@
 - inspector: ev-inspection-report [action, inspection] 11-04 09:00
 
 ### Q5 What caused the gearbox to become operational again?
-- operational at 11-06 12:00: ASSERTED, support ['att:374506f0eee14242']
+- operational at 11-06 12:00: ASSERTED, support ['att:f353010dc4124e4c']
 - initiated by ev-test-run (claim accepted, by ['technician']), ended 11-05 16:00, describing ['o-test-run']
     cause: ev-worklog-replacement -> ev-test-run (description-level): accepted [ASSERTED], claimed by ['technician']
     cause: o-bearing-replacement -> o-test-run (occurrence-level, lifted via {'description': 'ev-test-run', 'occurrence': 'o-test-run'}): accepted [ASSERTED], claimed by ['technician']
 
 ### Q6 Which explanations are disputed, rejected or unreviewed?
-- o-relubrication -> o-test-run: disputed; cm-1 (denies, inference, accepted); inspector (asserts, testimony, accepted)
+- o-relubrication -> o-test-run: disputed; inspector (asserts, testimony, accepted); cm-1 (denies, inference, accepted)
 - o-reassembly -> o-test-run: unreviewed; cm-1 (asserts, inference, unreviewed)
 - o-inspection -> o-test-run: rejected; apprentice (asserts, testimony, rejected)
 - not a cause by succession: the inspection ended before the test run (before = True), and the only claim that it caused it was rejected; the disassembly precedes it too and no one claimed it as a cause
@@ -113,15 +117,15 @@ fetch { "cause": $xid, "effect": $yid, "polarity": $pol, "by": $by, "basis": $b,
         "verdicts": [ match $v isa acceptance (accepted: $a, holder: $h), has verdict $vd; $h has wm-id $hid;
                       fetch { "holder": $hid, "verdict": $vd }; ] };
 ```
-  {"attestation": "att:3abc5ed95aca4b2d", "basis": "testimony", "by": "technician", "cause": "o-disassembly", "effect": "o-bearing-replacement", "polarity": true, "verdicts": [{"holder": "system", "verdict": "accepted"}], "world": "actual"}
-  {"attestation": "att:44e3b58bd5074cf0", "basis": "stipulation", "by": "system", "cause": "o-relubrication", "effect": "o-test-run", "polarity": true, "verdicts": [], "world": "plan-relubricate-only"}
-  {"attestation": "att:488e32b76b7741f6", "basis": "testimony", "by": "apprentice", "cause": "o-inspection", "effect": "o-test-run", "polarity": true, "verdicts": [{"holder": "system", "verdict": "rejected"}], "world": "actual"}
-  {"attestation": "att:755910f0b5ed443c", "basis": "testimony", "by": "technician", "cause": "ev-worklog-replacement", "effect": "ev-test-run", "polarity": true, "verdicts": [{"holder": "system", "verdict": "accepted"}], "world": "actual"}
-  {"attestation": "att:abd5965ce17e49ff", "basis": "inference", "by": "cm-1", "cause": "o-relubrication", "effect": "o-test-run", "polarity": false, "verdicts": [{"holder": "system", "verdict": "accepted"}], "world": "actual"}
-  {"attestation": "att:c1ee7db10c844ef3", "basis": "testimony", "by": "inspector", "cause": "o-relubrication", "effect": "o-test-run", "polarity": true, "verdicts": [{"holder": "system", "verdict": "accepted"}], "world": "actual"}
-  {"attestation": "att:c73b949ef8c4485c", "basis": "stipulation", "by": "system", "cause": "o-bearing-replacement", "effect": "o-test-run", "polarity": false, "verdicts": [], "world": "plan-relubricate-only"}
-  {"attestation": "att:d5b683f3762648b2", "basis": "inference", "by": "cm-1", "cause": "o-reassembly", "effect": "o-test-run", "polarity": true, "verdicts": [], "world": "actual"}
-  {"attestation": "att:f9947f0a21b94e13", "basis": "testimony", "by": "technician", "cause": "o-bearing-replacement", "effect": "o-test-run", "polarity": true, "verdicts": [{"holder": "system", "verdict": "accepted"}], "world": "actual"}
+  {"attestation": "att:17a060df1560467c", "basis": "testimony", "by": "technician", "cause": "o-disassembly", "effect": "o-bearing-replacement", "polarity": true, "verdicts": [{"holder": "system", "verdict": "accepted"}], "world": "actual"}
+  {"attestation": "att:66c316032c514d11", "basis": "testimony", "by": "inspector", "cause": "o-relubrication", "effect": "o-test-run", "polarity": true, "verdicts": [{"holder": "system", "verdict": "accepted"}], "world": "actual"}
+  {"attestation": "att:6f361a91a95e433a", "basis": "testimony", "by": "technician", "cause": "o-bearing-replacement", "effect": "o-test-run", "polarity": true, "verdicts": [{"holder": "system", "verdict": "accepted"}], "world": "actual"}
+  {"attestation": "att:74c31e08781f482a", "basis": "testimony", "by": "technician", "cause": "ev-worklog-replacement", "effect": "ev-test-run", "polarity": true, "verdicts": [{"holder": "system", "verdict": "accepted"}], "world": "actual"}
+  {"attestation": "att:7fd4d5c06aa94131", "basis": "stipulation", "by": "system", "cause": "o-relubrication", "effect": "o-test-run", "polarity": true, "verdicts": [], "world": "plan-relubricate-only"}
+  {"attestation": "att:8261a220880e4b40", "basis": "inference", "by": "cm-1", "cause": "o-relubrication", "effect": "o-test-run", "polarity": false, "verdicts": [{"holder": "system", "verdict": "accepted"}], "world": "actual"}
+  {"attestation": "att:8daf4502adb34a9f", "basis": "inference", "by": "cm-1", "cause": "o-reassembly", "effect": "o-test-run", "polarity": true, "verdicts": [], "world": "actual"}
+  {"attestation": "att:8fa40a21f52e468d", "basis": "stipulation", "by": "system", "cause": "o-bearing-replacement", "effect": "o-test-run", "polarity": false, "verdicts": [], "world": "plan-relubricate-only"}
+  {"attestation": "att:afdaced0131f4d6d", "basis": "testimony", "by": "apprentice", "cause": "o-inspection", "effect": "o-test-run", "polarity": true, "verdicts": [{"holder": "system", "verdict": "rejected"}], "world": "actual"}
 
 ### R5 process membership: occurrences recorded as part of o-repair
 ```

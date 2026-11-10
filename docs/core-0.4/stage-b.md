@@ -4,6 +4,147 @@
 Stage C not started.** Base: `main` at 322c5c7 (Stages A0-A2 merged). Plan: [core-0.4-plan.md](../plans/core-0.4-plan.md), Stage B
 and 9.3. Ontology: World Ontology v0.2 §3.2 (frozen).
 
+## Decision register (LABS-1.014, updated LABS-1.015)
+Earlier sections keep the history; this register is the current state. Approved decisions are not reopened without a
+demonstrated conflict.
+
+### Approved decisions
+| # | Decision | Approved |
+|---|---|---|
+| B-arch | Stage B architecture: module `core-0.4-b` (`causes` between descriptions and occurrences), processes and actions as classifications, process membership as part-of between occurrences, `dynamics.py` read and write operations on the existing attestation model | LABS-1.011 |
+| F-B1 | Description-level and occurrence-level claims are distinct contents and never dispute each other automatically | **settled**, LABS-1.012 |
+| U-2 | A lifted claim keeps its original attestation status, is identified as lifted through an accepted describes link, and applies only if the occurrences' own existence judgement allows; a denied occurrence never gets an applicable explanation through a lifted description claim | **settled**, LABS-1.012 |
+| Occ-1 | An occurrence's existence is judged only from attestations of its own existence; `exists()` and `occurrence_status()` share that judgement; other things keep the Core 0.3 participation rule | LABS-1.012 |
+| Occ-2 | An accepted account of a denied occurrence stays visible as its source's account; claims involving a denied occurrence do not apply (`applies: false`) | LABS-1.011 |
+| Perf-1 | World-wide event and describes loads are made once per question (per-question memo; no cache across questions) | LABS-1.012 |
+| Q-B1 | `changes` reports transitions whose valid time intersects the requested interval, with uncertain windows, world-state vs judgement categories and explanations only from accepted effect claims (rulings Q-B1.1, Q-B1.2, Q-B1.4) | LABS-1.015 |
+| Q-B2 | One functional-conflict judgement for `value_at`, `holds`, `facts_about` and `changes` | LABS-1.015 |
+
+Implemented within the approved architecture and recorded for review, but not ruled on individually:
+- **D-B-1:** effects are written by `claim_effect` / `account`; `record_event` is unchanged.
+- **D-B-2:** causal and effect claims are timeless contents.
+- **D-B-4:** actions are classified without an agent-capacity check.
+- **D-B-5:** the condition constraint is declared in the reference world only.
+- **D-B-6:** `interval()` uses only accounts the perspective accepts.
+- **D-B-7:** the dynamics modules are opt-in.
+
+### Deferred capabilities
+- **Causal chain queries.** The plan's "list asserted links along a chain"; `explain` stops one step back.
+- **Processes as homogeneous, ongoing happenings,** with persistence policies across gaps (v0.2 C9).
+- **Agent capacity for actions** (Stage C).
+- **Measurement activities, quantities and units** (Stage C).
+- **Single-valued event roles,** with dispute labels on participants (D9).
+- **Remaining per-description and identity loads** in `actions_of`, `process_steps` and nested `holds`.
+
+### Unresolved architectural questions
+| # | Question | Evidence |
+|---|---|---|
+| ~~Q-B1~~ | **Resolved (LABS-1.015):** the temporal contract of `changes`; see "The `changes` contract" below | rulings Q-B1.1, Q-B1.2, Q-B1.4 |
+| ~~Q-B2~~ | **Resolved (LABS-1.015):** `facts_about` and `changes` use the same functional-conflict judgement as `value_at` | ruling Q-B2 |
+| D-A1-1, D-A1-3 | material marking; physical and dynamics modules opt-in | Stage A1 |
+| U-3 | rounding of continuous parameters in proposition keys | plan 9.7 |
+| Perf-A0 | the A0 performance thresholds are not established (tracked risk) | Core 0.4 README |
+
+### The `changes` contract (implemented, LABS-1.015)
+`changes(world, subject, t1, t2, as_of, perspective)` returns:
+```
+{ "subject", "from", "to", "context": {world, perspective, as_of},
+  "transitions": [ {
+      "track":    {"kind": "slot", "type", "key", "value_role"}        # a functional slot keyed by the subject
+                | {"kind": "content", "type", "roles", "params"},       # any other content involving it
+      "category": "world-state" | "judgement",
+      "before", "after": {"status", "values" | "holds", "support", "conflicts"},
+      "window": (earliest, latest),       # possible transition interval; equal when certain
+      "within": "certain" | "possible",   # relative to (t1, t2]; transitions outside are not returned
+      "began", "ended": [contents],
+      "explanations": [{"event", "effect", "content", "claim", "claim_status", "claimed_by", "start", "end",
+                        "occurrences", "attribution": "unique" | "ambiguous"}] } ],
+  "began", "ended": [views over the transitions], "unchanged": n }
+```
+**How it is computed.**
+- **One load, then a scan.** The subject's records are loaded once (plus, for a slot keyed by another thing, the
+  rival records of that slot). Every start and end bound of their windows is a boundary. The judged state is
+  constant between boundaries, so judging once at each boundary gives the whole timeline. The judging is done in
+  Python; there are no extra queries per boundary.
+- **Categories (Q-B1.2).** World-state: between two accepted states (a value, or accepted "does not hold").
+  Judgement: into or out of UNKNOWN or DISPUTED. A judgement transition is never presented as physical change.
+- **Uncertain times (Q-B1.1).** Accepted A, then only UNKNOWN, then accepted B ≠ A is one world-state transition
+  whose window is the UNKNOWN gap. No instant is invented. Relative to (t1, t2], a transition is "certain" if its
+  window lies inside, "possible" if the window overlaps, and is omitted if outside. A change at exactly t1 is already
+  in effect at t1, so it is outside.
+- **Explanations (Q-B1.4).** Only *accepted* initiates / terminates claims about a content that began or ended in
+  the transition count. A claim is attributed only to activations that its event did not certainly start after: an
+  effect cannot precede the start of its event. That is the one temporal constraint used; proximity is never
+  evidence. If a claim fits more than one activation of the same content on the whole timeline, it is listed on each
+  as "ambiguous" and never chosen. Claims are looked up only for contents that change in a returned transition.
+- **One functional judgement (Q-B2).** `facts_about` and `changes` use `value_at`'s functional-conflict judgement. A
+  content in a functional conflict is DISPUTED, with its own support and the rival attestations. This includes
+  rivals that do not mention the subject: seen from a place, the thing's other places, found by one targeted load
+  only in that case. `facts_about` entries add `conflicts`, and `support_status` (the content's own status before
+  conflicts). `where()` uses `support_status` so that its per-question angle tolerance (D-A2-7) still decides
+  orientation conflicts.
+
+**The six probe cases, now** (`probes/core04_b_changes_contract.out.json`; before: `.before.json`):
+| Case | Result |
+|---|---|
+| 1. a → b (10:00) → a (11:00), interval 09:30-12:00 | two world-state transitions, both certain (was: nothing) |
+| 2. move known only within 10:00-10:20 | one world-state transition a → b with window 10:00..10:20: possible for 10:15-11:00, certain for 09:00-11:00, not returned for 10:30-11:00 |
+| 3. state with no stated end | nothing (it never holds) |
+| 4. rival claim accepted at 10:00 | judgement transition ASSERTED a → DISPUTED (a, b) at 10:00 |
+| 5. a begins at 08:00 (no event) and 13:00 (ev-move-2) | 07:00-08:30: judgement transition UNKNOWN → a, no explanation; 12:00-14:00: world-state b → a, explained by ev-move-2 (unique) |
+| 6. delayed effect: event 09:50-10:00, state from 10:45 | world-state a → b at 10:45 (certain), explained by ev-order (unique); the event itself is not a change |
+
+**In the reference world**, 11-03 12:00 to 11-06 12:00:
+- operational → faulty at 11-04 09:30: world-state, certain, no accepted effect claim;
+- faulty → operational at 11-05 16:00: world-state, certain, explained by ev-test-run (initiates and terminates,
+  unique);
+- the camera's first position fix: a judgement transition.
+
+Before, `changes` reported the condition as "unchanged" over this period.
+
+**Scaling** (`dynamics-scaling.json`; memo only: `dynamics-scaling-memo-1.012.json`; first scan before the
+claim-lookup restriction: `dynamics-scaling-scan-first.json`). Same session, median of five, changes(gbx-100,
+repair) at each size, as memo only → first scan → final:
+| Extra cycles | 0 | 4 | 16 | 64 |
+|---|---|---|---|---|
+| ms | 184 → 329 → 83 | 203 → 385 → 89 | 220 → 336 → 115 | 368 → 464 → 567 |
+| TypeQL queries | 85 → 281 → 58 | 85 → 281 → 58 | 85 → 281 → 58 | 86 → 283 → 59 |
+| records | 105 → 58 → 56 | 129 → 86 → 80 | 201 → 170 → 152 | 489 → 506 → 440 |
+
+- **Constant query count.** Boundary scanning adds no queries per boundary. The final version makes fewer queries
+  than the memo-only version, because the old one judged the subject twice.
+- **The 64-cycle run was noisy.** Its final figure (567 ms) came from a run in which every question was slower,
+  including ones whose queries did not change (`process_steps` 1,067 → 1,588 ms with identical queries), so the
+  latency difference at that size is not established.
+- **Other questions** keep their query and record counts.
+
+### Q-B1: the `changes` temporal contract (LABS-1.014 probe results, before the rulings)
+Requested contract: return state transitions whose effective valid time intersects the requested interval, judged for
+the knowledge time, perspective and world. Keep event time, transition valid time, knowledge time and explanations
+apart. An event outside the interval may explain a transition inside it, but is never itself an in-period change.
+
+**What `changes` does today.** It samples the judged state at two instants, t1 and t2. Whatever holds at t2 and not
+at t1 "began"; the reverse "ended". Every event ever claimed to initiate or terminate the content is attached.
+
+| Case (probe) | Today | Supported by the data model? |
+|---|---|---|
+| 1. box at a, then b (10:00-11:00), then a again; interval 09:30-12:00 | nothing changed | **yes:** transitions with certain times can be found exactly from the attestations' start and end windows; two-instant sampling misses them (a defect to fix once the contract is ruled) |
+| 6. delayed effect: event 09:50-10:00, state from 10:45; interval 10:30-11:00 | "b began", explained by the event | **yes:** the event is provenance, not an in-period change |
+| 3. a state with no stated end, not until superseded | never holds (UNKNOWN even at its start) | yes: nothing holds, so there is no transition |
+| 2. a move known only within 10:00-10:20; interval 10:15-11:00 | judged a, then UNKNOWN (10:00-10:20), then b | **no:** the transition has a window, not an instant, and may or may not lie in the interval. Needs a rule: "possibly in period" (window intersects) vs "certainly in period" (window inside), reported how |
+| 4. a rival claim accepted from 10:00 | "b began"; `value_at` says DISPUTED | **no:** the judged state moves to DISPUTED without any state accepted as beginning or ending. Is that a transition, and which read path defines it (Q-B2)? |
+| 2 and 4 together | — | **no:** changes of judged status (to UNKNOWN or DISPUTED) are not accepted beginnings or endings. Whether they count as transitions is undefined |
+| 5. box at a begins at 08:00 (no event) and again at 13:00 (ev-move-2); interval 07:00-08:30 | ev-move-2 listed as the explanation of the 08:00 transition | **no:** `initiates` links an event to a *content*, not to one occurrence of that content beginning. Tying events to particular transitions needs a time rule, which delayed effects (case 6) make non-trivial. Example rule: "events that ended at or before the transition and after the content's previous transition". That would be a new inference |
+
+**Decisions requested:**
+1. the treatment of uncertain transition windows;
+2. whether changes to UNKNOWN or DISPUTED are transitions;
+3. which read path defines a transition (Q-B2);
+4. the rule, if any, for associating claimed events with particular transitions.
+
+With those ruled, the implementation is a boundary scan over the attestation windows of the subject's contents,
+judged at each boundary, which can be added without schema changes.
+
 ## Run it
 ```bash
 uv run python -I scripts/show_dynamics.py                       # builds wm-reference-gearbox (all extensions)
@@ -264,6 +405,58 @@ descriptions.
 
 Loading a world's events once per question would remove most of the growth.
 
+## LABS-1.012: settled decisions and consolidation
+### Settled architectural decisions
+| # | Decision (settled, LABS-1.012) |
+|---|---|
+| **F-B1** | Description-level and occurrence-level causal claims are distinct contents. They never dispute each other automatically: a denial at one level leaves an accepted claim at the other level accepted. |
+| **U-2** | A lifted claim keeps its original attestation status and is identified as lifted (`lifted: true`, `lifted_via` the accepted describes link). Whether it applies is judged against the occurrences' own existence: `applies` is false if any occurrence involved is denied, null if any is disputed. A denied occurrence never gets an applicable causal explanation through a lifted description claim; the claim stays visible as its source's account. |
+| **Occurrence existence** | `exists()` and `occurrence_status()` share one judgement. An occurrence is judged only from attestations of its own existence. Participation (accepted descriptions, describes links, causal claims, process membership) never establishes it. Other things keep the Core 0.3 rule that participation implies existence. |
+
+### One existence judgement
+- **`exists(world, occurrence, t)`.** An existence judgement gives ASSERTED or STIPULATED (true, or false before the
+  occurrence's existence starts or after it ends) or DISPUTED. Without one, the answer is UNKNOWN when records about
+  the occurrence are visible, otherwise NOT_YET_KNOWN. It is never INFERRED from participation. Unreviewed existence
+  claims are returned as `alternatives`, and the evidence keeps the sources.
+- **`occurrence_status`.** It reads its status from that answer (accepted / denied / disputed / not established) and
+  includes the answer itself. With `details=True`, the default, it also lists the existence attestations and every
+  description, each with its source.
+- **What it costs.** The occurrence check is one kind lookup, made only when `exists()` would otherwise infer
+  existence from participation. Non-occurrences answer as before.
+- **Semantics preserved.** Valid time, knowledge time, perspective and hypothetical worlds work as before
+  (`tests/test_h_b4_consolidation.py`).
+
+### Events loaded once per question
+`_Memo` is a per-question memo, created inside one read operation and passed down. It is not a cache: it never
+outlives the question. It loads the world's event attestations and describes links at most once for that world,
+knowledge time and perspective. `changes`, `explain`, `causes_of`, `_events_claiming`, `interval`, `occurrences_of`
+and `occurrence_status` use it. No schema change and no change to any answer: a test compares every answer with and
+without it, on both paths.
+
+Same-session scaling (`scripts/measure_dynamics_scaling.py`, median of five).
+Before = `main` ff4341b (`dynamics-scaling-before-1.012.json`); after = this branch (`dynamics-scaling.json`).
+| Extra cycles (events / propositions / attestations) | changes: ms, queries, records | explain: ms, queries, records |
+|---|---|---|
+| 0 (12 / 141 / 163) | 188 → 188; 95 → 85; 107 → 105 | 690 → 460; 503 → 298; 265 → 107 |
+| 4 (20 / 173 / 203) | 297 → 200; 135 → 85; 215 → 129 | 837 → 545; 543 → 298; 441 → 127 |
+| 16 (44 / 269 / 323) | 728 → 222; 255 → 85; 923 → 201 | 1,275 → 445; 663 → 298; 1,353 → 187 |
+| 64 (140 / 653 / 803) | 3,516 → 476; 736 → 86; 9,515 → 489 | 4,840 → 637; 1,144 → 299; 10,761 → 427 |
+
+**Effect on `changes` and `explain`.** Their query counts are now constant in world size. The remaining growth is
+records: the one event load per question returns every event of the world.
+
+**Effect on other questions.**
+| Question | Before → after |
+|---|---|
+| `causes_of` | 238 → 143 queries at every size; 504 → 399 ms at 64 cycles |
+| `occurrence_status` | 33 → 48 queries, +15-20 ms: it now reads its status through `exists()` (one judgement) before listing provenance |
+| `effects_of`, `process_steps`, `actions_of`, `value_of` | same query counts; latency within noise |
+
+**Not addressed** (outside this increment's scope):
+- `actions_of` still makes one describes load per description;
+- identity is still loaded several times per question;
+- `effects_of` does not use the memo, because it reads one interval.
+
 ## Remaining limitations
 - **No causal chains.** There is no chain query yet; the plan's "a chain query lists asserted links" is not
   implemented. `explain` stops at the causes of the initiating event.
@@ -271,9 +464,10 @@ Loading a world's events once per question would remove most of the growth.
   persistence policy and no "homogeneous, ongoing" check (v0.2 C9).
 - **Participant roles are single-valued per description,** one patient and so on (Core 0.3 `@card`). The occurrence
   view lists every participant per description without a dispute label (D9 stays open).
-- **The new questions are slow,** and `changes` / `explain` grow superlinearly with the number of events claiming the
-  same outcome (LABS-1.011 scaling), because of the repeated loads listed above.
-- **Two existence answers.** The generic `exists()` still infers an occurrence's existence from participation (Core
-  0.3 behaviour); `occurrence_status` is the occurrence-specific answer.
+- **Still slow in places.** The dynamics questions take hundreds of milliseconds. `changes` and `explain` no longer
+  grow superlinearly (LABS-1.012), but `actions_of` and `process_steps` still grow linearly in queries.
+- **`changes` lists every claimed event.** It lists all events claimed to have initiated or terminated a state that
+  changed, including events outside the asked period (for example, later test runs). This behaviour was kept
+  unchanged and needs a ruling.
 - **Out of scope:** no prediction, simulation, automatic causal inference, measurement ontology, agency or
   capabilities, domain extensions or frontend (by design).

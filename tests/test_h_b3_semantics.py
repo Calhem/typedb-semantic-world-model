@@ -65,8 +65,8 @@ def test_an_accepted_description_does_not_establish_the_occurrence(world):
     assert [(d["description"], d["account"], d["account_by"], d["describes"]) for d in st["descriptions"]] == [
         ("ev-maintenance-record", "accepted", ["system"], "accepted"),
         ("ev-worklog-replacement", "accepted", ["technician"], "accepted")]
-    # the generic exists() still infers existence from participation (Core 0.3); occurrence_status does not
-    assert wm.exists(w, "o-bearing-replacement", g.AFTER).holds is True
+    # LABS-1.012: the generic exists() now agrees: participation does not establish an occurrence
+    assert wm.exists(w, "o-bearing-replacement", g.AFTER).holds is None
 
 
 def test_conflicting_descriptions_stay_attributable_to_their_sources(world):

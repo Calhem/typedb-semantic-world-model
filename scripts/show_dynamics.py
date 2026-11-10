@@ -101,6 +101,17 @@ def main():
             print(f"- {kind}: {x['type']} {x['roles']} [{x['status'].value}] stated by {x['stated_by']};"
                   f" claimed events: {evs}")
 
+        print(f"- all transitions of gbx-100 in ({g.BEFORE:%m-%d %H:%M}, {g.AFTER:%m-%d %H:%M}] (LABS-1.015 contract):")
+        for tr in wm.changes(w, "gbx-100", g.BEFORE, g.AFTER)["transitions"]:
+            tk, (e0, e1) = tr["track"], tr["window"]
+            what = f"{tk['type']}{tk.get('key', tk.get('roles'))}"
+            def st(x):
+                return f"{x['status'].value} {x.get('values', x.get('holds'))}"
+            win = f"{e0:%m-%d %H:%M}" if e0 == e1 else f"{e0:%m-%d %H:%M}..{e1:%m-%d %H:%M}"
+            exps = [f"{e['event']} ({e['effect']}, {e['attribution']})" for e in tr["explanations"]]
+            print(f"  - {what}: {st(tr['before'])} -> {st(tr['after'])}; {tr['category']} transition at {win}"
+                  f" ({tr['within']}); explained by {exps or 'no accepted effect claim'}")
+
         print("\n### Q4 Who performed the relevant actions?")
         for act in wm.actions_of(w, "technician"):
             print(f"- technician: {act['event']} [{', '.join(act['kinds'])}] {t(act['start'])}..{t(act['end'])}"

@@ -92,7 +92,8 @@ class PhysicalMixin:
             out.append({"frame": f["roles"]["frame"][0],
                         **{axis: (p[f"{axis}-min"], p[f"{axis}-max"]) for axis in AXES},
                         "orientation": tuple(p[k] for k in ("qw", "qx", "qy", "qz")) if "qw" in p else None,
-                        "status": f["status"], "support": f["support"]})
+                        "status": f["status"], "support": f["support"], "conflicts": f["conflicts"],
+                        "support_status": f["support_status"]})
         return sorted(out, key=lambda e: e["frame"])
 
     def frame_info(self, world, frame, t, as_of=None, perspective=SYSTEM):
@@ -376,7 +377,9 @@ class PhysicalMixin:
                 **mapped,
                 "orientation": qmul(total.q, p["orientation"]) if p["orientation"] and total is not None else
                 (p["orientation"] if direct else None),
-                "status": p["status"] if direct else r["status"], "stated_in": p["frame"], "stated": box,
+                # where() judges conflicts between candidates itself, under the question's angle tolerance (D-A2-7),
+                # so a direct candidate carries its own support's status, not the default-tolerance conflict status
+                "status": p["support_status"] if direct else r["status"], "stated_in": p["frame"], "stated": box,
                 "orientation_stated": p["orientation"], "position_support": p["support"], "direct": direct,
                 "rule": None if direct else RULE, "chain": r["chain"], "reason": r["reason"], "search": r["search"],
                 "verified": r["search"]["verified"]})

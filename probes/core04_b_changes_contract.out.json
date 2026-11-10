@@ -1,0 +1,63 @@
+{
+ "1 transitions entirely inside [09:30, 12:00]": {
+  "judged": {
+   "9:30": "ASSERTED ['a']",
+   "10:30": "ASSERTED ['b']",
+   "12:00": "ASSERTED ['a']"
+  },
+  "changes()": [
+   "slot located-at{'located': ['box']}: ASSERTED [['a']] -> ASSERTED [['b']] | world-state | at 10:00 (certain) | explained by none",
+   "slot located-at{'located': ['box']}: ASSERTED [['b']] -> ASSERTED [['a']] | world-state | at 11:00 (certain) | explained by none"
+  ]
+ },
+ "2 a transition known only within [10:00, 10:20], interval [10:15, 11:00]": {
+  "judged": {
+   "9:59": "ASSERTED ['a']",
+   "10:05": "UNKNOWN []",
+   "10:15": "UNKNOWN []",
+   "10:20": "ASSERTED ['b']"
+  },
+  "changes() [10:15, 11:00]": [
+   "slot located-at{'located': ['box']}: ASSERTED [['a']] -> ASSERTED [['b']] | world-state | at 10:00..10:20 (possible) | explained by none"
+  ],
+  "changes() [10:30, 11:00]": [],
+  "changes() [09:00, 11:00]": [
+   "slot located-at{'located': ['box']}: ASSERTED [['a']] -> ASSERTED [['b']] | world-state | at 10:00..10:20 (certain) | explained by none"
+  ],
+  "note": "the move happened at some time in [10:00, 10:20]; it may or may not lie in [10:15, 11:00]"
+ },
+ "3 a state with an unknown end": {
+  "judged": {
+   "9:00": "UNKNOWN []",
+   "9:01": "UNKNOWN []",
+   "12:00": "UNKNOWN []"
+  },
+  "changes() [08:00, 12:00]": [],
+  "note": "true at its start instant, undecided after: is true -> unknown an 'ended' transition?"
+ },
+ "4 a rival claim accepted from 10:00": {
+  "judged": {
+   "9:30": "ASSERTED ['a']",
+   "10:30": "DISPUTED ['a', 'b']"
+  },
+  "changes() [09:30, 10:30]": [
+   "slot located-at{'located': ['box']}: ASSERTED [['a']] -> DISPUTED [['a'], ['b']] | judgement | at 10:00 (certain) | explained by none"
+  ],
+  "note": "a -> disputed(a, b): neither 'a ended' nor 'b began' is accepted; is it a transition?"
+ },
+ "5 'box at a' begins at 08:00 (no event) and again at 13:00 (ev-move-2)": {
+  "changes() [07:00, 08:30]": [
+   "slot located-at{'located': ['box']}: UNKNOWN [] -> ASSERTED [['a']] | judgement | at 08:00 (certain) | explained by none"
+  ],
+  "changes() [12:00, 14:00]": [
+   "slot located-at{'located': ['box']}: ASSERTED [['b']] -> ASSERTED [['a']] | world-state | at 13:00 (certain) | explained by ['ev-move-2 (initiates, unique)']"
+  ],
+  "note": "ev-move-2 (12:50-13:00) must not explain the 08:00 activation"
+ },
+ "6 delayed effect: event 09:50-10:00, state from 10:45; interval [10:30, 11:00]": {
+  "changes()": [
+   "slot located-at{'located': ['box']}: ASSERTED [['a']] -> ASSERTED [['b']] | world-state | at 10:45 (certain) | explained by ['ev-order (initiates, unique)']"
+  ],
+  "note": "event before the interval, transition inside: allowed as provenance (supported)"
+ }
+}

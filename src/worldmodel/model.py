@@ -1147,7 +1147,12 @@ class WorldModel(PhysicalMixin, DynamicsMixin):
 
     def exists(self, world, thing, t, as_of=None, perspective=SYSTEM):
         """ASSERTED/STIPULATED from existence attestations (before creation and after destruction: false); INFERRED
-        true if the thing takes part in content holding at t; otherwise UNKNOWN, or NOT_YET_KNOWN."""
+        true if the thing takes part in content holding at t; otherwise UNKNOWN, or NOT_YET_KNOWN.
+
+        An occurrence (LABS-1.012) is judged only from attestations of its own existence: taking part in holding
+        content (an accepted describes link, a causal claim, part-of a process) never establishes that it happened,
+        so without an existence judgement the answer is UNKNOWN (records about it are visible) or NOT_YET_KNOWN.
+        Other things keep the Core 0.3 rule. occurrence_status() reads its status from this answer."""
         atts, ident = self._view(world, as_of, perspective, None, [thing])
         me = set(ident.members(thing))
         mine = [a for a in atts.values() if a.kind != "same-as" and any(me & set(ids) for ids in a.roles.values())]
@@ -1163,6 +1168,8 @@ class WorldModel(PhysicalMixin, DynamicsMixin):
             return Answer(answer_status(support), val, support=ids, alternatives=alternatives, evidence=ev)
         others = [a for cls, (val, sup, _) in self._judge([a for a in mine if a.kind != "existence"], ident, t,
                                                           perspective, as_of).items() if val is True for a in sup]
+        if others and self.is_a(self._kind_of_id(thing), "occurrence"):
+            others = []                           # participation never establishes an occurrence (LABS-1.012)
         if others:
             return Answer(Status.INFERRED, True, support=tuple(sorted(a.id for a in others)),
                           alternatives=alternatives, evidence=tuple(a.evidence() for a in others))
@@ -1172,17 +1179,52 @@ class WorldModel(PhysicalMixin, DynamicsMixin):
 
     # ---- listings -----------------------------------------------------------------------------------------------
     def facts_about(self, world, subject, t, as_of=None, perspective=SYSTEM):
-        """Every content (other than events and identity links) involving the subject that holds at t."""
+        """Every content (other than events and identity links) involving the subject that holds at t. A content in a
+        functional conflict is listed with status DISPUTED and the conflicting attestations (Q-B2, LABS-1.015)."""
         atts, ident = self._view(world, as_of, perspective, None, [subject], at=t)
         me = set(ident.members(subject))
         rel = [a for a in atts.values() if a.kind not in ("event", "same-as")
                and any(me & set(ids) for ids in a.roles.values())]
         out = []
-        for cls, (val, support, _) in self._judge(rel, ident, t, perspective, as_of).items():
-            if val is True:
+        rivals_pool = self._slot_rivals(world, as_of, perspective, rel, me, ident, at=t,
+                                        pool=None if self.selective else atts)
+        mine = {self._class(a, ident) for a in rel}
+        judged = self._judge(rel + rivals_pool, ident, t, perspective, as_of)
+        # The same functional-conflict judgement as value_at / holds (Q-B2, LABS-1.015): a holding content that gives a
+        # functional slot a different value than another holding content is DISPUTED, with the rival attestations,
+        # including rivals that do not mention the subject (seen from a place, the thing's other places).
+        conflicts = self._conflicts([c for c, (val, _, _) in judged.items() if val is True])
+        for cls, (val, support, _) in judged.items():
+            if val is True and cls in mine:
+                rivals = sorted({a.id for c in conflicts.get(cls, ()) for a in judged[c][1]})
                 out.append({"type": cls[0], "roles": {r: list(ids) for r, ids in cls[1]}, "params": dict(cls[2]),
-                            "support": sorted(a.id for a in support), "status": answer_status(support)})
+                            "support": sorted(a.id for a in support),
+                            "status": Status.DISPUTED if rivals else answer_status(support), "conflicts": rivals,
+                            "support_status": answer_status(support)})    # before functional conflicts
         return sorted(out, key=lambda f: (f["type"], str(f["roles"])))
+
+    def _slot_rivals(self, world, as_of, perspective, recs, me, ident, at=None, pool=None):
+        """Records that compete in a functional slot with `recs` but do not mention the subject (Q-B2, LABS-1.015): for
+        each constraint whose key players do not include the subject (the subject is a value, e.g. a place), the other
+        contents of that slot. Selective: one targeted load per constraint type by the key players, only in that case;
+        full load: taken from `pool`. Returns a list of records not already in `recs`."""
+        mine = {ident.canonical(x) for x in me}
+        keys = {}
+        for a in recs:
+            for decl, ks, _ in self._constraints(a.ctype):
+                players = {x for r in ks for x in a.roles.get(r, [])}
+                if players and not mine & {ident.canonical(x) for x in players}:
+                    keys.setdefault(decl, set()).update(players)
+        have = {a.id for a in recs}
+        extra = {}
+        for decl, players in sorted(keys.items()):
+            members = sorted({m for x in players for m in ident.members(x)})
+            found = ({k: a for k, a in pool.items() if self.is_a(a.ctype, decl)} if pool is not None else
+                     self._load(world, as_of, types=[decl], subjects=members, at=at, perspective=perspective))
+            for k, a in found.items():
+                if k not in have and any(set(members) & set(ids) for ids in a.roles.values()):
+                    extra[k] = a
+        return list(extra.values())
 
     def find(self, name, world=None, as_of=None, perspective=SYSTEM):
         """Ids whose name or alt-name equals `name` (every match). With `world`, only things that world's visible
