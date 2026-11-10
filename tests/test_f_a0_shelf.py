@@ -5,8 +5,6 @@ v0.2 §5.3 rule 2: a functional conflict is "incompatible values for a single-va
 compatible, whichever role the question is asked by.
 """
 
-import pytest
-
 from conftest import T
 from worldmodel.semantics import Status
 
@@ -64,8 +62,6 @@ def test_two_places_named_in_different_frames_are_still_two_places(wm):
     assert wm.value_at(w, "located-at", "b1", T("10:30")).status == Status.DISPUTED
 
 
-@pytest.mark.xfail(strict=True, reason="Core 0.3 defect F-5 (LABS-1.003), not corrected: the selective path loads "
-                   "identity only for the subject, so co-referring value players stay two values; full load merges them")
 def test_co_referring_place_names_answer_alike_on_both_paths(wm):
     w = setup(wm)
     at(wm, w, "b1", "shelf", T("10:00"))

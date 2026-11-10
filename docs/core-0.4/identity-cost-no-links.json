@@ -1,0 +1,69 @@
+{
+ "dataset": {
+  "objects": 200,
+  "places": 30,
+  "moves": 300,
+  "links": 0,
+  "queries": 60,
+  "rounds": 5,
+  "seed": 11
+ },
+ "rounds": {
+  "on": [
+   {
+    "median_ms": 20.24,
+    "queries_per_question": 11.73
+   },
+   {
+    "median_ms": 18.19,
+    "queries_per_question": 11.72
+   },
+   {
+    "median_ms": 17.87,
+    "queries_per_question": 11.72
+   },
+   {
+    "median_ms": 18.66,
+    "queries_per_question": 11.72
+   },
+   {
+    "median_ms": 18.91,
+    "queries_per_question": 11.72
+   }
+  ],
+  "off": [
+   {
+    "median_ms": 17.57,
+    "queries_per_question": 10.72
+   },
+   {
+    "median_ms": 17.35,
+    "queries_per_question": 10.72
+   },
+   {
+    "median_ms": 16.6,
+    "queries_per_question": 10.72
+   },
+   {
+    "median_ms": 17.63,
+    "queries_per_question": 10.72
+   },
+   {
+    "median_ms": 18.75,
+    "queries_per_question": 10.72
+   }
+  ]
+ },
+ "median_of_rounds_ms": {
+  "on": 18.66,
+  "off": 17.57
+ },
+ "queries_per_question": {
+  "on": 11.73,
+  "off": 10.72
+ },
+ "answers_differing_from_full_load": {
+  "on": 0,
+  "off": 0
+ }
+}

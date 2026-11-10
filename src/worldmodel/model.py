@@ -729,6 +729,46 @@ class WorldModel:
         if ids is None or not self.selective:
             same = self._load(world, as_of, types=["same-as"], perspective=perspective)
             return Identity(same.values(), perspective, as_of)
+        same, _ = self._identity_links(world, as_of, perspective, ids)
+        return Identity(same.values(), perspective, as_of)
+
+    def _identity_links(self, world, as_of, perspective, ids, same=None, known=None):
+        """same-as attestations reachable from `ids` through links usable by the perspective (transitively), added to
+        `same`; `known` is every id whose links are loaded. World, knowledge time and perspective rules apply as in
+        _load. Returns (same, known)."""
+        same = dict(same or {})
+        known = set(known or ())
+        frontier = sorted(set(ids) - known)
+        known |= set(frontier)
+        while frontier:
+            same.update(self._load(world, as_of, types=["same-as"], subjects=frontier, perspective=perspective))
+            ident = Identity(same.values(), perspective, as_of)
+            group = {m for i in known for m in ident.members(i)}
+            frontier = sorted(group - known)
+            known |= group
+        return same, known
+
+    def _linked_ids(self, ids):
+        """The ids among `ids` that take part in any stored same-as content, in any world (one targeted query per 50
+        ids). A cheap pre-filter: an id without same-as content cannot be co-referring for anyone."""
+        out, ids = set(), sorted(ids)
+        with self.driver.transaction(self.database, READ) as tx:
+            for i in range(0, len(ids), 50):
+                chunk = ids[i:i + 50]
+                alts = " or ".join(f"{{ $x has wm-id == $i{j}; }}" for j in range(len(chunk)))
+                out |= {q.opt(r, "xid") for r in q.rows(
+                    tx, f"match $c isa same-as; $c links (same: $x); $x has wm-id $xid; {alts};",
+                    {f"i{j}": x for j, x in enumerate(chunk)})}
+        return out
+
+    def _selective_identity(self, world, as_of, perspective, same, known, atts):
+        """Identity for a selective answer: the subjects' links (`same`, `known`), plus links of every other player of
+        the loaded attestations that has same-as content, so players compare as on the full load (F-5, LABS-1.004)."""
+        players = {x for a in atts.values() for ids in a.roles.values() for x in ids} - known
+        linked = self._linked_ids(players) if players else set()
+        if linked:
+            same, known = self._identity_links(world, as_of, perspective, linked, same, known)
+        return Identity(same.values(), perspective, as_of)
         known, frontier, same = set(ids), sorted(set(ids)), {}
         while frontier:
             same.update(self._load(world, as_of, types=["same-as"], subjects=frontier, perspective=perspective))
@@ -754,10 +794,12 @@ class WorldModel:
             atts = self.visible(world, as_of, perspective)
             ident = Identity([a for a in atts.values() if a.kind == "same-as"], perspective, as_of)
             return atts, ident
-        ident = self.identity(world, as_of, perspective, ids=subject_ids)
+        same, known = self._identity_links(world, as_of, perspective, subject_ids)
+        ident = Identity(same.values(), perspective, as_of)
         members = sorted({m for s in subject_ids for m in ident.members(s)})
-        return self._load(world, as_of, types=[type] if type else None, subjects=members, at=at,
-                          perspective=perspective), ident
+        atts = self._load(world, as_of, types=[type] if type else None, subjects=members, at=at,
+                          perspective=perspective)
+        return atts, self._selective_identity(world, as_of, perspective, same, known, atts)
 
     # ---- reading: answers ----------------------------------------------------------------------------------------
     @staticmethod
@@ -882,12 +924,13 @@ class WorldModel:
         key = keyed[0][1][0] if keyed else sorted(roles)[0]
         anchor = as_ids(roles[key])
         if self.selective:
-            ident = self.identity(world, as_of, perspective, ids=ids)
+            same, known = self._identity_links(world, as_of, perspective, ids)
+            ident = Identity(same.values(), perspective, as_of)
             members = sorted({m for x in anchor for m in ident.members(x)})
-            # A functional slot is shared with the declaring type's other subtypes, so load the whole slot.
             # A constraint is shared with its declaring type's other subtypes, so load from the most general one.
             atts = self._load(world, as_of, types=[constraints[0][0] if constraints else type], subjects=members,
                               perspective=perspective)
+            ident = self._selective_identity(world, as_of, perspective, same, known, atts)
         else:
             atts, ident = self._view(world, as_of, perspective, None, ids)
         want = {r: {ident.canonical(x) for x in as_ids(v)} for r, v in roles.items()}
