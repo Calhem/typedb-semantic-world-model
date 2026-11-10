@@ -1,7 +1,7 @@
 # Core 0.4 Stage A1: physical structure and a reference world (LABS-1.006)
 
-**Status (2026-11-10): implemented on `feature/core-0.4-a1-physical`, awaiting review. Not merged; Stages B-D not
-started.** Base: `main` at c9750d2 (Core 0.4 Stage A0 merged). Plan: [core-0.4-plan.md](../plans/core-0.4-plan.md),
+**Merged into `main` on 2026-11-10 (cb1e201, LABS-1.007).** Stage A2 (frame chains, position judgement):
+[stage-a2.md](stage-a2.md); it resolves D-A1-2 and D-A1-4. Base: `main` at c9750d2 (Core 0.4 Stage A0 merged). Plan: [core-0.4-plan.md](../plans/core-0.4-plan.md),
 Stage A. Ontology: World Ontology v0.2 (frozen), §3.4-3.5.
 
 ## Run it
