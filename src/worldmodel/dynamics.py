@@ -68,11 +68,21 @@ class DynamicsMixin:
         return {**self.content(key), "key": key}
 
     def interval(self, world, description, as_of=None, perspective=SYSTEM):
-        """The occurrence interval a description's usable attestation gives (start Window, end Window), or None."""
+        """The occurrence interval given by an attestation of the description that the perspective can use (start
+        Window, end Window, record), or None. An unaccepted account's times are never used for a judgement."""
         recs = [a for a in self._load(world, as_of, types=["event"], perspective=perspective).values()
-                if a.content == description]
-        recs.sort(key=lambda a: (not usable(a, perspective, as_of), a.id))
+                if a.content == description and a.polarity and usable(a, perspective, as_of)]
+        recs.sort(key=lambda a: a.id)
         return (recs[0].start, recs[0].end, recs[0]) if recs else None
+
+    def account_attestations(self, world, description, attester=None, as_of=None):
+        """Ids of the attestations that make up an account: of the description itself (its occurrence interval), and
+        of its classifications and describes links, optionally only those by `attester` (e.g. to accept them)."""
+        out = [a.id for a in self._load(world, as_of, types=["event"]).values() if a.content == description
+               and (attester is None or a.attester == attester)]
+        out += [h["attestation"] for h in self.history(world, description, as_of=as_of)
+                if h["type"] in ("classified-as", "describes") and (attester is None or h["attester"] == attester)]
+        return sorted(out)
 
     def _claims(self, world, subject, types, t, as_of, perspective):
         """Every attestation of a content of `types` involving `subject`, grouped by content, with the perspective's
@@ -207,3 +217,101 @@ class DynamicsMixin:
         if certainly_before(ib[2], ia[2]):
             return False
         return None
+
+    # ---- writing and reading: causation, processes, actions (B2) -----------------------------------------------------
+    def claim_cause(self, world, cause, effect, polarity=True, **attest):
+        """A source's claim that `cause` caused `effect` (event descriptions or occurrences, in any mix), or with
+        polarity False a denial. Timeless content; its acceptance is per perspective. Never inferred by the model."""
+        if cause == effect:
+            raise ValueError("a happening does not cause itself")
+        attest.setdefault("until_superseded", True)
+        return self.attest(world, "causes", {"cause": cause, "effect": effect}, polarity=polarity, **attest)
+
+    def _kind_of_id(self, i):
+        from .model import READ
+        with self.driver.transaction(self.database, READ) as tx:
+            return self._kinds_of(tx, [i])[i]
+
+    def causes_of(self, world, effect, t, as_of=None, perspective=SYSTEM):
+        """Every causal claim about what caused `effect` (an occurrence or an event description), judged for the
+        perspective. Claims stated about the effect itself are direct; claims stated about another description of the
+        same happening (or about the occurrence a description describes) are lifted, but only through describes links
+        the perspective accepts, and they keep their own provenance (plan 9.3). Each claim is reported with its level
+        (description / occurrence / mixed), the occurrences its cause is accepted as, its judgement (accepted,
+        disputed, denied, unreviewed, rejected) and its sources. Nothing is inferred from order or chained."""
+        occurrence = self.is_a(self._kind_of_id(effect), "occurrence")
+        lifted = (self.descriptions(world, effect, as_of, perspective) if occurrence
+                  else self.occurrences_of(world, effect, as_of, perspective))
+        out, seen = [], set()
+        for target in [effect, *lifted]:
+            for entry in self._claims(world, target, ("causes",), t, as_of, perspective):
+                if target not in entry["roles"].get("effect", []):
+                    continue
+                cause = entry["roles"]["cause"][0]
+                if (cause, target) in seen:
+                    continue
+                seen.add((cause, target))
+                cause_is_occ = self.is_a(self._kind_of_id(cause), "occurrence")
+                effect_is_occ = self.is_a(self._kind_of_id(target), "occurrence")
+                level = ("occurrence" if cause_is_occ and effect_is_occ else
+                         "description" if not cause_is_occ and not effect_is_occ else "mixed")
+                out.append({"cause": cause, "effect": target, "level": level, "lifted": target != effect,
+                            "lifted_via": None if target == effect else
+                            ({"description": target, "occurrence": effect} if occurrence
+                             else {"description": effect, "occurrence": target}),
+                            "cause_occurrences": [cause] if cause_is_occ else
+                            self.occurrences_of(world, cause, as_of, perspective),
+                            "judgement": self._verdict_label(entry), "status": entry["status"],
+                            "claimed_by": sorted({x["attester"] for x in entry["attestations"]}),
+                            "attestations": entry["attestations"]})
+        order = {"accepted": 0, "disputed": 1, "denied": 2, "unreviewed": 3, "rejected": 4, "retracted": 5}
+        return sorted(out, key=lambda c: (order.get(c["judgement"], 9), c["cause"], c["effect"]))
+
+    def explain(self, world, type, roles, t, as_of=None, perspective=SYSTEM):
+        """Why does a content hold at t? The judged answer; the events claimed to have initiated it that ended by t,
+        with each claim's judgement; and for each such event, the causal claims about it (causes_of, on its
+        description and on the occurrences it is accepted as describing). An explanation is only what was asserted
+        and accepted: earlier events without causal claims are not causes."""
+        from .keys import proposition_key
+        answer = self.holds(world, type, roles, t, as_of, perspective)
+        pid = self.proposition_id(proposition_key(type, roles))
+        initiators = []
+        for ev in (self._events_claiming(world, pid, "initiates", t, as_of, perspective) if pid else []):
+            if ev["end"] is None or ev["end"].latest > t:
+                continue
+            causes, seen = [], set()
+            for subject in [ev["event"], *ev["occurrences"]]:
+                for c in self.causes_of(world, subject, t, as_of, perspective):
+                    if (c["cause"], c["effect"]) not in seen:
+                        seen.add((c["cause"], c["effect"]))
+                        causes.append(c)
+            initiators.append({**ev, "causes": causes})
+        return {"content": {"type": type, "roles": roles}, "holds": answer, "initiated_by": initiators}
+
+    def process_steps(self, world, process, t, as_of=None, perspective=SYSTEM):
+        """The occurrences accepted as part of a process occurrence at t, ordered by their descriptions' intervals,
+        each with its descriptions, interval, kinds and actors (from the perspective's accepted descriptions)."""
+        kinds = {e["event"]: e for e in self.events(world, as_of=as_of, perspective=perspective)}
+        steps = []
+        for f in self.facts_about(world, process, t, as_of, perspective):
+            if f["type"] != "part-of" or process not in f["roles"].get("whole", []):
+                continue
+            for occ in f["roles"]["part"]:
+                descs = self.descriptions(world, occ, as_of, perspective)
+                spans = [self.interval(world, d, as_of, perspective) for d in descs]
+                span = min((s for s in spans if s and s[0]), key=lambda s: s[0].earliest, default=None)
+                steps.append({"occurrence": occ, "descriptions": descs, "start": span[0] if span else None,
+                              "end": span[1] if span else None,
+                              "kinds": sorted({k for d in descs if d in kinds for k in kinds[d]["kinds"]}),
+                              "actors": sorted({x for d in descs if d in kinds for x in kinds[d]["roles"].get("actor", [])}),
+                              "support": f["support"]})
+        far = max((s["start"].earliest for s in steps if s["start"]), default=None)
+        return sorted(steps, key=lambda s: (s["start"].earliest if s["start"] else far, s["occurrence"]))
+
+    def actions_of(self, world, agent, as_of=None, perspective=SYSTEM):
+        """Event descriptions in which `agent` is the actor and that are classified as actions, for the perspective.
+        (v0.2 also requires the actor's agent capacity; capacities are Stage C, so this lists the classification.)"""
+        return [{"event": e["event"], "kinds": e["kinds"], "start": e["start"], "end": e["end"],
+                 "occurrences": self.occurrences_of(world, e["event"], as_of, perspective), "attester": e["attester"]}
+                for e in self.events(world, participant=agent, as_of=as_of, perspective=perspective)
+                if "action" in e["kinds"] and agent in e["roles"].get("actor", [])]

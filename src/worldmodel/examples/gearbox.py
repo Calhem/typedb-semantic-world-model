@@ -36,6 +36,14 @@ INSPECTION = (datetime(2026, 11, 4, 9, 0, tzinfo=timezone.utc), datetime(2026, 1
 REPLACEMENT = (datetime(2026, 11, 5, 13, 50, tzinfo=timezone.utc), T1)
 TEST_RUN = (datetime(2026, 11, 5, 15, 30, tzinfo=timezone.utc), datetime(2026, 11, 5, 16, 0, tzinfo=timezone.utc))
 RESTORED = TEST_RUN[1]
+REPAIR = (datetime(2026, 11, 5, 13, 0, tzinfo=timezone.utc), RESTORED)
+STEPS = {"o-disassembly": (datetime(2026, 11, 5, 13, 0, tzinfo=timezone.utc),
+                           datetime(2026, 11, 5, 13, 45, tzinfo=timezone.utc)),
+         "o-relubrication": (datetime(2026, 11, 5, 14, 5, tzinfo=timezone.utc),
+                             datetime(2026, 11, 5, 14, 20, tzinfo=timezone.utc)),
+         "o-reassembly": (datetime(2026, 11, 5, 14, 15, tzinfo=timezone.utc),       # overlaps the relubrication
+                          datetime(2026, 11, 5, 15, 15, tzinfo=timezone.utc))}
+CAUSAL_PLAN_AT = datetime(2026, 11, 5, 12, 0, tzinfo=timezone.utc)
 
 PLACES = [("workshop", "Workshop W1", "the building's ground-floor workshop"),
           ("bay-1", "Bay 1", "assembly bay in the workshop"),
@@ -222,9 +230,8 @@ def extend_dynamics(wm, ids):
                      occurrence="o-bearing-replacement", attester="technician", id="ev-worklog-replacement")
     record = wm.account(w, {"patient": "bearing-1", "location": "bay-1"}, *REPLACEMENT, kind="replacement",
                         occurrence="o-bearing-replacement", id="ev-maintenance-record")
-    for a in wm.history(w, "ev-worklog-replacement"):
-        if a["attester"] == "technician":
-            wm.accept(a["attestation"])                     # the system accepts the work log and its classification
+    for a in wm.account_attestations(w, "ev-worklog-replacement", attester="technician"):
+        wm.accept(a)                                        # the system accepts the work log, its kinds and its link
     effects = [wm.claim_effect(w, log, "initiates", "part-of", {"part": "bearing-3", "whole": "shaft-asm-in"},
                                attester="technician"),
                wm.claim_effect(w, log, "terminates", "part-of", {"part": "bearing-1", "whole": "shaft-asm-in"},
@@ -253,12 +260,74 @@ def extend_dynamics(wm, ids):
                attester="inspector", id="ev-sign-off")
     signed_off = wm.end(w, fault, RESTORED, reason="signed off after the test run")
     wm.accept(signed_off)                  # the system accepts the inspector's ended restatement (per perspective)
-    for a in [*wm.history(w, "ev-inspection-report"), *wm.history(w, "ev-sign-off"), *wm.history(w, "ev-test-run")]:
-        if a["attester"] in ("inspector", "technician"):
-            wm.accept(a["attestation"])
+    for ev, by in (("ev-inspection-report", "inspector"), ("ev-sign-off", "inspector"), ("ev-test-run", "technician")):
+        for a in wm.account_attestations(w, ev, attester=by):
+            wm.accept(a)
     ids.update({"operational_t0": operational, "fault": fault, "fault_signed_off": signed_off,
                 "known_before_repair": known_before_repair, "inspection": insp, "worklog": log,
                 "maintenance_record": record, "replacement_effects": effects, "vibration_claim": vib_claim,
                 "vibration_state": vib_state, "test_run": test, "restored": restored, "restore_claims": restore_claims})
+    return ids
+
+
+def extend_causality(wm, ids):
+    """Stage B2 additions (LABS-1.010): the repair as a process of several occurrences, the technician's actions,
+    asserted causal claims at the occurrence and the description level, a competing claim that is disputed, a
+    rejected one, an unreviewed one, and a hypothetical world with another causal account. After extend_dynamics."""
+    w = ids["world"]
+    for i, n in (("wrench", "Torque wrench"), ("grease-gun", "Grease gun"), ("cm-1", "Condition monitor 1")):
+        wm.add_entity("physical-object", n, id=i)
+    wm.add_entity("social-object", "Apprentice J", id="apprentice")
+    for c in ("repair", "process", "disassembly", "lubrication", "reassembly"):
+        wm.add_entity("category", c, id=c)
+    for o, n in (("o-repair", "repair of GBX-100"), ("o-disassembly", "disassembly"),
+                 ("o-relubrication", "relubrication"), ("o-reassembly", "reassembly")):
+        wm.add_entity("occurrence", n, id=o)
+
+    def tech(roles, span, kind, occurrence, id):
+        eid = wm.account(w, roles, *span, kind=kind, occurrence=occurrence, attester="technician", id=id)
+        return eid
+
+    tech({"actor": "technician", "patient": "gbx-100", "location": "bay-1"}, REPAIR, ["repair", "process"],
+         "o-repair", "ev-repair")
+    tech({"actor": "technician", "patient": "gbx-100", "instrument": "wrench"}, STEPS["o-disassembly"],
+         ["disassembly", "action"], "o-disassembly", "ev-disassembly")
+    tech({"actor": "technician", "patient": "shaft-asm-in", "instrument": "grease-gun"}, STEPS["o-relubrication"],
+         ["lubrication", "action"], "o-relubrication", "ev-relubrication")
+    tech({"actor": "technician", "patient": "gbx-100", "instrument": "wrench"}, STEPS["o-reassembly"],
+         ["reassembly", "action"], "o-reassembly", "ev-reassembly")
+    steps = [wm.attest(w, "part-of", {"part": o, "whole": "o-repair"}, until_superseded=True, attester="technician")
+             for o in ("o-disassembly", "o-bearing-replacement", "o-relubrication", "o-reassembly", "o-test-run")]
+    for e in ("ev-repair", "ev-disassembly", "ev-relubrication", "ev-reassembly"):
+        for a in wm.account_attestations(w, e, attester="technician"):
+            wm.accept(a)
+    for a in steps:
+        wm.accept(a)
+    # causal claims about the successful test run (asserted by sources; the model infers none)
+    claims = {
+        "replacement": wm.claim_cause(w, "o-bearing-replacement", "o-test-run", attester="technician",
+                                      basis="testimony"),
+        "replacement_as_logged": wm.claim_cause(w, "ev-worklog-replacement", "ev-test-run", attester="technician"),
+        "relubrication": wm.claim_cause(w, "o-relubrication", "o-test-run", attester="inspector"),
+        "relubrication_denied": wm.claim_cause(w, "o-relubrication", "o-test-run", polarity=False, attester="cm-1",
+                                               basis="inference"),
+        "inspection": wm.claim_cause(w, "o-inspection", "o-test-run", attester="apprentice"),
+        "reassembly": wm.claim_cause(w, "o-reassembly", "o-test-run", attester="cm-1", basis="inference"),
+    }
+    for k in ("replacement", "replacement_as_logged", "relubrication"):
+        wm.accept(claims[k])
+    known_before_denial = wm._now()
+    wm.accept(claims["relubrication_denied"])
+    wm.accept(claims["inspection"], "rejected", reason="succession is not causation")
+    # a hypothetical account: the plan says relubrication alone would have restored it
+    plan = wm.create_world("Plan: relubricate only", kind="hypothetical", base=w, branch_at=CAUSAL_PLAN_AT,
+                           id="plan-relubricate-only")
+    wm.claim_cause(plan, "o-relubrication", "o-test-run")
+    wm.claim_cause(plan, "o-bearing-replacement", "o-test-run", polarity=False)
+    # recorded in the base after the plan was made: not part of its snapshot
+    late = wm.claim_cause(w, "o-disassembly", "o-bearing-replacement", attester="technician")
+    wm.accept(late)
+    ids.update({"causal_claims": claims, "known_before_denial": known_before_denial, "causal_plan": plan,
+                "late_claim": late, "repair_steps": steps})
     return ids
 
