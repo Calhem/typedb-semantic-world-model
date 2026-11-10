@@ -4,6 +4,72 @@
 Stage C not started.** Base: `main` at 322c5c7 (Stages A0-A2 merged). Plan: [core-0.4-plan.md](../plans/core-0.4-plan.md), Stage B
 and 9.3. Ontology: World Ontology v0.2 §3.2 (frozen).
 
+## Decision register (LABS-1.014)
+Earlier sections keep the history; this register is the current state. Approved decisions are not reopened without a
+demonstrated conflict.
+
+### Approved decisions
+| # | Decision | Approved |
+|---|---|---|
+| B-arch | Stage B architecture: module `core-0.4-b` (`causes` between descriptions and occurrences), processes and actions as classifications, process membership as part-of between occurrences, `dynamics.py` read and write operations on the existing attestation model | LABS-1.011 |
+| F-B1 | Description-level and occurrence-level claims are distinct contents and never dispute each other automatically | **settled**, LABS-1.012 |
+| U-2 | A lifted claim keeps its original attestation status, is identified as lifted through an accepted describes link, and applies only if the occurrences' own existence judgement allows; a denied occurrence never gets an applicable explanation through a lifted description claim | **settled**, LABS-1.012 |
+| Occ-1 | An occurrence's existence is judged only from attestations of its own existence; `exists()` and `occurrence_status()` share that judgement; other things keep the Core 0.3 participation rule | LABS-1.012 |
+| Occ-2 | An accepted account of a denied occurrence stays visible as its source's account; claims involving a denied occurrence do not apply (`applies: false`) | LABS-1.011 |
+| Perf-1 | World-wide event and describes loads are made once per question (per-question memo; no cache across questions) | LABS-1.012 |
+
+Implemented within the approved architecture and recorded for review, but not ruled on individually:
+- **D-B-1:** effects are written by `claim_effect` / `account`; `record_event` is unchanged.
+- **D-B-2:** causal and effect claims are timeless contents.
+- **D-B-4:** actions are classified without an agent-capacity check.
+- **D-B-5:** the condition constraint is declared in the reference world only.
+- **D-B-6:** `interval()` uses only accounts the perspective accepts.
+- **D-B-7:** the dynamics modules are opt-in.
+
+### Deferred capabilities
+- **Causal chain queries.** The plan's "list asserted links along a chain"; `explain` stops one step back.
+- **Processes as homogeneous, ongoing happenings,** with persistence policies across gaps (v0.2 C9).
+- **Agent capacity for actions** (Stage C).
+- **Measurement activities, quantities and units** (Stage C).
+- **Single-valued event roles,** with dispute labels on participants (D9).
+- **Remaining per-description and identity loads** in `actions_of`, `process_steps` and nested `holds`.
+
+### Unresolved architectural questions
+| # | Question | Evidence |
+|---|---|---|
+| **Q-B1** | The temporal contract of `changes` (LABS-1.014): see below. Needs a ruling on four points before it can be implemented without inventing transition times | `probes/core04_b_changes_contract.py` |
+| Q-B2 | `facts_about` (and so `changes`) lists each holding content separately, while `value_at` / `holds` report a functional conflict as DISPUTED. The two read paths disagree when a rival value is accepted (F-4 aligned `holds`, not `facts_about`) | probe case 4 |
+| D-A1-1, D-A1-3 | material marking; physical and dynamics modules opt-in | Stage A1 |
+| U-3 | rounding of continuous parameters in proposition keys | plan 9.7 |
+| Perf-A0 | the A0 performance thresholds are not established (tracked risk) | Core 0.4 README |
+
+### Q-B1: the `changes` temporal contract (probe results)
+Requested contract: return state transitions whose effective valid time intersects the requested interval, judged for
+the knowledge time, perspective and world. Keep event time, transition valid time, knowledge time and explanations
+apart. An event outside the interval may explain a transition inside it, but is never itself an in-period change.
+
+**What `changes` does today.** It samples the judged state at two instants, t1 and t2. Whatever holds at t2 and not
+at t1 "began"; the reverse "ended". Every event ever claimed to initiate or terminate the content is attached.
+
+| Case (probe) | Today | Supported by the data model? |
+|---|---|---|
+| 1. box at a, then b (10:00-11:00), then a again; interval 09:30-12:00 | nothing changed | **yes:** transitions with certain times can be found exactly from the attestations' start and end windows; two-instant sampling misses them (a defect to fix once the contract is ruled) |
+| 6. delayed effect: event 09:50-10:00, state from 10:45; interval 10:30-11:00 | "b began", explained by the event | **yes:** the event is provenance, not an in-period change |
+| 3. a state with no stated end, not until superseded | never holds (UNKNOWN even at its start) | yes: nothing holds, so there is no transition |
+| 2. a move known only within 10:00-10:20; interval 10:15-11:00 | judged a, then UNKNOWN (10:00-10:20), then b | **no:** the transition has a window, not an instant, and may or may not lie in the interval. Needs a rule: "possibly in period" (window intersects) vs "certainly in period" (window inside), reported how |
+| 4. a rival claim accepted from 10:00 | "b began"; `value_at` says DISPUTED | **no:** the judged state moves to DISPUTED without any state accepted as beginning or ending. Is that a transition, and which read path defines it (Q-B2)? |
+| 2 and 4 together | — | **no:** changes of judged status (to UNKNOWN or DISPUTED) are not accepted beginnings or endings. Whether they count as transitions is undefined |
+| 5. box at a begins at 08:00 (no event) and again at 13:00 (ev-move-2); interval 07:00-08:30 | ev-move-2 listed as the explanation of the 08:00 transition | **no:** `initiates` links an event to a *content*, not to one occurrence of that content beginning. Tying events to particular transitions needs a time rule, which delayed effects (case 6) make non-trivial. Example rule: "events that ended at or before the transition and after the content's previous transition". That would be a new inference |
+
+**Decisions requested:**
+1. the treatment of uncertain transition windows;
+2. whether changes to UNKNOWN or DISPUTED are transitions;
+3. which read path defines a transition (Q-B2);
+4. the rule, if any, for associating claimed events with particular transitions.
+
+With those ruled, the implementation is a boundary scan over the attestation windows of the subject's contents,
+judged at each boundary, which can be added without schema changes.
+
 ## Run it
 ```bash
 uv run python -I scripts/show_dynamics.py                       # builds wm-reference-gearbox (all extensions)

@@ -1,0 +1,91 @@
+{
+ "1 transitions entirely inside [09:30, 12:00]": {
+  "judged": {
+   "9:30": "ASSERTED ['a']",
+   "10:30": "ASSERTED ['b']",
+   "12:00": "ASSERTED ['a']"
+  },
+  "changes() today": {
+   "began": [],
+   "ended": [],
+   "claimed_events": {}
+  }
+ },
+ "2 a transition known only within [10:00, 10:20], interval [10:15, 11:00]": {
+  "judged": {
+   "9:59": "ASSERTED ['a']",
+   "10:05": "UNKNOWN []",
+   "10:15": "UNKNOWN []",
+   "10:20": "ASSERTED ['b']"
+  },
+  "note": "the move happened at some time in [10:00, 10:20]; it may or may not lie in [10:15, 11:00]"
+ },
+ "3 a state with an unknown end": {
+  "judged": {
+   "9:00": "UNKNOWN []",
+   "9:01": "UNKNOWN []",
+   "12:00": "UNKNOWN []"
+  },
+  "changes() today [08:00, 12:00]": {
+   "began": [],
+   "ended": [],
+   "claimed_events": {}
+  },
+  "note": "true at its start instant, undecided after: is true -> unknown an 'ended' transition?"
+ },
+ "4 a rival claim accepted from 10:00": {
+  "judged": {
+   "9:30": "ASSERTED ['a']",
+   "10:30": "DISPUTED ['a', 'b']"
+  },
+  "changes() today [09:30, 10:30]": {
+   "began": [
+    [
+     "b"
+    ]
+   ],
+   "ended": [],
+   "claimed_events": {
+    "['b']": []
+   }
+  },
+  "note": "a -> disputed(a, b): neither 'a ended' nor 'b began' is accepted; is it a transition?"
+ },
+ "5 'box at a' begins at 08:00 (no event) and again at 13:00 (ev-move-2)": {
+  "changes() today [07:00, 08:30]": {
+   "began": [
+    [
+     "a"
+    ]
+   ],
+   "ended": [],
+   "claimed_events": {
+    "['a']": [
+     "ev-move-2"
+    ]
+   }
+  },
+  "note": "ev-move-2 (12:50-13:00) is listed for a transition at 08:00 that it cannot explain"
+ },
+ "6 delayed effect: event 09:50-10:00, state from 10:45; interval [10:30, 11:00]": {
+  "changes() today": {
+   "began": [
+    [
+     "b"
+    ]
+   ],
+   "ended": [
+    [
+     "a"
+    ]
+   ],
+   "claimed_events": {
+    "['b']": [
+     "ev-order"
+    ],
+    "['a']": []
+   }
+  },
+  "note": "event before the interval, transition inside: allowed as provenance (supported)"
+ }
+}
