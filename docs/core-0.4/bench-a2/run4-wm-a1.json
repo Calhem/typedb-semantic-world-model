@@ -1,0 +1,32 @@
+{
+ "checkout": "wm-a1",
+ "extended": false,
+ "build_seconds": 1.08,
+ "database_bytes": 442537,
+ "questions": {
+  "poses(gear-in)": {
+   "median_ms": 21.36,
+   "queries": 14
+  },
+  "composition(gbx-100)": {
+   "median_ms": 373.09,
+   "queries": 212
+  },
+  "contents(workshop)": {
+   "median_ms": 147.24,
+   "queries": 86
+  },
+  "materials(cover)": {
+   "median_ms": 60.91,
+   "queries": 42
+  },
+  "frame_info(f-bench)": {
+   "median_ms": 22.55,
+   "queries": 15
+  },
+  "facts_about(housing)": {
+   "median_ms": 24.59,
+   "queries": 14
+  }
+ }
+}

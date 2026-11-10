@@ -6,16 +6,21 @@ identity semantics are the core's. Nothing here stores answers.
 
 Conventions (Core 0.4 plan 9.6): right-handed frames, metres, radians; unit quaternions (w, x, y, z), Hamilton,
 active; a norm more than 1e-9 from 1 is rejected. frame-transform(parent P, child C) gives C's pose in P:
-p_P = R(q)·p_C + t. Composing transforms into derived poses is deferred to A2.
+p_P = R(q)·p_C + t. A2 (LABS-1.007) composes transforms (spatial.py): derived positions are INFERRED and cite the
+position and every transform used (rule frame-transform/v1); several chains must agree within 1e-9 m.
 """
 
 import math
 
 from .keys import as_ids
+from .semantics import Identity, Status
+from .spatial import AXES as _AXES, ANGLE_TOLERANCE, Transform, angular_separation, boxes_overlap, map_box, qmul
 
-AXES = ("x", "y", "z")
+AXES = _AXES
 QUAT_TOLERANCE = 1e-9
 SYSTEM = "system"
+MAX_EDGE_VISITS = 100_000    # resource limit of one frame-graph search (edge examinations); reaching it is reported
+RULE = "frame-transform/v1"
 
 
 def _range(axis, value):
@@ -152,3 +157,270 @@ class PhysicalMixin:
                 if rows:
                     out[i] = q.opt(rows[0], "n")
         return out
+
+    # ---- A2: frame chains and derived positions ------------------------------------------------------------------
+    def _frame_edges(self, world, t, as_of, perspective):
+        """The frame-transform contents judged for the perspective at t, as graph edges. Holding contents are usable;
+        polarity-disputed ones are kept and marked, so any chain through them is DISPUTED."""
+        if self.selective:
+            atts = self._load(world, as_of, types=["frame-transform"], at=t, perspective=perspective)
+        else:
+            atts = {k: a for k, a in self.visible(world, as_of, perspective).items() if self.is_a(a.ctype, "frame-transform")}
+        edges = []
+        for cls, (val, support, _) in self._judge(list(atts.values()), Identity([], perspective, as_of), t,
+                                                  perspective, as_of).items():
+            if val is False:
+                continue
+            roles, p = dict(cls[1]), dict(cls[2])
+            edges.append({"parent": roles["parent"][0], "child": roles["child"][0],
+                          "transform": Transform((p["qw"], p["qx"], p["qy"], p["qz"]), (p["tx"], p["ty"], p["tz"])),
+                          "support": sorted(a.id for a in support), "disputed": val == "disputed"})
+        return sorted(edges, key=lambda e: (e["parent"], e["child"], e["support"]))
+
+    @staticmethod
+    def _search(edges, source, target, limit):
+        """Breadth-first search of the frame graph from `source` (each edge usable forward, child -> parent, or
+        inverse). No hop limit; each frame is reached once, so cycles terminate. Returns the composed transform from
+        `source` to every reached frame (along shortest chains), the predecessor of each, and the search metadata.
+        `limit` bounds the number of edge examinations; reaching it marks the search truncated."""
+        adj = {}
+        for i, e in enumerate(edges):
+            adj.setdefault(e["child"], []).append((i, e["parent"], "forward"))
+            adj.setdefault(e["parent"], []).append((i, e["child"], "inverse"))
+        pot, pred, queue, examined, truncated = {source: Transform()}, {source: None}, [source], 0, False
+        while queue and not truncated:
+            frame = queue.pop(0)
+            for i, nxt, direction in adj.get(frame, ()):
+                examined += 1
+                if examined > limit:
+                    truncated = True
+                    break
+                if nxt in pot:
+                    continue
+                step = edges[i]["transform"] if direction == "forward" else edges[i]["transform"].inverse()
+                pot[nxt], pred[nxt] = step.then(pot[frame]), (frame, i, direction)
+                queue.append(nxt)
+        return pot, pred, adj, {"complete": not truncated, "truncated": truncated, "limit": limit,
+                                "edges_examined": min(examined, limit), "frames_reached": len(pot),
+                                "edges_in_graph": len(edges)}
+
+    @staticmethod
+    def _blocks(nodes, adj):
+        """Biconnected components (as sets of edge ids) of the multigraph restricted to `nodes`, by an iterative
+        Tarjan search. Parallel edges between two frames form one block (a cycle of length 2)."""
+        index, low, blocks, estack, counter = {}, {}, [], [], 0
+        for root in sorted(nodes):
+            if root in index:
+                continue
+            index[root] = low[root] = counter
+            counter += 1
+            stack = [(root, None, iter(adj.get(root, ())))]
+            while stack:
+                v, via, it = stack[-1]
+                for eid, w, _ in it:
+                    if eid == via or w not in nodes:
+                        continue
+                    if w not in index:
+                        estack.append(eid)
+                        index[w] = low[w] = counter
+                        counter += 1
+                        stack.append((w, eid, iter(adj.get(w, ()))))
+                        break
+                    if index[w] < index[v]:                      # a back edge (or a parallel edge), once
+                        estack.append(eid)
+                        low[v] = min(low[v], index[w])
+                else:
+                    stack.pop()
+                    if stack:
+                        u = stack[-1][0]
+                        low[u] = min(low[u], low[v])
+                        if low[v] >= index[u]:
+                            block = set()
+                            while True:
+                                e = estack.pop()
+                                block.add(e)
+                                if e == via:
+                                    break
+                            blocks.append(block)
+        return blocks
+
+    @staticmethod
+    def _relevant_edges(edges, blocks, source, target):
+        """The edges that lie on at least one simple chain from source to target: the blocks on the path between
+        them in the block-cut tree (a standard property of biconnected components)."""
+        members = [{edges[e]["parent"] for e in b} | {edges[e]["child"] for e in b} for b in blocks]
+        tree = {}
+        for i, vs in enumerate(members):
+            for v in vs:
+                tree.setdefault(("v", v), []).append(("b", i))
+                tree.setdefault(("b", i), []).append(("v", v))
+        start, goal = ("v", source), ("v", target)
+        back, queue = {start: None}, [start]
+        while queue:
+            n = queue.pop(0)
+            if n == goal:
+                break
+            for m in tree.get(n, ()):
+                if m not in back:
+                    back[m] = n
+                    queue.append(m)
+        relevant, n = set(), goal
+        while n is not None and n in back:
+            if n[0] == "b":
+                relevant |= blocks[n[1]]
+            n = back[n]
+        return relevant
+
+    @staticmethod
+    def _describe(edges, steps):
+        out = []
+        for frame, i, direction in steps:
+            e = edges[i]
+            out.append({"parent": e["parent"], "child": e["child"], "direction": direction,
+                        "translation": e["transform"].t, "rotation": e["transform"].q, "support": e["support"],
+                        "disputed": e["disputed"]})
+        return out
+
+    def _resolve(self, edges, source, target, limit=None):
+        """Resolve how `source` coordinates map into `target` (plan 9.6, corrected in LABS-1.008).
+
+        Completed search, no chain: UNKNOWN, search complete. Search truncated before reaching the target: UNKNOWN,
+        search truncated (never a silent "no chain"). Target reached: the shortest chain gives the transform, and
+        every edge on any simple source-target chain is checked against the composed transforms: all simple chains
+        agree exactly when every such edge is consistent (within 1e-9 m and the angular tolerance). An inconsistent
+        edge makes the answer DISPUTED with no transform chosen; a disputed transform on any such chain likewise.
+        A truncated search that reached the target returns the shortest chain's transform as an unverified
+        candidate: status UNKNOWN, `verified: False` (LABS-1.009)."""
+        limit = MAX_EDGE_VISITS if limit is None else limit
+        if source == target:
+            return {"transform": Transform(), "status": None, "chain": [], "frames": [source], "reason": None,
+                    "search": {"complete": True, "truncated": False, "limit": limit, "edges_examined": 0,
+                               "frames_reached": 1, "edges_in_graph": len(edges), "hops": 0, "cycle": False,
+                               "relevant_edges": 0, "verified": True, "inconsistent": []}}
+        pot, pred, adj, search = self._search(edges, source, target, limit)
+        if target not in pot:
+            reason = (f"search truncated after {search['edges_examined']} edge examinations (limit {limit}) without "
+                      f"reaching {target}" if search["truncated"] else f"no frame chain from {source} to {target}")
+            return {"transform": None, "status": Status.UNKNOWN, "chain": [], "frames": [], "reason": reason,
+                    "search": {**search, "hops": None, "cycle": None, "relevant_edges": None, "verified": False,
+                               "inconsistent": []}}
+        steps, n = [], target
+        while pred[n] is not None:
+            prev, i, direction = pred[n]
+            steps.append((prev, i, direction))
+            n = prev
+        steps.reverse()
+        frames = [source] + [edges[i]["parent"] if d == "forward" else edges[i]["child"] for _, i, d in steps]
+        chain = self._describe(edges, steps)
+        info = {**search, "hops": len(steps), "cycle": None, "relevant_edges": None, "verified": False,
+                "inconsistent": []}
+        if search["truncated"]:      # a candidate only: not authoritative until every route is checked (LABS-1.009)
+            return {"transform": pot[target], "status": Status.UNKNOWN, "chain": chain, "frames": frames,
+                    "reason": "verification incomplete: search truncated, other chains were not checked for agreement",
+                    "search": info}
+        relevant = self._relevant_edges(edges, self._blocks(set(pot), adj), source, target)
+        bad = []
+        for i in sorted(relevant):
+            e = edges[i]
+            expected = e["transform"].then(pot[e["child"]])            # source -> child -> parent
+            if not expected.close_to(pot[e["parent"]]):
+                dt, da = expected.gap(pot[e["parent"]])
+                bad.append({"parent": e["parent"], "child": e["child"], "support": e["support"],
+                            "translation_gap_m": dt, "angle_gap_rad": da})
+        info.update({"cycle": len(relevant) > len(steps), "relevant_edges": len(relevant), "verified": True,
+                     "inconsistent": bad})
+        if bad:
+            return {"transform": None, "status": Status.DISPUTED, "chain": chain, "frames": frames,
+                    "reason": "chains disagree (ambiguous frame relationships)", "search": info}
+        if any(edges[i]["disputed"] for i in relevant):
+            return {"transform": None, "status": Status.DISPUTED, "chain": chain, "frames": frames,
+                    "reason": "a transform on a chain is disputed", "search": info}
+        return {"transform": pot[target], "status": Status.INFERRED, "chain": chain, "frames": frames, "reason": None,
+                "search": info}
+
+    def transform_between(self, world, source, target, t, as_of=None, perspective=SYSTEM, limit=None):
+        """How `source` frame coordinates map into `target` at t: {"status", "transform" (q, t) or None, "chain" (the
+        shortest chain, each step with its direction and supporting attestations), "frames", "reason", "search"}.
+        INFERRED from the transforms that hold for the perspective; DISPUTED when chains disagree or use a disputed
+        transform (no transform is chosen); UNKNOWN when no chain exists or the search was truncated (see `search`;
+        a truncated search that reached the target returns its transform as an unverified candidate)."""
+        edges = self._frame_edges(world, t, as_of, perspective)
+        r = self._resolve(edges, source, target, limit)
+        return {"source": source, "target": target, "status": r["status"] or Status.INFERRED, "rule": RULE, **r}
+
+    def where(self, world, thing, frame, t, as_of=None, perspective=SYSTEM, angle_tolerance=ANGLE_TOLERANCE,
+              limit=None):
+        """The thing's position in `frame` at t, judged (A2, LABS-1.008). Every position statement that holds for the
+        perspective is a candidate: stated in `frame` (direct), or mapped into it through the shortest frame chain
+        (derived, INFERRED, citing the position and every transform). Candidates are compared, never merged:
+        overlapping ranges can both be true (compatible), disjoint ranges conflict, and orientations conflict when
+        their angular separation exceeds `angle_tolerance` (policy, default 1e-9 rad). A statement whose frame cannot
+        be related to `frame` is listed as incomparable, with the search metadata saying whether the search completed
+        or was truncated. Where chains disagree, the candidate has no position (none is chosen) and is DISPUTED."""
+        atts, _ = self._view(world, as_of, perspective, "positioned-in", [thing])
+        about = [a for a in atts.values() if self.is_a(a.ctype, "positioned-in") and thing in a.roles.get("positioned", [])]
+        alternatives = self._alternatives(about, t, perspective, as_of)
+        poses = self.poses(world, thing, t, as_of, perspective)
+        edges = self._frame_edges(world, t, as_of, perspective) if any(p["frame"] != frame for p in poses) else []
+        candidates, incomparable = [], []
+        for p in poses:
+            box = {a: p[a] for a in AXES}
+            r = self._resolve(edges, p["frame"], frame, limit)
+            if r["transform"] is None and r["status"] == Status.UNKNOWN:
+                incomparable.append({"frame": p["frame"], "support": p["support"], "reason": r["reason"],
+                                     "search": r["search"]})
+                continue
+            direct, total = p["frame"] == frame, r["transform"]
+            mapped = map_box(total, box) if total is not None else {a: None for a in AXES}
+            candidates.append({
+                **mapped,
+                "orientation": qmul(total.q, p["orientation"]) if p["orientation"] and total is not None else
+                (p["orientation"] if direct else None),
+                "status": p["status"] if direct else r["status"], "stated_in": p["frame"], "stated": box,
+                "orientation_stated": p["orientation"], "position_support": p["support"], "direct": direct,
+                "rule": None if direct else RULE, "chain": r["chain"], "reason": r["reason"], "search": r["search"],
+                "verified": r["search"]["verified"]})
+        details = []
+        for i, a in enumerate(candidates):
+            for j, b in enumerate(candidates):
+                if i >= j or a["x"] is None or b["x"] is None:
+                    continue
+                unverified = not (a["verified"] and b["verified"])
+                if not boxes_overlap(a, b):
+                    details.append({"pair": (i, j), "kind": "disjoint ranges", "unverified": unverified})
+                elif a["orientation"] and b["orientation"]:
+                    sep = angular_separation(a["orientation"], b["orientation"])
+                    if sep > angle_tolerance:
+                        details.append({"pair": (i, j), "kind": "orientations differ", "separation_rad": sep,
+                                        "tolerance_rad": angle_tolerance, "unverified": unverified})
+        # Only verified candidates decide (LABS-1.009): an unverified one (truncated search) can neither create a
+        # conflict nor support an authoritative answer; it keeps the whole answer UNKNOWN unless a verified conflict.
+        conflicts = [d["pair"] for d in details if not d["unverified"]]
+        verified = all(c["verified"] for c in candidates) and not any(i["search"]["truncated"] for i in incomparable)
+        reason = None if verified else "verification incomplete: a frame search was truncated by its resource limit"
+        if conflicts or any(c["status"] == Status.DISPUTED and c["verified"] for c in candidates):
+            status = Status.DISPUTED
+        elif not verified:
+            status = Status.UNKNOWN
+        elif candidates:
+            direct = {c["status"] for c in candidates if c["direct"]}
+            status = next((s for s in (Status.STIPULATED, Status.ASSERTED, Status.INFERRED) if s in direct),
+                          Status.INFERRED)
+        else:
+            status = Status.UNKNOWN if about else Status.NOT_YET_KNOWN
+        return {"thing": thing, "frame": frame, "status": status, "candidates": candidates, "conflicts": conflicts,
+                "conflict_details": details, "angle_tolerance": angle_tolerance, "verified": verified, "reason": reason,
+                "judgement": ("conflicting" if conflicts else "compatible" if len(candidates) > 1 else
+                              "single" if candidates else None),
+                "incomparable": incomparable, "alternatives": alternatives}
+
+    def frames_linked_in_database(self, world, frame):
+        """Frames connected to `frame` by frame-transform records attested in `world`, by the TypeDB function
+        frames_linked (records only: time, acceptance and perspective ignored; inspection, like parts_in)."""
+        from . import typeql as q
+        from .model import READ
+        with self.driver.transaction(self.database, READ) as tx:
+            return sorted({q.opt(r, "id") for r in q.rows(tx, """match $f isa spatial-frame, has wm-id == $frame;
+                $w isa world, has wm-id == $world; let $g in frames_linked($f, $w); $g has wm-id $id;""",
+                {"frame": frame, "world": world})} - {frame})
+

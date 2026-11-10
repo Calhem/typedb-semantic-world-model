@@ -1,0 +1,48 @@
+{
+ "checkout": "typedb-semantic-world-model",
+ "extended": false,
+ "build_seconds": 1.27,
+ "database_bytes": 445192,
+ "questions": {
+  "poses(gear-in)": {
+   "median_ms": 24.92,
+   "queries": 14
+  },
+  "composition(gbx-100)": {
+   "median_ms": 354.75,
+   "queries": 212
+  },
+  "contents(workshop)": {
+   "median_ms": 147.17,
+   "queries": 86
+  },
+  "materials(cover)": {
+   "median_ms": 53.2,
+   "queries": 42
+  },
+  "frame_info(f-bench)": {
+   "median_ms": 20.56,
+   "queries": 15
+  },
+  "facts_about(housing)": {
+   "median_ms": 22.86,
+   "queries": 14
+  },
+  "where(gbx-100, f-workshop)": {
+   "median_ms": 53.45,
+   "queries": 32
+  },
+  "where(gear-in, f-workshop)": {
+   "median_ms": 41.74,
+   "queries": 32
+  },
+  "where(bench-1, f-gearbox)": {
+   "median_ms": 43.21,
+   "queries": 32
+  },
+  "transform_between(f-gearbox, f-workshop)": {
+   "median_ms": 8.25,
+   "queries": 6
+  }
+ }
+}

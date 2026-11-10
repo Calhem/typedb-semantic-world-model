@@ -1,0 +1,25 @@
+{
+ "P1 define a recursive two-direction reachability function": "accepted",
+ "P2 chain A-B-C-D, from B": [
+  [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  52.9
+ ],
+ "P3 after closing a cycle, from B (terminates?)": [
+  [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  12.1
+ ],
+ "P4 isolated frame E": [
+  [],
+  2.9
+ ]
+}

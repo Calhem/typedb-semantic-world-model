@@ -19,6 +19,7 @@ from . import typeql as q
 from . import keys
 from .keys import as_ids, check_new_id, proposition_key
 from .physical import PhysicalMixin
+from .spatial import params_compatible
 from .semantics import (Answer, AttestationRecord, Identity, Replacement, Status, Window, acceptance_state,
                         answer_status, certainly_before, superseded, usable, verdict)
 
@@ -26,10 +27,11 @@ READ, WRITE, SCHEMA = TransactionType.READ, TransactionType.WRITE, TransactionTy
 SCHEMA_DIR = Path(__file__).resolve().parents[2] / "schema"
 MODULES = {"core": ("0.3.0", ["core/core-0.3.tql"]),
            "core-0.4-a0": ("0.4.0-a0", ["core/core-0.4-a0.tql", "core/core-0.4-a0-slots.tql"]),  # Stage A0 (LABS-1.002)
-           "core-0.4-a": ("0.4.0-a1", ["core/core-0.4-a.tql"])}     # Stage A1 physical structure (LABS-1.006)
+           "core-0.4-a": ("0.4.0-a1", ["core/core-0.4-a.tql"]),     # Stage A1 physical structure (LABS-1.006)
+           "core-0.4-a2": ("0.4.0-a2", ["core/core-0.4-a2.tql"])}   # Stage A2 spatial reasoning (LABS-1.007)
 DEFAULT_MODULES = ("core", "core-0.4-a0")
-PHYSICAL_MODULES = ("core", "core-0.4-a0", "core-0.4-a")   # opt-in in A1 (decision D-A1-3)
-CORE_MODULES = ("core", "core-0.4-a0", "core-0.4-a")   # their types are the foundational (core) types; others: profiles
+PHYSICAL_MODULES = ("core", "core-0.4-a0", "core-0.4-a", "core-0.4-a2")   # opt-in (decision D-A1-3)
+CORE_MODULES = ("core", "core-0.4-a0", "core-0.4-a", "core-0.4-a2")   # their types are the core types; others: profiles
 
 
 def _core_labels():
@@ -53,7 +55,10 @@ PARAMS = {"has-quality": QUALITY_PARAMS, "positioned-in": POSE_PARAMS, "frame-tr
 # Functional slots of the core: one value at a time per slot. With the A0 module they are declared as data in TypeDB
 # (functional-slot entities, A0.3) at create or upgrade; without it (a Core 0.3 database) this constant is used.
 CORE_SLOTS = {"located-at": (("located",), "place")}
-MODULE_SLOTS = {"core-0.4-a": {"anchored-to": (("frame",), "anchor")}}    # a frame is attached to one thing at a time
+PARAMS_VALUE = "@params"     # a constraint whose value is the content's parameters (ranges, translation, rotation)
+MODULE_SLOTS = {"core-0.4-a": {"anchored-to": (("frame",), "anchor")},     # a frame is attached to one thing at a time
+                "core-0.4-a2": {"positioned-in": (("frame", "positioned"), PARAMS_VALUE),   # one position per frame
+                                "frame-transform": (("child", "parent"), PARAMS_VALUE)}}   # one transform per pair
 VARIANT_KINDS = ("hypothetical", "simulated")
 
 
@@ -231,7 +236,9 @@ class WorldModel(PhysicalMixin):
         with self.driver.transaction(self.database, READ) as tx:
             roles = {self.core_role(r.get("r").get_label())
                      for r in q.rows(tx, f"match $t label {q.label(predicate)}; $t relates $r;")}
-        unknown = (set(key_roles) | {value_role}) - roles
+        if value_role == PARAMS_VALUE and not self._param_names(predicate):
+            raise ValueError(f"{predicate!r} has no parameters to serve as a constraint value")
+        unknown = (set(key_roles) | ({value_role} - {PARAMS_VALUE})) - roles
         if unknown or not key_roles or value_role in key_roles:
             raise ValueError(f"invalid slot for {predicate!r}: key roles {key_roles}, value role {value_role!r} "
                              f"(roles: {sorted(roles)})")
@@ -877,11 +884,15 @@ class WorldModel(PhysicalMixin):
         for cls in classes:
             players = dict(cls[1])
             for decl, ks, v in self._constraints(cls[0]):
-                slots.setdefault((decl, ks, v, tuple(players.get(r) for r in ks)), []).append((players.get(v), cls))
+                value = cls[2] if v == PARAMS_VALUE else players.get(v)
+                slots.setdefault((decl, ks, v, tuple(players.get(r) for r in ks)), []).append((value, cls))
         out = {}
-        for members in slots.values():
+        for (_, _, v, _), members in slots.items():
+            # Role values conflict when different; parameter values (A2) when they cannot both be true: disjoint
+            # ranges, different rotations or different exact numbers (v0.2 5.3 rule 2: "disjoint ranges").
+            compatible = params_compatible if v == PARAMS_VALUE else (lambda a, b: a == b)
             for value, cls in members:
-                rivals = {c for val, c in members if val != value}
+                rivals = {c for val, c in members if not compatible(val, value)}
                 if rivals:
                     out.setdefault(cls, set()).update(rivals)
         return out
@@ -905,6 +916,8 @@ class WorldModel(PhysicalMixin):
         """The value(s) in a functional slot at t: `key` names a player for every key role of the type's slot, e.g.
         value_of(w, "seat-assignment", {"venue": "hall", "seat": "A1"}, t) -> the occupant (A0.3)."""
         found = sorted({v for _, ks, v in self._constraints(type) if set(ks) == set(key)})
+        if found == [PARAMS_VALUE]:
+            raise ValueError(f"{type!r}: the constraint's value is the content's parameters; ask with where/poses")
         if len(found) != 1:
             raise ValueError(f"{type!r}: key must name exactly the key roles of one functional constraint "
                              f"{sorted({ks for _, ks, _ in self._constraints(type)})}")
