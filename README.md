@@ -7,14 +7,17 @@ The question we are investigating: can one **small, evidence-aware semantic core
 That means what exists, what happened, when, where, who knows it, and on what evidence. The applications range
 from a robot to a video understanding pipeline to an agent's long-term memory.
 
-## Status (2026-11-09)
+## Status (2026-11-10)
 | Phase | State |
 |---|---|
 | 1. Research and architecture | Complete ([docs/phase-1](docs/phase-1/README.md)) |
 | 1B. Research validation and architectural review | Complete ([docs/phase-1b](docs/phase-1b/README.md)) |
 | 1C. Preparation: semantics, environments, baselines | Complete ([docs/phase-1c](docs/phase-1c/README.md)) |
-| **M1. Executable foundational core** | **Implemented and reviewed: core 0.2.0, 41 tests passing** ([docs/m1](docs/m1/README.md)) |
-| M2-M4. Temporal and evidential semantics, profiles, cross-domain validation | Not started |
+| M1. Executable foundational core | Superseded by Core 0.3; its 41 tests are ported ([docs/m1](docs/m1/README.md)) |
+| World Ontology v0.1 | Proposal reviewed; D2 preferred ([docs/architecture/world-ontology-v0.1.md](docs/architecture/world-ontology-v0.1.md)) |
+| World Ontology v0.2 | **Frozen baseline** ([docs/architecture/world-ontology-v0.2.md](docs/architecture/world-ontology-v0.2.md)) |
+| **Core 0.3** | **Merged into `main` (2026-11-10): World Ontology v0.2 implemented, 78 tests** ([docs/core-0.3](docs/core-0.3/README.md)) |
+| Next | World-representation layer (composition, causality, space and frames, quantities, agency, domain extensions); not started |
 
 Start with **[Phase 1C's outstanding decisions](docs/phase-1c/07-outstanding-decisions.md)**, then the
 [Phase 1B executive summary](docs/phase-1b/07-executive-summary.md). Phase 1 ([docs/phase-1/README.md](docs/phase-1/README.md))
@@ -40,6 +43,8 @@ unknown until observed); real TypeDB operations only; every claim of advantage t
 | **GUPI agent memory** | Whether a shared profile keeps [GUPI](https://github.com/Calhem/typedb-gupi-agent-memory)'s evidence and time model while improving coherence and interoperability | GUPI research is paused; a parity check only, until an independent answer set exists |
 
 ## Repository
+- `docs/architecture/`: the ontology architecture proposal; `docs/typedb-modelling-best-practices.md`: verified
+  TypeDB modelling constraints.
 - `schema/`, `src/worldmodel/`, `tests/`: the world model (TypeQL schema modules, Python interface, tests);
   `scripts/bench_query_paths.py`: selective vs full query benchmark.
 - `docs/phase-1/`: framework comparison, core ontology proposal, modules and profiles, TypeDB capability

@@ -1,10 +1,11 @@
-"""Compare the selective query path (filters in TypeDB) with the full-load reference on a synthetic world.
+"""Core 0.3 query-path benchmark, on the same workload as Milestone 1's (main: scripts/bench_query_paths.py).
 
     uv run python -I scripts/bench_query_paths.py --objects 200 --places 30 --moves 1000 --queries 60
 
-Builds a throwaway database (wm-bench-*), runs the same random value_at() questions through both paths, checks the
-answers are identical, prints JSON (ingestion, latency, claims and TypeQL queries per question, database size) and
-deletes the database. Indicative only: one machine, TypeDB in Docker.
+Builds a throwaway database (wm-bench-*): an actual world with `objects` things and `moves` moves, a hypothetical
+variant with moves/20 moves; asks the same random value_at() questions through the selective path and the full-load
+reference; checks the answers are identical; prints JSON and deletes the database. Indicative only (one machine,
+TypeDB in Docker).
 """
 
 import argparse
@@ -41,14 +42,14 @@ def main():
     driver = connect()
     name = f"wm-bench-{uuid.uuid4().hex[:8]}"
     wm = WorldModel.create(name, driver=driver)
-    out = {"dataset": vars(a)}
+    out = {"implementation": "core-0.3", "dataset": vars(a)}
     try:
         t0 = time.perf_counter()
         w = wm.create_world("actual")
         objs = [wm.add_entity("physical-object", f"o{i}") for i in range(a.objects)]
         pls = [wm.add_entity("place", f"p{i}") for i in range(a.places)]
         for o in objs:
-            wm.assert_fact(w, "located-at", {"located": o, "place": rnd.choice(pls)}, start=START, until_ceased=True)
+            wm.attest(w, "located-at", {"located": o, "place": rnd.choice(pls)}, start=START, until_superseded=True)
         t = START
         move_seconds = []
         for _ in range(a.moves):
@@ -65,27 +66,24 @@ def main():
                          "move_ms_p95": round(pct(move_seconds, 0.95) * 1000, 1)}
         full = WorldModel.open(name, driver=driver)
         full.selective = False
-        total = len(full.visible_claims(w))
-        out["claims_in_actual_world"] = total
+        out["attestations_in_actual_world"] = len(full.visible(w))
+        out["propositions"] = wm.count("proposition")
         questions = [(rnd.choice([w, h]), rnd.choice(objs), START + (t - START) * rnd.random()) for _ in range(a.queries)]
+        answers = {}
         for label, model in (("selective", wm), ("full", full)):
-            model.stats = {"queries": 0, "claims": 0}
-            lat, answers = [], []
+            model.stats = {"queries": 0, "attestations": 0}
+            lat, answers[label] = [], []
             for world, o, when in questions:
                 s = time.perf_counter()
-                answers.append(model.value_at(world, "located-at", o, when))
+                answers[label].append(model.value_at(world, "located-at", o, when))
                 lat.append(time.perf_counter() - s)
             out[label] = {"ms_median": round(statistics.median(lat) * 1000, 1), "ms_p95": round(pct(lat, 0.95) * 1000, 1),
-                          "claims_per_question": round(model.stats["claims"] / a.queries, 1),
+                          "attestations_per_question": round(model.stats["attestations"] / a.queries, 1),
                           "typeql_queries_per_question": round(model.stats["queries"] / a.queries, 1)}
-            out[label + "_answers"] = answers
-        same = out.pop("selective_answers") == out.pop("full_answers")
-        out["identical_answers"] = same
+        out["identical_answers"] = answers["selective"] == answers["full"]
         size = subprocess.run(["docker", "exec", "wm-typedb", "du", "-sb", f"/var/lib/typedb/data/{name}"],
                               capture_output=True, text=True)
         out["database_bytes"] = int(size.stdout.split()[0]) if size.returncode == 0 else None
-        if out["database_bytes"]:
-            out["bytes_per_claim"] = round(out["database_bytes"] / total)
     finally:
         driver.databases.get(name).delete()
     print(json.dumps(out, indent=1))

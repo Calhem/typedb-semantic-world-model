@@ -1,0 +1,31 @@
+{
+ "implementation": "core-0.3",
+ "dataset": {
+  "objects": 200,
+  "places": 30,
+  "moves": 1000,
+  "queries": 60,
+  "seed": 11
+ },
+ "ingest": {
+  "seconds": 63.8,
+  "move_ms_median": 51.2,
+  "move_ms_p95": 91.4
+ },
+ "attestations_in_actual_world": 3200,
+ "propositions": 1140,
+ "selective": {
+  "ms_median": 53.1,
+  "ms_p95": 111.5,
+  "attestations_per_question": 7.1,
+  "typeql_queries_per_question": 12.5
+ },
+ "full": {
+  "ms_median": 4175.1,
+  "ms_p95": 4872.7,
+  "attestations_per_question": 3283.9,
+  "typeql_queries_per_question": 6.3
+ },
+ "identical_answers": true,
+ "database_bytes": 12387252
+}

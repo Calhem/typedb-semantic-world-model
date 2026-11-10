@@ -1,8 +1,7 @@
-"""Application-level semantics: valid-time truth, status at a transaction time, identity closure, answers.
+"""Application-level semantics of World Ontology v0.2 (pure Python, no database).
 
-Pure Python, no database. Everything here is a decision of the ontology's *semantics* that TypeDB does not enforce.
-Milestone 1 implements the statuses ASSERTED, INFERRED, DISPUTED, UNKNOWN and NOT_YET_KNOWN. OBSERVED and PRESUMED
-(observations, persistence policies) arrive in Milestone 2.
+Everything here is a decision of the ontology's semantics that TypeDB does not enforce: whether an attestation is
+usable for a perspective at a knowledge time, what it says about valid time t, identity closure, and answer statuses.
 """
 
 from dataclasses import dataclass, field
@@ -11,11 +10,20 @@ from enum import Enum
 
 
 class Status(str, Enum):
-    ASSERTED = "ASSERTED"            # an accepted claim states it (author, source or document)
-    INFERRED = "INFERRED"            # derived by a declared rule (M1: functional exclusivity)
-    DISPUTED = "DISPUTED"            # accepted claims of equal standing disagree at that time
-    UNKNOWN = "UNKNOWN"              # claims exist by the transaction time, none decides the valid time
-    NOT_YET_KNOWN = "NOT_YET_KNOWN"  # nothing about it had been recorded by the transaction time
+    """Answer classification (v0.2 §5.6, layer 3). OBSERVED and PRESUMED need observations and persistence policies,
+    which Core 0.3 does not implement yet (attestations with basis observation are reported as ASSERTED, with the basis
+    visible in the evidence)."""
+    OBSERVED = "OBSERVED"
+    ASSERTED = "ASSERTED"
+    STIPULATED = "STIPULATED"
+    INFERRED = "INFERRED"
+    PRESUMED = "PRESUMED"
+    DISPUTED = "DISPUTED"
+    UNKNOWN = "UNKNOWN"
+    NOT_YET_KNOWN = "NOT_YET_KNOWN"
+
+
+SUPPORTING_STANCES = ("asserts", "believes", "stipulates")   # `doubts` and `hypothesises` never support an answer
 
 
 @dataclass(frozen=True)
@@ -30,91 +38,139 @@ class Window:
 
 
 @dataclass
-class ClaimRecord:
+class Replacement:
+    """A visible supersession of an attestation: the replacing attestation's id, when the supersession was recorded,
+    and what a perspective needs to judge it (its attester, stance and the perspective's acceptances of it)."""
     id: str
-    type: str
-    world: str
-    roles: dict                       # role label -> list of referent (or claim) ids
-    start: Window | None              # None: holds from the start of the world (an author's statement)
-    end: Window | None                # stated end window, if any
-    end_basis: str                    # "stated", "unknown", "until-ceased"
     recorded_at: datetime
-    initial_status: str               # "accepted" or "proposed"
-    clock: str = "wall"
-    description: str | None = None
-    depth: int = 0                    # 0: claim of the queried world; n: inherited from the n-th base world
-    cessations: list = field(default_factory=list)   # [(Window, recorded_at, world)]
-    reviews: list = field(default_factory=list)      # [(verdict, recorded_at)]
+    attester: str
+    stance: str
+    acceptances: list = field(default_factory=list)   # [(holder, verdict, recorded_at)]
 
 
-def status_at(claim, as_of):
-    """'accepted', 'proposed', 'rejected' or 'retracted' at transaction time `as_of` (None = now / everything).
+@dataclass
+class AttestationRecord:
+    id: str
+    content: str                       # proposition key, or event-description id
+    ctype: str                         # content type label
+    roles: dict                        # role -> sorted ids
+    params: dict
+    attester: str
+    world: str
+    stance: str
+    polarity: bool
+    basis: str
+    start: Window | None               # None: from the start of the world
+    end: Window | None                 # stated end window
+    end_basis: str                     # "stated", "unknown", "until-superseded"
+    recorded_at: datetime
+    credence: float | None = None
+    depth: int = 0                     # 0: the asked world; n: inherited from the n-th base world
+    acceptances: list = field(default_factory=list)   # [(holder, verdict, recorded_at)]
+    superseded_by: list = field(default_factory=list)  # [Replacement] visible in this context
 
-    The latest review recorded by `as_of` decides; on a tie, a rejection or retraction wins. Without a review, the
-    claim's initial status applies.
+    def evidence(self):
+        return {"attestation": self.id, "attester": self.attester, "stance": self.stance, "basis": self.basis,
+                "polarity": self.polarity, "world": self.world, "start": self.start, "end": self.end,
+                "recorded_at": self.recorded_at,
+                "superseded_by_source": sorted(r.id for r in self.superseded_by)}
+
+
+def acceptance_state(a, perspective, as_of):
+    """'accepted', 'rejected', 'retracted' or 'unreviewed' for `perspective` at knowledge time `as_of`.
+
+    Stipulations are constitutive of their world: accepted for everyone (E7). Otherwise the perspective's latest
+    decision by `as_of` wins, a rejection or retraction winning ties; without one, the perspective's own attestations
+    are accepted (they are part of its view) and others' are unreviewed.
     """
-    reviews = [(rec, v) for v, rec in claim.reviews if as_of is None or rec <= as_of]
-    if not reviews:
-        return claim.initial_status
-    latest = max(rec for rec, _ in reviews)
-    verdicts = {v for rec, v in reviews if rec == latest}
-    for v in ("retracted", "rejected"):
-        if v in verdicts:
-            return v
-    return "accepted"
+    if a.stance == "stipulates":
+        return "accepted"
+    mine = [(rec, v) for h, v, rec in a.acceptances if h == perspective and (as_of is None or rec <= as_of)]
+    if mine:
+        latest = max(rec for rec, _ in mine)
+        verdicts = {v for rec, v in mine if rec == latest}
+        for v in ("retracted", "rejected"):
+            if v in verdicts:
+                return v
+        return "accepted"
+    return "accepted" if a.attester == perspective else "unreviewed"
 
 
-def effective_end(claim, as_of):
-    """(end window, basis) as known at `as_of`: the earliest cessation recorded by then overrides the stated end."""
-    ces = [w for w, rec, _ in claim.cessations if as_of is None or rec <= as_of]
-    if ces:
-        return min(ces, key=lambda w: (w.earliest, w.latest or datetime.max.replace(tzinfo=w.earliest.tzinfo))), "ceased"
-    return claim.end, claim.end_basis
+def superseded(a, perspective, as_of):
+    """Superseded *for this perspective*: its source has replaced it (a supersession recorded by `as_of`) **and** the
+    replacement is part of the perspective's view (its own, accepted by it, or a stipulation). A source's revision is
+    not another perspective's acceptance: until a perspective accepts the replacement it keeps the original, and if it
+    rejects the replacement it keeps the original for good."""
+    return any((as_of is None or r.recorded_at <= as_of) and acceptance_state(r, perspective, as_of) == "accepted"
+               for r in a.superseded_by)
 
 
-def truth_at(claim, t, as_of):
-    """True if the claim certainly holds at t, False if it certainly does not, None if this claim does not decide.
+def usable(a, perspective, as_of):
+    """Supports answers for the perspective: accepted, not superseded for it, and a supporting stance."""
+    return (a.stance in SUPPORTING_STANCES and not superseded(a, perspective, as_of)
+            and acceptance_state(a, perspective, as_of) == "accepted")
 
-    Half-open valid time [start, end). Holds for certain when start.latest <= t < end.earliest. A missing start means
-    "from the start of the world". End basis "until-ceased" with no cessation: holds for every t after the start.
-    End basis "unknown" with no stated window: the claim decides nothing after its start (no invented continuity).
-    Before the start the claim is silent (it does not say the fact was false earlier).
-    """
-    if claim.start is not None and t < claim.start.latest:
-        if claim.type == "existence" and t < claim.start.earliest:
-            return False                  # an existence claim's start is the thing's creation
-        return None
-    end, basis = effective_end(claim, as_of)
-    if end is not None:
-        if t < end.earliest:
-            return True
-        if end.latest is not None and t >= end.latest:
+
+def in_interval(a, t):
+    """True: t is certainly inside the attested interval; False: certainly after its end (or, for existence, before
+    creation); None: the attestation does not decide t. Half-open [start, end). A missing start means "from the start
+    of the world"; end basis "until-superseded" holds until a supersession is recorded; "unknown" decides nothing after
+    the start (no invented continuity). Before its start an attestation is silent, except that an existence start is
+    a creation."""
+    if a.start is not None and t < a.start.latest:
+        if a.ctype == "existence" and a.polarity and t < a.start.earliest:
             return False
         return None
-    if basis == "until-ceased":
-        return True
-    return None
+    if a.end is not None:
+        if t < a.end.earliest:
+            return True
+        if a.end.latest is not None and t >= a.end.latest:
+            return False
+        return None
+    return True if a.end_basis == "until-superseded" else None
+
+
+def verdict(a, t):
+    """What the attestation says about its content at t: True (holds), False (does not hold), None (nothing).
+
+    A positive attestation says the content holds inside its interval and, with a stated end, no longer holds after it.
+    A denial says the content does not hold inside its interval and nothing outside it."""
+    inside = in_interval(a, t)
+    if a.polarity:
+        return inside
+    return False if inside is True else None
 
 
 def certainly_before(a, b):
-    """Event a certainly ended before event b started (both ClaimRecords; uses windows, never guesses)."""
+    """a's interval certainly ends before b's starts (windows; never a guess)."""
     a_end = a.end.latest if a.end is not None else (a.start.latest if a.start else None)
     return a_end is not None and b.start is not None and a_end <= b.start.earliest
 
 
-class Identity:
-    """Equivalence classes from accepted same-as claims only. Proposed links are never chained."""
+def answer_status(support):
+    """Status for a set of supporting attestations: STIPULATED > ASSERTED > INFERRED by basis (v0.2 gives no order
+    between supported kinds; Core 0.3 reports the most direct basis and lists all evidence)."""
+    bases = {a.basis for a in support}
+    if "stipulation" in bases:
+        return Status.STIPULATED
+    if bases & {"testimony", "observation"}:
+        return Status.ASSERTED
+    return Status.INFERRED
 
-    def __init__(self, same_as_claims, as_of):
-        self.parent = {}
-        self.proposed = []
-        for c in same_as_claims:
-            a, b = c.roles["same"][:2]
-            st = status_at(c, as_of)
-            if st == "accepted":
-                self._union(a, b)
-            elif st == "proposed":
-                self.proposed.append((c.id, a, b))
+
+class Identity:
+    """Equivalence classes from usable `same-as` attestations for one perspective. Unaccepted links never chain."""
+
+    def __init__(self, same_as, perspective, as_of):
+        self.parent, self.proposed = {}, []
+        for a in same_as:
+            if a.ctype != "same-as" or not a.polarity:
+                continue
+            x, y = a.roles["same"][:2]
+            if usable(a, perspective, as_of):
+                self._union(x, y)
+            elif acceptance_state(a, perspective, as_of) == "unreviewed" and not superseded(a, perspective, as_of):
+                self.proposed.append((a.id, x, y))
 
     def _find(self, x):
         self.parent.setdefault(x, x)
@@ -140,7 +196,8 @@ class Identity:
 @dataclass(frozen=True)
 class Answer:
     status: Status
-    holds: bool | None = None                 # for holds(): True / False / None
-    values: tuple = ()                        # for value_at(): canonical referent ids
-    support: tuple = ()                       # claim ids the answer rests on
-    alternatives: tuple = ()                  # proposed (not accepted) claim ids bearing on the question
+    holds: bool | None = None                 # holds(): True / False / None
+    values: tuple = ()                        # value_at(): canonical ids
+    support: tuple = ()                       # attestation ids the answer rests on
+    alternatives: tuple = ()                  # unreviewed attestations bearing on the question
+    evidence: tuple = ()                      # one dict per supporting attestation (attester, stance, basis, ...)
