@@ -299,30 +299,42 @@ class DynamicsMixin:
                     world, proposition_id(k), kind, t2, as_of, perspective, memo) if e["claim"] == "accepted"]
             return claims[(cls, kind)]
 
-        def compatible(ev, latest):
-            return ev["start"] is None or ev["start"].earliest <= latest
+        def timing(ev, early, late):
+            """The approved Stage B causal rule (LABS-1.016): an event cannot explain a transition that certainly
+            precedes the start of its occurrence. Occurrence time is the event's accepted occurrence interval (valid
+            time), never the time its account was recorded. None: excluded (the transition is certainly earlier);
+            "consistent": the occurrence certainly started by the transition's earliest time; "unresolved": the
+            occurrence time is unavailable or overlaps the transition window, so applicability is reported, not
+            rejected."""
+            if ev["start"] is None:
+                return "unresolved"
+            if late < ev["start"].earliest:
+                return None
+            return "consistent" if ev["start"].latest <= early else "unresolved"
 
         activations = {}
         for n, (key, before, after, early, late, cat) in enumerate(found):
             for cls in after[2] - before[2]:
-                activations.setdefault((cls, "initiates"), []).append((n, late))
+                activations.setdefault((cls, "initiates"), []).append((n, early, late))
             for cls in before[2] - after[2]:
-                activations.setdefault((cls, "terminates"), []).append((n, late))
+                activations.setdefault((cls, "terminates"), []).append((n, early, late))
         # Claims are looked up only for contents that change in a returned transition; attribution still counts every
         # activation of the content on the whole timeline.
         returned = {n for n, (key, before, after, early, late, cat) in enumerate(found) if not (late <= t1 or early > t2)}
         explained = {}
         for (cls, kind), acts in activations.items():
-            if not any(n in returned for n, _ in acts):
+            if not any(n in returned for n, _, _ in acts):
                 continue
             for ev in claims_for(cls, kind):
-                fits = [n for n, late in acts if compatible(ev, late)]
-                for n in fits:
+                fits = {n: timing(ev, early, late) for n, early, late in acts}
+                fits = {n: tm for n, tm in fits.items() if tm is not None}
+                for n, tm in fits.items():
                     explained.setdefault(n, []).append({
                         "event": ev["event"], "effect": kind, "content": {"type": cls[0], "roles": dict(cls[1])},
                         "class": cls, "claim": ev["claim"], "claim_status": ev["claim_status"],
                         "claimed_by": ev["claimed_by"], "start": ev["start"], "end": ev["end"],
-                        "occurrences": ev["occurrences"], "attribution": "unique" if len(fits) == 1 else "ambiguous"})
+                        "occurrences": ev["occurrences"], "attribution": "unique" if len(fits) == 1 else "ambiguous",
+                        "timing": tm})
 
         def describe(cls):
             return {"type": cls[0], "roles": {r: list(i) for r, i in cls[1]}, "params": dict(cls[2])}
