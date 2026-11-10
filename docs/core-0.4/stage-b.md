@@ -285,6 +285,37 @@ Loading a world's events once per question would remove most of the growth.
 - **Semantics preserved.** Valid time, knowledge time, perspective and hypothetical worlds work as before
   (`tests/test_h_b4_consolidation.py`).
 
+### Events loaded once per question
+`_Memo` is a per-question memo, created inside one read operation and passed down. It is not a cache: it never
+outlives the question. It loads the world's event attestations and describes links at most once for that world,
+knowledge time and perspective. `changes`, `explain`, `causes_of`, `_events_claiming`, `interval`, `occurrences_of`
+and `occurrence_status` use it. No schema change and no change to any answer: a test compares every answer with and
+without it, on both paths.
+
+Same-session scaling (`scripts/measure_dynamics_scaling.py`, median of five).
+Before = `main` ff4341b (`dynamics-scaling-before-1.012.json`); after = this branch (`dynamics-scaling.json`).
+| Extra cycles (events / propositions / attestations) | changes: ms, queries, records | explain: ms, queries, records |
+|---|---|---|
+| 0 (12 / 141 / 163) | 188 → 188; 95 → 85; 107 → 105 | 690 → 460; 503 → 298; 265 → 107 |
+| 4 (20 / 173 / 203) | 297 → 200; 135 → 85; 215 → 129 | 837 → 545; 543 → 298; 441 → 127 |
+| 16 (44 / 269 / 323) | 728 → 222; 255 → 85; 923 → 201 | 1,275 → 445; 663 → 298; 1,353 → 187 |
+| 64 (140 / 653 / 803) | 3,516 → 476; 736 → 86; 9,515 → 489 | 4,840 → 637; 1,144 → 299; 10,761 → 427 |
+
+**Effect on `changes` and `explain`.** Their query counts are now constant in world size. The remaining growth is
+records: the one event load per question returns every event of the world.
+
+**Effect on other questions.**
+| Question | Before → after |
+|---|---|
+| `causes_of` | 238 → 143 queries at every size; 504 → 399 ms at 64 cycles |
+| `occurrence_status` | 33 → 48 queries, +15-20 ms: it now reads its status through `exists()` (one judgement) before listing provenance |
+| `effects_of`, `process_steps`, `actions_of`, `value_of` | same query counts; latency within noise |
+
+**Not addressed** (outside this increment's scope):
+- `actions_of` still makes one describes load per description;
+- identity is still loaded several times per question;
+- `effects_of` does not use the memo, because it reads one interval.
+
 ## Remaining limitations
 - **No causal chains.** There is no chain query yet; the plan's "a chain query lists asserted links" is not
   implemented. `explain` stops at the causes of the initiating event.
@@ -292,9 +323,10 @@ Loading a world's events once per question would remove most of the growth.
   persistence policy and no "homogeneous, ongoing" check (v0.2 C9).
 - **Participant roles are single-valued per description,** one patient and so on (Core 0.3 `@card`). The occurrence
   view lists every participant per description without a dispute label (D9 stays open).
-- **The new questions are slow,** and `changes` / `explain` grow superlinearly with the number of events claiming the
-  same outcome (LABS-1.011 scaling), because of the repeated loads listed above.
-- **Two existence answers.** The generic `exists()` still infers an occurrence's existence from participation (Core
-  0.3 behaviour); `occurrence_status` is the occurrence-specific answer.
+- **Still slow in places.** The dynamics questions take hundreds of milliseconds. `changes` and `explain` no longer
+  grow superlinearly (LABS-1.012), but `actions_of` and `process_steps` still grow linearly in queries.
+- **`changes` lists every claimed event.** It lists all events claimed to have initiated or terminated a state that
+  changed, including events outside the asked period (for example, later test runs). This behaviour was kept
+  unchanged and needs a ruling.
 - **Out of scope:** no prediction, simulation, automatic causal inference, measurement ontology, agency or
   capabilities, domain extensions or frontend (by design).

@@ -2,7 +2,8 @@
 
 exists() and occurrence_status() give the same answer for an occurrence in every case (accepted, denied, disputed,
 not established), with provenance; other things keep the Core 0.3 rule. A lifted claim keeps its own status, is
-marked lifted, and applies only if the occurrences' own existence judgement allows.
+marked lifted, and applies only if the occurrences' own existence judgement allows. The per-question memo changes no
+answer and loads the world's events and describes links once.
 """
 
 import uuid
@@ -10,6 +11,7 @@ from datetime import timedelta
 
 import pytest
 
+import worldmodel.dynamics as dynamics
 from conftest import FakeClock
 from worldmodel import DYNAMICS_MODULES, WorldModel
 from worldmodel.examples import gearbox as g
@@ -131,3 +133,61 @@ def test_description_and_occurrence_level_claims_do_not_dispute_each_other(fresh
     c = {(x["cause"], x["effect"]): x for x in wm.causes_of(w, "o-test-run", g.AFTER)}
     assert c[("o-bearing-replacement", "o-test-run")]["judgement"] == "disputed"
     assert c[("ev-worklog-replacement", "ev-test-run")]["judgement"] == "accepted"   # F-B1: distinct contents
+
+
+# ---- 3. events loaded once per question ---------------------------------------------------------------------------
+def test_events_and_describes_are_loaded_once_per_question(driver, monkeypatch):
+    wm, ids = build(driver, cycles=6)
+    try:
+        w = ids["world"]
+        loads = []
+        real = wm._load
+
+        def counting(world, as_of=None, types=None, subjects=None, at=None, perspective="system"):
+            loads.append((tuple(types or ()), bool(subjects)))
+            return real(world, as_of, types, subjects, at, perspective)
+
+        monkeypatch.setattr(wm, "_load", counting)
+        for ask in (lambda: wm.changes(w, "gbx-100", g.REPAIR[0], g.AFTER),
+                    lambda: wm.explain(w, "has-quality", OPERATIONAL, g.AFTER)):
+            loads.clear()
+            ask()
+            assert loads.count((("event",), False)) == 1                    # was one per claimed event
+            assert loads.count((("describes",), False)) <= 1                # describes: one world load ...
+            assert loads.count((("describes",), True)) <= 2                 # ... plus descriptions() of the asked
+            #                                                                 occurrence; not one per event
+        e = wm.explain(w, "has-quality", OPERATIONAL, g.AFTER)
+        assert [i["event"] for i in e["initiated_by"]] == ["ev-test-run"]   # later test runs are not explanations
+    finally:
+        driver.databases.get(wm.database).delete()
+
+
+def test_the_memo_changes_no_answer(driver, monkeypatch):
+    wm, ids = build(driver, cycles=3)
+    try:
+        w = ids["world"]
+
+        def answers():
+            return [wm.changes(w, "gbx-100", g.REPAIR[0], g.AFTER), wm.explain(w, "has-quality", OPERATIONAL, g.AFTER),
+                    wm.causes_of(w, "o-test-run", g.AFTER), wm.changes(w, "gbx-100", g.REPAIR[0], g.AFTER,
+                                                                       perspective="technician"),
+                    wm.explain(w, "has-quality", OPERATIONAL, g.AFTER, as_of=ids["known_before_repair"]),
+                    wm.occurrence_status(w, "o-test-run", g.AFTER)]
+
+        with_memo = answers()
+
+        class NoMemo(dynamics._Memo):                    # the pre-LABS-1.012 behaviour: load on every call
+            def events(self):
+                self._events = None
+                return super().events()
+
+            def occurrences(self, description):
+                self._occurrences = None
+                return super().occurrences(description)
+
+        monkeypatch.setattr(dynamics, "_Memo", NoMemo)
+        assert answers() == with_memo
+        wm.selective = False
+        assert answers() == with_memo                    # and on the full-load path
+    finally:
+        driver.databases.get(wm.database).delete()

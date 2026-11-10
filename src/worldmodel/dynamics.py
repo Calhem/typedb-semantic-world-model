@@ -22,6 +22,36 @@ SYSTEM = "system"
 EPS = timedelta(microseconds=1)
 
 
+class _Memo:
+    """World-wide loads reused within one question (LABS-1.012): the event attestations (for intervals and accounts)
+    and the describes links (for occurrences_of), each loaded at most once for one world, knowledge time and
+    perspective. Created by a read operation and passed down; it never outlives the question, so nothing is cached
+    across writes."""
+
+    def __init__(self, wm, world, as_of, perspective):
+        self.wm, self.world, self.as_of, self.perspective = wm, world, as_of, perspective
+        self._events = self._occurrences = None
+
+    def events(self):
+        """{description id: [attestation records of it]} for every event description visible in the world."""
+        if self._events is None:
+            self._events = {}
+            for a in self.wm._load(self.world, self.as_of, types=["event"], perspective=self.perspective).values():
+                self._events.setdefault(a.content, []).append(a)
+        return self._events
+
+    def occurrences(self, description):
+        """The occurrences the description is accepted (by the perspective) as describing."""
+        if self._occurrences is None:
+            self._occurrences = {}
+            links = self.wm._load(self.world, self.as_of, types=["describes"], perspective=self.perspective)
+            for a in links.values():
+                if a.polarity and usable(a, self.perspective, self.as_of):
+                    for d in a.roles.get("description", []):
+                        self._occurrences.setdefault(d, set()).update(a.roles.get("occurrence", []))
+        return sorted(self._occurrences.get(description, ()))
+
+
 class DynamicsMixin:
     # ---- writing ---------------------------------------------------------------------------------------------------
     def account(self, world, roles, start, end=None, kind=None, occurrence=None, attester=SYSTEM, id=None,
@@ -67,11 +97,13 @@ class DynamicsMixin:
         key = q.opt(rows[0], "k")
         return {**self.content(key), "key": key}
 
-    def interval(self, world, description, as_of=None, perspective=SYSTEM):
+    def interval(self, world, description, as_of=None, perspective=SYSTEM, _memo=None):
         """The occurrence interval given by an attestation of the description that the perspective can use (start
         Window, end Window, record), or None. An unaccepted account's times are never used for a judgement."""
-        recs = [a for a in self._load(world, as_of, types=["event"], perspective=perspective).values()
-                if a.content == description and a.polarity and usable(a, perspective, as_of)]
+        found = (_memo.events().get(description, []) if _memo else
+                 [a for a in self._load(world, as_of, types=["event"], perspective=perspective).values()
+                  if a.content == description])
+        recs = [a for a in found if a.polarity and usable(a, perspective, as_of)]
         recs.sort(key=lambda a: a.id)
         return (recs[0].start, recs[0].end, recs[0]) if recs else None
 
@@ -166,6 +198,7 @@ class DynamicsMixin:
         before = {key(f): f for f in self.facts_about(world, subject, t1, as_of, perspective)}
         after = {key(f): f for f in self.facts_about(world, subject, t2, as_of, perspective)}
         hist = {h["attestation"]: h for h in self.history(world, subject, as_of=as_of, perspective=perspective)}
+        memo = _Memo(self, world, as_of, perspective)
 
         def entry(f, kind):
             content = f["type"], {r: v for r, v in f["roles"].items()}
@@ -173,7 +206,7 @@ class DynamicsMixin:
             return {"type": f["type"], "roles": f["roles"], "params": f["params"], "status": f["status"],
                     "stated_by": sorted({hist[a]["attester"] for a in f["support"] if a in hist}),
                     "support": f["support"], "outcome_id": pid,
-                    "claimed_events": self._events_claiming(world, pid, kind, t2, as_of, perspective) if pid else [],
+                    "claimed_events": self._events_claiming(world, pid, kind, t2, as_of, perspective, memo) if pid else [],
                     "content": content}
 
         began = [entry(f, "initiates") for k, f in sorted(after.items()) if k not in before]
@@ -185,23 +218,26 @@ class DynamicsMixin:
         from .keys import proposition_key
         return proposition_key(fact["type"], fact["roles"], fact["params"] or None)
 
-    def _events_claiming(self, world, pid, kind, t, as_of, perspective):
+    def _events_claiming(self, world, pid, kind, t, as_of, perspective, _memo=None):
         """Event descriptions claimed to have initiated / terminated the proposition `pid`, with claim judgements and
         the occurrences each description is accepted as describing."""
+        memo = _memo or _Memo(self, world, as_of, perspective)
         out = []
         for entry in self._claims(world, pid, (kind,), t, as_of, perspective):
             if pid not in entry["roles"].get("outcome", []):
                 continue
             for ev in entry["roles"].get("event", []):
-                span = self.interval(world, ev, as_of, perspective)
+                span = self.interval(world, ev, as_of, perspective, _memo=memo)
                 out.append({"event": ev, "claim": self._verdict_label(entry), "claim_status": entry["status"],
                             "claimed_by": sorted({x["attester"] for x in entry["attestations"]}),
                             "start": span[0] if span else None, "end": span[1] if span else None,
-                            "occurrences": self.occurrences_of(world, ev, as_of, perspective)})
+                            "occurrences": self.occurrences_of(world, ev, as_of, perspective, _memo=memo)})
         return out
 
-    def occurrences_of(self, world, description, as_of=None, perspective=SYSTEM):
+    def occurrences_of(self, world, description, as_of=None, perspective=SYSTEM, _memo=None):
         """The occurrences a description is accepted (by the perspective) as describing."""
+        if _memo is not None:
+            return _memo.occurrences(description)
         links = self._load(world, as_of, types=["describes"], subjects=[description], perspective=perspective)
         return sorted({o for a in links.values() if a.polarity and usable(a, perspective, as_of)
                        and description in a.roles.get("description", []) for o in a.roles.get("occurrence", [])})
@@ -232,7 +268,7 @@ class DynamicsMixin:
         with self.driver.transaction(self.database, READ) as tx:
             return self._kinds_of(tx, [i])[i]
 
-    def occurrence_status(self, world, occurrence, t, as_of=None, perspective=SYSTEM, details=True):
+    def occurrence_status(self, world, occurrence, t, as_of=None, perspective=SYSTEM, details=True, _memo=None):
         """Whether the occurrence happened, for the perspective (LABS-1.011): judged only from attestations of its own
         existence (existence(existent: occurrence)), never from accepted descriptions, describes links or causal
         claims. `status` is accepted, denied, disputed or "not established". Each description that some source links
@@ -248,13 +284,13 @@ class DynamicsMixin:
             return {"occurrence": occurrence, "status": status, "answer": answer}
         existence = [e for e in self._claims(world, occurrence, ("existence",), t, as_of, perspective)
                      if occurrence in e["roles"].get("existent", [])]
-        events = [a for a in self._load(world, as_of, types=["event"], perspective=perspective).values()]
+        memo = _memo or _Memo(self, world, as_of, perspective)
         descs = []
         for link in self._claims(world, occurrence, ("describes",), t, as_of, perspective):
             if occurrence not in link["roles"].get("occurrence", []):
                 continue
             for d in link["roles"].get("description", []):
-                recs = [a for a in events if a.content == d]
+                recs = memo.events().get(d, [])
                 account = ("accepted" if any(a.polarity and usable(a, perspective, as_of) for a in recs) else
                            "unreviewed" if any(acceptance_state(a, perspective, as_of) == "unreviewed" for a in recs)
                            else "rejected" if recs else "none")
@@ -267,7 +303,7 @@ class DynamicsMixin:
                                "attestations": e["attestations"]} for e in existence],
                 "descriptions": sorted(descs, key=lambda x: x["description"])}
 
-    def causes_of(self, world, effect, t, as_of=None, perspective=SYSTEM):
+    def causes_of(self, world, effect, t, as_of=None, perspective=SYSTEM, _memo=None):
         """Every causal claim about what caused `effect` (an occurrence or an event description), judged for the
         perspective. Claims stated about the effect itself are direct; claims stated about another description of the
         same happening (or about the occurrence a description describes) are lifted, but only through describes links
@@ -280,6 +316,7 @@ class DynamicsMixin:
         about a denied occurrence stays visible as its source's account (its own judgement is unchanged), but it does
         not answer what caused the happening, and a lifted claim never makes a denied occurrence accepted."""
         occurrence = self.is_a(self._kind_of_id(effect), "occurrence")
+        memo = _memo or _Memo(self, world, as_of, perspective)
         statuses = {}
 
         def status_of(o):
@@ -287,7 +324,7 @@ class DynamicsMixin:
                 statuses[o] = self.occurrence_status(world, o, t, as_of, perspective, details=False)["status"]
             return statuses[o]
         lifted = (self.descriptions(world, effect, as_of, perspective) if occurrence
-                  else self.occurrences_of(world, effect, as_of, perspective))
+                  else self.occurrences_of(world, effect, as_of, perspective, _memo=memo))
         out, seen = [], set()
         for target in [effect, *lifted]:
             for entry in self._claims(world, target, ("causes",), t, as_of, perspective):
@@ -301,8 +338,9 @@ class DynamicsMixin:
                 effect_is_occ = self.is_a(self._kind_of_id(target), "occurrence")
                 level = ("occurrence" if cause_is_occ and effect_is_occ else
                          "description" if not cause_is_occ and not effect_is_occ else "mixed")
-                cause_occs = [cause] if cause_is_occ else self.occurrences_of(world, cause, as_of, perspective)
-                effect_occs = [target] if effect_is_occ else self.occurrences_of(world, target, as_of, perspective)
+                cause_occs = [cause] if cause_is_occ else self.occurrences_of(world, cause, as_of, perspective, _memo=memo)
+                effect_occs = [target] if effect_is_occ else self.occurrences_of(world, target, as_of, perspective,
+                                                                                 _memo=memo)
                 involved = {o: status_of(o) for o in sorted(set(cause_occs) | set(effect_occs))}
                 applies = (False if "denied" in involved.values() else None if "disputed" in involved.values()
                            else True)
@@ -326,13 +364,14 @@ class DynamicsMixin:
         from .keys import proposition_key
         answer = self.holds(world, type, roles, t, as_of, perspective)
         pid = self.proposition_id(proposition_key(type, roles))
+        memo = _Memo(self, world, as_of, perspective)            # events and describes loaded once (LABS-1.012)
         initiators = []
-        for ev in (self._events_claiming(world, pid, "initiates", t, as_of, perspective) if pid else []):
+        for ev in (self._events_claiming(world, pid, "initiates", t, as_of, perspective, memo) if pid else []):
             if ev["end"] is None or ev["end"].latest > t:
                 continue
             causes, seen = [], set()
             for subject in [ev["event"], *ev["occurrences"]]:
-                for c in self.causes_of(world, subject, t, as_of, perspective):
+                for c in self.causes_of(world, subject, t, as_of, perspective, _memo=memo):
                     if (c["cause"], c["effect"]) not in seen:
                         seen.add((c["cause"], c["effect"]))
                         causes.append(c)

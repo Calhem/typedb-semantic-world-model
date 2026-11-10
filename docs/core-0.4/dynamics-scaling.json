@@ -10,7 +10,7 @@
   },
   "questions": {
    "effects_of(ev-worklog-replacement)": {
-    "median_ms": 286.3,
+    "median_ms": 254.1,
     "typeql_queries": 197,
     "records_retrieved": 52,
     "repeated_loads": {
@@ -20,40 +20,34 @@
     }
    },
    "changes(gbx-100, repair)": {
-    "median_ms": 240.1,
-    "typeql_queries": 95,
-    "records_retrieved": 107,
+    "median_ms": 187.8,
+    "typeql_queries": 85,
+    "records_retrieved": 105,
     "repeated_loads": {
      "same-as (subjects)": 5,
-     "* (subjects)": 5,
-     "event (all)": 2,
-     "describes (subjects)": 2
+     "* (subjects)": 5
     }
    },
    "causes_of(o-test-run)": {
-    "median_ms": 449.7,
-    "typeql_queries": 238,
-    "records_retrieved": 124,
+    "median_ms": 189.7,
+    "typeql_queries": 143,
+    "records_retrieved": 52,
     "repeated_loads": {
-     "same-as (subjects)": 14,
-     "* (subjects)": 13,
-     "event (all)": 5,
-     "describes (subjects)": 3
+     "same-as (subjects)": 9,
+     "* (subjects)": 8
     }
    },
    "explain(operational)": {
-    "median_ms": 843.1,
-    "typeql_queries": 503,
-    "records_retrieved": 265,
+    "median_ms": 459.8,
+    "typeql_queries": 298,
+    "records_retrieved": 107,
     "repeated_loads": {
-     "same-as (subjects)": 28,
-     "* (subjects)": 26,
-     "event (all)": 11,
-     "describes (subjects)": 7
+     "same-as (subjects)": 18,
+     "* (subjects)": 16
     }
    },
    "process_steps(o-repair)": {
-    "median_ms": 244.0,
+    "median_ms": 227.8,
     "typeql_queries": 153,
     "records_retrieved": 130,
     "repeated_loads": {
@@ -63,7 +57,7 @@
     }
    },
    "actions_of(technician)": {
-    "median_ms": 155.3,
+    "median_ms": 168.1,
     "typeql_queries": 79,
     "records_retrieved": 31,
     "repeated_loads": {
@@ -71,16 +65,16 @@
     }
    },
    "occurrence_status(o-bearing-replacement)": {
-    "median_ms": 51.1,
-    "typeql_queries": 33,
-    "records_retrieved": 22,
+    "median_ms": 68.5,
+    "typeql_queries": 48,
+    "records_retrieved": 27,
     "repeated_loads": {
-     "same-as (subjects)": 2,
-     "* (subjects)": 2
+     "same-as (subjects)": 3,
+     "* (subjects)": 3
     }
    },
    "value_of(condition)": {
-    "median_ms": 46.7,
+    "median_ms": 40.6,
     "typeql_queries": 23,
     "records_retrieved": 6,
     "repeated_loads": {}
@@ -98,7 +92,7 @@
   },
   "questions": {
    "effects_of(ev-worklog-replacement)": {
-    "median_ms": 304.3,
+    "median_ms": 304.0,
     "typeql_queries": 197,
     "records_retrieved": 60,
     "repeated_loads": {
@@ -108,40 +102,34 @@
     }
    },
    "changes(gbx-100, repair)": {
-    "median_ms": 310.6,
-    "typeql_queries": 135,
-    "records_retrieved": 215,
+    "median_ms": 199.7,
+    "typeql_queries": 85,
+    "records_retrieved": 129,
     "repeated_loads": {
-     "event (all)": 6,
-     "describes (subjects)": 6,
      "same-as (subjects)": 5,
      "* (subjects)": 5
     }
    },
    "causes_of(o-test-run)": {
-    "median_ms": 383.5,
-    "typeql_queries": 238,
-    "records_retrieved": 164,
+    "median_ms": 265.8,
+    "typeql_queries": 143,
+    "records_retrieved": 60,
     "repeated_loads": {
-     "same-as (subjects)": 14,
-     "* (subjects)": 13,
-     "event (all)": 5,
-     "describes (subjects)": 3
+     "same-as (subjects)": 9,
+     "* (subjects)": 8
     }
    },
    "explain(operational)": {
-    "median_ms": 928.3,
-    "typeql_queries": 543,
-    "records_retrieved": 441,
+    "median_ms": 544.8,
+    "typeql_queries": 298,
+    "records_retrieved": 127,
     "repeated_loads": {
-     "same-as (subjects)": 28,
-     "* (subjects)": 26,
-     "event (all)": 15,
-     "describes (subjects)": 11
+     "same-as (subjects)": 18,
+     "* (subjects)": 16
     }
    },
    "process_steps(o-repair)": {
-    "median_ms": 344.2,
+    "median_ms": 327.1,
     "typeql_queries": 185,
     "records_retrieved": 210,
     "repeated_loads": {
@@ -151,7 +139,7 @@
     }
    },
    "actions_of(technician)": {
-    "median_ms": 250.4,
+    "median_ms": 247.9,
     "typeql_queries": 151,
     "records_retrieved": 63,
     "repeated_loads": {
@@ -159,16 +147,16 @@
     }
    },
    "occurrence_status(o-bearing-replacement)": {
-    "median_ms": 48.8,
-    "typeql_queries": 33,
-    "records_retrieved": 30,
+    "median_ms": 77.4,
+    "typeql_queries": 48,
+    "records_retrieved": 35,
     "repeated_loads": {
-     "same-as (subjects)": 2,
-     "* (subjects)": 2
+     "same-as (subjects)": 3,
+     "* (subjects)": 3
     }
    },
    "value_of(condition)": {
-    "median_ms": 42.5,
+    "median_ms": 43.3,
     "typeql_queries": 23,
     "records_retrieved": 6,
     "repeated_loads": {}
@@ -186,7 +174,7 @@
   },
   "questions": {
    "effects_of(ev-worklog-replacement)": {
-    "median_ms": 342.2,
+    "median_ms": 289.0,
     "typeql_queries": 197,
     "records_retrieved": 84,
     "repeated_loads": {
@@ -196,40 +184,34 @@
     }
    },
    "changes(gbx-100, repair)": {
-    "median_ms": 780.1,
-    "typeql_queries": 255,
-    "records_retrieved": 923,
+    "median_ms": 221.7,
+    "typeql_queries": 85,
+    "records_retrieved": 201,
     "repeated_loads": {
-     "event (all)": 18,
-     "describes (subjects)": 18,
      "same-as (subjects)": 5,
      "* (subjects)": 5
     }
    },
    "causes_of(o-test-run)": {
-    "median_ms": 398.3,
-    "typeql_queries": 238,
-    "records_retrieved": 284,
+    "median_ms": 246.4,
+    "typeql_queries": 143,
+    "records_retrieved": 84,
     "repeated_loads": {
-     "same-as (subjects)": 14,
-     "* (subjects)": 13,
-     "event (all)": 5,
-     "describes (subjects)": 3
+     "same-as (subjects)": 9,
+     "* (subjects)": 8
     }
    },
    "explain(operational)": {
-    "median_ms": 1334.5,
-    "typeql_queries": 663,
-    "records_retrieved": 1353,
+    "median_ms": 445.2,
+    "typeql_queries": 298,
+    "records_retrieved": 187,
     "repeated_loads": {
-     "same-as (subjects)": 28,
-     "event (all)": 27,
-     "* (subjects)": 26,
-     "describes (subjects)": 23
+     "same-as (subjects)": 18,
+     "* (subjects)": 16
     }
    },
    "process_steps(o-repair)": {
-    "median_ms": 427.5,
+    "median_ms": 448.0,
     "typeql_queries": 281,
     "records_retrieved": 450,
     "repeated_loads": {
@@ -239,7 +221,7 @@
     }
    },
    "actions_of(technician)": {
-    "median_ms": 907.9,
+    "median_ms": 507.1,
     "typeql_queries": 367,
     "records_retrieved": 159,
     "repeated_loads": {
@@ -247,16 +229,16 @@
     }
    },
    "occurrence_status(o-bearing-replacement)": {
-    "median_ms": 69.0,
-    "typeql_queries": 33,
-    "records_retrieved": 54,
+    "median_ms": 75.5,
+    "typeql_queries": 48,
+    "records_retrieved": 59,
     "repeated_loads": {
-     "same-as (subjects)": 2,
-     "* (subjects)": 2
+     "same-as (subjects)": 3,
+     "* (subjects)": 3
     }
    },
    "value_of(condition)": {
-    "median_ms": 65.6,
+    "median_ms": 42.7,
     "typeql_queries": 23,
     "records_retrieved": 6,
     "repeated_loads": {}
@@ -274,7 +256,7 @@
   },
   "questions": {
    "effects_of(ev-worklog-replacement)": {
-    "median_ms": 445.7,
+    "median_ms": 408.7,
     "typeql_queries": 197,
     "records_retrieved": 180,
     "repeated_loads": {
@@ -284,40 +266,34 @@
     }
    },
    "changes(gbx-100, repair)": {
-    "median_ms": 3465.5,
-    "typeql_queries": 736,
-    "records_retrieved": 9515,
+    "median_ms": 476.3,
+    "typeql_queries": 86,
+    "records_retrieved": 489,
     "repeated_loads": {
-     "event (all)": 66,
-     "describes (subjects)": 66,
      "same-as (subjects)": 5,
      "* (subjects)": 5
     }
    },
    "causes_of(o-test-run)": {
-    "median_ms": 517.8,
-    "typeql_queries": 238,
-    "records_retrieved": 764,
+    "median_ms": 398.5,
+    "typeql_queries": 143,
+    "records_retrieved": 180,
     "repeated_loads": {
-     "same-as (subjects)": 14,
-     "* (subjects)": 13,
-     "event (all)": 5,
-     "describes (subjects)": 3
+     "same-as (subjects)": 9,
+     "* (subjects)": 8
     }
    },
    "explain(operational)": {
-    "median_ms": 5231.8,
-    "typeql_queries": 1144,
-    "records_retrieved": 10761,
+    "median_ms": 637.0,
+    "typeql_queries": 299,
+    "records_retrieved": 427,
     "repeated_loads": {
-     "event (all)": 75,
-     "describes (subjects)": 71,
-     "same-as (subjects)": 28,
-     "* (subjects)": 26
+     "same-as (subjects)": 18,
+     "* (subjects)": 16
     }
    },
    "process_steps(o-repair)": {
-    "median_ms": 1126.1,
+    "median_ms": 1120.8,
     "typeql_queries": 665,
     "records_retrieved": 1410,
     "repeated_loads": {
@@ -327,7 +303,7 @@
     }
    },
    "actions_of(technician)": {
-    "median_ms": 2473.6,
+    "median_ms": 1749.1,
     "typeql_queries": 1231,
     "records_retrieved": 543,
     "repeated_loads": {
@@ -335,16 +311,16 @@
     }
    },
    "occurrence_status(o-bearing-replacement)": {
-    "median_ms": 94.6,
-    "typeql_queries": 33,
-    "records_retrieved": 150,
+    "median_ms": 113.5,
+    "typeql_queries": 48,
+    "records_retrieved": 155,
     "repeated_loads": {
-     "same-as (subjects)": 2,
-     "* (subjects)": 2
+     "same-as (subjects)": 3,
+     "* (subjects)": 3
     }
    },
    "value_of(condition)": {
-    "median_ms": 49.7,
+    "median_ms": 57.1,
     "typeql_queries": 23,
     "records_retrieved": 6,
     "repeated_loads": {}
