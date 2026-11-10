@@ -8,7 +8,8 @@ Evidence keys: `P1-n` Phase 1 probes (`probes/typedb_capabilities.py`), `P1B-x` 
 (`probes/phase_1b_probes.py`), `A-n` architecture probes (`probes/architecture_probes.py`,
 `probes/architecture_snippet_check.py`), `B-n` v0.2 probes (`probes/architecture_v02_probes.py`), `M1` Milestone 1
 code and tests, `C03` Core 0.3 code, tests and Stage D measurements (`docs/core-0.3/`), `C04P` Core 0.4 planning probes
-(`probes/core04_feasibility.py`; exploratory schema, throwaway databases).
+(`probes/core04_feasibility.py`; exploratory schema, throwaway databases), `A0-x` Core 0.4 Stage A0 probes
+(`probes/core04_a0_probes.py`) and the A0 code and tests (`tests/test_f_a0_*.py`).
 
 ## Types and identity
 | Practice | Why (verified behaviour) | Evidence |
@@ -30,6 +31,8 @@ code and tests, `C03` Core 0.3 code, tests and Stage D measurements (`docs/core-
 | A role allows **at most one player per relation instance** unless declared otherwise: give symmetric or multi-player roles an explicit `@card` (e.g. `relates same @card(2..2)`) | two players on an undeclared role were rejected with `CNT5` (`@card(0..1)`) | B2, M1 |
 | A query on a general role finds players of roles specialised from it: `$e isa event (actor: $x)` returns a profile's `pickup:picker` players | role inheritance works for matching | C04P P3 |
 | But labels come back specialised: `isa!` gives the subtype (`pickup`) and `links ($r: $x)` gives `pickup:picker`; application code that compares labels must map them to their core supertype and core role | otherwise profile subtypes are silently missed | C04P P3b, P3c |
+| Read a type's supertypes from the schema with `match $t label X; $t sub $s;` (reflexive: X, then each ancestor) | returns e.g. `docked-at`, `located-at`, `proposition` | A0-R1 |
+| Read a specialised role's parent with `match $t label X; $t relates $r; $r sub $p;` (reflexive); `relates` also lists roles inherited from supertypes | returns e.g. `pickup:picker -> event:actor` | A0-R2, A0-R3 |
 | A type may own a second `@key` attribute (e.g. a proposition's `proposition-key` and `wm-id`), and both are enforced | duplicate second key rejected with `CNT9` | C04P P8 |
 | A proposition (relation) can play a role in another proposition (e.g. the outcome of `initiates`) | works | C04P P2 |
 | One role can take players of several relation types (a `content` role played by propositions and by event descriptions); filter with `$c isa <type>` in the query | queried by any, by proposition or by event | B2 |
@@ -45,6 +48,7 @@ code and tests, `C03` Core 0.3 code, tests and Stage D measurements (`docs/core-
 ## Queries
 | Practice | Why | Evidence |
 |---|---|---|
+| When a disjunction tells instances apart by which attribute they own (`{ $c has proposition-key $k; } or { $c has wm-id $k; }`), name the type in each branch (`{ $c isa event, has wm-id $k; }`) | once a further type owns the attribute (propositions gaining `wm-id`), an instance owning both matches both branches and the query silently returns each one twice under two ids; 13 of 78 regression tests caught it | A0.1 |
 | Pass values as parameters with a `given` header; compare attributes with `has attr == $param` | `has attr $param` declares the variable as an attribute and conflicts with a value parameter (`REP35`) | M1 |
 | Never give a parameter the same name as a matched variable (e.g. `$old` as both a thing and a value) | `REP1` | M1, Core 0.3 Stage B |
 | Do not reuse one variable name for two different things (e.g. a thing and a value) in one query | `REP1` | M1 |
@@ -85,6 +89,8 @@ code and tests, `C03` Core 0.3 code, tests and Stage D measurements (`docs/core-
 |---|---|---|
 | Run tests in throwaway databases with unique names and delete them in `finally`, plus a session-end sweep | repeated runs left nothing behind | M1 |
 | Treat timings as indicative unless repeated; record runs and machine | single-laptop Docker runs vary | Phase 1, M1 |
+| To make an attribute a `@key` of a type that already has instances, migrate in three steps: `define T owns A;` (schema tx), write `A` for every instance (write tx), then `define T owns A @key;` | adding `owns A @key` directly while instances lack `A` is rejected with `CNT5`; after step 3, new instances without `A` are rejected | A0-M1..M4b, A0.1 upgrade test |
+| Build a query branch that depends on an optional schema module only when that module is installed (e.g. `{ $x isa proposition; }` in an id lookup) | on a database without the module the branch is impossible and the whole query is rejected (`INF11`) | A0.1 upgrade test |
 
 ## Design trade-offs observed (not yet best practice)
 These are preferences supported by analysis, not verified rules.

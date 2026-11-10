@@ -1,0 +1,10 @@
+# Core 0.4, Stage A0 groundwork module (LABS-1.002). Additive to core-0.3.tql; installed after it.
+#
+# A0.1: every proposition owns a deterministic, immutable identifier `wm-id` (p: + 24 hex characters of the SHA-256 of
+# its canonical key), so propositions can be role players and are looked up like every other identified thing. The
+# canonical key keeps its meaning (structural identity of content); the id is derived from it and never changes.
+# For an existing Core 0.3 database, use WorldModel.upgrade_to_a0(): TypeDB rejects adding `@key` while propositions
+# lack the attribute (CNT5), so the upgrade owns the attribute first, writes the ids, then adds the key.
+
+define
+proposition owns wm-id @key;

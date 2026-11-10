@@ -15,13 +15,16 @@ from pathlib import Path
 from typedb.driver import Credentials, DriverOptions, DriverTlsConfig, TransactionType, TypeDB
 
 from . import typeql as q
-from .keys import as_ids, check_id, proposition_key
+from . import keys
+from .keys import as_ids, check_new_id, proposition_key
 from .semantics import (Answer, AttestationRecord, Identity, Replacement, Status, Window, acceptance_state,
                         answer_status, certainly_before, superseded, usable, verdict)
 
 READ, WRITE, SCHEMA = TransactionType.READ, TransactionType.WRITE, TransactionType.SCHEMA
 SCHEMA_DIR = Path(__file__).resolve().parents[2] / "schema"
-MODULES = {"core": ("0.3.0", ["core/core-0.3.tql"])}
+MODULES = {"core": ("0.3.0", ["core/core-0.3.tql"]),
+           "core-0.4-a0": ("0.4.0-a0", ["core/core-0.4-a0.tql"])}      # Stage A0 groundwork (LABS-1.002)
+DEFAULT_MODULES = ("core", "core-0.4-a0")
 SYSTEM = "system"                     # the system's own agent: the default attester and perspective
 KINDS = ("physical-object", "social-object", "place", "information-object", "occurrence",
          "category", "social-role", "quality-kind", "clock", "spatial-frame", "unit")
@@ -51,6 +54,14 @@ def _window(value):
     raise TypeError(f"expected a datetime, a (earliest, latest) tuple or a Window, got {value!r}")
 
 
+class PropositionIdCollision(ValueError):
+    """Two different canonical keys derived the same proposition id. Raised instead of merging their content."""
+
+    def __init__(self, pid, key, existing):
+        super().__init__(f"proposition id {pid} already belongs to {existing!r}; refusing {key!r}")
+        self.pid, self.key, self.existing = pid, key, existing
+
+
 class WorldModel:
     def __init__(self, driver, database, clock=utcnow, selective=True):
         self.driver, self.database, self.clock = driver, database, clock
@@ -58,10 +69,11 @@ class WorldModel:
         self.stats = {"queries": 0, "attestations": 0}
         self._last_recorded = None
         self._types = None
+        self._prop_ids = None
 
     # ---- setup -----------------------------------------------------------------------------------------------------
     @classmethod
-    def create(cls, database, driver=None, modules=("core",), clock=utcnow, replace=False):
+    def create(cls, database, driver=None, modules=DEFAULT_MODULES, clock=utcnow, replace=False):
         """Create the database, load schema modules in order and register the system agent."""
         driver = driver or connect()
         if driver.databases.contains(database):
@@ -83,13 +95,40 @@ class WorldModel:
         version, files = (version, files) if files else MODULES[name]
         with self.driver.transaction(self.database, SCHEMA) as tx:
             for f in files:
-                tx.query((SCHEMA_DIR / f).read_text()).resolve()
+                tx.query((Path(f) if Path(f).is_absolute() else SCHEMA_DIR / f).read_text()).resolve()
             tx.commit()
         with self.driver.transaction(self.database, WRITE) as tx:
             q.run(tx, "insert $m isa schema-module, has module-name == $n, has module-version == $v;",
                   {"n": name, "v": version})
             tx.commit()
         self._types = None
+        self._prop_ids = None
+
+    def has_proposition_ids(self):
+        """True when the A0 module is installed (propositions own a `wm-id` key)."""
+        if self._prop_ids is None:
+            self._prop_ids = "core-0.4-a0" in self.modules()
+        return self._prop_ids
+
+    def upgrade_to_a0(self):
+        """Upgrade an existing Core 0.3 database in place: give every proposition its deterministic id, then make the
+        id a key. Three steps, because TypeDB rejects adding @key while instances lack the attribute (CNT5)."""
+        if self.has_proposition_ids():
+            return 0
+        with self.driver.transaction(self.database, SCHEMA) as tx:
+            tx.query("define proposition owns wm-id;").resolve()
+            tx.commit()
+        with self.driver.transaction(self.database, READ) as tx:
+            pending = [q.opt(r, "k") for r in q.rows(tx, """match $p isa proposition, has proposition-key $k;
+                not { $p has wm-id $i; };""")]
+        with self.driver.transaction(self.database, WRITE) as tx:
+            for key in pending:
+                q.run(tx, "match $p isa proposition, has proposition-key == $k; insert $p has wm-id == $id;",
+                      {"k": key, "id": keys.proposition_id(key)})
+            tx.commit()
+        version, files = MODULES["core-0.4-a0"]
+        self.install_module("core-0.4-a0", files=files, version=version)
+        return len(pending)
 
     def modules(self):
         with self.driver.transaction(self.database, READ) as tx:
@@ -119,7 +158,7 @@ class WorldModel:
     def add_entity(self, kind, name, alt_names=(), description=None, id=None):
         """A particular (physical-object, social-object, place, information-object, occurrence), a concept (category,
         social-role, quality-kind) or a reference system (clock, spatial-frame, unit). Profiles may add subtypes."""
-        rid = check_id(id or self._mint(kind))
+        rid = check_new_id(id or self._mint(kind))
         attrs = ", has name == $n" + "".join(f", has alt-name == $a{i}" for i in range(len(alt_names)))
         params = {"id": rid, "n": name, **{f"a{i}": a for i, a in enumerate(alt_names)}}
         if description:
@@ -133,7 +172,7 @@ class WorldModel:
     def create_world(self, name, kind="actual", base=None, branch_at=None, knowledge_at=None, id=None):
         """A world (actual, hypothetical or simulated). A variant names its base, the valid time it branches at, and
         the base knowledge it inherits (`knowledge_at`, a transaction time; default now; never in the future)."""
-        wid = check_id(id or self._mint("world"))
+        wid = check_new_id(id or self._mint("world"))
         with self.driver.transaction(self.database, WRITE) as tx:
             q.run(tx, "insert $w isa world, has wm-id == $id, has name == $n, has world-kind == $k;",
                   {"id": wid, "n": name, "k": kind})
@@ -159,16 +198,19 @@ class WorldModel:
 
     # ---- writing: content --------------------------------------------------------------------------------------
     def _kinds_of(self, tx, ids):
-        """Exact type of each id among particulars, concepts, reference systems and event descriptions."""
+        """Exact type of each id among particulars, concepts, reference systems, event descriptions and (A0.1) propositions."""
         out = {}
+        # The proposition branch exists only once propositions own wm-id: an infeasible branch is an error (INF11).
+        extra = " or { $x isa proposition; }" if self.has_proposition_ids() else ""
         for i in sorted(set(ids)):
             for r in q.rows(tx, """match $x has wm-id == $id; $x isa! $t;
-                { $x isa particular; } or { $x isa concept; } or { $x isa reference-system; } or { $x isa event; };""",
-                            {"id": i}):
+                { $x isa particular; } or { $x isa concept; } or { $x isa reference-system; } or { $x isa event; }"""
+                            + extra + ";", {"id": i}):
                 out[i] = r.get("t").get_label()
         missing = set(ids) - set(out)
         if missing:
-            raise ValueError(f"no particular, concept, reference system or event description with id {sorted(missing)}")
+            raise ValueError(f"no particular, concept, reference system, event description or proposition with id "
+                             f"{sorted(missing)}")
         return out
 
     def _players(self, tx, roles, prefix="p"):
@@ -198,9 +240,22 @@ class WorldModel:
         attrs = "".join(f", has {q.label(name)} == $v_{name.replace('-', '_')}" for name in sorted(params))
         values.update({f"v_{name.replace('-', '_')}": float(v) for name, v in params.items()})
         values["key"] = key
+        if self.has_proposition_ids():
+            pid = keys.proposition_id(key)
+            clash = q.rows(tx, "match $p isa proposition, has wm-id == $id, has proposition-key $k;", {"id": pid})
+            if clash:      # same id, different content: never merge silently
+                raise PropositionIdCollision(pid, key, q.opt(clash[0], "k"))
+            attrs += ", has wm-id == $pid"
+            values["pid"] = pid
         q.run(tx, f"match {patterns} insert $p isa {q.label(type)} ({links}), has proposition-key == $key{attrs};",
               values)
         return key
+
+    def proposition_id(self, key):
+        """The stored proposition's immutable id (A0.1), read from the database; None if absent."""
+        with self.driver.transaction(self.database, READ) as tx:
+            rows = q.rows(tx, "match $p isa proposition, has proposition-key == $k, has wm-id $id;", {"k": key})
+        return q.opt(rows[0], "id") if rows else None
 
     def proposition(self, type, roles, params=None):
         """Store the content (once) and return its canonical key. Content alone asserts nothing."""
@@ -212,7 +267,7 @@ class WorldModel:
     def describe_event(self, roles, description=None, id=None):
         """An event description: one account of an occurrence, with its participants. Identified by id, not by
         content: two descriptions with the same participants are two descriptions. Asserts nothing by itself."""
-        eid = check_id(id or self._mint("event"))
+        eid = check_new_id(id or self._mint("event"))
         with self.driver.transaction(self.database, WRITE) as tx:
             patterns, links, values = self._players(tx, roles)
             values["id"] = eid
@@ -278,7 +333,7 @@ class WorldModel:
         if end is not None and until_superseded:
             raise ValueError("give either an end or until_superseded, not both")
         end_basis = "stated" if end is not None else ("until-superseded" if until_superseded else "unknown")
-        aid = check_id(id or self._mint("att"))
+        aid = check_new_id(id or self._mint("att"))
         values = {"world": world, "attester": attester, "id": aid, "st": stance, "pol": polarity, "bs": basis,
                   "eb": end_basis, "rec": self._now()}
         attrs = ""
@@ -342,7 +397,7 @@ class WorldModel:
         with self.driver.transaction(self.database, READ) as tx:
             rows = q.rows(tx, """match $a isa attestation (content: $c, attester: $who), has wm-id == $id,
                 has stance $st, has polarity $pol, has basis $bs; $who has wm-id $wid; $c isa! $t;
-                { $c has proposition-key $ck; } or { $c has wm-id $ck; };
+                { $c has proposition-key $ck; } or { $c isa event, has wm-id $ck; };
                 try { $a has valid-from-earliest $se; }; try { $a has valid-from-latest $sl; };
                 try { $a has credence $cr; };""", {"id": aid})
         if not rows:
@@ -438,7 +493,7 @@ class WorldModel:
         elif type is not None:
             content_id = "$c has proposition-key $ck;"
         else:
-            content_id = "{ $c has proposition-key $ck; } or { $c has wm-id $ck; };"
+            content_id = "{ $c has proposition-key $ck; } or { $c isa event, has wm-id $ck; };"
         # Attributes are read with one `fetch` stage rather than one `try` block each: same values, about 3x faster
         # (docs/core-0.3, experiment-main-query.json). Absent attributes come back as null.
         for d in q.documents(tx, head + f""" $who has wm-id $wid; $c isa! $t; {content_id}

@@ -9,7 +9,7 @@ from worldmodel.model import WRITE
 
 
 def test_schema_installed_and_system_agent_registered(wm):
-    assert wm.modules() == {"core": "0.3.0"}
+    assert wm.modules() == {"core": "0.3.0", "core-0.4-a0": "0.4.0-a0"}      # Core 0.3 plus the additive A0 module (LABS-1.002)
     assert {"existence", "located-at", "part-of", "member-of", "depends-on", "classified-as", "has-quality",
             "same-as", "describes", "initiates", "terminates"} == wm.proposition_types()
     assert wm.find("system reasoner") == [SYSTEM]
