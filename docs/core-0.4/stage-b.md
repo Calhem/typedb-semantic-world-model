@@ -4,7 +4,7 @@
 Stage C not started.** Base: `main` at 322c5c7 (Stages A0-A2 merged). Plan: [core-0.4-plan.md](../plans/core-0.4-plan.md), Stage B
 and 9.3. Ontology: World Ontology v0.2 §3.2 (frozen).
 
-## Decision register (LABS-1.014)
+## Decision register (LABS-1.014, updated LABS-1.015)
 Earlier sections keep the history; this register is the current state. Approved decisions are not reopened without a
 demonstrated conflict.
 
@@ -17,6 +17,8 @@ demonstrated conflict.
 | Occ-1 | An occurrence's existence is judged only from attestations of its own existence; `exists()` and `occurrence_status()` share that judgement; other things keep the Core 0.3 participation rule | LABS-1.012 |
 | Occ-2 | An accepted account of a denied occurrence stays visible as its source's account; claims involving a denied occurrence do not apply (`applies: false`) | LABS-1.011 |
 | Perf-1 | World-wide event and describes loads are made once per question (per-question memo; no cache across questions) | LABS-1.012 |
+| Q-B1 | `changes` reports transitions whose valid time intersects the requested interval, with uncertain windows, world-state vs judgement categories and explanations only from accepted effect claims (rulings Q-B1.1, Q-B1.2, Q-B1.4) | LABS-1.015 |
+| Q-B2 | One functional-conflict judgement for `value_at`, `holds`, `facts_about` and `changes` | LABS-1.015 |
 
 Implemented within the approved architecture and recorded for review, but not ruled on individually:
 - **D-B-1:** effects are written by `claim_effect` / `account`; `record_event` is unchanged.
@@ -37,13 +39,86 @@ Implemented within the approved architecture and recorded for review, but not ru
 ### Unresolved architectural questions
 | # | Question | Evidence |
 |---|---|---|
-| **Q-B1** | The temporal contract of `changes` (LABS-1.014): see below. Needs a ruling on four points before it can be implemented without inventing transition times | `probes/core04_b_changes_contract.py` |
-| Q-B2 | `facts_about` (and so `changes`) lists each holding content separately, while `value_at` / `holds` report a functional conflict as DISPUTED. The two read paths disagree when a rival value is accepted (F-4 aligned `holds`, not `facts_about`) | probe case 4 |
+| ~~Q-B1~~ | **Resolved (LABS-1.015):** the temporal contract of `changes`; see "The `changes` contract" below | rulings Q-B1.1, Q-B1.2, Q-B1.4 |
+| ~~Q-B2~~ | **Resolved (LABS-1.015):** `facts_about` and `changes` use the same functional-conflict judgement as `value_at` | ruling Q-B2 |
 | D-A1-1, D-A1-3 | material marking; physical and dynamics modules opt-in | Stage A1 |
 | U-3 | rounding of continuous parameters in proposition keys | plan 9.7 |
 | Perf-A0 | the A0 performance thresholds are not established (tracked risk) | Core 0.4 README |
 
-### Q-B1: the `changes` temporal contract (probe results)
+### The `changes` contract (implemented, LABS-1.015)
+`changes(world, subject, t1, t2, as_of, perspective)` returns:
+```
+{ "subject", "from", "to", "context": {world, perspective, as_of},
+  "transitions": [ {
+      "track":    {"kind": "slot", "type", "key", "value_role"}        # a functional slot keyed by the subject
+                | {"kind": "content", "type", "roles", "params"},       # any other content involving it
+      "category": "world-state" | "judgement",
+      "before", "after": {"status", "values" | "holds", "support", "conflicts"},
+      "window": (earliest, latest),       # possible transition interval; equal when certain
+      "within": "certain" | "possible",   # relative to (t1, t2]; transitions outside are not returned
+      "began", "ended": [contents],
+      "explanations": [{"event", "effect", "content", "claim", "claim_status", "claimed_by", "start", "end",
+                        "occurrences", "attribution": "unique" | "ambiguous"}] } ],
+  "began", "ended": [views over the transitions], "unchanged": n }
+```
+**How it is computed.**
+- **One load, then a scan.** The subject's records are loaded once (plus, for a slot keyed by another thing, the
+  rival records of that slot). Every start and end bound of their windows is a boundary. The judged state is
+  constant between boundaries, so judging once at each boundary gives the whole timeline. The judging is done in
+  Python; there are no extra queries per boundary.
+- **Categories (Q-B1.2).** World-state: between two accepted states (a value, or accepted "does not hold").
+  Judgement: into or out of UNKNOWN or DISPUTED. A judgement transition is never presented as physical change.
+- **Uncertain times (Q-B1.1).** Accepted A, then only UNKNOWN, then accepted B ≠ A is one world-state transition
+  whose window is the UNKNOWN gap. No instant is invented. Relative to (t1, t2], a transition is "certain" if its
+  window lies inside, "possible" if the window overlaps, and is omitted if outside. A change at exactly t1 is already
+  in effect at t1, so it is outside.
+- **Explanations (Q-B1.4).** Only *accepted* initiates / terminates claims about a content that began or ended in
+  the transition count. A claim is attributed only to activations that its event did not certainly start after: an
+  effect cannot precede the start of its event. That is the one temporal constraint used; proximity is never
+  evidence. If a claim fits more than one activation of the same content on the whole timeline, it is listed on each
+  as "ambiguous" and never chosen. Claims are looked up only for contents that change in a returned transition.
+- **One functional judgement (Q-B2).** `facts_about` and `changes` use `value_at`'s functional-conflict judgement. A
+  content in a functional conflict is DISPUTED, with its own support and the rival attestations. This includes
+  rivals that do not mention the subject: seen from a place, the thing's other places, found by one targeted load
+  only in that case. `facts_about` entries add `conflicts`, and `support_status` (the content's own status before
+  conflicts). `where()` uses `support_status` so that its per-question angle tolerance (D-A2-7) still decides
+  orientation conflicts.
+
+**The six probe cases, now** (`probes/core04_b_changes_contract.out.json`; before: `.before.json`):
+| Case | Result |
+|---|---|
+| 1. a → b (10:00) → a (11:00), interval 09:30-12:00 | two world-state transitions, both certain (was: nothing) |
+| 2. move known only within 10:00-10:20 | one world-state transition a → b with window 10:00..10:20: possible for 10:15-11:00, certain for 09:00-11:00, not returned for 10:30-11:00 |
+| 3. state with no stated end | nothing (it never holds) |
+| 4. rival claim accepted at 10:00 | judgement transition ASSERTED a → DISPUTED (a, b) at 10:00 |
+| 5. a begins at 08:00 (no event) and 13:00 (ev-move-2) | 07:00-08:30: judgement transition UNKNOWN → a, no explanation; 12:00-14:00: world-state b → a, explained by ev-move-2 (unique) |
+| 6. delayed effect: event 09:50-10:00, state from 10:45 | world-state a → b at 10:45 (certain), explained by ev-order (unique); the event itself is not a change |
+
+**In the reference world**, 11-03 12:00 to 11-06 12:00:
+- operational → faulty at 11-04 09:30: world-state, certain, no accepted effect claim;
+- faulty → operational at 11-05 16:00: world-state, certain, explained by ev-test-run (initiates and terminates,
+  unique);
+- the camera's first position fix: a judgement transition.
+
+Before, `changes` reported the condition as "unchanged" over this period.
+
+**Scaling** (`dynamics-scaling.json`; memo only: `dynamics-scaling-memo-1.012.json`; first scan before the
+claim-lookup restriction: `dynamics-scaling-scan-first.json`). Same session, median of five, changes(gbx-100,
+repair) at each size, as memo only → first scan → final:
+| Extra cycles | 0 | 4 | 16 | 64 |
+|---|---|---|---|---|
+| ms | 184 → 329 → 83 | 203 → 385 → 89 | 220 → 336 → 115 | 368 → 464 → 567 |
+| TypeQL queries | 85 → 281 → 58 | 85 → 281 → 58 | 85 → 281 → 58 | 86 → 283 → 59 |
+| records | 105 → 58 → 56 | 129 → 86 → 80 | 201 → 170 → 152 | 489 → 506 → 440 |
+
+- **Constant query count.** Boundary scanning adds no queries per boundary. The final version makes fewer queries
+  than the memo-only version, because the old one judged the subject twice.
+- **The 64-cycle run was noisy.** Its final figure (567 ms) came from a run in which every question was slower,
+  including ones whose queries did not change (`process_steps` 1,067 → 1,588 ms with identical queries), so the
+  latency difference at that size is not established.
+- **Other questions** keep their query and record counts.
+
+### Q-B1: the `changes` temporal contract (LABS-1.014 probe results, before the rulings)
 Requested contract: return state transitions whose effective valid time intersects the requested interval, judged for
 the knowledge time, perspective and world. Keep event time, transition valid time, knowledge time and explanations
 apart. An event outside the interval may explain a transition inside it, but is never itself an in-period change.

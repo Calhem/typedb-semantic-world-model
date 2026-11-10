@@ -308,8 +308,13 @@ class DynamicsMixin:
                 activations.setdefault((cls, "initiates"), []).append((n, late))
             for cls in before[2] - after[2]:
                 activations.setdefault((cls, "terminates"), []).append((n, late))
+        # Claims are looked up only for contents that change in a returned transition; attribution still counts every
+        # activation of the content on the whole timeline.
+        returned = {n for n, (key, before, after, early, late, cat) in enumerate(found) if not (late <= t1 or early > t2)}
         explained = {}
         for (cls, kind), acts in activations.items():
+            if not any(n in returned for n, _ in acts):
+                continue
             for ev in claims_for(cls, kind):
                 fits = [n for n, late in acts if compatible(ev, late)]
                 for n in fits:
