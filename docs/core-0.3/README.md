@@ -1,7 +1,7 @@
 # Core 0.3: World Ontology v0.2 implemented (Stages A-D)
 
-**Status (2026-11-10): Stages A-D complete on branch `feature/core-0.3`, with the `fetch` optimisation and the
-supersession fix; merge paused for review of the fix; not merged.**
+**Status (2026-11-10): approved and merged into `main`.** Stages A-D complete, with the `fetch` optimisation and the
+supersession fix (D14). The remaining performance gap and the 13 deferrals (D1-D13) are accepted known limitations.
 Baseline: [World Ontology v0.2](../architecture/world-ontology-v0.2.md) (frozen). Milestone 1 stays on `main`.
 
 ## Run it
@@ -30,6 +30,20 @@ wm.holds(w, "located-at", {"located": box, "place": shelf}, t1)   # DISPUTED, wi
 wm.holds(w, "located-at", {"located": box, "place": shelf}, t1, perspective="A")   # A's view: false
 ```
 
+## Core semantics in one page
+- **Three layers of record.** A *proposition* is timeless content, stored once under a canonical key. An *attestation*
+  is one source's stance on it (stance, polarity, basis, interval, world). An *acceptance* is one perspective's
+  decision about an attestation. Answers are computed for a world, a perspective, a knowledge time and a valid time,
+  and never stored.
+- **Source corrections are not acceptances.** A source revises only its own attestations: it ends one, corrects it
+  (`attest(supersedes=…)`) or withdraws it. A revision changes that source's own view at once. Every other
+  perspective keeps what it accepted until it accepts the revision, and keeps it for good if it rejects the revision.
+  Its answers then list the revision in `superseded_by_source` (D14,
+  [supersession-and-endings.md](supersession-and-endings.md)).
+- **Validity vs learning.** When content held (valid time) is separate from when a source revised it and when a
+  perspective accepted the revision (transaction time). Every view is reproducible at any knowledge time, and
+  hypothetical worlds keep the snapshot they branched from.
+
 ## What is implemented
 | v0.2 element | Core 0.3 | Where |
 |---|---|---|
@@ -44,6 +58,9 @@ wm.holds(w, "located-at", {"located": box, "place": shelf}, t1, perspective="A")
 | Selective retrieval in TypeQL (content type, bound subject, world, knowledge limit, branch limit, start ≤ t), full load as reference | `_filters`, `_load`, `selective` flag | `model.py` |
 
 ## Deviations from v0.2 and clarifications (none changes the baseline's meaning)
+D1-D13 are the **13 accepted deferrals and clarifications** for Core 0.3, tracked here until each is implemented or
+closed. D14 is a defect that was found and fixed before the merge.
+
 | # | Item | What Core 0.3 does | Why |
 |---|---|---|---|
 | D1 | OBSERVED and PRESUMED | not produced; attestations with basis observation are labelled ASSERTED, with `basis: observation` in the evidence | observations, coverage and persistence policies are deferred (baseline §12) |
