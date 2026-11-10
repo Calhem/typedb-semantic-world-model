@@ -322,12 +322,12 @@ class WorldModel:
     def _kinds_of(self, tx, ids):
         """Exact type of each id among particulars, concepts, reference systems, event descriptions and (A0.1) propositions."""
         out = {}
-        # The proposition branch exists only once propositions own wm-id: an infeasible branch is an error (INF11).
-        extra = " or { $x isa proposition; }" if self.has_proposition_ids() else ""
+        # Only ids of the reserved proposition form can name a proposition (A0.1), so other ids keep the Core 0.3
+        # query; the proposition branch would be infeasible without the A0 module anyway (INF11).
         for i in sorted(set(ids)):
-            for r in q.rows(tx, """match $x has wm-id == $id; $x isa! $t;
-                { $x isa particular; } or { $x isa concept; } or { $x isa reference-system; } or { $x isa event; }"""
-                            + extra + ";", {"id": i}):
+            kinds = ("{ $x isa proposition; }" if keys.PROPOSITION_ID.match(i) and self.has_proposition_ids() else
+                     "{ $x isa particular; } or { $x isa concept; } or { $x isa reference-system; } or { $x isa event; }")
+            for r in q.rows(tx, f"match $x has wm-id == $id; $x isa! $t; {kinds};", {"id": i}):
                 out[i] = r.get("t").get_label()
         missing = set(ids) - set(out)
         if missing:
@@ -356,17 +356,21 @@ class WorldModel:
         if unknown:
             raise ValueError(f"unknown proposition parameters {sorted(unknown)}")
         key = proposition_key(type, roles, params)
-        if q.rows(tx, "match $p isa proposition, has proposition-key == $k;", {"k": key}):
+        if self.has_proposition_ids():
+            # One lookup by id answers both "already stored?" and "does another key own this id?" (A0.1).
+            pid = keys.proposition_id(key)
+            found = q.rows(tx, "match $p isa proposition, has wm-id == $id, has proposition-key $k;", {"id": pid})
+            if found:
+                if q.opt(found[0], "k") == key:
+                    return key
+                raise PropositionIdCollision(pid, key, q.opt(found[0], "k"))   # never merge silently
+        elif q.rows(tx, "match $p isa proposition, has proposition-key == $k;", {"k": key}):
             return key
         patterns, links, values = self._players(tx, roles)
         attrs = "".join(f", has {q.label(name)} == $v_{name.replace('-', '_')}" for name in sorted(params))
         values.update({f"v_{name.replace('-', '_')}": float(v) for name, v in params.items()})
         values["key"] = key
         if self.has_proposition_ids():
-            pid = keys.proposition_id(key)
-            clash = q.rows(tx, "match $p isa proposition, has wm-id == $id, has proposition-key $k;", {"id": pid})
-            if clash:      # same id, different content: never merge silently
-                raise PropositionIdCollision(pid, key, q.opt(clash[0], "k"))
             attrs += ", has wm-id == $pid"
             values["pid"] = pid
         q.run(tx, f"match {patterns} insert $p isa {q.label(type)} ({links}), has proposition-key == $key{attrs};",
