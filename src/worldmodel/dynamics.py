@@ -232,18 +232,22 @@ class DynamicsMixin:
         with self.driver.transaction(self.database, READ) as tx:
             return self._kinds_of(tx, [i])[i]
 
-    def occurrence_status(self, world, occurrence, t, as_of=None, perspective=SYSTEM):
+    def occurrence_status(self, world, occurrence, t, as_of=None, perspective=SYSTEM, details=True):
         """Whether the occurrence happened, for the perspective (LABS-1.011): judged only from attestations of its own
         existence (existence(existent: occurrence)), never from accepted descriptions, describes links or causal
         claims. `status` is accepted, denied, disputed or "not established". Each description that some source links
         to it is reported separately: its source, whether the perspective accepts the account (the description's own
         attestation) and the describes link. An accepted account of a denied occurrence is representable and reported
         as such."""
+        # One judgement for both APIs (LABS-1.012): the status is read from exists(), which judges an occurrence only
+        # from its own existence attestations.
+        answer = self.exists(world, occurrence, t, as_of, perspective)
+        status = ("disputed" if answer.status == Status.DISPUTED else "accepted" if answer.holds is True else
+                  "denied" if answer.holds is False else "not established")
+        if not details:
+            return {"occurrence": occurrence, "status": status, "answer": answer}
         existence = [e for e in self._claims(world, occurrence, ("existence",), t, as_of, perspective)
                      if occurrence in e["roles"].get("existent", [])]
-        verdicts = {self._verdict_label(e) for e in existence}
-        status = ("disputed" if "disputed" in verdicts or {"accepted", "denied"} <= verdicts else
-                  "accepted" if "accepted" in verdicts else "denied" if "denied" in verdicts else "not established")
         events = [a for a in self._load(world, as_of, types=["event"], perspective=perspective).values()]
         descs = []
         for link in self._claims(world, occurrence, ("describes",), t, as_of, perspective):
@@ -258,7 +262,7 @@ class DynamicsMixin:
                               "account_by": sorted({a.attester for a in recs}),
                               "describes": self._verdict_label(link),
                               "describes_by": sorted({x["attester"] for x in link["attestations"]})})
-        return {"occurrence": occurrence, "status": status,
+        return {"occurrence": occurrence, "status": status, "answer": answer,
                 "existence": [{"judgement": self._verdict_label(e), "status": e["status"],
                                "attestations": e["attestations"]} for e in existence],
                 "descriptions": sorted(descs, key=lambda x: x["description"])}
@@ -280,7 +284,7 @@ class DynamicsMixin:
 
         def status_of(o):
             if o not in statuses:
-                statuses[o] = self.occurrence_status(world, o, t, as_of, perspective)["status"]
+                statuses[o] = self.occurrence_status(world, o, t, as_of, perspective, details=False)["status"]
             return statuses[o]
         lifted = (self.descriptions(world, effect, as_of, perspective) if occurrence
                   else self.occurrences_of(world, effect, as_of, perspective))

@@ -1147,7 +1147,12 @@ class WorldModel(PhysicalMixin, DynamicsMixin):
 
     def exists(self, world, thing, t, as_of=None, perspective=SYSTEM):
         """ASSERTED/STIPULATED from existence attestations (before creation and after destruction: false); INFERRED
-        true if the thing takes part in content holding at t; otherwise UNKNOWN, or NOT_YET_KNOWN."""
+        true if the thing takes part in content holding at t; otherwise UNKNOWN, or NOT_YET_KNOWN.
+
+        An occurrence (LABS-1.012) is judged only from attestations of its own existence: taking part in holding
+        content (an accepted describes link, a causal claim, part-of a process) never establishes that it happened,
+        so without an existence judgement the answer is UNKNOWN (records about it are visible) or NOT_YET_KNOWN.
+        Other things keep the Core 0.3 rule. occurrence_status() reads its status from this answer."""
         atts, ident = self._view(world, as_of, perspective, None, [thing])
         me = set(ident.members(thing))
         mine = [a for a in atts.values() if a.kind != "same-as" and any(me & set(ids) for ids in a.roles.values())]
@@ -1163,6 +1168,8 @@ class WorldModel(PhysicalMixin, DynamicsMixin):
             return Answer(answer_status(support), val, support=ids, alternatives=alternatives, evidence=ev)
         others = [a for cls, (val, sup, _) in self._judge([a for a in mine if a.kind != "existence"], ident, t,
                                                           perspective, as_of).items() if val is True for a in sup]
+        if others and self.is_a(self._kind_of_id(thing), "occurrence"):
+            others = []                           # participation never establishes an occurrence (LABS-1.012)
         if others:
             return Answer(Status.INFERRED, True, support=tuple(sorted(a.id for a in others)),
                           alternatives=alternatives, evidence=tuple(a.evidence() for a in others))

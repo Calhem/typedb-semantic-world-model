@@ -264,6 +264,27 @@ descriptions.
 
 Loading a world's events once per question would remove most of the growth.
 
+## LABS-1.012: settled decisions and consolidation
+### Settled architectural decisions
+| # | Decision (settled, LABS-1.012) |
+|---|---|
+| **F-B1** | Description-level and occurrence-level causal claims are distinct contents. They never dispute each other automatically: a denial at one level leaves an accepted claim at the other level accepted. |
+| **U-2** | A lifted claim keeps its original attestation status and is identified as lifted (`lifted: true`, `lifted_via` the accepted describes link). Whether it applies is judged against the occurrences' own existence: `applies` is false if any occurrence involved is denied, null if any is disputed. A denied occurrence never gets an applicable causal explanation through a lifted description claim; the claim stays visible as its source's account. |
+| **Occurrence existence** | `exists()` and `occurrence_status()` share one judgement. An occurrence is judged only from attestations of its own existence. Participation (accepted descriptions, describes links, causal claims, process membership) never establishes it. Other things keep the Core 0.3 rule that participation implies existence. |
+
+### One existence judgement
+- **`exists(world, occurrence, t)`.** An existence judgement gives ASSERTED or STIPULATED (true, or false before the
+  occurrence's existence starts or after it ends) or DISPUTED. Without one, the answer is UNKNOWN when records about
+  the occurrence are visible, otherwise NOT_YET_KNOWN. It is never INFERRED from participation. Unreviewed existence
+  claims are returned as `alternatives`, and the evidence keeps the sources.
+- **`occurrence_status`.** It reads its status from that answer (accepted / denied / disputed / not established) and
+  includes the answer itself. With `details=True`, the default, it also lists the existence attestations and every
+  description, each with its source.
+- **What it costs.** The occurrence check is one kind lookup, made only when `exists()` would otherwise infer
+  existence from participation. Non-occurrences answer as before.
+- **Semantics preserved.** Valid time, knowledge time, perspective and hypothetical worlds work as before
+  (`tests/test_h_b4_consolidation.py`).
+
 ## Remaining limitations
 - **No causal chains.** There is no chain query yet; the plan's "a chain query lists asserted links" is not
   implemented. `explain` stops at the causes of the initiating event.
