@@ -59,11 +59,15 @@ code and tests, `C03` Core 0.3 code, tests and Stage D measurements (`docs/core-
 | Store content as a keyed relation and each stance as a separate n-ary relation (`attestation (attester, content, context)`) pointing at it | one content, many holders; denials share content; selection through the two hops measured at about 2 ms per query on 2,200 facts | B1, C03 experiment |
 | Pick the content-id pattern by content type (`proposition-key` for propositions, `wm-id` for event descriptions) rather than a disjunction | with a fixed type, the impossible branch is rejected (`INF11`) | C03 Stage B |
 | Bind the subject positively and recover its role from that binding; read other players with `try { $c links ($role: $x); }` | two `links` constraints never match the same player | M1, C03 |
+| When a revision record links an old stance record to a new one (supersession), judge the link **per perspective**: hide the old record only for perspectives that accept the new one | otherwise an unaccepted record changes other perspectives' answers; 5 regression tests failed before this rule | C03 D14 (`test_e_supersession.py`); architectural recommendation, not database behaviour |
 
 ## Query selectivity and temporal filtering
 | Practice | Why | Evidence |
 |---|---|---|
-| Read many optional attributes of matched instances with a `fetch` stage, not one `try` block each | on the same selection and results: five `try` blocks 7.6 ms per query vs `fetch` 2.5 ms (ids alone 1.9 ms) | C03 experiment (`experiment-main-query.json`) |
+| Read many optional attributes of matched instances with a `fetch` stage, not one `try` block each | on the same selection and results: five `try` blocks 7.6 ms per query vs `fetch` 2.5 ms (ids alone 1.9 ms); applied in Core 0.3, the main query went from 8.8 to 2.9 ms per call | C03 experiment (`experiment-main-query.json`), `bench-instrumented-core03-fetch.json` |
+| In `fetch`, `$x.attr` must be ownable by **every** possible type of `$x`; fetch optional attributes of a subtype in a separate query restricted to it | `QUA8` "attribute 'lower' cannot be when '$c' has type 'existence'" | C03 Stage D |
+| `fetch` returns datetimes as ISO strings with nanoseconds and offset, types as `{"kind", "label"}`, absent attributes as `null` | parse to the same Python values as concept rows (test compares both) | C03 (`test_d_fetch.py`) |
+| When timing, wrap every read helper (rows **and** documents): an unwrapped `fetch` path is silently counted as Python time | the first optimised measurement showed Python 13.5 ms, which was really `fetch` time | C03 Stage D |
 | Measure where time goes before optimising: wrap the read helper and split TypeDB time from Python time | Core 0.3's 2× regression was 91 % TypeDB reads; the main query was 51 % of read time | C03 (`bench-instrumented-*.json`, `profile-query-kinds.json`) |
 | **Do not pre-filter in TypeQL by "ended before t"** when an end carries meaning: an attestation that ended says the content stopped holding, which can dispute other accounts | dropping such rows changed answers on the selective path only; the equivalence test caught it; a regression test fails with the old filter | C03 D6 (`test_c_time_semantics.py`) |
 | Pre-filtering "starts after t" is safe: such rows say nothing about t | equivalence tests pass on both paths | C03 |

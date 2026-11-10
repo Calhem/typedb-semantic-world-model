@@ -1,6 +1,7 @@
 # Core 0.3: World Ontology v0.2 implemented (Stages A-D)
 
-**Status (2026-11-09): Stages A-D complete on branch `feature/core-0.3`; stopped for architectural review; not merged.**
+**Status (2026-11-10): Stages A-D complete on branch `feature/core-0.3`, with the `fetch` optimisation and the
+supersession fix; merge paused for review of the fix; not merged.**
 Baseline: [World Ontology v0.2](../architecture/world-ontology-v0.2.md) (frozen). Milestone 1 stays on `main`.
 
 ## Run it
@@ -57,10 +58,11 @@ wm.holds(w, "located-at", {"located": box, "place": shelf}, t1, perspective="A")
 | D10 | `destroy` on others' claims | the system's own attestations are ended; others' accepted ones are denied by the system (so they become disputed, not overruled) | the system cannot supersede another attester's claim |
 | D11 | `social-role` | the role concept type is named `social-role` | `role` is reserved in TypeQL |
 | D12 | Measurements, clocks, frames | stored (ranges, coverage level, clock role) but not reasoned about | deferred (baseline §12) |
+| D14 | Supersession across perspectives (**defect, fixed**) | a source's replacement hides the original only for perspectives whose view includes the replacement; others keep it, marked `superseded_by_source`; corrections via `attest(supersedes=…)` | previously an unaccepted replacement erased other perspectives' accepted evidence, contrary to v0.2 §6.2 ([supersession-and-endings.md](supersession-and-endings.md)) |
 | D13 | v0.2 core proposition types not yet in the schema | `constitution`, `causes`, `positioned-in`, `frame-transform`, `clock-alignment`, `absence-of`, `anchored-to` | Core 0.3's first increment covered the types Milestone 1's behaviour needed; the rest are specified but unimplemented |
 
 ## Regression results
-**69 tests**, against TypeDB CE 3.14.1 in throwaway databases:
+**78 tests**, against TypeDB CE 3.14.1 in throwaway databases:
 | Group | Tests | File |
 |---|---|---|
 | Stage A: schema, keys, proposition uniqueness, event descriptions | 8 | `test_a_content.py` |
@@ -69,6 +71,8 @@ wm.holds(w, "located-at", {"located": box, "place": shelf}, t1, perspective="A")
 | **Milestone 1 regression requirements, ported** (same names and expectations) | **41** | `test_m1_core.py` 19, `test_m1_worlds.py` 9, `test_m1_existence.py` 6, `test_m1_semantics.py` 6, `test_m1_selective.py` 1 |
 | Occurrences vs descriptions (clarification A) | 3 | `test_c_occurrences.py` |
 | Defects found in Stage C (D5, D6), each shown to fail without its fix | 3 | `test_c_time_semantics.py` |
+| `fetch` reads match row-based reads (Stage D optimisation) | 1 | `test_d_fetch.py` |
+| Supersession across perspectives (D14): ends, corrections, retraction, acceptance and rejection of replacements, hypothetical worlds, path equivalence for every perspective; 5 of 8 failed before the fix | 8 | `test_e_supersession.py` |
 
 Every test runs on both paths (selective, and `WM_SELECTIVE=0` full load). The equivalence test and the benchmark compare
 whole answers (status, values, support, alternatives **and evidence**) between the paths: identical. Validation runs
@@ -76,29 +80,34 @@ are recorded at the end of this document.
 
 ## Performance against Milestone 1
 Same workload as Milestone 1's benchmark (200 objects, 30 places, 1,000 moves, a hypothetical variant with 50 moves,
-60 random `value_at` questions, seed 11), same TypeDB server, same session, **same Python (3.13.17)**, both
-implementations run through `scripts/bench_instrumented.py`, which wraps each one's own read helper without changing its
-code. One run each; indicative.
+60 random `value_at` questions, seed 11), same TypeDB server, same session, **same Python (3.13.17)**. Every
+implementation ran through `scripts/bench_instrumented.py`, which wraps each one's own read helpers without changing its
+code, to split TypeDB time from Python time. One run each, except Milestone 1 (two runs, for drift); indicative.
 
-| Measure | Milestone 1 (`main`) | Core 0.3 | Ratio |
+| Measure | Milestone 1 (run 1 · run 2) | Core 0.3 original | **Core 0.3 + `fetch`** |
 |---|---|---|---|
-| Selective question, median / p95 | 26.9 / 39.9 ms | 49.8 / 98.7 ms | 1.9× / 2.5× |
-| — of which TypeDB reads (median) | 23.3 ms (86 % of total) | 45.5 ms (91 %) | 2.0× |
-| — of which Python (median) | 3.5 ms | 4.2 ms | 1.2× |
-| Full-load question, median / p95 | 2,022 / 2,331 ms | 4,115 / 4,705 ms | 2.0× |
-| Records retrieved per selective question | 3.7 claims | 7.1 attestations | 1.9× |
-| TypeQL queries per selective question | 12.5 | 12.5 | 1.0× |
-| Building the world (1,000 moves) | 46.9 s (34 ms per move) | 74.1 s (56 ms per move) | 1.6× |
-| Database size on disk | 9.06 MB | 12.40 MB | 1.4× |
-| Stored records | 2,200 claims + 1,000 cessations | 3,200 attestations, 1,140 propositions, 1,000 event descriptions, 1,000 supersessions | — |
+| Selective question, median / p95 | 26.9 / 39.9 · 24.9 / 34.2 ms | 49.8 / 98.7 ms | **43.5 / 60.3 ms** |
+| — TypeDB reads (median) | 23.3 · 21.6 ms | 45.5 ms | **40.2 ms** |
+| — Python (median) | 3.5 · 3.2 ms | 4.2 ms | **3.3 ms** |
+| Main attestation query, per call | — | 8.8 ms | **2.9 ms** |
+| Full-load question, median | 2,022 · 1,903 ms | 4,115 ms | **2,234 ms** |
+| Records retrieved per selective question | 3.7 claims | 7.1 attestations | 7.1 attestations |
+| TypeQL queries per selective question | 12.5 | 12.5 | 12.5 |
+| Building the world (1,000 moves) | 46.9 · 42.7 s | 74.1 s | **56.0 s** |
+| Database size on disk | 9.06 · 9.07 MB | 12.40 MB | 12.34 MB |
+| Stored records | 2,200 claims + 1,000 cessations | 3,200 attestations, 1,140 propositions, 1,000 event descriptions, 1,000 supersessions | same |
+| Answers identical on both paths | yes | yes | yes |
 
-An earlier uninstrumented pair (Milestone 1 on Python 3.15, Core 0.3 on 3.13) gave 23.2 vs 53.1 ms median: the same
-picture (`bench-m1-same-session.json`, `bench-core03.json`).
+Raw outputs: `bench-instrumented-m1.json`, `bench-instrumented-m1-run2.json`, `bench-instrumented-core03.json`,
+`bench-instrumented-core03-fetch.json`; profiles `profile-query-kinds.json`, `profile-query-kinds-fetch.json`. An
+earlier uninstrumented pair (Milestone 1 on Python 3.15) gave the same picture (`bench-m1-same-session.json`,
+`bench-core03.json`). The supersession fix (D14) adds one query per world level only when supersessions exist and was
+not re-benchmarked separately; the suite runs in similar time.
 
-**Cause of the regression (investigated before any optimisation):**
-1. *Where:* TypeDB reads, not Python (table above).
-2. *Which query:* the main attestation query is 51 % of read time: 8.8 ms for about 2.3 rows; roles 22 %,
-   supersessions 17 %, acceptances 6 %, world chain 5 % (`profile-query-kinds.json`).
+**Cause of the original regression (investigated before optimising):**
+1. *Where:* TypeDB reads, not Python.
+2. *Which query:* the main attestation query was 51 % of read time: 8.8 ms for about 2.3 rows
+   (`profile-query-kinds.json`).
 3. *Which part of it* (`experiment-main-query.json`; one world, the same 80 questions, identical result ids):
 
 | Main-query variant | Mean |
@@ -112,15 +121,15 @@ picture (`bench-m1-same-session.json`, `bench-core03.json`).
 | **same selection, attributes read with a `fetch` stage** | **2.5 ms** |
 | selection only (ids) | 1.9 ms |
 
-**Conclusion:** the content/stance architecture itself is cheap. The two-hop selection costs about 2 ms. The regression
-comes from (a) reading optional attributes through `try` blocks, a per-row cost, and (b) twice as many rows per question,
-because every change keeps the superseded attestation and its ended restatement, and ended attestations are no longer
-pre-filtered (D6, required for correctness). Ingestion is slower for a related reason: each move writes more records and
-reads the attester's current claims through the same queries (not profiled further).
+**Applied:** the main query reads its attributes with one `fetch` stage; quality parameters use a separate `fetch` only
+where the content can be `has-quality`. Effect: main query 8.8 → 2.9 ms per call; selective median −13 %, p95 −39 %;
+full load −46 %; ingestion −24 %; answers unchanged.
 
-**Proposed, not implemented:** read attestation attributes with a `fetch` stage instead of `try` blocks in the main,
-roles and supersession queries. On this workload, the experiment suggests the main query would fall from about 7.6 to
-2.5 ms. That is an estimate until implemented and re-measured. No architectural change is indicated by this evidence.
+**Remaining gap to Milestone 1 (about 1.7× median):** the role-player and supersession queries (about 3 ms each,
+three times per question, `profile-query-kinds-fetch.json`) and twice the rows per question (superseded originals and
+their restatements; ended attestations kept for correctness, D6). The content/stance architecture itself remains cheap
+(selection about 2 ms). Not optimised further; see section 4 of
+[supersession-and-endings.md](supersession-and-endings.md) for the write-amplification question.
 
 ## TypeDB modelling lessons from this work
 Recorded with evidence in [typedb-modelling-best-practices.md](../typedb-modelling-best-practices.md):
@@ -131,13 +140,16 @@ Recorded with evidence in [typedb-modelling-best-practices.md](../typedb-modelli
 - Parameter names must not clash with matched variables (`REP1`).
 - Content uniqueness needs a computed key with `@key`, since TypeDB allows duplicate relation instances.
 - Optional attributes read through `try` blocks cost about 1 ms each per query here; a `fetch` stage read the same
-  attributes 3× faster.
+  attributes 3× faster. `fetch` of `$c.lower` is rejected unless every possible type of `$c` can own `lower`.
+- Supersession must be judged per perspective: a replacement nobody else accepted must not hide their evidence.
 - A valid-time pre-filter must not drop attestations that ended before t: an end is evidence that the content does
   not hold.
 
 ## Remaining limitations and risks
-- **Performance debt:** selective questions are about 2× slower than Milestone 1 (cause diagnosed, fix proposed, not
-  applied). p95 98.7 ms exceeds the 50 ms ROS target proposed in Phase 1C (not yet an approved threshold).
+- **Performance:** after the `fetch` change, selective questions are about 1.7× slower than Milestone 1 (median 43.5
+  vs 24.9-26.9 ms). p95 60.3 ms still exceeds the 50 ms ROS target proposed in Phase 1C, which was never approved.
+- **Supersession semantics** were wrong until D14; the fix awaits review. Endings still cost a restatement plus a
+  supersession; a lighter form would need an ontology amendment (acceptance of terminations).
 - **Record volume:** each change writes about 5-6 records (Milestone 1: 4). The restatement-plus-supersession pattern
   for ends doubles the attestations a history holds.
 - All deviations D1-D13 above, notably D7 (agency not checked), D8 (no derivations) and D13 (seven v0.2 types missing).
@@ -204,3 +216,13 @@ That last one is an open question, not a change.
 After all runs, no test or benchmark databases remained on the server. The benchmarks also reported identical answers
 on both paths. The D5 and D6 regression tests were each shown to fail with their fix removed and to pass with it
 restored.
+
+## Validation record (2026-11-10, after the `fetch` change and the supersession fix)
+| Run | Selective path | Full-load path |
+|---|---|---|
+| fetch only, before D14 (commit `03a8ba9`) | 70 passed (46.2 s) | 70 passed (37.5 s) |
+| with D14, run 1 | 78 passed (75.6 s) | 78 passed (54.5 s) |
+| with D14, run 2 | 78 passed (59.4 s) | 78 passed (54.9 s) |
+
+The supersession tests failed (5 of 8) against commit `03a8ba9` and pass with the fix. No test or benchmark databases
+remained on the server after the runs.
