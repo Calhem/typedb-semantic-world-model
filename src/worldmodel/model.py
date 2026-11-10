@@ -19,6 +19,7 @@ from . import typeql as q
 from . import keys
 from .keys import as_ids, check_new_id, proposition_key
 from .dynamics import DynamicsMixin
+from .qualities import QualitiesMixin
 from .physical import PhysicalMixin
 from .spatial import params_compatible
 from .semantics import (Answer, AttestationRecord, Identity, Replacement, Status, Window, acceptance_state,
@@ -30,11 +31,13 @@ MODULES = {"core": ("0.3.0", ["core/core-0.3.tql"]),
            "core-0.4-a0": ("0.4.0-a0", ["core/core-0.4-a0.tql", "core/core-0.4-a0-slots.tql"]),  # Stage A0 (LABS-1.002)
            "core-0.4-a": ("0.4.0-a1", ["core/core-0.4-a.tql"]),     # Stage A1 physical structure (LABS-1.006)
            "core-0.4-a2": ("0.4.0-a2", ["core/core-0.4-a2.tql"]),   # Stage A2 spatial reasoning (LABS-1.007)
-           "core-0.4-b": ("0.4.0-b", ["core/core-0.4-b.tql"])}      # Stage B dynamics and causality (LABS-1.010)
+           "core-0.4-b": ("0.4.0-b", ["core/core-0.4-b.tql"]),      # Stage B dynamics and causality (LABS-1.010)
+           "core-0.4-c": ("0.4.0-c", ["core/core-0.4-c1.tql"])}     # Stage C qualities and agency (LABS-1.016)
 DEFAULT_MODULES = ("core", "core-0.4-a0")
 PHYSICAL_MODULES = ("core", "core-0.4-a0", "core-0.4-a", "core-0.4-a2")   # opt-in (decision D-A1-3)
 DYNAMICS_MODULES = PHYSICAL_MODULES + ("core-0.4-b",)                     # opt-in, like the physical modules
-CORE_MODULES = ("core", "core-0.4-a0", "core-0.4-a", "core-0.4-a2", "core-0.4-b")   # the core types; others: profiles
+QUALITY_MODULES = DYNAMICS_MODULES + ("core-0.4-c",)                      # Stage C: qualities, measurement, agency
+CORE_MODULES = ("core", "core-0.4-a0", "core-0.4-a", "core-0.4-a2", "core-0.4-b", "core-0.4-c")   # the core types
 
 
 def _core_labels():
@@ -94,7 +97,7 @@ class PropositionIdCollision(ValueError):
         self.pid, self.key, self.existing = pid, key, existing
 
 
-class WorldModel(PhysicalMixin, DynamicsMixin):
+class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin):
     def __init__(self, driver, database, clock=utcnow, selective=True):
         self.driver, self.database, self.clock = driver, database, clock
         self.selective = selective

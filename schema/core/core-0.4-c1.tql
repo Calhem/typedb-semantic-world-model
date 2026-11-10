@@ -1,0 +1,36 @@
+# Core 0.4, Stage C1 (LABS-1.016): qualities, units and measurements. Additive; World Ontology v0.2 §3.3 and the
+# Core 0.4 plan 9.2 (DX-2 amended). No new foundational category.
+#
+# - Units and quality kinds have a dimension (mass, length, temperature...). A unit converts to the dimension's SI
+#   unit by si = raw * si-factor + si-offset. Reported content (has-quality ranges) is stored in the SI unit.
+# - A measurement is three things: the measuring activity (an event description classified `measurement`), the
+#   result record (an information-object: what the act produced, with its raw value, standard uncertainty, coverage
+#   factor, conditions and calibration reference, intrinsic to the record), and the reported content (a has-quality
+#   range). produced(activity, result) and reports(result, content) link them; both are ordinary attested content.
+# - expressed-in(record, unit): the unit the record's raw value is written in. Structural, like the record's other
+#   attributes (what the record says does not change), so it is not an attested proposition (decision D-C-1).
+
+define
+attribute dimension, value string;
+attribute si-factor, value double;
+attribute si-offset, value double;
+attribute raw-value, value double;
+attribute standard-uncertainty, value double;
+attribute coverage-factor, value double;
+attribute condition, value string;
+attribute calibration-ref, value string;
+
+unit owns dimension, owns si-factor, owns si-offset;
+quality-kind owns dimension;
+information-object owns raw-value, owns standard-uncertainty, owns coverage-factor, owns condition @card(0..),
+  owns calibration-ref;
+
+relation expressed-in, relates record @card(1..1), relates unit @card(1..1);
+information-object plays expressed-in:record;
+unit plays expressed-in:unit;
+
+relation produced sub proposition, relates activity, relates result;
+relation reports sub proposition, relates result, relates content;
+event plays produced:activity;
+information-object plays produced:result, plays reports:result;
+proposition plays reports:content;
