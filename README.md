@@ -20,6 +20,7 @@ from a robot to a video understanding pipeline to an agent's long-term memory.
 | **Core 0.4 Stage A0** | **Merged into `main` (2026-11-10, c9750d2):** proposition ids, profile subtypes and roles, functional constraints as data, and four corrections; 128 tests ([docs/core-0.4](docs/core-0.4/README.md)) |
 | **Core 0.4 Stage A1** | **Merged into `main` (2026-11-10, cb1e201):** physical structure and the gearbox reference world; 142 tests ([docs/core-0.4/stage-a1.md](docs/core-0.4/stage-a1.md)) |
 | **Core 0.4 Stage A2** | **Merged into `main` (2026-11-10, LABS-1.009):** positions derived across frame chains (complete, bounded traversal), position-conflict judgement with an angular orientation policy; 181 tests; known limitations recorded ([docs/core-0.4/stage-a2.md](docs/core-0.4/stage-a2.md)) |
+| **Core 0.4 Stage B** | **Merged into `main` (2026-11-10, LABS-1.011):** events, occurrences and state transitions, processes and actions, asserted causation with competing accounts, occurrence status judged apart from descriptions; 211 tests ([docs/core-0.4/stage-b.md](docs/core-0.4/stage-b.md)) |
 | Next | World-representation layer (composition, causality, space and frames, quantities, agency, domain extensions); not started |
 
 Start with **[Phase 1C's outstanding decisions](docs/phase-1c/07-outstanding-decisions.md)**, then the

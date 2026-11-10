@@ -1,0 +1,15 @@
+# Core 0.4, Stage B (LABS-1.010): dynamics and causality. Additive to core-0.3 (which already has occurrence, event
+# descriptions, describes, initiates and terminates) and the Stage A modules.
+#
+# causes(cause, effect): a source's claim that one happening caused another (World Ontology v0.2 §3.2, plan 9.3).
+# Asserted, never inferred: not from temporal succession, not transitively. Its players are event descriptions
+# (a description-level claim: the happenings as described) or occurrences (an occurrence-level claim). A
+# description-level claim answers an occurrence-level question only through describes links usable by the asking
+# perspective (lifting, in Python).
+# Processes and actions are classifications of events (v0.2 DR-05); process membership is part-of between
+# occurrences (occurrences are particulars). No other type is added.
+
+define
+relation causes sub proposition, relates cause, relates effect;
+event plays causes:cause, plays causes:effect;
+occurrence plays causes:cause, plays causes:effect;

@@ -22,9 +22,11 @@ ap = argparse.ArgumentParser()
 ap.add_argument("checkout")
 ap.add_argument("--rounds", type=int, default=5)
 ap.add_argument("--extended", action="store_true", help="also build the A2 extensions (only for an A2 checkout)")
+ap.add_argument("--dynamics", action="store_true", help="also build the Stage B extensions and time B questions")
 a = ap.parse_args()
 sys.path.insert(0, str(Path(a.checkout).resolve() / "src"))
 import worldmodel.typeql as typeql  # noqa: E402
+import worldmodel  # noqa: E402
 from worldmodel import PHYSICAL_MODULES, WorldModel  # noqa: E402
 from worldmodel.examples import gearbox as g  # noqa: E402
 
@@ -40,11 +42,13 @@ def counted(tx, body, params=None):
 typeql.run = counted
 name = f"wm-phys-{uuid.uuid4().hex[:8]}"
 s = time.perf_counter()
-wm = WorldModel.create(name, modules=PHYSICAL_MODULES)
+wm = WorldModel.create(name, modules=worldmodel.DYNAMICS_MODULES if a.dynamics else PHYSICAL_MODULES)
 try:
     ids = g.build(wm)
     if a.extended:
         ids = g.extend_spatial(wm, ids)
+    if a.dynamics:
+        ids = g.extend_causality(wm, g.extend_dynamics(wm, ids))
     build_s = time.perf_counter() - s
     w = ids["world"]
     questions = {
@@ -62,6 +66,17 @@ try:
             "where(bench-1, f-gearbox)": lambda: wm.where(w, "bench-1", "f-gearbox", g.AFTER),
             "transform_between(f-gearbox, f-workshop)": lambda: wm.transform_between(w, "f-gearbox", "f-workshop", g.AFTER),
         })
+    if a.dynamics:
+        cond = {"bearer": "gbx-100", "quality": "condition"}
+        questions.update({
+            "effects_of(ev-worklog-replacement)": lambda: wm.effects_of(w, "ev-worklog-replacement", g.AFTER),
+            "changes(gbx-100, repair)": lambda: wm.changes(w, "gbx-100", g.REPAIR[0], g.AFTER),
+            "causes_of(o-test-run)": lambda: wm.causes_of(w, "o-test-run", g.AFTER),
+            "explain(operational)": lambda: wm.explain(w, "has-quality", {**cond, "value": "operational"}, g.AFTER),
+            "process_steps(o-repair)": lambda: wm.process_steps(w, "o-repair", g.AFTER),
+            "actions_of(technician)": lambda: wm.actions_of(w, "technician"),
+            "value_of(condition)": lambda: wm.value_of(w, "has-quality", cond, g.AFTER),
+        })
     times = {k: [] for k in questions}
     queries = {}
     for _ in range(a.rounds):
@@ -73,7 +88,7 @@ try:
             queries[k] = count[0]
     size = subprocess.run(["docker", "exec", "wm-typedb", "du", "-sb", f"/var/lib/typedb/data/{name}"],
                           capture_output=True, text=True)
-    print(json.dumps({"checkout": Path(a.checkout).resolve().name, "extended": a.extended,
+    print(json.dumps({"checkout": Path(a.checkout).resolve().name, "extended": a.extended, "dynamics": a.dynamics,
                       "build_seconds": round(build_s, 2),
                       "database_bytes": int(size.stdout.split()[0]) if size.returncode == 0 else None,
                       "questions": {k: {"median_ms": round(statistics.median(v) * 1000, 2), "queries": queries[k]}
