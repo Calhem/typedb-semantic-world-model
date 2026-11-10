@@ -289,7 +289,8 @@ class PhysicalMixin:
         every edge on any simple source-target chain is checked against the composed transforms: all simple chains
         agree exactly when every such edge is consistent (within 1e-9 m and the angular tolerance). An inconsistent
         edge makes the answer DISPUTED with no transform chosen; a disputed transform on any such chain likewise.
-        A truncated search that reached the target answers from the shortest chain with `verified: False`."""
+        A truncated search that reached the target returns the shortest chain's transform as an unverified
+        candidate: status UNKNOWN, `verified: False` (LABS-1.009)."""
         limit = MAX_EDGE_VISITS if limit is None else limit
         if source == target:
             return {"transform": Transform(), "status": None, "chain": [], "frames": [source], "reason": None,
@@ -313,9 +314,10 @@ class PhysicalMixin:
         chain = self._describe(edges, steps)
         info = {**search, "hops": len(steps), "cycle": None, "relevant_edges": None, "verified": False,
                 "inconsistent": []}
-        if search["truncated"]:
-            return {"transform": pot[target], "status": Status.INFERRED, "chain": chain, "frames": frames,
-                    "reason": "search truncated: other chains were not checked for agreement", "search": info}
+        if search["truncated"]:      # a candidate only: not authoritative until every route is checked (LABS-1.009)
+            return {"transform": pot[target], "status": Status.UNKNOWN, "chain": chain, "frames": frames,
+                    "reason": "verification incomplete: search truncated, other chains were not checked for agreement",
+                    "search": info}
         relevant = self._relevant_edges(edges, self._blocks(set(pot), adj), source, target)
         bad = []
         for i in sorted(relevant):
@@ -340,7 +342,8 @@ class PhysicalMixin:
         """How `source` frame coordinates map into `target` at t: {"status", "transform" (q, t) or None, "chain" (the
         shortest chain, each step with its direction and supporting attestations), "frames", "reason", "search"}.
         INFERRED from the transforms that hold for the perspective; DISPUTED when chains disagree or use a disputed
-        transform (no transform is chosen); UNKNOWN when no chain exists or the search was truncated (see `search`)."""
+        transform (no transform is chosen); UNKNOWN when no chain exists or the search was truncated (see `search`;
+        a truncated search that reached the target returns its transform as an unverified candidate)."""
         edges = self._frame_edges(world, t, as_of, perspective)
         r = self._resolve(edges, source, target, limit)
         return {"source": source, "target": target, "status": r["status"] or Status.INFERRED, "rule": RULE, **r}
@@ -363,7 +366,7 @@ class PhysicalMixin:
         for p in poses:
             box = {a: p[a] for a in AXES}
             r = self._resolve(edges, p["frame"], frame, limit)
-            if r["status"] == Status.UNKNOWN:
+            if r["transform"] is None and r["status"] == Status.UNKNOWN:
                 incomparable.append({"frame": p["frame"], "support": p["support"], "reason": r["reason"],
                                      "search": r["search"]})
                 continue
@@ -375,22 +378,30 @@ class PhysicalMixin:
                 (p["orientation"] if direct else None),
                 "status": p["status"] if direct else r["status"], "stated_in": p["frame"], "stated": box,
                 "orientation_stated": p["orientation"], "position_support": p["support"], "direct": direct,
-                "rule": None if direct else RULE, "chain": r["chain"], "reason": r["reason"], "search": r["search"]})
+                "rule": None if direct else RULE, "chain": r["chain"], "reason": r["reason"], "search": r["search"],
+                "verified": r["search"]["verified"]})
         details = []
         for i, a in enumerate(candidates):
             for j, b in enumerate(candidates):
                 if i >= j or a["x"] is None or b["x"] is None:
                     continue
+                unverified = not (a["verified"] and b["verified"])
                 if not boxes_overlap(a, b):
-                    details.append({"pair": (i, j), "kind": "disjoint ranges"})
+                    details.append({"pair": (i, j), "kind": "disjoint ranges", "unverified": unverified})
                 elif a["orientation"] and b["orientation"]:
                     sep = angular_separation(a["orientation"], b["orientation"])
                     if sep > angle_tolerance:
                         details.append({"pair": (i, j), "kind": "orientations differ", "separation_rad": sep,
-                                        "tolerance_rad": angle_tolerance})
-        conflicts = [d["pair"] for d in details]
-        if conflicts or any(c["status"] == Status.DISPUTED for c in candidates):
+                                        "tolerance_rad": angle_tolerance, "unverified": unverified})
+        # Only verified candidates decide (LABS-1.009): an unverified one (truncated search) can neither create a
+        # conflict nor support an authoritative answer; it keeps the whole answer UNKNOWN unless a verified conflict.
+        conflicts = [d["pair"] for d in details if not d["unverified"]]
+        verified = all(c["verified"] for c in candidates) and not any(i["search"]["truncated"] for i in incomparable)
+        reason = None if verified else "verification incomplete: a frame search was truncated by its resource limit"
+        if conflicts or any(c["status"] == Status.DISPUTED and c["verified"] for c in candidates):
             status = Status.DISPUTED
+        elif not verified:
+            status = Status.UNKNOWN
         elif candidates:
             direct = {c["status"] for c in candidates if c["direct"]}
             status = next((s for s in (Status.STIPULATED, Status.ASSERTED, Status.INFERRED) if s in direct),
@@ -398,7 +409,7 @@ class PhysicalMixin:
         else:
             status = Status.UNKNOWN if about else Status.NOT_YET_KNOWN
         return {"thing": thing, "frame": frame, "status": status, "candidates": candidates, "conflicts": conflicts,
-                "conflict_details": details, "angle_tolerance": angle_tolerance,
+                "conflict_details": details, "angle_tolerance": angle_tolerance, "verified": verified, "reason": reason,
                 "judgement": ("conflicting" if conflicts else "compatible" if len(candidates) > 1 else
                               "single" if candidates else None),
                 "incomparable": incomparable, "alternatives": alternatives}

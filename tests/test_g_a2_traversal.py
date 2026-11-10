@@ -106,8 +106,9 @@ def test_a_resource_limit_is_reported_never_a_silent_no_chain():
     full = R._resolve(star, "hub", "goal")
     assert full["search"]["verified"] and full["status"] == Status.INFERRED
     tiny = R._resolve(star, "goal", "hub", limit=1)
-    assert tiny["status"] == Status.INFERRED and tiny["search"]["truncated"] and not tiny["search"]["verified"]
-    assert tiny["reason"] == "search truncated: other chains were not checked for agreement"
+    assert tiny["status"] == Status.UNKNOWN and tiny["search"]["truncated"] and not tiny["search"]["verified"]
+    assert tiny["transform"] is not None            # an unverified candidate only (LABS-1.009)
+    assert tiny["reason"] == "verification incomplete: search truncated, other chains were not checked for agreement"
 
 
 def test_a_disputed_transform_on_any_route_disputes_the_answer():

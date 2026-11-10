@@ -54,8 +54,18 @@ Saved output: [spatial-reasoning-output.md](spatial-reasoning-output.md). Measur
   - A completed search with no chain: UNKNOWN, reason "no frame chain from X to Y", `complete: true`.
   - A truncated search that did not reach the target: UNKNOWN, reason "search truncated after N edge examinations
     (limit L) without reaching Y", `truncated: true`.
-  - A truncated search that did reach the target: answered from the shortest chain, marked `verified: false`, with
-    reason "other chains were not checked for agreement".
+  - A truncated search that did reach the target: *(LABS-1.009)* the shortest chain's transform is returned as an
+    **unverified candidate only**. Its status is UNKNOWN, `verified: false`, with the reason "verification incomplete:
+    search truncated, other chains were not checked for agreement".
+- **Truncated results in `where` (LABS-1.009).**
+  - A candidate derived through a truncated search keeps its computed position, so it is visible, but it has status
+    UNKNOWN and `verified: false`.
+  - It cannot support an authoritative answer. While any candidate is unverified, or a truncated search left a
+    statement incomparable, the answer is UNKNOWN, with `verified: false` and the reason "verification incomplete".
+  - An unverified candidate cannot create a conflict: its conflicts are listed with `unverified: true` and do not
+    decide.
+  - Verified conflicts still decide, so the answer is DISPUTED. Without truncation, `verified` is true and the rules
+    above apply unchanged.
 - **Results.** `transform_between` returns `chain`, `frames` and `search`; each `where` candidate carries its
   `chain` and `search`. A candidate whose chains disagree has no position (x, y, z are None) and is DISPUTED.
   Incomparable statements carry their `search`, so a truncated search is visible there too.
@@ -171,8 +181,31 @@ None of these rows applies time, acceptance or perspective.
   snapshot.
 - **Reference world:** the demonstration questions, and selective/full-load equivalence over 41 spatial questions.
 
-Full suite after LABS-1.008: **171 passed, twice on each path** (13 new in `tests/test_g_a2_traversal.py`). Only the
-intentional `wm-reference-gearbox` database remains.
+Full suite after LABS-1.008: 171 passed, twice on each path (13 new in `tests/test_g_a2_traversal.py`).
+
+### LABS-1.009 verification (`tests/test_g_a2_verification.py`, 10)
+**Truncated results.**
+- A truncated search that reached the target gives an unverified candidate with status UNKNOWN; one that missed the
+  target gives UNKNOWN with no transform.
+- A `where` answer with an unverified derived candidate next to an ASSERTED direct observation is UNKNOWN, not
+  ASSERTED, with `verified: false`.
+- Verified disjoint claims stay DISPUTED despite an unverified candidate.
+
+**Competing transforms.** These passed before any change, so the graph keeps every alternative:
+- two accepted incompatible transforms for one pair give DISPUTED (both kept as edges, no transform chosen,
+  `where` candidate without position);
+- a transform stated in the inverse direction is kept and checked: it agrees, then a disagreeing one makes the answer
+  DISPUTED;
+- a competing transform on an alternative route gives DISPUTED;
+- perspective: unreviewed, the rival's own view, accepted, rejected;
+- time: a rival valid for a period, then ended, and knowledge time (`as_of`);
+- hypothetical worlds: a variant overriding the inherited transform, two disagreeing stipulations, and a base
+  transform recorded after the branch, which the snapshot excludes;
+- selective/full-load equivalence.
+
+Full suite: **181 passed, twice on each path.** The reference-world outputs are unchanged: A1 identical; A2
+identical apart from the order of raw rows, which are sorted by random attestation ids. Only the intentional
+`wm-reference-gearbox` database remains.
 
 ## Performance against A1 (`scripts/measure_physical.py`, three alternating runs each, same A1 world)
 | Question | A1 median of runs (ms) | A2 (ms) | TypeQL queries, A1 / A2 |
