@@ -1,8 +1,9 @@
-# Core 0.4 Stage A0: groundwork (LABS-1.002, LABS-1.003, LABS-1.004)
+# Core 0.4 Stage A0: groundwork (LABS-1.002 to LABS-1.005)
 
 **Status (2026-11-10): A0.1-A0.3 implemented on `feature/core-0.4-a0`; conditionally approved (LABS-1.003), with the
-shelf-dispute correction, additive constraint inheritance and the identity-equivalence correction (LABS-1.004)
-applied. Not merged into `main`; Stage A not started.**
+shelf-dispute correction, additive constraint inheritance, the identity-equivalence correction (LABS-1.004) and the
+`holds` functional-dispute correction (F-4, LABS-1.005) applied; performance limits accepted as tracked risks
+(LABS-1.005). Not merged into `main`; Stage A not started.**
 Baseline: Core 0.3 (`b64f635`). Plan: [core-0.4-plan.md](../plans/core-0.4-plan.md) (LABS-1.001, refined under
 LABS-1.002 in section 9). Stage A0 adds no new world concepts: it removes three code constraints that would block
 Stages A-D (plan section 0). Stages A-D are not started.
@@ -82,8 +83,39 @@ polarity and variant rules are unchanged; the 78 Core 0.3 tests pass.
 | F-1 | Defect fixed in A0.1: disjunctions telling propositions from events by owning `wm-id` matched propositions twice (13 of 78 tests failed); each branch now names its type | fixed |
 | F-2 | Shelf dispute (Core 0.3 defect) | fixed (above) |
 | F-3 | Subtype constraint replacing the inherited one | superseded: additive semantics (above) |
-| F-4 | `holds` judges one content at a time: with two conflicting located-at facts at the same depth, each one `holds` (ASSERTED) and only `value_at` shows the DISPUTED conflict. Core 0.3 behaviour; v0.2 §5.3 lists functional conflict under dispute detection, which suggests `holds` should report DISPUTED too | **open: needs a ruling** (changes `holds` answers) |
+| F-4 | `holds` did not report functional conflicts (each of two incompatible facts was ASSERTED) | **fixed (LABS-1.005)**, see below |
 | F-5 | Core 0.3 defect: the selective path ignored `same-as` links of value players (see Identity equivalence) | **fixed (LABS-1.004)**; the `xfail` marker is removed |
+
+## `holds` and functional conflicts (LABS-1.005; was F-4)
+**Ruling.** When accepted contents give incompatible values to one functional slot, the judgement represents the
+dispute consistently: `value_at` reports DISPUTED, and `holds` reports DISPUTED for each content taking part in the
+unresolved conflict. Evidence for both sides stays available; nothing is rejected or deleted; the sources'
+attestations are unchanged, and the dispute is the perspective's judgement.
+
+**Consistency check (before implementing).** v0.2 §5.6 defines DISPUTED as "answers of equal standing for *p* disagree
+at t (5.3)", and §5.3 lists functional conflict among the ways answers disagree; `holds` already returned DISPUTED for
+polarity conflicts (documented in the Core 0.3 README). No Core 0.3 test or document gave `holds` a different meaning;
+the only test asserting the old behaviour was A0.3's own record of F-4. No conflict.
+
+**Correction.** One functional-dispute check, `_conflicts`, returns which holding contents conflict with which (same
+constraint key players, different value players; canonical under identity; every applicable constraint, inherited
+ones included). `value_at`/`value_of` use it as before; `holds` now applies it to the contents it already judges
+(the peers sharing the slot key), so it needs no extra query. A content that holds but conflicts is answered
+`Answer(DISPUTED, holds=None, support=<its own attestations>, conflicts=<the conflicting attestations>, evidence=<both>)`.
+`conflicts` is a new optional `Answer` field (default empty), so every other answer is unchanged.
+
+**Unchanged.** A content that does not hold keeps its answer (e.g. INFERRED false by exclusivity); a third value
+while the slot is disputed stays UNKNOWN, as in Core 0.3, because no settled value excludes it. Unreviewed rival
+claims do not create a dispute until the perspective accepts them.
+
+**Tests** (`tests/test_f_a0_holds.py`, each question on both paths, whole answers compared): incompatible values
+(both DISPUTED, support and conflicts split, evidence for both, history intact); compatible facts sharing a
+non-functional role (ASSERTED); values made equivalent by an accepted `same-as` (ASSERTED); perspective-specific
+acceptance and rejection; history and knowledge time; hypothetical snapshots and variant overrides; the inherited
+located-at constraint on `docked-at`. All 7 failed before the correction.
+
+**Performance.** Same number of queries per `holds` call before and after (24.48 on a 30-object world with some
+conflicts, 120 questions, two alternating runs each); median 35.2 / 31.8 ms before, 33.2 / 31.4 ms after.
 
 ## Identity equivalence of answer values (LABS-1.004; was F-5)
 **Defect (Core 0.3, reproduced on `main`).** Answers group contents by the canonical player of every role under the

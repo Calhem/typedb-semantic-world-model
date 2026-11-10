@@ -208,3 +208,5 @@ class Answer:
     support: tuple = ()                       # attestation ids the answer rests on
     alternatives: tuple = ()                  # unreviewed attestations bearing on the question
     evidence: tuple = ()                      # one dict per supporting attestation (attester, stance, basis, ...)
+    conflicts: tuple = ()                     # holds(), functional dispute: attestation ids of the conflicting
+                                              # contents (their evidence is in `evidence` too) (LABS-1.005)

@@ -850,17 +850,24 @@ class WorldModel:
                 del out[cls]
         return out
 
-    def _functional_conflict(self, classes):
-        """v0.2 §5.3 rule 2: holding contents that give different values to one functional slot, i.e. the same players
-        in the slot's key roles and different players in its value role (one thing in two places). Several values
-        for other questions are compatible (two things on one shelf). Players are canonical under the perspective's
-        identity, so co-referring names are one value (LABS-1.003)."""
-        values = {}
+    def _conflicts(self, classes):
+        """v0.2 §5.3 rule 2: {class: classes it conflicts with} among holding contents that give different values to
+        one functional slot, i.e. the same players in a constraint's key roles and different players in its value
+        role (one thing in two places). Several values for other questions are compatible (two things on one shelf).
+        Players are canonical under the perspective's identity, so co-referring names are one value (LABS-1.003).
+        The one functional-dispute check, used by value_at/value_of and holds (LABS-1.005)."""
+        slots = {}
         for cls in classes:
             players = dict(cls[1])
             for decl, ks, v in self._constraints(cls[0]):
-                values.setdefault((decl, ks, v, tuple(players.get(r) for r in ks)), set()).add(players.get(v))
-        return any(len(v) > 1 for v in values.values())
+                slots.setdefault((decl, ks, v, tuple(players.get(r) for r in ks)), []).append((players.get(v), cls))
+        out = {}
+        for members in slots.values():
+            for value, cls in members:
+                rivals = {c for val, c in members if val != value}
+                if rivals:
+                    out.setdefault(cls, set()).update(rivals)
+        return out
 
     @staticmethod
     def _alternatives(atts, t, perspective, as_of):
@@ -911,7 +918,7 @@ class WorldModel:
         ids = tuple(sorted(a.id for a in support))
         if not values:
             return Answer(Status.UNKNOWN, alternatives=alternatives)
-        if disputed or self._functional_conflict(holding):
+        if disputed or self._conflicts(holding):
             return Answer(Status.DISPUTED, values=tuple(values), support=ids, alternatives=alternatives, evidence=evidence)
         return Answer(answer_status(support), values=tuple(values), support=ids, alternatives=alternatives,
                       evidence=evidence)
@@ -947,11 +954,17 @@ class WorldModel:
         judged = self._judge(peers, ident, t, perspective, as_of)
         mine = {cls: v for cls, v in judged.items() if any(matches(a) for a in v[1])}
         alternatives = self._alternatives(about, t, perspective, as_of)
+        conflicts = self._conflicts([c for c, (val, _, _) in judged.items() if val is True])
         for cls, (val, sup, _) in mine.items():
             evidence = tuple(a.evidence() for a in sorted(sup, key=lambda a: a.id))
             ids_ = tuple(sorted(a.id for a in sup))
             if val == "disputed":
                 return Answer(Status.DISPUTED, None, support=ids_, alternatives=alternatives, evidence=evidence)
+            if val is True and cls in conflicts:      # a functional conflict: the perspective's judgement is DISPUTED
+                rival = sorted({a.id: a for c in conflicts[cls] for a in judged[c][1]}.values(), key=lambda a: a.id)
+                return Answer(Status.DISPUTED, None, support=ids_, alternatives=alternatives,
+                              conflicts=tuple(a.id for a in rival),
+                              evidence=tuple(a.evidence() for a in sorted(sup + rival, key=lambda a: a.id)))
             return Answer(answer_status(sup), val, support=ids_, alternatives=alternatives, evidence=evidence)
         for decl, ks, v in keyed:          # root first: the most general constraint that settles it is cited
             if v in roles:

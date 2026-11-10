@@ -155,7 +155,7 @@ def test_located_at_behaves_as_in_core_0_3(wm, hall):
     wm.attest(hall, "located-at", {"located": "boat", "place": "bay"}, start=T("10:00"), until_superseded=True)
     assert wm.value_at(hall, "located-at", "boat", T("10:30")).status == Status.DISPUTED
     held = wm.holds(hall, "located-at", {"located": "boat", "place": "pier"}, T("10:30"))
-    assert (held.status, held.holds) == (Status.ASSERTED, True)     # holds judges one content; value_at shows the clash
+    assert (held.status, held.holds) == (Status.DISPUTED, None)     # the same functional conflict (F-4, LABS-1.005)
 
 
 def test_selective_and_full_load_agree_on_composite_slots(wm, hall):
