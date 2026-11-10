@@ -1,7 +1,7 @@
-# Core 0.4 Stage B: dynamics and causality (LABS-1.010)
+# Core 0.4 Stage B: dynamics and causality (LABS-1.010, LABS-1.011)
 
-**Status (2026-11-10): B1-B3 implemented on `feature/core-0.4-b-dynamics`, awaiting review. Not merged; Stage C not
-started.** Base: `main` at 322c5c7 (Stages A0-A2 merged). Plan: [core-0.4-plan.md](../plans/core-0.4-plan.md), Stage B
+**Status (2026-11-10): B1-B3 implemented; LABS-1.011 semantic verification done; merged into `main` (LABS-1.011).
+Stage C not started.** Base: `main` at 322c5c7 (Stages A0-A2 merged). Plan: [core-0.4-plan.md](../plans/core-0.4-plan.md), Stage B
 and 9.3. Ontology: World Ontology v0.2 §3.2 (frozen).
 
 ## Run it
@@ -193,6 +193,77 @@ are not optimised; no optimisation was authorised.
 | D-B-6 | `interval()` uses only an account the perspective can use; a change claimed by an unaccepted account has no timing for that perspective | an unaccepted source's times must not judge a change | — |
 | D-B-7 | `DYNAMICS_MODULES` is opt-in, like the physical modules (D-A1-3) | keeps Core 0.3 and A0 tests unchanged | with D-A1-3 |
 
+## LABS-1.011: occurrence vs description semantics, and the scope of causal claims
+**The gap.** An occurrence's happening was not judged on its own. Core 0.3's generic `exists()` infers existence from
+participation in any holding content, so an accepted `describes` link or causal claim "established" an occurrence.
+`causes_of` also presented claims about an occurrence someone had denied without saying so.
+
+**The amendment (read-time only; no schema change).** Occurrences are particulars, so the existing
+`existence(existent)` proposition already applies to them.
+- `occurrence_status(world, occurrence, t)` judges whether the occurrence happened only from attestations of its own
+  existence: accepted, denied, disputed, or **not established**. It never uses descriptions, describes links or
+  causal claims for this. It lists every description separately, with its source, the perspective's judgement of
+  that account (the description's own attestation) and of its describes link.
+- `causes_of` adds, to every claim, the status of each occurrence the claim involves, and `applies`: False if any of
+  them is denied, None if any is disputed, True otherwise.
+
+**Verified behaviour (`tests/test_h_b3_semantics.py`).**
+| Requirement | Result |
+|---|---|
+| An accepted description does not establish the occurrence | the replacement has two accepted accounts and accepted describes links, and is "not established" until someone attests its existence (the generic `exists()` still infers it; `occurrence_status` does not) |
+| A denied occurrence cannot become accepted through a lifted claim | with the test run's existence denied and accepted, the work log's lifted description-level causal claim is still accepted as an account, but `applies: false`, and the occurrence stays denied |
+| Conflicting descriptions stay attributable | the replacement's two accounts (bearing-3 by the technician, bearing-1 by the system) are listed apart, with their own sources and judgements, per perspective |
+| A description accepted while the occurrence is denied or disputed | reported directly: account "accepted", occurrence "denied" (or "disputed" when existence is both asserted and denied, both accepted; then `applies: null`) |
+| Hypothetical overrides | a plan that stipulates the relubrication did not happen gives "denied" in the plan, keeps the inherited account "accepted", and marks the claim not applying there; the base world is unchanged |
+
+**Clarification: lifted claims about a denied occurrence.** They remain visible, as the source's account. A source
+did claim that the happenings, as described, stood in a causal relation, and that record and its judgement are
+preserved. They are marked `applies: false`, so they never answer what caused the denied happening. The same holds
+for direct occurrence-level claims involving a denied occurrence.
+
+**Scope of causal claims.** No temporal fields were needed: a causal claim names particular occurrences or
+descriptions.
+- **Two similar repairs.** A second repair on 11-20 has the same kinds, actor and tools as the first, but its own
+  occurrences and descriptions. Its causal claim is not among the first test run's causes, and the reverse holds.
+- **Over time and by perspective.** The second claim is unreviewed before its acceptance was recorded and accepted
+  after. The inspector's denial of it is its own view; the system still accepts it, and the first repair is
+  unaffected.
+- **Snapshots.** A plan branched before a later claim was recorded does not see it.
+- **Descriptions of one occurrence.**
+  - A claim about the test-run description lifts to the occurrence.
+  - The occurrence-level claim lifts down to the QA log, which is a second description of the same test run.
+  - A claim about a *sibling* description is not transferred to the QA log. That would take two hops, which the plan
+    does not allow.
+
+**Performance scaling** (`scripts/measure_dynamics_scaling.py`, `dynamics-scaling.json`): the reference world with
+0 / 4 / 16 / 64 extra repair cycles, questions about the first repair, median of five.
+| Size: events / propositions / attestations | 12 / 141 / 163 | 20 / 173 / 203 | 44 / 269 / 323 | 140 / 653 / 803 |
+|---|---|---|---|---|
+| effects_of: ms, queries, records | 286, 197, 52 | 304, 197, 60 | 342, 197, 84 | 446, 197, 180 |
+| causes_of | 450, 238, 124 | 384, 238, 164 | 398, 238, 284 | 518, 238, 764 |
+| occurrence_status | 51, 33, 22 | 49, 33, 30 | 69, 33, 54 | 95, 33, 150 |
+| value_of(condition) | 47, 23, 6 | 43, 23, 6 | 66, 23, 6 | 50, 23, 6 |
+| process_steps | 244, 153, 130 | 344, 185, 210 | 428, 281, 450 | 1,126, 665, 1,410 |
+| actions_of | 155, 79, 31 | 250, 151, 63 | 908, 367, 159 | 2,474, 1,231, 543 |
+| changes | 240, 95, 107 | 311, 135, 215 | 780, 255, 923 | 3,466, 736, 9,515 |
+| explain | 843, 503, 265 | 928, 543, 441 | 1,335, 663, 1,353 | 5,232, 1,144, 10,761 |
+
+**How costs scale:**
+- **Constant query count:** `effects_of`, `causes_of`, `occurrence_status` and `value_of`. Records grow, because
+  each loads the world's event attestations once or a few times.
+- **Queries linear in the actor's events:** `actions_of` (one describes load per description) and `process_steps`.
+- **Superlinear:** `changes` and `explain`, wherever many events claim the same outcome. Every test run claims
+  "operational", and each claimed event's `interval()` reloads every event attestation of the world.
+
+**Obvious repeated retrieval**, identified but not optimised (no optimisation was authorised):
+- `interval()` loads all event attestations per call: 66 of them in one `changes` question at 64 cycles, and 75 in
+  `explain`.
+- `occurrences_of()` makes one describes load per description: 135 in `actions_of`.
+- `explain` computes intervals for every initiating claim before filtering to the events that ended by t.
+- Identity (`same-as`) is loaded 10-28 times per question, by the nested `holds` and `_view` calls.
+
+Loading a world's events once per question would remove most of the growth.
+
 ## Remaining limitations
 - **No causal chains.** There is no chain query yet; the plan's "a chain query lists asserted links" is not
   implemented. `explain` stops at the causes of the initiating event.
@@ -200,6 +271,9 @@ are not optimised; no optimisation was authorised.
   persistence policy and no "homogeneous, ongoing" check (v0.2 C9).
 - **Participant roles are single-valued per description,** one patient and so on (Core 0.3 `@card`). The occurrence
   view lists every participant per description without a dispute label (D9 stays open).
-- **The new questions are slow:** hundreds of milliseconds, as measured above.
+- **The new questions are slow,** and `changes` / `explain` grow superlinearly with the number of events claiming the
+  same outcome (LABS-1.011 scaling), because of the repeated loads listed above.
+- **Two existence answers.** The generic `exists()` still infers an occurrence's existence from participation (Core
+  0.3 behaviour); `occurrence_status` is the occurrence-specific answer.
 - **Out of scope:** no prediction, simulation, automatic causal inference, measurement ontology, agency or
   capabilities, domain extensions or frontend (by design).
