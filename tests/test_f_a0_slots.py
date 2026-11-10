@@ -105,10 +105,10 @@ def test_subtypes_inherit_a_slot_and_a_declaration_replaces_it(wm, hall):
     wm.attest(hall, "berthed-at", {"located": "boat", "place": "pier"}, start=T("10:00"), until_superseded=True)
     wm.attest(hall, "located-at", {"located": "boat", "place": "bay"}, start=T("10:00"), until_superseded=True)
     assert wm.value_at(hall, "berthed-at", "pier", T("10:30")).values == ("boat",)     # asked by its own slot
-    # Replaced, not added (U-5): berthed-at facts no longer compete in located-at's slot for exclusivity, but a
-    # berthed-at is still a located-at, so "where is the boat?" sees both places, and two places are a dispute.
+    # Replaced, not added (A0.3 default for U-5): berthed-at facts no longer share located-at's slot, so the boat's
+    # two places are not a functional conflict. (LABS-1.003 replaces this with additive inheritance.)
     loc = wm.value_at(hall, "located-at", "boat", T("10:30"))
-    assert (loc.status, loc.values) == (Status.DISPUTED, ("bay", "pier"))
+    assert (loc.status, loc.values) == (Status.ASSERTED, ("bay", "pier"))
     h = wm.create_world("plan", kind="hypothetical", base=hall, branch_at=T("12:00"))
     wm.attest(h, "located-at", {"located": "boat", "place": "pier"}, start=T("12:30"), until_superseded=True)
     loc = wm.value_at(h, "located-at", "boat", T("13:00"))     # the variant's located-at overrides the inherited

@@ -802,6 +802,19 @@ class WorldModel:
                 del out[cls]
         return out
 
+    def _functional_conflict(self, classes):
+        """v0.2 §5.3 rule 2: holding contents that give different values to one functional slot, i.e. the same players
+        in the slot's key roles and different players in its value role (one thing in two places). Several values
+        for other questions are compatible (two things on one shelf). Players are canonical under the perspective's
+        identity, so co-referring names are one value (LABS-1.003)."""
+        values = {}
+        for cls in classes:
+            slot = self._slot(cls[0])
+            if slot:
+                players = dict(cls[1])
+                values.setdefault((slot[0], tuple(players.get(r) for r in slot[1])), set()).add(players.get(slot[2]))
+        return any(len(v) > 1 for v in values.values())
+
     @staticmethod
     def _alternatives(atts, t, perspective, as_of):
         return tuple(sorted(a.id for a in atts if acceptance_state(a, perspective, as_of) == "unreviewed"
@@ -851,10 +864,7 @@ class WorldModel:
         ids = tuple(sorted(a.id for a in support))
         if not values:
             return Answer(Status.UNKNOWN, alternatives=alternatives)
-        # Several values are a dispute when the type has a slot. Core 0.3 rule kept unchanged for one-role slots
-        # (whatever role is asked); a composite slot (A0.3) counts only when the question names its whole key.
-        multiple = slot and len(values) > 1 and (len(slot[1]) == 1 or set(key) == set(slot[1]))
-        if disputed or multiple:
+        if disputed or self._functional_conflict(holding):
             return Answer(Status.DISPUTED, values=tuple(values), support=ids, alternatives=alternatives, evidence=evidence)
         return Answer(answer_status(support), values=tuple(values), support=ids, alternatives=alternatives,
                       evidence=evidence)
