@@ -1,0 +1,49 @@
+{
+ "checkout": "wm-a2m",
+ "extended": true,
+ "dynamics": false,
+ "build_seconds": 2.1,
+ "database_bytes": 470758,
+ "questions": {
+  "poses(gear-in)": {
+   "median_ms": 21.72,
+   "queries": 14
+  },
+  "composition(gbx-100)": {
+   "median_ms": 327.19,
+   "queries": 212
+  },
+  "contents(workshop)": {
+   "median_ms": 109.58,
+   "queries": 86
+  },
+  "materials(cover)": {
+   "median_ms": 56.86,
+   "queries": 42
+  },
+  "frame_info(f-bench)": {
+   "median_ms": 24.96,
+   "queries": 16
+  },
+  "facts_about(housing)": {
+   "median_ms": 22.47,
+   "queries": 14
+  },
+  "where(gbx-100, f-workshop)": {
+   "median_ms": 57.27,
+   "queries": 33
+  },
+  "where(gear-in, f-workshop)": {
+   "median_ms": 46.41,
+   "queries": 33
+  },
+  "where(bench-1, f-gearbox)": {
+   "median_ms": 50.47,
+   "queries": 35
+  },
+  "transform_between(f-gearbox, f-workshop)": {
+   "median_ms": 10.8,
+   "queries": 7
+  }
+ }
+}
