@@ -1,0 +1,52 @@
+{
+ "M1 add `owns wm-id @key` to propositions that exist without one": "rejected: [CNT5] Constraint '@card(1..1)' has been violated: found 0 instances. Caused: [DVL8] Instance [1F00 0100 0000 0000 0000 00] of type 'located-at' has a key constraint violation for attribute ownership ",
+ "M2 add `owns wm-id` without @key": "accepted",
+ "M3 write ids for existing propositions (write transaction)": "accepted",
+ "M4 then add @key to the ownership": "accepted",
+ "M4b a new proposition without wm-id is now rejected": "rejected: [CNT5] Constraint '@card(1..1)' has been violated: found 0 instances. Caused: [DVL8] Instance [1F00 0100 0000 0000 0000 01] of type 'located-at' has a key constraint violation for attribute ownership ",
+ "R1 supertypes of a subtype (`$t sub $s`, with `label`)": [
+  "docked-at",
+  "located-at",
+  "proposition"
+ ],
+ "R1b supertypes of an entity subtype": [
+  "person",
+  "thing"
+ ],
+ "R2 roles of a relation type (`relates`)": [
+  "event:actor",
+  "event:patient",
+  "pickup:picked",
+  "pickup:picker"
+ ],
+ "R3 parent role of a specialised role (`$r sub $p`)": [
+  "event:actor -> event:actor",
+  "event:patient -> event:patient",
+  "pickup:picked -> event:patient",
+  "pickup:picked -> pickup:picked",
+  "pickup:picker -> event:actor",
+  "pickup:picker -> pickup:picker"
+ ],
+ "R3b all relation types and their direct roles, in one query": [
+  "docked-at: located-at:located",
+  "docked-at: located-at:place",
+  "event: event:actor",
+  "event: event:patient",
+  "located-at: located-at:located",
+  "located-at: located-at:place",
+  "pickup: event:actor",
+  "pickup: event:patient",
+  "pickup: pickup:picked",
+  "pickup: pickup:picker"
+ ],
+ "R4 role labels of a subtype that inherits its roles unspecialised": [
+  "located-at:located",
+  "located-at:place"
+ ],
+ "R4b role labels of a subtype with specialised roles": [
+  "pickup:picked",
+  "pickup:picker"
+ ],
+ "R5 insert a specialised relation using the parent role names": "rejected: [INF11] Type-inference was unable to find compatible types for the pair of variables '_anonymous' & '_anonymous' across a 'links' constraint. Types were: - _anonymous: [pickup] - _anonymous: [event:ac",
+ "leftover": []
+}

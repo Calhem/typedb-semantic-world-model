@@ -8,6 +8,7 @@ Division of labour (v0.2 §8.1):
 """
 
 import os
+import re
 import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -15,18 +16,37 @@ from pathlib import Path
 from typedb.driver import Credentials, DriverOptions, DriverTlsConfig, TransactionType, TypeDB
 
 from . import typeql as q
-from .keys import as_ids, check_id, proposition_key
+from . import keys
+from .keys import as_ids, check_new_id, proposition_key
 from .semantics import (Answer, AttestationRecord, Identity, Replacement, Status, Window, acceptance_state,
                         answer_status, certainly_before, superseded, usable, verdict)
 
 READ, WRITE, SCHEMA = TransactionType.READ, TransactionType.WRITE, TransactionType.SCHEMA
 SCHEMA_DIR = Path(__file__).resolve().parents[2] / "schema"
-MODULES = {"core": ("0.3.0", ["core/core-0.3.tql"])}
+MODULES = {"core": ("0.3.0", ["core/core-0.3.tql"]),
+           "core-0.4-a0": ("0.4.0-a0", ["core/core-0.4-a0.tql", "core/core-0.4-a0-slots.tql"])}   # Stage A0 (LABS-1.002)
+DEFAULT_MODULES = ("core", "core-0.4-a0")
+CORE_MODULES = ("core", "core-0.4-a0")       # their types are the foundational (core) types; the rest are profiles
+
+
+def _core_labels():
+    """Labels of the types the core modules define, read from the schema files (the single source of truth)."""
+    labels = set()
+    for name in CORE_MODULES:
+        for f in MODULES[name][1]:
+            labels |= set(re.findall(r"^\s*(?:entity|relation|attribute)\s+([a-z][a-z0-9-]*)",
+                                     (SCHEMA_DIR / f).read_text(), re.M))
+    return frozenset(labels)
+
+
+CORE_LABELS = _core_labels()
 SYSTEM = "system"                     # the system's own agent: the default attester and perspective
 KINDS = ("physical-object", "social-object", "place", "information-object", "occurrence",
          "category", "social-role", "quality-kind", "clock", "spatial-frame", "unit")
 QUALITY_PARAMS = ("lower", "upper", "coverage-level")
-FUNCTIONAL = {"located-at": ("located", "place")}   # one value at a time per key role (profile metadata in v0.2)
+# Functional slots of the core: one value at a time per slot. With the A0 module they are declared as data in TypeDB
+# (functional-slot entities, A0.3) at create or upgrade; without it (a Core 0.3 database) this constant is used.
+CORE_SLOTS = {"located-at": (("located",), "place")}
 VARIANT_KINDS = ("hypothetical", "simulated")
 
 
@@ -51,6 +71,14 @@ def _window(value):
     raise TypeError(f"expected a datetime, a (earliest, latest) tuple or a Window, got {value!r}")
 
 
+class PropositionIdCollision(ValueError):
+    """Two different canonical keys derived the same proposition id. Raised instead of merging their content."""
+
+    def __init__(self, pid, key, existing):
+        super().__init__(f"proposition id {pid} already belongs to {existing!r}; refusing {key!r}")
+        self.pid, self.key, self.existing = pid, key, existing
+
+
 class WorldModel:
     def __init__(self, driver, database, clock=utcnow, selective=True):
         self.driver, self.database, self.clock = driver, database, clock
@@ -58,10 +86,13 @@ class WorldModel:
         self.stats = {"queries": 0, "attestations": 0}
         self._last_recorded = None
         self._types = None
+        self._prop_ids = None
+        self._lattice = None
+        self._slots = None
 
     # ---- setup -----------------------------------------------------------------------------------------------------
     @classmethod
-    def create(cls, database, driver=None, modules=("core",), clock=utcnow, replace=False):
+    def create(cls, database, driver=None, modules=DEFAULT_MODULES, clock=utcnow, replace=False):
         """Create the database, load schema modules in order and register the system agent."""
         driver = driver or connect()
         if driver.databases.contains(database):
@@ -73,6 +104,8 @@ class WorldModel:
         for name in modules:
             wm.install_module(name)
         wm.add_entity("social-object", "system reasoner", id=SYSTEM)
+        if wm.has_proposition_ids():
+            wm._declare_core_slots()
         return wm
 
     @classmethod
@@ -83,18 +116,150 @@ class WorldModel:
         version, files = (version, files) if files else MODULES[name]
         with self.driver.transaction(self.database, SCHEMA) as tx:
             for f in files:
-                tx.query((SCHEMA_DIR / f).read_text()).resolve()
+                tx.query((Path(f) if Path(f).is_absolute() else SCHEMA_DIR / f).read_text()).resolve()
             tx.commit()
         with self.driver.transaction(self.database, WRITE) as tx:
             q.run(tx, "insert $m isa schema-module, has module-name == $n, has module-version == $v;",
                   {"n": name, "v": version})
             tx.commit()
         self._types = None
+        self._prop_ids = None
+        self._lattice = None
+        self._slots = None
+
+    def has_proposition_ids(self):
+        """True when the A0 module is installed (propositions own a `wm-id` key)."""
+        if self._prop_ids is None:
+            self._prop_ids = "core-0.4-a0" in self.modules()
+        return self._prop_ids
+
+    def upgrade_to_a0(self):
+        """Upgrade an existing Core 0.3 database in place: give every proposition its deterministic id, then make the
+        id a key. Three steps, because TypeDB rejects adding @key while instances lack the attribute (CNT5)."""
+        if self.has_proposition_ids():
+            return 0
+        with self.driver.transaction(self.database, SCHEMA) as tx:
+            tx.query("define proposition owns wm-id;").resolve()
+            tx.commit()
+        with self.driver.transaction(self.database, READ) as tx:
+            pending = [q.opt(r, "k") for r in q.rows(tx, """match $p isa proposition, has proposition-key $k;
+                not { $p has wm-id $i; };""")]
+        with self.driver.transaction(self.database, WRITE) as tx:
+            for key in pending:
+                q.run(tx, "match $p isa proposition, has proposition-key == $k; insert $p has wm-id == $id;",
+                      {"k": key, "id": keys.proposition_id(key)})
+            tx.commit()
+        version, files = MODULES["core-0.4-a0"]
+        self.install_module("core-0.4-a0", files=files, version=version)
+        self._declare_core_slots()
+        return len(pending)
 
     def modules(self):
         with self.driver.transaction(self.database, READ) as tx:
             return {q.opt(r, "n"): q.opt(r, "v") for r in
                     q.rows(tx, "match $m isa schema-module, has module-name $n, has module-version $v;")}
+
+    # ---- the type and role lattice (A0.2) ---------------------------------------------------------------------------
+    def _schema_lattice(self):
+        """(direct supertype of each type, direct parent of each specialised role), read from the schema by query
+        (`sub!`) once per installed schema. Profiles add subtypes and specialised roles; nothing is hard-coded."""
+        if self._lattice is None:
+            parents, role_parents = {}, {}
+            with self.driver.transaction(self.database, READ) as tx:
+                for kind in ("entity", "relation"):
+                    for r in q.rows(tx, f"match {kind} $t; $t sub! $s;"):
+                        parents[r.get("t").get_label()] = r.get("s").get_label()
+                for r in q.rows(tx, "match relation $t; $t relates $r; $r sub! $p;"):
+                    role_parents[r.get("r").get_label()] = r.get("p").get_label()
+            self._lattice = (parents, role_parents, {}, {})      # + memo of ancestors and core roles
+        return self._lattice
+
+    def ancestors(self, label):
+        """The type and its supertypes, nearest first (e.g. docked-at, located-at, proposition)."""
+        parents, _, memo, _ = self._schema_lattice()
+        if label not in memo:
+            out = [label]
+            while out[-1] in parents:
+                out.append(parents[out[-1]])
+            memo[label] = tuple(out)
+        return list(memo[label])
+
+    def is_a(self, label, ancestor):
+        return ancestor in self.ancestors(label)
+
+    def core_type(self, label):
+        """The nearest core (foundational) type of a label: itself for a core type, else its nearest core supertype."""
+        return next((t for t in self.ancestors(label) if t in CORE_LABELS), label)
+
+    def core_role(self, scoped):
+        """The core role name for a scoped role label: `pickup:picker` (picker as actor) -> `actor`; a role of a core
+        type -> its own name; a profile's own new role (no core parent) -> its own name."""
+        _, role_parents, _, memo = self._schema_lattice()
+        if scoped not in memo:
+            r = scoped
+            while r.split(":")[0] not in CORE_LABELS and r in role_parents:
+                r = role_parents[r]
+            memo[scoped] = (r if r.split(":")[0] in CORE_LABELS else scoped).split(":")[-1]
+        return memo[scoped]
+
+    # ---- functional slots (A0.3) ---------------------------------------------------------------------------------
+    def _declare_core_slots(self):
+        for predicate, (key_roles, value_role) in CORE_SLOTS.items():
+            self.declare_slot(predicate, key_roles, value_role)
+
+    def declare_slot(self, predicate, key_roles, value_role):
+        """Declare a functional constraint: content of `predicate` and of every subtype has at most one `value_role`
+        value at a time for each combination of `key_roles` players. Stored as data in TypeDB; role names are core
+        role names. A type may declare several. Subtypes inherit all their ancestors' constraints and their own add to
+        them; no declaration replaces or weakens an inherited one (U-5, LABS-1.003). Declaring a constraint that
+        already applies (own or inherited) is a no-op."""
+        if not self.has_proposition_ids():
+            raise ValueError("slot declarations need the core-0.4-a0 module (upgrade_to_a0)")
+        key_roles = tuple(sorted(set(key_roles)))
+        if predicate not in self.proposition_types():
+            raise ValueError(f"{predicate!r} is not a proposition type")
+        with self.driver.transaction(self.database, READ) as tx:
+            roles = {self.core_role(r.get("r").get_label())
+                     for r in q.rows(tx, f"match $t label {q.label(predicate)}; $t relates $r;")}
+        unknown = (set(key_roles) | {value_role}) - roles
+        if unknown or not key_roles or value_role in key_roles:
+            raise ValueError(f"invalid slot for {predicate!r}: key roles {key_roles}, value role {value_role!r} "
+                             f"(roles: {sorted(roles)})")
+        if any((k, v) == (key_roles, value_role) for _, k, v in self._constraints(predicate)):
+            return
+        attrs = "".join(f", has slot-role == $k{i}" for i in range(len(key_roles)))
+        with self.driver.transaction(self.database, WRITE) as tx:
+            q.run(tx, f"""insert $s isa functional-slot, has slot-id == $id, has slot-predicate == $p,
+                has value-role == $v{attrs};""",
+                  {"id": f"{predicate}|{','.join(key_roles)}|{value_role}", "p": predicate, "v": value_role,
+                   **{f"k{i}": r for i, r in enumerate(key_roles)}})
+            tx.commit()
+        self._slots = None
+
+    def slots(self):
+        """{predicate: [(key roles, value role), ...]}: the functional constraints each type declares itself (from
+        TypeDB, or CORE_SLOTS without the A0 module). See `_constraints` for what applies to a type."""
+        if self._slots is None:
+            if not self.has_proposition_ids():
+                self._slots = {p: [c] for p, c in CORE_SLOTS.items()}
+            else:
+                found = {}
+                with self.driver.transaction(self.database, READ) as tx:
+                    for r in q.rows(tx, """match $s isa functional-slot, has slot-id $id, has slot-predicate $p,
+                        has value-role $v, has slot-role $k;"""):
+                        _, _, keys_ = found.setdefault(q.opt(r, "id"), (q.opt(r, "p"), q.opt(r, "v"), set()))
+                        keys_.add(q.opt(r, "k"))
+                out = {}
+                for p, v, k in found.values():
+                    out.setdefault(p, []).append((tuple(sorted(k)), v))
+                self._slots = {p: sorted(cs) for p, cs in out.items()}
+        return self._slots
+
+    def _constraints(self, label):
+        """Every functional constraint that applies to a content type: (declaring type, key roles, value role), its
+        ancestors' first (root first), then its own. Additive: a subtype never loses an inherited constraint."""
+        declared = self.slots()
+        return [(t, *c) for t in reversed(self.ancestors(label)) for c in declared.get(t, ())]
 
     def proposition_types(self):
         """Concrete proposition types in the installed schema (core and profiles), by introspection."""
@@ -119,7 +284,7 @@ class WorldModel:
     def add_entity(self, kind, name, alt_names=(), description=None, id=None):
         """A particular (physical-object, social-object, place, information-object, occurrence), a concept (category,
         social-role, quality-kind) or a reference system (clock, spatial-frame, unit). Profiles may add subtypes."""
-        rid = check_id(id or self._mint(kind))
+        rid = check_new_id(id or self._mint(kind))
         attrs = ", has name == $n" + "".join(f", has alt-name == $a{i}" for i in range(len(alt_names)))
         params = {"id": rid, "n": name, **{f"a{i}": a for i, a in enumerate(alt_names)}}
         if description:
@@ -133,7 +298,7 @@ class WorldModel:
     def create_world(self, name, kind="actual", base=None, branch_at=None, knowledge_at=None, id=None):
         """A world (actual, hypothetical or simulated). A variant names its base, the valid time it branches at, and
         the base knowledge it inherits (`knowledge_at`, a transaction time; default now; never in the future)."""
-        wid = check_id(id or self._mint("world"))
+        wid = check_new_id(id or self._mint("world"))
         with self.driver.transaction(self.database, WRITE) as tx:
             q.run(tx, "insert $w isa world, has wm-id == $id, has name == $n, has world-kind == $k;",
                   {"id": wid, "n": name, "k": kind})
@@ -159,16 +324,19 @@ class WorldModel:
 
     # ---- writing: content --------------------------------------------------------------------------------------
     def _kinds_of(self, tx, ids):
-        """Exact type of each id among particulars, concepts, reference systems and event descriptions."""
+        """Exact type of each id among particulars, concepts, reference systems, event descriptions and (A0.1) propositions."""
         out = {}
+        # Only ids of the reserved proposition form can name a proposition (A0.1), so other ids keep the Core 0.3
+        # query; the proposition branch would be infeasible without the A0 module anyway (INF11).
         for i in sorted(set(ids)):
-            for r in q.rows(tx, """match $x has wm-id == $id; $x isa! $t;
-                { $x isa particular; } or { $x isa concept; } or { $x isa reference-system; } or { $x isa event; };""",
-                            {"id": i}):
+            kinds = ("{ $x isa proposition; }" if keys.PROPOSITION_ID.match(i) and self.has_proposition_ids() else
+                     "{ $x isa particular; } or { $x isa concept; } or { $x isa reference-system; } or { $x isa event; }")
+            for r in q.rows(tx, f"match $x has wm-id == $id; $x isa! $t; {kinds};", {"id": i}):
                 out[i] = r.get("t").get_label()
         missing = set(ids) - set(out)
         if missing:
-            raise ValueError(f"no particular, concept, reference system or event description with id {sorted(missing)}")
+            raise ValueError(f"no particular, concept, reference system, event description or proposition with id "
+                             f"{sorted(missing)}")
         return out
 
     def _players(self, tx, roles, prefix="p"):
@@ -192,15 +360,32 @@ class WorldModel:
         if unknown:
             raise ValueError(f"unknown proposition parameters {sorted(unknown)}")
         key = proposition_key(type, roles, params)
-        if q.rows(tx, "match $p isa proposition, has proposition-key == $k;", {"k": key}):
+        if self.has_proposition_ids():
+            # One lookup by id answers both "already stored?" and "does another key own this id?" (A0.1).
+            pid = keys.proposition_id(key)
+            found = q.rows(tx, "match $p isa proposition, has wm-id == $id, has proposition-key $k;", {"id": pid})
+            if found:
+                if q.opt(found[0], "k") == key:
+                    return key
+                raise PropositionIdCollision(pid, key, q.opt(found[0], "k"))   # never merge silently
+        elif q.rows(tx, "match $p isa proposition, has proposition-key == $k;", {"k": key}):
             return key
         patterns, links, values = self._players(tx, roles)
         attrs = "".join(f", has {q.label(name)} == $v_{name.replace('-', '_')}" for name in sorted(params))
         values.update({f"v_{name.replace('-', '_')}": float(v) for name, v in params.items()})
         values["key"] = key
+        if self.has_proposition_ids():
+            attrs += ", has wm-id == $pid"
+            values["pid"] = pid
         q.run(tx, f"match {patterns} insert $p isa {q.label(type)} ({links}), has proposition-key == $key{attrs};",
               values)
         return key
+
+    def proposition_id(self, key):
+        """The stored proposition's immutable id (A0.1), read from the database; None if absent."""
+        with self.driver.transaction(self.database, READ) as tx:
+            rows = q.rows(tx, "match $p isa proposition, has proposition-key == $k, has wm-id $id;", {"k": key})
+        return q.opt(rows[0], "id") if rows else None
 
     def proposition(self, type, roles, params=None):
         """Store the content (once) and return its canonical key. Content alone asserts nothing."""
@@ -209,17 +394,20 @@ class WorldModel:
             tx.commit()
         return key
 
-    def describe_event(self, roles, description=None, id=None):
+    def describe_event(self, roles, description=None, id=None, type="event"):
         """An event description: one account of an occurrence, with its participants. Identified by id, not by
-        content: two descriptions with the same participants are two descriptions. Asserts nothing by itself."""
-        eid = check_id(id or self._mint("event"))
+        content: two descriptions with the same participants are two descriptions. Asserts nothing by itself.
+        `type` may be a profile subtype of `event` (A0.2); roles are then that type's own role names."""
+        if not self.is_a(type, "event"):
+            raise ValueError(f"{type!r} is not an event type")
+        eid = check_new_id(id or self._mint("event"))
         with self.driver.transaction(self.database, WRITE) as tx:
             patterns, links, values = self._players(tx, roles)
             values["id"] = eid
             extra = ""
             if description:
                 extra, values["d"] = ", has description == $d", description
-            q.run(tx, f"match {patterns} insert $e isa event ({links}), has wm-id == $id{extra};", values)
+            q.run(tx, f"match {patterns} insert $e isa {q.label(type)} ({links}), has wm-id == $id{extra};", values)
             tx.commit()
         return eid
 
@@ -232,14 +420,19 @@ class WorldModel:
             if not rows:
                 return None
             out = {"type": rows[0].get("t").get_label(), "roles": {}, "params": {}}
+            scoped = {}
             for r in q.rows(tx, """match { $c isa proposition, has proposition-key == $k; } or
                 { $c isa event, has wm-id == $k; }; $c links ($role: $x); $x has wm-id $xid;""", {"k": key_or_id}):
                 out["roles"].setdefault(r.get("role").get_label().split(":")[-1], []).append(q.opt(r, "xid"))
+                scoped.setdefault(r.get("role").get_label(), set()).add(q.opt(r, "xid"))
+            core_roles = self._role_maps(scoped)[0]
             for name in QUALITY_PARAMS:
                 for r in q.rows(tx, f"match $c isa proposition, has proposition-key == $k, has {name} $v;",
                                 {"k": key_or_id}):
                     out["params"][name] = q.opt(r, "v")
         out["roles"] = {k: sorted(v) for k, v in out["roles"].items()}
+        if out["type"] not in CORE_LABELS:          # a profile subtype: also say what it is in core terms (A0.2)
+            out["core_type"], out["core_roles"] = self.core_type(out["type"]), core_roles
         return out
 
     def count(self, type):
@@ -278,7 +471,7 @@ class WorldModel:
         if end is not None and until_superseded:
             raise ValueError("give either an end or until_superseded, not both")
         end_basis = "stated" if end is not None else ("until-superseded" if until_superseded else "unknown")
-        aid = check_id(id or self._mint("att"))
+        aid = check_new_id(id or self._mint("att"))
         values = {"world": world, "attester": attester, "id": aid, "st": stance, "pol": polarity, "bs": basis,
                   "eb": end_basis, "rec": self._now()}
         attrs = ""
@@ -342,13 +535,13 @@ class WorldModel:
         with self.driver.transaction(self.database, READ) as tx:
             rows = q.rows(tx, """match $a isa attestation (content: $c, attester: $who), has wm-id == $id,
                 has stance $st, has polarity $pol, has basis $bs; $who has wm-id $wid; $c isa! $t;
-                { $c has proposition-key $ck; } or { $c has wm-id $ck; };
+                { $c has proposition-key $ck; } or { $c isa event, has wm-id $ck; };
                 try { $a has valid-from-earliest $se; }; try { $a has valid-from-latest $sl; };
                 try { $a has credence $cr; };""", {"id": aid})
         if not rows:
             raise ValueError(f"no attestation {aid!r}")
         r = rows[0]
-        return {"content": q.opt(r, "ck"), "is_event": r.get("t").get_label() == "event", "attester": q.opt(r, "wid"),
+        return {"content": q.opt(r, "ck"), "is_event": self.is_a(r.get("t").get_label(), "event"), "attester": q.opt(r, "wid"),
                 "stance": q.opt(r, "st"), "polarity": q.opt(r, "pol"), "basis": q.opt(r, "bs"),
                 "start": Window(q.opt(r, "se"), q.opt(r, "sl")) if q.opt(r, "se") else None, "credence": q.opt(r, "cr")}
 
@@ -433,12 +626,12 @@ class WorldModel:
         head, params = self._filters(world, type, subject, klim, vlim, at)
         # Type inference rejects a disjunction branch that cannot apply to a fixed type, so pick the content id pattern.
         recs = {}
-        if type == "event":
+        if type is not None and self.is_a(type, "event"):
             content_id = "$c has wm-id $ck;"
         elif type is not None:
             content_id = "$c has proposition-key $ck;"
         else:
-            content_id = "{ $c has proposition-key $ck; } or { $c has wm-id $ck; };"
+            content_id = "{ $c has proposition-key $ck; } or { $c isa event, has wm-id $ck; };"
         # Attributes are read with one `fetch` stage rather than one `try` block each: same values, about 3x faster
         # (docs/core-0.3, experiment-main-query.json). Absent attributes come back as null.
         for d in q.documents(tx, head + f""" $who has wm-id $wid; $c isa! $t; {content_id}
@@ -446,15 +639,17 @@ class WorldModel:
                      "bs": $a.basis, "eb": $a.end-basis, "sfe": $a.valid-from-earliest, "sfl": $a.valid-from-latest,
                      "tte": $a.valid-to-earliest, "ttl": $a.valid-to-latest, "cr": $a.credence }};""", params):
             sfe, sfl, tte, ttl = (q.parse_datetime(d[k]) for k in ("sfe", "sfl", "tte", "ttl"))
+            ctype = d["t"]["label"]
             recs[d["aid"]] = AttestationRecord(
-                id=d["aid"], content=d["ck"], ctype=d["t"]["label"], roles={}, params={}, attester=d["wid"],
+                id=d["aid"], content=d["ck"], ctype=ctype, base=None if ctype in CORE_LABELS else self.core_type(ctype),
+                roles={}, params={}, attester=d["wid"],
                 world=world, stance=d["st"], polarity=d["pol"], basis=d["bs"],
                 start=Window(sfe, sfl) if sfe is not None else None,
                 end=Window(tte, ttl) if tte is not None else None, end_basis=d["eb"],
                 recorded_at=q.parse_datetime(d["rec"]), credence=d["cr"], depth=depth)
         # Fetching `$c.lower` is rejected unless every possible type of $c can own it, so quality parameters are
         # fetched separately, only when the content can be has-quality.
-        if type in (None, "has-quality"):
+        if type is None or self.is_a(type, "has-quality") or self.is_a("has-quality", type):
             for d in q.documents(tx, head + """ $c isa has-quality;
                 fetch { "aid": $aid, "lower": $c.lower, "upper": $c.upper, "coverage-level": $c.coverage-level };""",
                                  params):
@@ -466,15 +661,15 @@ class WorldModel:
             role_q = head + " $c links ($role: $x); $x has wm-id $xid;"
         else:   # the subject's own role comes from $kr; a second `links` cannot match it again
             role_q = head + " try { $c links ($role: $x); $x has wm-id $xid; };"
-        for r in q.rows(tx, role_q, params):
+        for r in q.rows(tx, role_q, params):           # scoped role label -> ids
             mine = roles.setdefault(q.opt(r, "aid"), {})
             if subject is not None:
-                mine.setdefault(r.get("kr").get_label().split(":")[-1], set()).add(subject)
+                mine.setdefault(r.get("kr").get_label(), set()).add(subject)
             if r.get("role") is not None:
-                mine.setdefault(r.get("role").get_label().split(":")[-1], set()).add(q.opt(r, "xid"))
+                mine.setdefault(r.get("role").get_label(), set()).add(q.opt(r, "xid"))
         for aid, rs in roles.items():
             if aid in recs:
-                recs[aid].roles = {role: sorted(ids) for role, ids in rs.items()}
+                recs[aid].roles, recs[aid].concrete_roles = self._role_maps(rs)
         for r in q.rows(tx, head + """ $acc isa acceptance (holder: $h, accepted: $a), has verdict $vd,
             has recorded-at $vrec; $h has wm-id == $persp;""", {**params, "persp": perspective}):
             if klim is None or q.opt(r, "vrec") <= klim:
@@ -534,6 +729,46 @@ class WorldModel:
         if ids is None or not self.selective:
             same = self._load(world, as_of, types=["same-as"], perspective=perspective)
             return Identity(same.values(), perspective, as_of)
+        same, _ = self._identity_links(world, as_of, perspective, ids)
+        return Identity(same.values(), perspective, as_of)
+
+    def _identity_links(self, world, as_of, perspective, ids, same=None, known=None):
+        """same-as attestations reachable from `ids` through links usable by the perspective (transitively), added to
+        `same`; `known` is every id whose links are loaded. World, knowledge time and perspective rules apply as in
+        _load. Returns (same, known)."""
+        same = dict(same or {})
+        known = set(known or ())
+        frontier = sorted(set(ids) - known)
+        known |= set(frontier)
+        while frontier:
+            same.update(self._load(world, as_of, types=["same-as"], subjects=frontier, perspective=perspective))
+            ident = Identity(same.values(), perspective, as_of)
+            group = {m for i in known for m in ident.members(i)}
+            frontier = sorted(group - known)
+            known |= group
+        return same, known
+
+    def _linked_ids(self, ids):
+        """The ids among `ids` that take part in any stored same-as content, in any world (one targeted query per 50
+        ids). A cheap pre-filter: an id without same-as content cannot be co-referring for anyone."""
+        out, ids = set(), sorted(ids)
+        with self.driver.transaction(self.database, READ) as tx:
+            for i in range(0, len(ids), 50):
+                chunk = ids[i:i + 50]
+                alts = " or ".join(f"{{ $x has wm-id == $i{j}; }}" for j in range(len(chunk)))
+                out |= {q.opt(r, "xid") for r in q.rows(
+                    tx, f"match $c isa same-as; $c links (same: $x); $x has wm-id $xid; {alts};",
+                    {f"i{j}": x for j, x in enumerate(chunk)})}
+        return out
+
+    def _selective_identity(self, world, as_of, perspective, same, known, atts):
+        """Identity for a selective answer: the subjects' links (`same`, `known`), plus links of every other player of
+        the loaded attestations that has same-as content, so players compare as on the full load (F-5, LABS-1.004)."""
+        players = {x for a in atts.values() for ids in a.roles.values() for x in ids} - known
+        linked = self._linked_ids(players) if players else set()
+        if linked:
+            same, known = self._identity_links(world, as_of, perspective, linked, same, known)
+        return Identity(same.values(), perspective, as_of)
         known, frontier, same = set(ids), sorted(set(ids)), {}
         while frontier:
             same.update(self._load(world, as_of, types=["same-as"], subjects=frontier, perspective=perspective))
@@ -543,16 +778,28 @@ class WorldModel:
             known |= group
         return Identity(same.values(), perspective, as_of)
 
+    def _role_maps(self, scoped):
+        """{scoped role label: ids} -> (roles by core role name, roles by stored name or None when they agree)."""
+        core, concrete = {}, {}
+        for label, ids in scoped.items():
+            core.setdefault(self.core_role(label), set()).update(ids)
+            concrete.setdefault(label.split(":")[-1], set()).update(ids)
+        core = {r: sorted(v) for r, v in core.items()}
+        concrete = {r: sorted(v) for r, v in concrete.items()}
+        return core, (None if concrete == core else concrete)
+
     def _view(self, world, as_of, perspective, type, subject_ids, at=None):
         """(attestations, identity) for a question about `subject_ids`: selective by default, else the full load."""
         if not self.selective:
             atts = self.visible(world, as_of, perspective)
-            ident = Identity([a for a in atts.values() if a.ctype == "same-as"], perspective, as_of)
+            ident = Identity([a for a in atts.values() if a.kind == "same-as"], perspective, as_of)
             return atts, ident
-        ident = self.identity(world, as_of, perspective, ids=subject_ids)
+        same, known = self._identity_links(world, as_of, perspective, subject_ids)
+        ident = Identity(same.values(), perspective, as_of)
         members = sorted({m for s in subject_ids for m in ident.members(s)})
-        return self._load(world, as_of, types=[type] if type else None, subjects=members, at=at,
-                          perspective=perspective), ident
+        atts = self._load(world, as_of, types=[type] if type else None, subjects=members, at=at,
+                          perspective=perspective)
+        return atts, self._selective_identity(world, as_of, perspective, same, known, atts)
 
     # ---- reading: answers ----------------------------------------------------------------------------------------
     @staticmethod
@@ -589,18 +836,37 @@ class WorldModel:
             near = [(a, v) for a, v in items if a.depth == depth]
             vals = {v for _, v in near}
             out[cls] = ("disputed" if len(vals) > 1 else vals.pop(), [a for a, _ in near], depth)
-        slot_depth = {}
+        slot_depth, slots = {}, {}
         for cls, (val, support, depth) in out.items():
-            if val is True and cls[0] in FUNCTIONAL:
-                key_role = FUNCTIONAL[cls[0]][0]
-                slot = (cls[0], dict(cls[1]).get(key_role))
+            if val is not True:
+                continue
+            players = dict(cls[1])
+            for decl, ks, v in self._constraints(cls[0]):      # every applicable constraint, inherited and own
+                slot = (decl, ks, v, tuple(players.get(r) for r in ks))
+                slots.setdefault(cls, []).append(slot)
                 slot_depth[slot] = min(slot_depth.get(slot, depth), depth)
-        for cls in list(out):
-            val, support, depth = out[cls]
-            if val is True and cls[0] in FUNCTIONAL:
-                slot = (cls[0], dict(cls[1]).get(FUNCTIONAL[cls[0]][0]))
-                if depth > slot_depth[slot]:
-                    del out[cls]
+        for cls, its in slots.items():
+            if any(out[cls][2] > slot_depth[slot] for slot in its):
+                del out[cls]
+        return out
+
+    def _conflicts(self, classes):
+        """v0.2 §5.3 rule 2: {class: classes it conflicts with} among holding contents that give different values to
+        one functional slot, i.e. the same players in a constraint's key roles and different players in its value
+        role (one thing in two places). Several values for other questions are compatible (two things on one shelf).
+        Players are canonical under the perspective's identity, so co-referring names are one value (LABS-1.003).
+        The one functional-dispute check, used by value_at/value_of and holds (LABS-1.005)."""
+        slots = {}
+        for cls in classes:
+            players = dict(cls[1])
+            for decl, ks, v in self._constraints(cls[0]):
+                slots.setdefault((decl, ks, v, tuple(players.get(r) for r in ks)), []).append((players.get(v), cls))
+        out = {}
+        for members in slots.values():
+            for value, cls in members:
+                rivals = {c for val, c in members if val != value}
+                if rivals:
+                    out.setdefault(cls, set()).update(rivals)
         return out
 
     @staticmethod
@@ -610,14 +876,36 @@ class WorldModel:
 
     def value_at(self, world, type, subject, t, as_of=None, perspective=SYSTEM, key_role=None, value_role=None):
         """The value(s) of a relationship for `subject` at valid time t, for a perspective, as known at `as_of`."""
-        key_role, value_role = (key_role, value_role) if key_role else FUNCTIONAL[type]
-        atts, ident = self._view(world, as_of, perspective, type, [subject], at=t)
-        me = set(ident.members(subject))
-        about = [a for a in atts.values() if a.ctype == type and me & set(a.roles.get(key_role, []))]
+        if not key_role:
+            simple = sorted({(ks, v) for _, ks, v in self._constraints(type) if len(ks) == 1})
+            if len(simple) != 1:
+                raise ValueError(f"{type!r} has {len(simple)} one-role functional constraints {simple}: name key_role "
+                                 f"and value_role (composite constraints: use value_of)")
+            (key_role,), value_role = simple[0]
+        return self._value(world, type, {key_role: subject}, value_role, t, as_of, perspective)
+
+    def value_of(self, world, type, key, t, as_of=None, perspective=SYSTEM):
+        """The value(s) in a functional slot at t: `key` names a player for every key role of the type's slot, e.g.
+        value_of(w, "seat-assignment", {"venue": "hall", "seat": "A1"}, t) -> the occupant (A0.3)."""
+        found = sorted({v for _, ks, v in self._constraints(type) if set(ks) == set(key)})
+        if len(found) != 1:
+            raise ValueError(f"{type!r}: key must name exactly the key roles of one functional constraint "
+                             f"{sorted({ks for _, ks, _ in self._constraints(type)})}")
+        return self._value(world, type, key, found[0], t, as_of, perspective)
+
+    def _value(self, world, type, key, value_role, t, as_of, perspective):
+        subjects = [key[r] for r in sorted(key)]
+        atts, ident = self._view(world, as_of, perspective, type, subjects, at=t)
+        want = {r: set(ident.members(x)) for r, x in key.items()}
+
+        def keyed(a):
+            return self.is_a(a.ctype, type) and all(m & set(a.roles.get(r, [])) for r, m in want.items())
+
+        about = [a for a in atts.values() if keyed(a)]
         if not about:
             if self.selective:
-                anything, _ = self._view(world, as_of, perspective, type, [subject])
-                if any(a.ctype == type and me & set(a.roles.get(key_role, [])) for a in anything.values()):
+                anything, _ = self._view(world, as_of, perspective, type, subjects)
+                if any(keyed(a) for a in anything.values()):
                     return Answer(Status.UNKNOWN)
             return Answer(Status.NOT_YET_KNOWN)
         judged = self._judge(about, ident, t, perspective, as_of)
@@ -630,7 +918,7 @@ class WorldModel:
         ids = tuple(sorted(a.id for a in support))
         if not values:
             return Answer(Status.UNKNOWN, alternatives=alternatives)
-        if disputed or (type in FUNCTIONAL and len(values) > 1):
+        if disputed or self._conflicts(holding):
             return Answer(Status.DISPUTED, values=tuple(values), support=ids, alternatives=alternatives, evidence=evidence)
         return Answer(answer_status(support), values=tuple(values), support=ids, alternatives=alternatives,
                       evidence=evidence)
@@ -638,38 +926,49 @@ class WorldModel:
     def holds(self, world, type, roles, t, as_of=None, perspective=SYSTEM):
         """Does this content hold at t for the perspective? Evidence-backed status with polarity."""
         ids = sorted({x for v in roles.values() for x in as_ids(v)})
-        key = FUNCTIONAL[type][0] if type in FUNCTIONAL and FUNCTIONAL[type][0] in roles else sorted(roles)[0]
+        constraints = self._constraints(type)
+        keyed = [c for c in constraints if set(c[1]) <= set(roles)]     # constraints whose whole key is given
+        key = keyed[0][1][0] if keyed else sorted(roles)[0]
         anchor = as_ids(roles[key])
         if self.selective:
-            ident = self.identity(world, as_of, perspective, ids=ids)
+            same, known = self._identity_links(world, as_of, perspective, ids)
+            ident = Identity(same.values(), perspective, as_of)
             members = sorted({m for x in anchor for m in ident.members(x)})
-            atts = self._load(world, as_of, types=[type], subjects=members, perspective=perspective)
+            # A constraint is shared with its declaring type's other subtypes, so load from the most general one.
+            atts = self._load(world, as_of, types=[constraints[0][0] if constraints else type], subjects=members,
+                              perspective=perspective)
+            ident = self._selective_identity(world, as_of, perspective, same, known, atts)
         else:
             atts, ident = self._view(world, as_of, perspective, None, ids)
         want = {r: {ident.canonical(x) for x in as_ids(v)} for r, v in roles.items()}
 
         def matches(a):
-            return a.ctype == type and all(want[r] <= {ident.canonical(x) for x in a.roles.get(r, [])} for r in want)
+            return self.is_a(a.ctype, type) and all(want[r] <= {ident.canonical(x) for x in a.roles.get(r, [])} for r in want)
 
         about = [a for a in atts.values() if matches(a)]
         peers = about
-        if type in FUNCTIONAL and FUNCTIONAL[type][0] in want:
-            k = FUNCTIONAL[type][0]
-            peers = [a for a in atts.values() if a.ctype == type
-                     and want[k] <= {ident.canonical(x) for x in a.roles.get(k, [])}]
+        if keyed:
+            peers = [a for a in atts.values() if any(
+                self.is_a(a.ctype, decl) and all(want[k] <= {ident.canonical(x) for x in a.roles.get(k, [])} for k in ks)
+                for decl, ks, _ in keyed)]
         judged = self._judge(peers, ident, t, perspective, as_of)
         mine = {cls: v for cls, v in judged.items() if any(matches(a) for a in v[1])}
         alternatives = self._alternatives(about, t, perspective, as_of)
+        conflicts = self._conflicts([c for c, (val, _, _) in judged.items() if val is True])
         for cls, (val, sup, _) in mine.items():
             evidence = tuple(a.evidence() for a in sorted(sup, key=lambda a: a.id))
             ids_ = tuple(sorted(a.id for a in sup))
             if val == "disputed":
                 return Answer(Status.DISPUTED, None, support=ids_, alternatives=alternatives, evidence=evidence)
+            if val is True and cls in conflicts:      # a functional conflict: the perspective's judgement is DISPUTED
+                rival = sorted({a.id: a for c in conflicts[cls] for a in judged[c][1]}.values(), key=lambda a: a.id)
+                return Answer(Status.DISPUTED, None, support=ids_, alternatives=alternatives,
+                              conflicts=tuple(a.id for a in rival),
+                              evidence=tuple(a.evidence() for a in sorted(sup + rival, key=lambda a: a.id)))
             return Answer(answer_status(sup), val, support=ids_, alternatives=alternatives, evidence=evidence)
-        if type in FUNCTIONAL:
-            k, v = FUNCTIONAL[type]
-            if k in roles and v in roles:
-                other = self.value_at(world, type, anchor[0], t, as_of, perspective)
+        for decl, ks, v in keyed:          # root first: the most general constraint that settles it is cited
+            if v in roles:
+                other = self._value(world, decl, {k: as_ids(roles[k])[0] for k in ks}, v, t, as_of, perspective)
                 if other.status in (Status.ASSERTED, Status.STIPULATED, Status.INFERRED) \
                         and not set(other.values) & want[v]:
                     return Answer(Status.INFERRED, False, support=other.support, alternatives=alternatives,
@@ -685,7 +984,7 @@ class WorldModel:
         me = set(ident.members(subject))
         rows = []
         for a in atts.values():
-            if (type is None or a.ctype == type) and any(me & set(ids) for ids in a.roles.values()):
+            if (type is None or self.is_a(a.ctype, type)) and any(me & set(ids) for ids in a.roles.values()):
                 rows.append({**a.evidence(), "content": a.content, "type": a.ctype, "roles": a.roles,
                              "state": acceptance_state(a, perspective, as_of), "superseded": superseded(a, perspective, as_of),
                              "world_depth": a.depth})
@@ -693,15 +992,16 @@ class WorldModel:
         return sorted(rows, key=lambda r: (r["start"].earliest if r["start"] else far, r["recorded_at"], r["attestation"]))
 
     # ---- events, occurrences and moves -----------------------------------------------------------------------------
-    def record_event(self, world, roles, start, end=None, kind=None, ends=(), effects=(), attester=SYSTEM, id=None):
+    def record_event(self, world, roles, start, end=None, kind=None, ends=(), effects=(), attester=SYSTEM, id=None,
+                     type="event"):
         """An event description, its occurrence attested by `attester` over [start, end], and how it changed the world.
 
         kind: optional category classifying the description. ends: attestations it ended (each superseded by its
         attester with an end at the event's end). effects: dicts {type, roles} for new facts from the event's end,
-        holding until superseded. Returns (event id, [effect attestation ids])."""
+        holding until superseded. type: `event` or a profile subtype (A0.2). Returns (event id, [effect attestation ids])."""
         start = _window(start)
         end = _window(end) or start
-        eid = self.describe_event(roles, id=id)
+        eid = self.describe_event(roles, id=id, type=type)
         self.attest(world, event=eid, start=start, end=end, attester=attester)
         if kind:
             self.attest(world, "classified-as", {"classified": eid, "class": kind}, start=start, until_superseded=True,
@@ -718,7 +1018,7 @@ class WorldModel:
         just_before = _window(at).earliest - timedelta(microseconds=1)
         atts, ident = self._view(world, as_of, attester, "located-at", [thing], at=just_before)
         me = set(ident.members(thing))
-        before = [a for a in atts.values() if a.ctype == "located-at" and me & set(a.roles.get("located", []))
+        before = [a for a in atts.values() if a.kind == "located-at" and me & set(a.roles.get("located", []))
                   and a.attester == attester and usable(a, attester, as_of) and verdict(a, just_before) is True]
         origin = sorted({p for a in before for p in a.roles.get("place", [])})
         roles = {"patient": thing, "destination": to}
@@ -736,7 +1036,7 @@ class WorldModel:
             who = set(ident.members(participant))
         else:
             atts, who = self._load(world, as_of, types=["event"], perspective=perspective), None
-        evs = [a for a in atts.values() if a.ctype == "event" and a.polarity and usable(a, perspective, as_of)
+        evs = [a for a in atts.values() if a.kind == "event" and a.polarity and usable(a, perspective, as_of)
                and (who is None or any(who & set(ids) for ids in a.roles.values()))]
         kinds = {}
         if evs:
@@ -747,7 +1047,7 @@ class WorldModel:
                         kinds.setdefault(x, set()).update(a.roles.get("class", []))
         far = datetime.min.replace(tzinfo=timezone.utc)
         evs.sort(key=lambda a: (a.start.earliest if a.start else far, a.start.latest if a.start else far, a.id))
-        return [{"event": a.content, "attestation": a.id, "attester": a.attester, "roles": a.roles,
+        return [{"event": a.content, "type": a.ctype, "attestation": a.id, "attester": a.attester, "roles": a.roles,
                  "kinds": sorted(kinds.get(a.content, [])), "start": a.start, "end": a.end, "record": a} for a in evs]
 
     @staticmethod
@@ -799,7 +1099,7 @@ class WorldModel:
         me = set(ident.members(thing))
         touched = []
         for cls, (val, support, _) in self._judge(list(atts.values()), ident, t, SYSTEM, None).items():
-            if val is not True or cls[0] in ("event", "same-as"):
+            if val is not True or self.core_type(cls[0]) in ("event", "same-as"):
                 continue
             for a in support:
                 if not any(me & set(ids) for ids in a.roles.values()):
@@ -807,7 +1107,7 @@ class WorldModel:
                 if a.attester == SYSTEM:
                     self.end(world, a.id, at, reason=reason or f"{thing} destroyed")
                 else:
-                    self.attest(world, a.ctype, a.roles, params=a.params or None, start=at, until_superseded=True,
+                    self.attest(world, a.ctype, a.concrete_roles or a.roles, params=a.params or None, start=at, until_superseded=True,
                                 polarity=False)
                 touched.append(a.id)
         return sorted(touched)
@@ -817,8 +1117,8 @@ class WorldModel:
         true if the thing takes part in content holding at t; otherwise UNKNOWN, or NOT_YET_KNOWN."""
         atts, ident = self._view(world, as_of, perspective, None, [thing])
         me = set(ident.members(thing))
-        mine = [a for a in atts.values() if a.ctype != "same-as" and any(me & set(ids) for ids in a.roles.values())]
-        ex = [a for a in mine if a.ctype == "existence"]
+        mine = [a for a in atts.values() if a.kind != "same-as" and any(me & set(ids) for ids in a.roles.values())]
+        ex = [a for a in mine if a.kind == "existence"]
         alternatives = tuple(sorted(a.id for a in ex if acceptance_state(a, perspective, as_of) == "unreviewed"
                                     and not superseded(a, perspective, as_of)))
         judged = self._judge(ex, ident, t, perspective, as_of)
@@ -828,7 +1128,7 @@ class WorldModel:
             if val == "disputed":
                 return Answer(Status.DISPUTED, None, support=ids, alternatives=alternatives, evidence=ev)
             return Answer(answer_status(support), val, support=ids, alternatives=alternatives, evidence=ev)
-        others = [a for cls, (val, sup, _) in self._judge([a for a in mine if a.ctype != "existence"], ident, t,
+        others = [a for cls, (val, sup, _) in self._judge([a for a in mine if a.kind != "existence"], ident, t,
                                                           perspective, as_of).items() if val is True for a in sup]
         if others:
             return Answer(Status.INFERRED, True, support=tuple(sorted(a.id for a in others)),
@@ -842,7 +1142,7 @@ class WorldModel:
         """Every content (other than events and identity links) involving the subject that holds at t."""
         atts, ident = self._view(world, as_of, perspective, None, [subject], at=t)
         me = set(ident.members(subject))
-        rel = [a for a in atts.values() if a.ctype not in ("event", "same-as")
+        rel = [a for a in atts.values() if a.kind not in ("event", "same-as")
                and any(me & set(ids) for ids in a.roles.values())]
         out = []
         for cls, (val, support, _) in self._judge(rel, ident, t, perspective, as_of).items():

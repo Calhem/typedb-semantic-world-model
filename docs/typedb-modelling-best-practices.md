@@ -7,7 +7,9 @@ in the last section, marked as such. Started 2026-11-09; keep it current as new 
 Evidence keys: `P1-n` Phase 1 probes (`probes/typedb_capabilities.py`), `P1B-x` Phase 1B probes
 (`probes/phase_1b_probes.py`), `A-n` architecture probes (`probes/architecture_probes.py`,
 `probes/architecture_snippet_check.py`), `B-n` v0.2 probes (`probes/architecture_v02_probes.py`), `M1` Milestone 1
-code and tests, `C03` Core 0.3 code, tests and Stage D measurements (`docs/core-0.3/`).
+code and tests, `C03` Core 0.3 code, tests and Stage D measurements (`docs/core-0.3/`), `C04P` Core 0.4 planning probes
+(`probes/core04_feasibility.py`; exploratory schema, throwaway databases), `A0-x` Core 0.4 Stage A0 probes
+(`probes/core04_a0_probes.py`) and the A0 code and tests (`tests/test_f_a0_*.py`).
 
 ## Types and identity
 | Practice | Why (verified behaviour) | Evidence |
@@ -27,11 +29,21 @@ code and tests, `C03` Core 0.3 code, tests and Stage D measurements (`docs/core-
 | Use `@card(1..1)` on `plays` or `relates` for "exactly one" (e.g. one world per claim); it is checked at commit | `CNT5` on violation | M1 |
 | Removing a role from a type is refused while data uses it: plan profile removal as a migration | `SVL51` | P1B-D |
 | A role allows **at most one player per relation instance** unless declared otherwise: give symmetric or multi-player roles an explicit `@card` (e.g. `relates same @card(2..2)`) | two players on an undeclared role were rejected with `CNT5` (`@card(0..1)`) | B2, M1 |
+| A query on a general role finds players of roles specialised from it: `$e isa event (actor: $x)` returns a profile's `pickup:picker` players | role inheritance works for matching | C04P P3 |
+| But labels come back specialised: `isa!` gives the subtype (`pickup`) and `links ($r: $x)` gives `pickup:picker`; application code that compares labels must map them to their core supertype and core role | otherwise profile subtypes are silently missed | C04P P3b, P3c |
+| Read a type's supertypes from the schema with `match $t label X; $t sub $s;` (reflexive: X, then each ancestor) | returns e.g. `docked-at`, `located-at`, `proposition` | A0-R1 |
+| Read a specialised role's parent with `match $t label X; $t relates $r; $r sub $p;` (reflexive); `relates` also lists roles inherited from supertypes | returns e.g. `pickup:picker -> event:actor` | A0-R2, A0-R3 |
+| Read the whole lattice in two queries: `match entity $t; $t sub! $s;` (and `relation $t`) for direct supertypes, `match relation $t; $t relates $r; $r sub! $p;` for direct parent roles; cache it per schema version and walk it in code | gives everything needed to map profile labels to core types and roles; used by `WorldModel.ancestors`/`core_role` | A0.2 tests |
+| A subtype that inherits its roles unspecialised reports them under the supertype's scope (`docked-at` links as `located-at:located`); a subtype with specialised roles reports its own (`pickup:picker`) | so code must map role labels through the lattice, not by splitting on `:` alone | A0-R4, A0-R4b |
+| Write a specialised relation with its own role names: `pickup (actor: $a)` is rejected when `pickup` specialises `actor` as `picker` | `INF11` | A0-R5 |
+| A type may own a second `@key` attribute (e.g. a proposition's `proposition-key` and `wm-id`), and both are enforced | duplicate second key rejected with `CNT9` | C04P P8 |
+| A proposition (relation) can play a role in another proposition (e.g. the outcome of `initiates`) | works | C04P P2 |
 | One role can take players of several relation types (a `content` role played by propositions and by event descriptions); filter with `$c isa <type>` in the query | queried by any, by proposition or by event | B2 |
 
 ## Attributes and values
 | Practice | Why | Evidence |
 |---|---|---|
+| Store small declarative metadata (e.g. which roles form a functional slot) as entities with a multi-valued attribute: `owns slot-role @card(1..)` | several values per instance are stored and read back as one row per value; `@key` on the predicate label keeps one declaration per type | A0.3 tests |
 | Put uncertainty, units or provenance of a value on the owning entity or relation, not on the attribute | attributes cannot own attributes (`DEX11`) | P1-5 |
 | For values of several types under one name, define an abstract attribute with typed subtypes and have the owner own **each concrete subtype**; query with the abstract parent | owning only the abstract parent is rejected (`INF11`); owning the subtypes works and `has magnitude $v` returns all | A2, A2b |
 | Do not rely on struct values for stored data in 3.14.1 | structs can be defined, but no literal form tried could be inserted | P1-6, P1B-A |
@@ -40,6 +52,7 @@ code and tests, `C03` Core 0.3 code, tests and Stage D measurements (`docs/core-
 ## Queries
 | Practice | Why | Evidence |
 |---|---|---|
+| When a disjunction tells instances apart by which attribute they own (`{ $c has proposition-key $k; } or { $c has wm-id $k; }`), name the type in each branch (`{ $c isa event, has wm-id $k; }`) | once a further type owns the attribute (propositions gaining `wm-id`), an instance owning both matches both branches and the query silently returns each one twice under two ids; 13 of 78 regression tests caught it | A0.1 |
 | Pass values as parameters with a `given` header; compare attributes with `has attr == $param` | `has attr $param` declares the variable as an attribute and conflicts with a value parameter (`REP35`) | M1 |
 | Never give a parameter the same name as a matched variable (e.g. `$old` as both a thing and a value) | `REP1` | M1, Core 0.3 Stage B |
 | Do not reuse one variable name for two different things (e.g. a thing and a value) in one query | `REP1` | M1 |
@@ -51,6 +64,7 @@ code and tests, `C03` Core 0.3 code, tests and Stage D measurements (`docs/core-
 | When a variable's type is fixed by the query (e.g. `$c isa same-as`), every disjunction branch **and every `try` block** must be possible for that type: build the pattern for the type instead of relying on pruning | an impossible branch (`{ $c has wm-id $x; }` for a proposition) or `try { $c has lower $v; }` for a type that cannot own `lower` is rejected with `INF11`, not skipped | Core 0.3 Stage B |
 | In the Python driver, `row.get(var)` raises if `var` is not in the query; wrap optional reads | "Cannot get concept from a concept row by variable" | Core 0.3 Stage B |
 | Recursive functions (`fun f(...) -> { ... }` with `let $x in f(...)`) work for transitive closures and can take a scoping argument (e.g. a world) | — | P1-7, M1 |
+| A function's declared return type must cover every type that can play the returned role; when a role is played by unrelated types (e.g. `causes:effect` by events and occurrences), narrow inside the match (`$x isa event;`) | otherwise the schema commit fails (`FIN4`) | C04P P5 |
 | Compare attributes of two matched instances directly for interval logic, e.g. range overlap `$la <= $ub; $lb <= $ua;` | finds exactly the overlapping pairs | B3 |
 
 ## Content and stance (proposition / attestation) patterns
@@ -59,6 +73,10 @@ code and tests, `C03` Core 0.3 code, tests and Stage D measurements (`docs/core-
 | Store content as a keyed relation and each stance as a separate n-ary relation (`attestation (attester, content, context)`) pointing at it | one content, many holders; denials share content; selection through the two hops measured at about 2 ms per query on 2,200 facts | B1, C03 experiment |
 | Pick the content-id pattern by content type (`proposition-key` for propositions, `wm-id` for event descriptions) rather than a disjunction | with a fixed type, the impossible branch is rejected (`INF11`) | C03 Stage B |
 | Bind the subject positively and recover its role from that binding; read other players with `try { $c links ($role: $x); }` | two `links` constraints never match the same player | M1, C03 |
+| Decide a functional ("one value at a time") conflict per constraint key: two holding contents conflict only if they give the same key players different value players; never count the values of whatever role a question asks | counting asked-role values made two boxes on one shelf "disputed"; regression tests failed on Core 0.3 `main` before the fix | LABS-1.003 (`test_f_a0_shelf.py`); architectural recommendation, not database behaviour |
+| Use one functional-conflict check for every question kind (here `_conflicts`, used by `value_at` and `holds`), applied to contents already judged, and return the asked content's support apart from the conflicting attestations | two separate rules had let `holds` say ASSERTED where `value_at` said DISPUTED; sharing the check made them agree without extra queries | LABS-1.005 (`test_f_a0_holds.py`); architectural recommendation |
+| Inherit functional constraints additively along the single-supertype chain; a subtype may add constraints, never replace one | every subtype instance is an instance of its ancestors (`isa` is polymorphic), so replacing an ancestor's constraint would let its own instances escape it | LABS-1.003 (`test_f_a0_slots.py`); architectural recommendation |
+| On a selective path, load identity (`same-as`) for every player an answer compares, not only for the subject; pre-filter with one query for the players that take part in any `same-as` content (`$c isa same-as; $c links (same: $x); { $x has wm-id == $i0; } or …`), then load links only for those | identity loaded for the subject only kept two co-referring places as two values (DISPUTED) while full load merged them (ASSERTED); with the pre-filter, a world without links pays one query per question; 10 linked places cost +10.6 queries per affected question | LABS-1.003, LABS-1.004 (`test_f_a0_identity.py`, `identity-cost-*.json`) |
 | When a revision record links an old stance record to a new one (supersession), judge the link **per perspective**: hide the old record only for perspectives that accept the new one | otherwise an unaccepted record changes other perspectives' answers; 5 regression tests failed before this rule | C03 D14 (`test_e_supersession.py`); architectural recommendation, not database behaviour |
 
 ## Query selectivity and temporal filtering
@@ -79,6 +97,8 @@ code and tests, `C03` Core 0.3 code, tests and Stage D measurements (`docs/core-
 |---|---|---|
 | Run tests in throwaway databases with unique names and delete them in `finally`, plus a session-end sweep | repeated runs left nothing behind | M1 |
 | Treat timings as indicative unless repeated; record runs and machine | single-laptop Docker runs vary | Phase 1, M1 |
+| To make an attribute a `@key` of a type that already has instances, migrate in three steps: `define T owns A;` (schema tx), write `A` for every instance (write tx), then `define T owns A @key;` | adding `owns A @key` directly while instances lack `A` is rejected with `CNT5`; after step 3, new instances without `A` are rejected | A0-M1..M4b, A0.1 upgrade test |
+| Build a query branch that depends on an optional schema module only when that module is installed (e.g. `{ $x isa proposition; }` in an id lookup) | on a database without the module the branch is impossible and the whole query is rejected (`INF11`) | A0.1 upgrade test |
 
 ## Design trade-offs observed (not yet best practice)
 These are preferences supported by analysis, not verified rules.

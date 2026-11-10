@@ -1,0 +1,68 @@
+{
+ "bench": {
+  "implementation": "core-0.3",
+  "dataset": {
+   "objects": 200,
+   "places": 30,
+   "moves": 1000,
+   "queries": 60,
+   "seed": 11
+  },
+  "ingest": {
+   "seconds": 79.7,
+   "move_ms_median": 62.2,
+   "move_ms_p95": 117.2
+  },
+  "attestations_in_actual_world": 3200,
+  "propositions": 1140,
+  "selective": {
+   "ms_median": 61.6,
+   "ms_p95": 100.7,
+   "attestations_per_question": 7.1,
+   "typeql_queries_per_question": 13.5
+  },
+  "full": {
+   "ms_median": 4119.5,
+   "ms_p95": 4914.6,
+   "attestations_per_question": 3283.9,
+   "typeql_queries_per_question": 9.4
+  },
+  "identical_answers": true,
+  "database_bytes": 12383881
+ },
+ "instrumented": {
+  "python": "3.13.17",
+  "selective": {
+   "questions": 60,
+   "total": {
+    "median_ms": 61.6,
+    "p95_ms": 100.7
+   },
+   "typedb_reads": {
+    "median_ms": 56.7,
+    "p95_ms": 95.6
+   },
+   "python": {
+    "median_ms": 4.3,
+    "p95_ms": 7.2
+   },
+   "typedb_share_of_total": 0.929
+  },
+  "full": {
+   "questions": 60,
+   "total": {
+    "median_ms": 4119.5,
+    "p95_ms": 4914.6
+   },
+   "typedb_reads": {
+    "median_ms": 3933.6,
+    "p95_ms": 4702.2
+   },
+   "python": {
+    "median_ms": 193.6,
+    "p95_ms": 237.4
+   },
+   "typedb_share_of_total": 0.947
+  }
+ }
+}

@@ -1,0 +1,11 @@
+# Test-only profile for Core 0.4 Stage A0.3 (LABS-1.002): a predicate with a composite functional slot, a subtype
+# that inherits it, and a subtype of located-at that will declare its own slot. Throwaway databases only.
+define
+entity seat sub place;
+entity guest sub physical-object;
+relation seat-assignment sub proposition, relates venue, relates seat, relates occupant;
+relation vip-assignment sub seat-assignment;
+relation berthed-at sub located-at;
+place plays seat-assignment:venue;
+seat plays seat-assignment:seat;
+physical-object plays seat-assignment:occupant;

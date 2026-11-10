@@ -1,0 +1,56 @@
+{
+ "checkout": "wm-a0c",
+ "dataset": {
+  "objects": 200,
+  "places": 30,
+  "moves": 300,
+  "seed": 11
+ },
+ "move_ms_median": 44.66,
+ "move_ms_mean": 55.71,
+ "queries_per_move": 25.33,
+ "in_queries_ms_mean": 28.27,
+ "outside_queries_ms_mean": 27.44,
+ "by_kind": {
+  "match $ isa world, has wm-id == $; $ isa attestation (content: $, context: $, attester: $)": {
+   "per_move": 8.49,
+   "mean_ms": 1.8
+  },
+  "match $ has wm-id == $; $ isa! $; { $ isa particular; } or { $ isa concept; } or { $ isa r": {
+   "per_move": 4.88,
+   "mean_ms": 0.6
+  },
+  "match $ isa world, has wm-id == $; $ isa proposition, has proposition-key == $; $ has wm-i": {
+   "per_move": 2.0,
+   "mean_ms": 1.22
+  },
+  "match $ isa world, has wm-id == $, has world-kind $;": {
+   "per_move": 3.0,
+   "mean_ms": 0.6
+  },
+  "match $ isa world, has wm-id == $; $ isa event, has wm-id == $; $ has wm-id == $; { $ isa ": {
+   "per_move": 1.0,
+   "mean_ms": 1.23
+  },
+  "match $ isa world, has wm-id == $; $ isa branching (base: $, variant: $), has branch-at $,": {
+   "per_move": 2.0,
+   "mean_ms": 0.61
+  },
+  "match $ isa attestation (content: $, attester: $), has wm-id == $, has stance $, has polar": {
+   "per_move": 1.0,
+   "mean_ms": 1.17
+  },
+  "match $ isa place, has wm-id == $; $ isa place, has wm-id == $; $ isa physical-object, has": {
+   "per_move": 1.0,
+   "mean_ms": 0.92
+  },
+  "match $ isa physical-object, has wm-id == $; $ isa place, has wm-id == $; insert $ isa loc": {
+   "per_move": 0.96,
+   "mean_ms": 0.75
+  },
+  "match $ isa proposition, has wm-id == $, has proposition-key $;": {
+   "per_move": 1.0,
+   "mean_ms": 0.53
+  }
+ }
+}
