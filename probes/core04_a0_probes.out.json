@@ -39,5 +39,14 @@
   "pickup: pickup:picked",
   "pickup: pickup:picker"
  ],
+ "R4 role labels of a subtype that inherits its roles unspecialised": [
+  "located-at:located",
+  "located-at:place"
+ ],
+ "R4b role labels of a subtype with specialised roles": [
+  "pickup:picked",
+  "pickup:picker"
+ ],
+ "R5 insert a specialised relation using the parent role names": "rejected: [INF11] Type-inference was unable to find compatible types for the pair of variables '_anonymous' & '_anonymous' across a 'links' constraint. Types were: - _anonymous: [pickup] - _anonymous: [event:ac",
  "leftover": []
 }

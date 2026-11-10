@@ -52,8 +52,8 @@ class Replacement:
 class AttestationRecord:
     id: str
     content: str                       # proposition key, or event-description id
-    ctype: str                         # content type label
-    roles: dict                        # role -> sorted ids
+    ctype: str                         # content type label, as stored (a profile subtype stays itself)
+    roles: dict                        # core role name -> sorted ids (a specialised role maps to the role it specialises)
     params: dict
     attester: str
     world: str
@@ -68,6 +68,13 @@ class AttestationRecord:
     depth: int = 0                     # 0: the asked world; n: inherited from the n-th base world
     acceptances: list = field(default_factory=list)   # [(holder, verdict, recorded_at)]
     superseded_by: list = field(default_factory=list)  # [Replacement] visible in this context
+    base: str | None = None            # nearest core type of ctype (A0.2); None: ctype is a core type
+    concrete_roles: dict | None = None  # role name as stored -> sorted ids, when any differs from `roles` (A0.2)
+
+    @property
+    def kind(self):
+        """The core type this content is an instance of (its foundational type), whatever profile subtype it has."""
+        return self.base or self.ctype
 
     def evidence(self):
         return {"attestation": self.id, "attester": self.attester, "stance": self.stance, "basis": self.basis,
@@ -118,7 +125,7 @@ def in_interval(a, t):
     the start (no invented continuity). Before its start an attestation is silent, except that an existence start is
     a creation."""
     if a.start is not None and t < a.start.latest:
-        if a.ctype == "existence" and a.polarity and t < a.start.earliest:
+        if a.kind == "existence" and a.polarity and t < a.start.earliest:
             return False
         return None
     if a.end is not None:
@@ -164,7 +171,7 @@ class Identity:
     def __init__(self, same_as, perspective, as_of):
         self.parent, self.proposed = {}, []
         for a in same_as:
-            if a.ctype != "same-as" or not a.polarity:
+            if a.kind != "same-as" or not a.polarity:
                 continue
             x, y = a.roles["same"][:2]
             if usable(a, perspective, as_of):

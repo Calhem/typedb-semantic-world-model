@@ -1,0 +1,13 @@
+# Test-only domain profile for Core 0.4 Stage A0.2 (LABS-1.002): representative subtypes and specialised roles.
+# Not a real profile; installed by tests/test_f_a0_types.py into throwaway databases.
+define
+entity person sub physical-object, plays pickup:picker, plays employment:employee;
+entity organisation sub social-object, plays employment:employer;
+entity dock sub place;
+# A specialised event: its roles specialise the core event roles.
+relation pickup sub event, relates picker as actor, relates picked as patient;
+physical-object plays pickup:picked;
+# A specialised proposition that inherits located-at's roles unchanged.
+relation docked-at sub located-at;
+# A profile's own predicate with its own roles (no core parent role).
+relation employment sub proposition, relates employer, relates employee;

@@ -6,6 +6,7 @@
 M1-M4 (A0.1 migration): can `proposition owns wm-id @key` be added to a database whose propositions have no wm-id?
 If not, does "own without key, write ids, then add @key" work, and in which transaction kinds?
 R1-R3 (A0.2 lattice): how to read a type's supertypes and a specialised role's parent role from the schema by query.
+R4-R5 (A0.2): which role labels instances report, and whether a specialised relation accepts its parent's role names.
 """
 
 import json
@@ -70,7 +71,6 @@ d.databases.get(db).delete()
 
 db = "wm-a0-r"
 fresh(db, BASE, PROFILE)
-rows = step(db, T.READ, "match $t sub proposition; $t label $l;") if False else None
 for label, query, show in (
     ("R1 supertypes of a subtype (`$t sub $s`, with `label`)",
      "match $t label docked-at; $t sub $s;", lambda r: r.get("s").get_label()),
@@ -83,6 +83,16 @@ for label, query, show in (
 ):
     res = step(db, T.READ, query)
     out[label] = sorted({show(r) for r in res}) if isinstance(res, list) else res
+step(db, T.WRITE, 'insert $a isa person, has wm-id "a"; $b isa thing, has wm-id "b"; '
+                  'docked-at (located: $b, place: $a), has proposition-key "k3"; '
+                  'pickup (picker: $a, picked: $b), has wm-id "e1";')
+res = step(db, T.READ, "match $c isa docked-at; $c links ($r: $x);")
+out["R4 role labels of a subtype that inherits its roles unspecialised"] = sorted({r.get("r").get_label() for r in res})
+res = step(db, T.READ, "match $c isa pickup; $c links ($r: $x);")
+out["R4b role labels of a subtype with specialised roles"] = sorted({r.get("r").get_label() for r in res})
+out["R5 insert a specialised relation using the parent role names"] = step(
+    db, T.WRITE, 'match $a isa person, has wm-id "a"; $b isa thing, has wm-id "b"; '
+                 'insert pickup (actor: $a, patient: $b), has wm-id "e2";')
 d.databases.get(db).delete()
 out["leftover"] = [x.name for x in d.databases.all() if x.name.startswith("wm-a0-")]
 print(json.dumps(out, indent=1))
