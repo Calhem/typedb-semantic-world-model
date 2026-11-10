@@ -102,15 +102,15 @@ def test_multi_hop_chain_with_rotations_and_inverse_use(space):
     bc = link(wm, w, "B", "C", (0.0, 2.0, 0.0))
     dc = link(wm, w, "D", "C", (0.0, 0.0, 1.0), yaw(math.pi))      # C is D's child: reaching D from C is forward
     r = wm.transform_between(w, "C", "A", T)
-    assert r["status"] == Status.INFERRED and [s["direction"] for s in r["chains"][0]["steps"]] == ["forward"] * 2
+    assert r["status"] == Status.INFERRED and [s["direction"] for s in r["chain"]] == ["forward"] * 2
     assert close(r["transform"].apply((0.0, 0.0, 0.0)), (-1.0, 0.0, 0.0))     # C's origin: (0,2,0) in B -> (-1,0,0) in A
     back = wm.transform_between(w, "A", "C", T)
     assert back["transform"].then(r["transform"]).close_to(Transform())       # inverse chain
-    assert [s["direction"] for s in back["chains"][0]["steps"]] == ["inverse", "inverse"]
+    assert [s["direction"] for s in back["chain"]] == ["inverse", "inverse"]
     to_d = wm.transform_between(w, "A", "D", T)                               # A -> B -> C (inverse) -> D (forward)
-    assert to_d["chains"][0]["frames"] == ["A", "B", "C", "D"]
-    assert [s["direction"] for s in to_d["chains"][0]["steps"]] == ["inverse", "inverse", "forward"]
-    assert {x for s in to_d["chains"][0]["steps"] for x in s["support"]} == {ab, bc, dc}   # provenance of every hop
+    assert to_d["frames"] == ["A", "B", "C", "D"]
+    assert [s["direction"] for s in to_d["chain"]] == ["inverse", "inverse", "forward"]
+    assert {x for s in to_d["chain"] for x in s["support"]} == {ab, bc, dc}   # provenance of every hop
     assert wm.frames_linked_in_database(w, "A") == ["B", "C", "D"]
 
 
@@ -119,6 +119,7 @@ def test_missing_chains_are_unknown_not_invented(space):
     link(wm, w, "A", "B", (1.0, 0.0, 0.0))
     r = wm.transform_between(w, "A", "E", T)
     assert (r["status"], r["transform"], r["reason"]) == (Status.UNKNOWN, None, "no frame chain from A to E")
+    assert r["search"]["complete"] and not r["search"]["truncated"]           # a completed search, not a limit
     wm.position(w, "box", "E", 1.0, 2.0, 3.0, start=T0, until_superseded=True)
     a = wm.where(w, "box", "A", T)
     assert a["status"] == Status.UNKNOWN and a["candidates"] == [] and a["incomparable"][0]["frame"] == "E"
@@ -132,13 +133,14 @@ def test_ambiguous_and_cyclic_frame_relationships(space):
     link(wm, w, "B", "C", (1.0, 0.0, 0.0))
     link(wm, w, "A", "C", (2.0, 0.0, 0.0))                          # a second, consistent route: a cycle A-B-C
     r = wm.transform_between(w, "C", "A", T)
-    assert (r["status"], r["cycle"], len(r["chains"])) == (Status.INFERRED, True, 2)
-    assert r["chains"][0]["frames"] == ["C", "A"]                   # shortest first
+    assert (r["status"], r["search"]["cycle"], r["search"]["relevant_edges"]) == (Status.INFERRED, True, 3)
+    assert r["frames"] == ["C", "A"] and r["search"]["verified"]    # shortest chain; the other chain checked
     link(wm, w, "C", "D", (0.0, 1.0, 0.0))
     link(wm, w, "B", "D", (1.0, 1.5, 0.0))                          # inconsistent: D is 0.5 m apart on two routes
     d = wm.transform_between(w, "D", "A", T)
     assert d["status"] == Status.DISPUTED and d["reason"] == "chains disagree (ambiguous frame relationships)"
-    assert d["cycle"] and len(d["chains"]) >= 2
+    assert d["search"]["cycle"] and d["transform"] is None and d["search"]["inconsistent"]   # none chosen
+    assert d["search"]["inconsistent"][0]["translation_gap_m"] == pytest.approx(0.5)
 
 
 def test_two_transform_claims_for_one_pair_are_judged_by_the_shared_conflict_check(space):

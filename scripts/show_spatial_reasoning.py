@@ -62,10 +62,15 @@ def show_where(wm, world, thing, frame, t, label, **kw):
         for s in c["chain"]:
             print(f"    via {s['child']} -> {s['parent']} ({s['direction']}): t = {tuple(round(v, 4) for v in s['translation'])},"
                   f" rotation {math.degrees(angle_about_z(s['rotation'])):.0f} deg about z; attestation(s) {s['support']}")
-        if c["chains"] > 1:
-            print(f"    ({c['chains']} chains, all agreeing within 1e-9 m)")
-    for i, j in a["conflicts"]:
-        print(f"- conflict: candidates {i} and {j} are disjoint")
+        se = c["search"]
+        if not c["direct"]:
+            print(f"    search: {'complete' if se['complete'] else 'TRUNCATED'}, {se['frames_reached']} frames reached, "
+                  f"{se['edges_examined']} edge examinations, {se['relevant_edges']} edges on any route checked "
+                  f"({'cycle present, ' if se['cycle'] else ''}{'all consistent' if se['verified'] and not se['inconsistent'] else 'see reason'})")
+    for d in a["conflict_details"]:
+        extra = (f" ({d['separation_rad']:.3g} rad apart, tolerance {d['tolerance_rad']:.3g} rad)"
+                 if d["kind"] == "orientations differ" else "")
+        print(f"- conflict: candidates {d['pair'][0]} and {d['pair'][1]}: {d['kind']}{extra}")
     for inc in a["incomparable"]:
         print(f"- incomparable: a position stated in {inc['frame']} ({inc['support']}): {inc['reason']}")
     if a["alternatives"]:
@@ -88,7 +93,8 @@ def main():
         print(f"\n### How the gearbox frame sits in the workshop frame at {g.AFTER:%Y-%m-%d %H:%M}\n"
               f"`transform_between('actual', 'f-gearbox', 'f-workshop')` -> **{r['status'].value}**: origin at "
               f"{tuple(round(v, 4) for v in r['transform'].t)}, rotated "
-              f"{math.degrees(angle_about_z(r['transform'].q)):.0f} deg about z, via {' -> '.join(r['chains'][0]['frames'])}")
+              f"{math.degrees(angle_about_z(r['transform'].q)):.0f} deg about z, via {' -> '.join(r['frames'])};"
+              f" search complete: {r['search']['complete']}, verified: {r['search']['verified']}")
         show_where(wm, w, "gbx-100", "f-workshop", g.AFTER, "Q1 Where is the gearbox relative to the workshop?")
         show_where(wm, w, "gear-in", "f-bench", g.AFTER, "Q2 Where is the pinion relative to the workbench?")
         show_where(wm, w, "gear-in", "f-workshop", g.AFTER, "Q2b ... and relative to the workshop (two hops)?")
