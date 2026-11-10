@@ -36,17 +36,18 @@ def sit(wm, w, venue, seat, who, start, **kw):
 
 
 def test_the_core_slot_is_declared_as_data_in_typedb(wm):
-    assert wm.slots() == {"located-at": (("located",), "place")}
+    assert wm.slots() == {"located-at": [(("located",), "place")]}
     with wm.driver.transaction(wm.database, READ) as tx:
         rows = q.rows(tx, "match $s isa functional-slot, has slot-predicate $p, has slot-role $k, has value-role $v;")
     assert [(q.opt(r, "p"), q.opt(r, "k"), q.opt(r, "v")) for r in rows] == [("located-at", "located", "place")]
 
 
 def test_declarations_are_validated(wm, hall):
-    assert wm.slots()[SEAT] == (("seat", "venue"), "occupant")
+    assert wm.slots()[SEAT] == [(("seat", "venue"), "occupant")]
     wm.declare_slot(SEAT, ["seat", "venue"], "occupant")                       # the same declaration again: no-op
-    for bad in ((SEAT, ["venue"], "occupant"),                                 # a different slot for a declared type
-                ("vip-assignment", ["venue", "nope"], "occupant"),             # unknown role
+    wm.declare_slot("vip-assignment", ["venue", "seat"], "occupant")           # already inherited: no-op
+    assert "vip-assignment" not in wm.slots()
+    for bad in (("vip-assignment", ["venue", "nope"], "occupant"),             # unknown role
                 ("vip-assignment", ["venue"], "venue"),                        # value role inside the key
                 ("seat", ["venue"], "occupant")):                              # not a proposition type
         with pytest.raises(ValueError):
@@ -68,9 +69,9 @@ def test_a_composite_slot_holds_one_value_per_key_combination(wm, hall):
 
 
 def test_composite_slots_need_every_key_role(wm, hall):
-    with pytest.raises(ValueError, match="composite"):
+    with pytest.raises(ValueError, match="one-role functional constraints"):
         wm.value_at(hall, SEAT, "A1", T("10:30"))
-    with pytest.raises(ValueError, match="slot roles"):
+    with pytest.raises(ValueError, match="key roles of one functional constraint"):
         wm.value_of(hall, SEAT, {"seat": "A1"}, T("10:30"))
 
 
@@ -94,25 +95,59 @@ def test_an_occupant_may_hold_several_slots(wm, hall):
     assert (a.status, a.values) == (Status.ASSERTED, ("A1", "A2"))
 
 
-def test_subtypes_inherit_a_slot_and_a_declaration_replaces_it(wm, hall):
+def test_subtypes_inherit_every_constraint(wm, hall):
     sit(wm, hall, "hall", "A1", "ann", T("10:00"))
     wm.attest(hall, "vip-assignment", {"venue": "hall", "seat": "A1", "occupant": "bo"}, start=T("10:00"),
               until_superseded=True)
     a = wm.value_of(hall, SEAT, {"venue": "hall", "seat": "A1"}, T("10:30"))
     assert (a.status, a.values) == (Status.DISPUTED, ("ann", "bo"))          # inherited: they compete for one seat
-    # berthed-at declares its own slot (one boat per berth): it no longer shares located-at's slot.
+
+
+def test_a_subtype_declaration_adds_a_constraint_and_keeps_the_inherited_one(wm, hall):
+    """U-5 (LABS-1.003): berthed-at adds "one boat per berth" and keeps located-at's "one place per thing"."""
+    wm.add_entity("physical-object", "skiff", id="skiff")
     wm.declare_slot("berthed-at", ["place"], "located")
+    assert wm._constraints("berthed-at") == [("located-at", ("located",), "place"), ("berthed-at", ("place",), "located")]
     wm.attest(hall, "berthed-at", {"located": "boat", "place": "pier"}, start=T("10:00"), until_superseded=True)
     wm.attest(hall, "located-at", {"located": "boat", "place": "bay"}, start=T("10:00"), until_superseded=True)
-    assert wm.value_at(hall, "berthed-at", "pier", T("10:30")).values == ("boat",)     # asked by its own slot
-    # Replaced, not added (A0.3 default for U-5): berthed-at facts no longer share located-at's slot, so the boat's
-    # two places are not a functional conflict. (LABS-1.003 replaces this with additive inheritance.)
     loc = wm.value_at(hall, "located-at", "boat", T("10:30"))
-    assert (loc.status, loc.values) == (Status.ASSERTED, ("bay", "pier"))
+    assert (loc.status, loc.values) == (Status.DISPUTED, ("bay", "pier"))     # the inherited constraint still holds
+    wm.attest(hall, "berthed-at", {"located": "skiff", "place": "pier"}, start=T("10:00"), until_superseded=True)
+    berth = wm.value_at(hall, "berthed-at", "pier", T("10:30"), key_role="place", value_role="located")
+    assert (berth.status, berth.values) == (Status.DISPUTED, ("boat", "skiff"))  # the added constraint
+    with pytest.raises(ValueError, match="one-role functional constraints"):
+        wm.value_at(hall, "berthed-at", "boat", T("10:30"))                 # two apply: the question must say which
+
+
+def test_an_added_constraint_does_not_reach_the_parent_type(wm, hall):
+    wm.add_entity("physical-object", "skiff", id="skiff")
+    wm.declare_slot("berthed-at", ["place"], "located")
+    wm.attest(hall, "located-at", {"located": "boat", "place": "pier"}, start=T("10:00"), until_superseded=True)
+    wm.attest(hall, "located-at", {"located": "skiff", "place": "pier"}, start=T("10:00"), until_superseded=True)
+    at_pier = wm.value_at(hall, "located-at", "pier", T("10:30"), key_role="place", value_role="located")
+    assert (at_pier.status, at_pier.values) == (Status.ASSERTED, ("boat", "skiff"))   # plain located-at: compatible
+
+
+def test_an_inherited_constraint_overrides_across_worlds_for_subtype_facts(wm, hall):
+    wm.declare_slot("berthed-at", ["place"], "located")
+    wm.attest(hall, "berthed-at", {"located": "boat", "place": "pier"}, start=T("10:00"), until_superseded=True)
     h = wm.create_world("plan", kind="hypothetical", base=hall, branch_at=T("12:00"))
-    wm.attest(h, "located-at", {"located": "boat", "place": "pier"}, start=T("12:30"), until_superseded=True)
-    loc = wm.value_at(h, "located-at", "boat", T("13:00"))     # the variant's located-at overrides the inherited
-    assert (loc.status, loc.values) == (Status.STIPULATED, ("pier",))   # bay is overridden; the berth still holds
+    wm.attest(h, "located-at", {"located": "boat", "place": "bay"}, start=T("12:30"), until_superseded=True)
+    loc = wm.value_at(h, "located-at", "boat", T("13:00"))
+    assert (loc.status, loc.values) == (Status.STIPULATED, ("bay",))       # the variant's place wins the boat's slot
+    berthed = wm.holds(h, "berthed-at", {"located": "boat", "place": "pier"}, T("13:00"))
+    assert (berthed.status, berthed.holds) == (Status.INFERRED, False)
+    assert wm.value_at(hall, "located-at", "boat", T("13:00")).values == ("pier",)
+
+
+def test_a_type_may_declare_several_constraints(wm, hall):
+    wm.declare_slot(SEAT, ["venue", "occupant"], "seat")                    # one seat per guest per venue, too
+    assert wm.slots()[SEAT] == [(("occupant", "venue"), "seat"), (("seat", "venue"), "occupant")]
+    sit(wm, hall, "hall", "A1", "ann", T("10:00"))
+    sit(wm, hall, "hall", "A2", "ann", T("10:00"))
+    a = wm.value_of(hall, SEAT, {"venue": "hall", "occupant": "ann"}, T("10:30"))
+    assert (a.status, a.values) == (Status.DISPUTED, ("A1", "A2"))
+    assert wm.value_of(hall, SEAT, {"venue": "hall", "seat": "A1"}, T("10:30")).values == ("ann",)
 
 
 def test_located_at_behaves_as_in_core_0_3(wm, hall):
@@ -152,12 +187,12 @@ def test_a_core_0_3_upgrade_declares_the_core_slot(driver):
     name = f"wm-test-{uuid.uuid4().hex[:10]}"
     legacy = WorldModel.create(name, driver=driver, modules=("core",), clock=FakeClock())
     try:
-        assert legacy.slots() == {"located-at": (("located",), "place")}     # the Core 0.3 constant
+        assert legacy.slots() == {"located-at": [(("located",), "place")]}     # the Core 0.3 constant
         with pytest.raises(ValueError, match="core-0.4-a0"):
             legacy.declare_slot("located-at", ["located"], "place")
         legacy.upgrade_to_a0()
         with driver.transaction(name, READ) as tx:
             assert len(q.rows(tx, "match $s isa functional-slot;")) == 1
-        assert WorldModel.open(name, driver=driver).slots() == {"located-at": (("located",), "place")}
+        assert WorldModel.open(name, driver=driver).slots() == {"located-at": [(("located",), "place")]}
     finally:
         driver.databases.get(name).delete()

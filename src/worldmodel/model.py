@@ -208,9 +208,11 @@ class WorldModel:
             self.declare_slot(predicate, key_roles, value_role)
 
     def declare_slot(self, predicate, key_roles, value_role):
-        """Declare that content of `predicate` (and of its subtypes that declare nothing of their own) has at most one
-        `value_role` value at a time for each combination of `key_roles` players. Stored as data in TypeDB. Role names
-        are core role names. Declaring the same slot again is a no-op; a different one for the same type is refused."""
+        """Declare a functional constraint: content of `predicate` and of every subtype has at most one `value_role`
+        value at a time for each combination of `key_roles` players. Stored as data in TypeDB; role names are core
+        role names. A type may declare several. Subtypes inherit all their ancestors' constraints and their own add to
+        them; no declaration replaces or weakens an inherited one (U-5, LABS-1.003). Declaring a constraint that
+        already applies (own or inherited) is a no-op."""
         if not self.has_proposition_ids():
             raise ValueError("slot declarations need the core-0.4-a0 module (upgrade_to_a0)")
         key_roles = tuple(sorted(set(key_roles)))
@@ -223,39 +225,41 @@ class WorldModel:
         if unknown or not key_roles or value_role in key_roles:
             raise ValueError(f"invalid slot for {predicate!r}: key roles {key_roles}, value role {value_role!r} "
                              f"(roles: {sorted(roles)})")
-        existing = self.slots().get(predicate)
-        if existing is not None:
-            if existing != (key_roles, value_role):
-                raise ValueError(f"{predicate!r} already declares slot {existing}")
+        if any((k, v) == (key_roles, value_role) for _, k, v in self._constraints(predicate)):
             return
         attrs = "".join(f", has slot-role == $k{i}" for i in range(len(key_roles)))
         with self.driver.transaction(self.database, WRITE) as tx:
-            q.run(tx, f"insert $s isa functional-slot, has slot-predicate == $p, has value-role == $v{attrs};",
-                  {"p": predicate, "v": value_role, **{f"k{i}": r for i, r in enumerate(key_roles)}})
+            q.run(tx, f"""insert $s isa functional-slot, has slot-id == $id, has slot-predicate == $p,
+                has value-role == $v{attrs};""",
+                  {"id": f"{predicate}|{','.join(key_roles)}|{value_role}", "p": predicate, "v": value_role,
+                   **{f"k{i}": r for i, r in enumerate(key_roles)}})
             tx.commit()
         self._slots = None
 
     def slots(self):
-        """{predicate: (key roles, value role)}: the declared functional slots (from TypeDB, or CORE_SLOTS without the
-        A0 module)."""
+        """{predicate: [(key roles, value role), ...]}: the functional constraints each type declares itself (from
+        TypeDB, or CORE_SLOTS without the A0 module). See `_constraints` for what applies to a type."""
         if self._slots is None:
             if not self.has_proposition_ids():
-                self._slots = dict(CORE_SLOTS)
+                self._slots = {p: [c] for p, c in CORE_SLOTS.items()}
             else:
                 found = {}
                 with self.driver.transaction(self.database, READ) as tx:
-                    for r in q.rows(tx, """match $s isa functional-slot, has slot-predicate $p, has value-role $v,
-                        has slot-role $k;"""):
-                        keys_, _ = found.setdefault(q.opt(r, "p"), (set(), q.opt(r, "v")))
+                    for r in q.rows(tx, """match $s isa functional-slot, has slot-id $id, has slot-predicate $p,
+                        has value-role $v, has slot-role $k;"""):
+                        _, _, keys_ = found.setdefault(q.opt(r, "id"), (q.opt(r, "p"), q.opt(r, "v"), set()))
                         keys_.add(q.opt(r, "k"))
-                self._slots = {p: (tuple(sorted(k)), v) for p, (k, v) in found.items()}
+                out = {}
+                for p, v, k in found.values():
+                    out.setdefault(p, []).append((tuple(sorted(k)), v))
+                self._slots = {p: sorted(cs) for p, cs in out.items()}
         return self._slots
 
-    def _slot(self, label):
-        """(declaring type, key roles, value role) of the functional slot a content type takes part in, or None. A
-        subtype inherits its nearest ancestor's declaration, and its own declaration replaces it (U-5 default)."""
+    def _constraints(self, label):
+        """Every functional constraint that applies to a content type: (declaring type, key roles, value role), its
+        ancestors' first (root first), then its own. Additive: a subtype never loses an inherited constraint."""
         declared = self.slots()
-        return next(((t, *declared[t]) for t in self.ancestors(label) if t in declared), None)
+        return [(t, *c) for t in reversed(self.ancestors(label)) for c in declared.get(t, ())]
 
     def proposition_types(self):
         """Concrete proposition types in the installed schema (core and profiles), by introspection."""
@@ -792,13 +796,15 @@ class WorldModel:
             out[cls] = ("disputed" if len(vals) > 1 else vals.pop(), [a for a, _ in near], depth)
         slot_depth, slots = {}, {}
         for cls, (val, support, depth) in out.items():
-            decl = self._slot(cls[0])
-            if val is True and decl:
-                players = dict(cls[1])
-                slots[cls] = slot = (decl[0], tuple(players.get(r) for r in decl[1]))
+            if val is not True:
+                continue
+            players = dict(cls[1])
+            for decl, ks, v in self._constraints(cls[0]):      # every applicable constraint, inherited and own
+                slot = (decl, ks, v, tuple(players.get(r) for r in ks))
+                slots.setdefault(cls, []).append(slot)
                 slot_depth[slot] = min(slot_depth.get(slot, depth), depth)
-        for cls, slot in slots.items():
-            if out[cls][2] > slot_depth[slot]:
+        for cls, its in slots.items():
+            if any(out[cls][2] > slot_depth[slot] for slot in its):
                 del out[cls]
         return out
 
@@ -809,10 +815,9 @@ class WorldModel:
         identity, so co-referring names are one value (LABS-1.003)."""
         values = {}
         for cls in classes:
-            slot = self._slot(cls[0])
-            if slot:
-                players = dict(cls[1])
-                values.setdefault((slot[0], tuple(players.get(r) for r in slot[1])), set()).add(players.get(slot[2]))
+            players = dict(cls[1])
+            for decl, ks, v in self._constraints(cls[0]):
+                values.setdefault((decl, ks, v, tuple(players.get(r) for r in ks)), set()).add(players.get(v))
         return any(len(v) > 1 for v in values.values())
 
     @staticmethod
@@ -822,24 +827,24 @@ class WorldModel:
 
     def value_at(self, world, type, subject, t, as_of=None, perspective=SYSTEM, key_role=None, value_role=None):
         """The value(s) of a relationship for `subject` at valid time t, for a perspective, as known at `as_of`."""
-        slot = self._slot(type)
         if not key_role:
-            if not slot:
-                raise ValueError(f"{type!r} declares no functional slot: name key_role and value_role")
-            if len(slot[1]) > 1:
-                raise ValueError(f"{type!r} has a composite slot {slot[1]}: use value_of with every key role")
-            key_role, value_role = slot[1][0], slot[2]
-        return self._value(world, type, {key_role: subject}, value_role, t, as_of, perspective, slot)
+            simple = sorted({(ks, v) for _, ks, v in self._constraints(type) if len(ks) == 1})
+            if len(simple) != 1:
+                raise ValueError(f"{type!r} has {len(simple)} one-role functional constraints {simple}: name key_role "
+                                 f"and value_role (composite constraints: use value_of)")
+            (key_role,), value_role = simple[0]
+        return self._value(world, type, {key_role: subject}, value_role, t, as_of, perspective)
 
     def value_of(self, world, type, key, t, as_of=None, perspective=SYSTEM):
         """The value(s) in a functional slot at t: `key` names a player for every key role of the type's slot, e.g.
         value_of(w, "seat-assignment", {"venue": "hall", "seat": "A1"}, t) -> the occupant (A0.3)."""
-        slot = self._slot(type)
-        if not slot or set(key) != set(slot[1]):
-            raise ValueError(f"{type!r}: key must name exactly the slot roles {slot[1] if slot else ()}")
-        return self._value(world, type, key, slot[2], t, as_of, perspective, slot)
+        found = sorted({v for _, ks, v in self._constraints(type) if set(ks) == set(key)})
+        if len(found) != 1:
+            raise ValueError(f"{type!r}: key must name exactly the key roles of one functional constraint "
+                             f"{sorted({ks for _, ks, _ in self._constraints(type)})}")
+        return self._value(world, type, key, found[0], t, as_of, perspective)
 
-    def _value(self, world, type, key, value_role, t, as_of, perspective, slot):
+    def _value(self, world, type, key, value_role, t, as_of, perspective):
         subjects = [key[r] for r in sorted(key)]
         atts, ident = self._view(world, as_of, perspective, type, subjects, at=t)
         want = {r: set(ident.members(x)) for r, x in key.items()}
@@ -872,15 +877,17 @@ class WorldModel:
     def holds(self, world, type, roles, t, as_of=None, perspective=SYSTEM):
         """Does this content hold at t for the perspective? Evidence-backed status with polarity."""
         ids = sorted({x for v in roles.values() for x in as_ids(v)})
-        slot = self._slot(type)
-        keyed = bool(slot) and set(slot[1]) <= set(roles)
-        key = slot[1][0] if keyed else sorted(roles)[0]
+        constraints = self._constraints(type)
+        keyed = [c for c in constraints if set(c[1]) <= set(roles)]     # constraints whose whole key is given
+        key = keyed[0][1][0] if keyed else sorted(roles)[0]
         anchor = as_ids(roles[key])
         if self.selective:
             ident = self.identity(world, as_of, perspective, ids=ids)
             members = sorted({m for x in anchor for m in ident.members(x)})
             # A functional slot is shared with the declaring type's other subtypes, so load the whole slot.
-            atts = self._load(world, as_of, types=[slot[0] if slot else type], subjects=members, perspective=perspective)
+            # A constraint is shared with its declaring type's other subtypes, so load from the most general one.
+            atts = self._load(world, as_of, types=[constraints[0][0] if constraints else type], subjects=members,
+                              perspective=perspective)
         else:
             atts, ident = self._view(world, as_of, perspective, None, ids)
         want = {r: {ident.canonical(x) for x in as_ids(v)} for r, v in roles.items()}
@@ -891,8 +898,9 @@ class WorldModel:
         about = [a for a in atts.values() if matches(a)]
         peers = about
         if keyed:
-            peers = [a for a in atts.values() if self.is_a(a.ctype, slot[0])
-                     and all(want[k] <= {ident.canonical(x) for x in a.roles.get(k, [])} for k in slot[1])]
+            peers = [a for a in atts.values() if any(
+                self.is_a(a.ctype, decl) and all(want[k] <= {ident.canonical(x) for x in a.roles.get(k, [])} for k in ks)
+                for decl, ks, _ in keyed)]
         judged = self._judge(peers, ident, t, perspective, as_of)
         mine = {cls: v for cls, v in judged.items() if any(matches(a) for a in v[1])}
         alternatives = self._alternatives(about, t, perspective, as_of)
@@ -902,10 +910,9 @@ class WorldModel:
             if val == "disputed":
                 return Answer(Status.DISPUTED, None, support=ids_, alternatives=alternatives, evidence=evidence)
             return Answer(answer_status(sup), val, support=ids_, alternatives=alternatives, evidence=evidence)
-        if keyed:
-            decl, ks, v = slot
+        for decl, ks, v in keyed:          # root first: the most general constraint that settles it is cited
             if v in roles:
-                other = self._value(world, decl, {k: as_ids(roles[k])[0] for k in ks}, v, t, as_of, perspective, slot)
+                other = self._value(world, decl, {k: as_ids(roles[k])[0] for k in ks}, v, t, as_of, perspective)
                 if other.status in (Status.ASSERTED, Status.STIPULATED, Status.INFERRED) \
                         and not set(other.values) & want[v]:
                     return Answer(Status.INFERRED, False, support=other.support, alternatives=alternatives,
