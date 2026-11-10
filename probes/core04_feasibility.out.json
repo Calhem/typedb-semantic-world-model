@@ -1,0 +1,45 @@
+{
+ "P1 core-0.3 + draft core + draft profile load": "accepted",
+ "P1b scenario insert": "inserted",
+ "P2 proposition as role player (initiates outcome)": [
+  "k-constitution"
+ ],
+ "P3 query by `actor` finds `pickup:picker` players": [
+  "bob",
+  "rover",
+  "rover"
+ ],
+ "P3b `isa event` includes the profile subtype; isa! gives its label": [
+  "e1:pickup",
+  "e2:event",
+  "e3:event"
+ ],
+ "P3c role label of a specialised player": [
+  "pickup:picked",
+  "pickup:picker"
+ ],
+ "P4 frames reachable from map": [
+  "rover-base",
+  "rover-cam"
+ ],
+ "P5 effects of e1 (transitive)": [
+  "e2",
+  "e3"
+ ],
+ "P6 positioned within a box in a frame": [
+  "box"
+ ],
+ "P7 capabilities of rover": [
+  "can-drive"
+ ],
+ "P7b employees of acme (profile relation, polymorphic over proposition)": [
+  "bob"
+ ],
+ "P8 duplicate proposition wm-id rejected": {
+  "error": "[CNT9] Constraint '@unique' has been violated: there is a conflict for value '\"p:1\"'. Caused: [DVL9] Instance [1F00 1100 0000 0000 0000 01] of type 'constitution' has a key constraint violation for attribute ownership of 'wm-id', since it is not the unique owner of attribute '\"p:1\"'. Caused: [COW5] "
+ },
+ "P9 undefine profile subtype with data": {
+  "error": "[SVL46] Cannot delete type 'pickup' as it has existing instances. Caused: [COW4] Concept write failed due to a schema validation error. Caused: [UEX7] Error removing type 'pickup'. Caused: [QEX4] Failed to execute undefine query. Near 1:10 ----- --> undefine pickup; ^ ----- Caused: [TSV10] Aborting "
+ },
+ "leftover": []
+}
