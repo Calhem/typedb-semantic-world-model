@@ -24,7 +24,7 @@ from .semantics import (Answer, AttestationRecord, Identity, Replacement, Status
 READ, WRITE, SCHEMA = TransactionType.READ, TransactionType.WRITE, TransactionType.SCHEMA
 SCHEMA_DIR = Path(__file__).resolve().parents[2] / "schema"
 MODULES = {"core": ("0.3.0", ["core/core-0.3.tql"]),
-           "core-0.4-a0": ("0.4.0-a0", ["core/core-0.4-a0.tql"])}      # Stage A0 groundwork (LABS-1.002)
+           "core-0.4-a0": ("0.4.0-a0", ["core/core-0.4-a0.tql", "core/core-0.4-a0-slots.tql"])}   # Stage A0 (LABS-1.002)
 DEFAULT_MODULES = ("core", "core-0.4-a0")
 CORE_MODULES = ("core", "core-0.4-a0")       # their types are the foundational (core) types; the rest are profiles
 
@@ -44,7 +44,9 @@ SYSTEM = "system"                     # the system's own agent: the default atte
 KINDS = ("physical-object", "social-object", "place", "information-object", "occurrence",
          "category", "social-role", "quality-kind", "clock", "spatial-frame", "unit")
 QUALITY_PARAMS = ("lower", "upper", "coverage-level")
-FUNCTIONAL = {"located-at": ("located", "place")}   # one value at a time per key role (profile metadata in v0.2)
+# Functional slots of the core: one value at a time per slot. With the A0 module they are declared as data in TypeDB
+# (functional-slot entities, A0.3) at create or upgrade; without it (a Core 0.3 database) this constant is used.
+CORE_SLOTS = {"located-at": (("located",), "place")}
 VARIANT_KINDS = ("hypothetical", "simulated")
 
 
@@ -86,6 +88,7 @@ class WorldModel:
         self._types = None
         self._prop_ids = None
         self._lattice = None
+        self._slots = None
 
     # ---- setup -----------------------------------------------------------------------------------------------------
     @classmethod
@@ -101,6 +104,8 @@ class WorldModel:
         for name in modules:
             wm.install_module(name)
         wm.add_entity("social-object", "system reasoner", id=SYSTEM)
+        if wm.has_proposition_ids():
+            wm._declare_core_slots()
         return wm
 
     @classmethod
@@ -120,6 +125,7 @@ class WorldModel:
         self._types = None
         self._prop_ids = None
         self._lattice = None
+        self._slots = None
 
     def has_proposition_ids(self):
         """True when the A0 module is installed (propositions own a `wm-id` key)."""
@@ -145,6 +151,7 @@ class WorldModel:
             tx.commit()
         version, files = MODULES["core-0.4-a0"]
         self.install_module("core-0.4-a0", files=files, version=version)
+        self._declare_core_slots()
         return len(pending)
 
     def modules(self):
@@ -195,10 +202,60 @@ class WorldModel:
             memo[scoped] = (r if r.split(":")[0] in CORE_LABELS else scoped).split(":")[-1]
         return memo[scoped]
 
+    # ---- functional slots (A0.3) ---------------------------------------------------------------------------------
+    def _declare_core_slots(self):
+        for predicate, (key_roles, value_role) in CORE_SLOTS.items():
+            self.declare_slot(predicate, key_roles, value_role)
+
+    def declare_slot(self, predicate, key_roles, value_role):
+        """Declare that content of `predicate` (and of its subtypes that declare nothing of their own) has at most one
+        `value_role` value at a time for each combination of `key_roles` players. Stored as data in TypeDB. Role names
+        are core role names. Declaring the same slot again is a no-op; a different one for the same type is refused."""
+        if not self.has_proposition_ids():
+            raise ValueError("slot declarations need the core-0.4-a0 module (upgrade_to_a0)")
+        key_roles = tuple(sorted(set(key_roles)))
+        if predicate not in self.proposition_types():
+            raise ValueError(f"{predicate!r} is not a proposition type")
+        with self.driver.transaction(self.database, READ) as tx:
+            roles = {self.core_role(r.get("r").get_label())
+                     for r in q.rows(tx, f"match $t label {q.label(predicate)}; $t relates $r;")}
+        unknown = (set(key_roles) | {value_role}) - roles
+        if unknown or not key_roles or value_role in key_roles:
+            raise ValueError(f"invalid slot for {predicate!r}: key roles {key_roles}, value role {value_role!r} "
+                             f"(roles: {sorted(roles)})")
+        existing = self.slots().get(predicate)
+        if existing is not None:
+            if existing != (key_roles, value_role):
+                raise ValueError(f"{predicate!r} already declares slot {existing}")
+            return
+        attrs = "".join(f", has slot-role == $k{i}" for i in range(len(key_roles)))
+        with self.driver.transaction(self.database, WRITE) as tx:
+            q.run(tx, f"insert $s isa functional-slot, has slot-predicate == $p, has value-role == $v{attrs};",
+                  {"p": predicate, "v": value_role, **{f"k{i}": r for i, r in enumerate(key_roles)}})
+            tx.commit()
+        self._slots = None
+
+    def slots(self):
+        """{predicate: (key roles, value role)}: the declared functional slots (from TypeDB, or CORE_SLOTS without the
+        A0 module)."""
+        if self._slots is None:
+            if not self.has_proposition_ids():
+                self._slots = dict(CORE_SLOTS)
+            else:
+                found = {}
+                with self.driver.transaction(self.database, READ) as tx:
+                    for r in q.rows(tx, """match $s isa functional-slot, has slot-predicate $p, has value-role $v,
+                        has slot-role $k;"""):
+                        keys_, _ = found.setdefault(q.opt(r, "p"), (set(), q.opt(r, "v")))
+                        keys_.add(q.opt(r, "k"))
+                self._slots = {p: (tuple(sorted(k)), v) for p, (k, v) in found.items()}
+        return self._slots
+
     def _slot(self, label):
-        """(declaring type, key role, value role) of the functional slot a content type takes part in, or None. A subtype
-        inherits its nearest ancestor's declaration (U-5 default: inherit), so docked-at shares located-at's slot."""
-        return next(((t, *FUNCTIONAL[t]) for t in self.ancestors(label) if t in FUNCTIONAL), None)
+        """(declaring type, key roles, value role) of the functional slot a content type takes part in, or None. A
+        subtype inherits its nearest ancestor's declaration, and its own declaration replaces it (U-5 default)."""
+        declared = self.slots()
+        return next(((t, *declared[t]) for t in self.ancestors(label) if t in declared), None)
 
     def proposition_types(self):
         """Concrete proposition types in the installed schema (core and profiles), by introspection."""
@@ -733,7 +790,8 @@ class WorldModel:
         for cls, (val, support, depth) in out.items():
             decl = self._slot(cls[0])
             if val is True and decl:
-                slots[cls] = slot = (decl[0], dict(cls[1]).get(decl[1]))
+                players = dict(cls[1])
+                slots[cls] = slot = (decl[0], tuple(players.get(r) for r in decl[1]))
                 slot_depth[slot] = min(slot_depth.get(slot, depth), depth)
         for cls, slot in slots.items():
             if out[cls][2] > slot_depth[slot]:
@@ -748,16 +806,35 @@ class WorldModel:
     def value_at(self, world, type, subject, t, as_of=None, perspective=SYSTEM, key_role=None, value_role=None):
         """The value(s) of a relationship for `subject` at valid time t, for a perspective, as known at `as_of`."""
         slot = self._slot(type)
-        if not key_role and not slot:
-            raise ValueError(f"{type!r} declares no functional slot: name key_role and value_role")
-        key_role, value_role = (key_role, value_role) if key_role else slot[1:]
-        atts, ident = self._view(world, as_of, perspective, type, [subject], at=t)
-        me = set(ident.members(subject))
-        about = [a for a in atts.values() if self.is_a(a.ctype, type) and me & set(a.roles.get(key_role, []))]
+        if not key_role:
+            if not slot:
+                raise ValueError(f"{type!r} declares no functional slot: name key_role and value_role")
+            if len(slot[1]) > 1:
+                raise ValueError(f"{type!r} has a composite slot {slot[1]}: use value_of with every key role")
+            key_role, value_role = slot[1][0], slot[2]
+        return self._value(world, type, {key_role: subject}, value_role, t, as_of, perspective, slot)
+
+    def value_of(self, world, type, key, t, as_of=None, perspective=SYSTEM):
+        """The value(s) in a functional slot at t: `key` names a player for every key role of the type's slot, e.g.
+        value_of(w, "seat-assignment", {"venue": "hall", "seat": "A1"}, t) -> the occupant (A0.3)."""
+        slot = self._slot(type)
+        if not slot or set(key) != set(slot[1]):
+            raise ValueError(f"{type!r}: key must name exactly the slot roles {slot[1] if slot else ()}")
+        return self._value(world, type, key, slot[2], t, as_of, perspective, slot)
+
+    def _value(self, world, type, key, value_role, t, as_of, perspective, slot):
+        subjects = [key[r] for r in sorted(key)]
+        atts, ident = self._view(world, as_of, perspective, type, subjects, at=t)
+        want = {r: set(ident.members(x)) for r, x in key.items()}
+
+        def keyed(a):
+            return self.is_a(a.ctype, type) and all(m & set(a.roles.get(r, [])) for r, m in want.items())
+
+        about = [a for a in atts.values() if keyed(a)]
         if not about:
             if self.selective:
-                anything, _ = self._view(world, as_of, perspective, type, [subject])
-                if any(self.is_a(a.ctype, type) and me & set(a.roles.get(key_role, [])) for a in anything.values()):
+                anything, _ = self._view(world, as_of, perspective, type, subjects)
+                if any(keyed(a) for a in anything.values()):
                     return Answer(Status.UNKNOWN)
             return Answer(Status.NOT_YET_KNOWN)
         judged = self._judge(about, ident, t, perspective, as_of)
@@ -770,7 +847,10 @@ class WorldModel:
         ids = tuple(sorted(a.id for a in support))
         if not values:
             return Answer(Status.UNKNOWN, alternatives=alternatives)
-        if disputed or (slot and len(values) > 1):
+        # Several values are a dispute when the type has a slot. Core 0.3 rule kept unchanged for one-role slots
+        # (whatever role is asked); a composite slot (A0.3) counts only when the question names its whole key.
+        multiple = slot and len(values) > 1 and (len(slot[1]) == 1 or set(key) == set(slot[1]))
+        if disputed or multiple:
             return Answer(Status.DISPUTED, values=tuple(values), support=ids, alternatives=alternatives, evidence=evidence)
         return Answer(answer_status(support), values=tuple(values), support=ids, alternatives=alternatives,
                       evidence=evidence)
@@ -779,7 +859,8 @@ class WorldModel:
         """Does this content hold at t for the perspective? Evidence-backed status with polarity."""
         ids = sorted({x for v in roles.values() for x in as_ids(v)})
         slot = self._slot(type)
-        key = slot[1] if slot and slot[1] in roles else sorted(roles)[0]
+        keyed = bool(slot) and set(slot[1]) <= set(roles)
+        key = slot[1][0] if keyed else sorted(roles)[0]
         anchor = as_ids(roles[key])
         if self.selective:
             ident = self.identity(world, as_of, perspective, ids=ids)
@@ -795,10 +876,9 @@ class WorldModel:
 
         about = [a for a in atts.values() if matches(a)]
         peers = about
-        if slot and slot[1] in want:
-            k = slot[1]
+        if keyed:
             peers = [a for a in atts.values() if self.is_a(a.ctype, slot[0])
-                     and want[k] <= {ident.canonical(x) for x in a.roles.get(k, [])}]
+                     and all(want[k] <= {ident.canonical(x) for x in a.roles.get(k, [])} for k in slot[1])]
         judged = self._judge(peers, ident, t, perspective, as_of)
         mine = {cls: v for cls, v in judged.items() if any(matches(a) for a in v[1])}
         alternatives = self._alternatives(about, t, perspective, as_of)
@@ -808,10 +888,10 @@ class WorldModel:
             if val == "disputed":
                 return Answer(Status.DISPUTED, None, support=ids_, alternatives=alternatives, evidence=evidence)
             return Answer(answer_status(sup), val, support=ids_, alternatives=alternatives, evidence=evidence)
-        if slot:
-            decl, k, v = slot
-            if k in roles and v in roles:
-                other = self.value_at(world, decl, anchor[0], t, as_of, perspective)
+        if keyed:
+            decl, ks, v = slot
+            if v in roles:
+                other = self._value(world, decl, {k: as_ids(roles[k])[0] for k in ks}, v, t, as_of, perspective, slot)
                 if other.status in (Status.ASSERTED, Status.STIPULATED, Status.INFERRED) \
                         and not set(other.values) & want[v]:
                     return Answer(Status.INFERRED, False, support=other.support, alternatives=alternatives,

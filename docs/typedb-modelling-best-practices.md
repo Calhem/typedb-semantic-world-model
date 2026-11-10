@@ -43,6 +43,7 @@ code and tests, `C03` Core 0.3 code, tests and Stage D measurements (`docs/core-
 ## Attributes and values
 | Practice | Why | Evidence |
 |---|---|---|
+| Store small declarative metadata (e.g. which roles form a functional slot) as entities with a multi-valued attribute: `owns slot-role @card(1..)` | several values per instance are stored and read back as one row per value; `@key` on the predicate label keeps one declaration per type | A0.3 tests |
 | Put uncertainty, units or provenance of a value on the owning entity or relation, not on the attribute | attributes cannot own attributes (`DEX11`) | P1-5 |
 | For values of several types under one name, define an abstract attribute with typed subtypes and have the owner own **each concrete subtype**; query with the abstract parent | owning only the abstract parent is rejected (`INF11`); owning the subtypes works and `has magnitude $v` returns all | A2, A2b |
 | Do not rely on struct values for stored data in 3.14.1 | structs can be defined, but no literal form tried could be inserted | P1-6, P1B-A |

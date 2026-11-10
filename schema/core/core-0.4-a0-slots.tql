@@ -1,0 +1,13 @@
+# Core 0.4, Stage A0.3 (LABS-1.002): functional-slot declarations, stored as data in TypeDB (U-4: implementation
+# choice consistent with "TypeDB is the only store"; profile packaging is Stage D).
+#
+# A declaration says: for content of this proposition type (and its subtypes, unless one declares its own: U-5),
+# at most one value of `value-role` holds at a time for each combination of the `slot-role` players. located-at has
+# slot (located) and value place; a seat assignment might have slot (venue, seat) and value occupant.
+# Role names are core role names (a specialised role is named by the core role it specialises).
+
+define
+attribute slot-predicate, value string;
+attribute slot-role, value string;
+attribute value-role, value string;
+entity functional-slot, owns slot-predicate @key, owns slot-role @card(1..), owns value-role @card(1..1);
