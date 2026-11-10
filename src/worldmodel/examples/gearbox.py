@@ -31,6 +31,11 @@ PLAN_AT = datetime(2026, 11, 7, 9, 0, tzinfo=timezone.utc)
 OBSERVED = datetime(2026, 11, 6, 11, 0, tzinfo=timezone.utc)   # camera and tag-reader observations around AFTER
 T2 = datetime(2026, 11, 8, 10, 0, tzinfo=timezone.utc)         # the bench is moved and turned
 LATER = datetime(2026, 11, 8, 12, 0, tzinfo=timezone.utc)
+# Stage B additions (extend_dynamics)
+INSPECTION = (datetime(2026, 11, 4, 9, 0, tzinfo=timezone.utc), datetime(2026, 11, 4, 9, 30, tzinfo=timezone.utc))
+REPLACEMENT = (datetime(2026, 11, 5, 13, 50, tzinfo=timezone.utc), T1)
+TEST_RUN = (datetime(2026, 11, 5, 15, 30, tzinfo=timezone.utc), datetime(2026, 11, 5, 16, 0, tzinfo=timezone.utc))
+RESTORED = TEST_RUN[1]
 
 PLACES = [("workshop", "Workshop W1", "the building's ground-floor workshop"),
           ("bay-1", "Bay 1", "assembly bay in the workshop"),
@@ -180,5 +185,80 @@ def extend_spatial(wm, ids):
                                until_superseded=True)
     ids.update({"camera_position": seen, "tag_position": tag, "camera_pixel": pix, "moved_transform": moved,
                 "bench_plan": plan, "planned_transform": planned})
+    return ids
+
+
+def extend_dynamics(wm, ids):
+    """Stage B1 additions (LABS-1.010): the gearbox's condition over time, an inspection that records a fault, the
+    bearing replacement as an occurrence with two descriptions and claimed effects, and a test run that restores the
+    operational condition. Needs DYNAMICS_MODULES. Returns the notable ids, merged into `ids`."""
+    w = ids["world"]
+    for i, n in (("technician", "Technician R"), ("vib-meter", "Vibration meter"), ("bearing-press", "Bearing press"),
+                 ("test-rig", "Test rig")):
+        wm.add_entity("physical-object", n, id=i)
+    for c in ("operational", "faulty", "low", "inspection", "replacement", "test", "action", "sign-off"):
+        if not wm.find(c):
+            wm.add_entity("category", c, id=c)
+    for q in ("condition", "vibration"):
+        wm.add_entity("quality-kind", q, id=q)
+    for o, n in (("o-inspection", "inspection of GBX-100"), ("o-bearing-replacement", "bearing replacement"),
+                 ("o-test-run", "test run"), ("o-sign-off", "inspection sign-off")):
+        wm.add_entity("occurrence", n, id=o)
+    # one condition at a time per thing and quality (data for this world, not a core constraint)
+    wm.declare_slot("has-quality", ["bearer", "quality"], "value")
+    cond = {"bearer": "gbx-100", "quality": "condition"}
+    operational = wm.attest(w, "has-quality", {**cond, "value": "operational"}, start=T0, until_superseded=True)
+    # the inspection: the inspector's report, and the fault it records (evidence of the fault, not its cause)
+    insp = wm.account(w, {"actor": "inspector", "patient": "gbx-100", "instrument": "vib-meter", "location": "bay-1"},
+                      *INSPECTION, kind=["inspection", "action"], occurrence="o-inspection", attester="inspector",
+                      id="ev-inspection-report")
+    fault = wm.attest(w, "has-quality", {**cond, "value": "faulty"}, start=INSPECTION[1], until_superseded=True,
+                      attester="inspector", basis="observation")
+    wm.accept(fault)
+    wm.end(w, operational, INSPECTION[1], reason="fault recorded by the inspection")
+    # the bearing replacement: one occurrence, two descriptions with different details
+    log = wm.account(w, {"actor": "technician", "patient": "bearing-3", "instrument": "bearing-press",
+                         "location": "bay-1"}, *REPLACEMENT, kind=["replacement", "action"],
+                     occurrence="o-bearing-replacement", attester="technician", id="ev-worklog-replacement")
+    record = wm.account(w, {"patient": "bearing-1", "location": "bay-1"}, *REPLACEMENT, kind="replacement",
+                        occurrence="o-bearing-replacement", id="ev-maintenance-record")
+    for a in wm.history(w, "ev-worklog-replacement"):
+        if a["attester"] == "technician":
+            wm.accept(a["attestation"])                     # the system accepts the work log and its classification
+    effects = [wm.claim_effect(w, log, "initiates", "part-of", {"part": "bearing-3", "whole": "shaft-asm-in"},
+                               attester="technician"),
+               wm.claim_effect(w, log, "terminates", "part-of", {"part": "bearing-1", "whole": "shaft-asm-in"},
+                               attester="technician")]
+    for e in effects:
+        wm.accept(e)
+    # an asserted effect the system has not accepted (nor the state it claims)
+    vib_claim = wm.claim_effect(w, log, "initiates", "has-quality",
+                                {"bearer": "gbx-100", "quality": "vibration", "value": "low"}, attester="technician")
+    vib_state = wm.attest(w, "has-quality", {"bearer": "gbx-100", "quality": "vibration", "value": "low"},
+                          start=REPLACEMENT[1], until_superseded=True, attester="technician", basis="observation")
+    known_before_repair = wm._now()        # a transaction time: everything above is recorded, the repair is not
+    # the test run restores the operational condition; the inspector signs off and ends the fault
+    test = wm.account(w, {"actor": "technician", "patient": "gbx-100", "instrument": "test-rig", "location": "bay-1"},
+                      *TEST_RUN, kind=["test", "action"], occurrence="o-test-run", attester="technician", id="ev-test-run")
+    restored = wm.attest(w, "has-quality", {**cond, "value": "operational"}, start=RESTORED, until_superseded=True,
+                         attester="technician", basis="observation")
+    wm.accept(restored)
+    restore_claims = [wm.claim_effect(w, test, "initiates", "has-quality", {**cond, "value": "operational"},
+                                      attester="technician"),
+                      wm.claim_effect(w, test, "terminates", "has-quality", {**cond, "value": "faulty"},
+                                      attester="technician")]
+    for c in restore_claims:
+        wm.accept(c)
+    wm.account(w, {"actor": "inspector", "patient": "gbx-100"}, RESTORED, kind="sign-off", occurrence="o-sign-off",
+               attester="inspector", id="ev-sign-off")
+    signed_off = wm.end(w, fault, RESTORED, reason="signed off after the test run")
+    wm.accept(signed_off)                  # the system accepts the inspector's ended restatement (per perspective)
+    for a in [*wm.history(w, "ev-inspection-report"), *wm.history(w, "ev-sign-off"), *wm.history(w, "ev-test-run")]:
+        if a["attester"] in ("inspector", "technician"):
+            wm.accept(a["attestation"])
+    ids.update({"operational_t0": operational, "fault": fault, "fault_signed_off": signed_off,
+                "known_before_repair": known_before_repair, "inspection": insp, "worklog": log,
+                "maintenance_record": record, "replacement_effects": effects, "vibration_claim": vib_claim,
+                "vibration_state": vib_state, "test_run": test, "restored": restored, "restore_claims": restore_claims})
     return ids
 
