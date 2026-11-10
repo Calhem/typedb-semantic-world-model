@@ -1,0 +1,33 @@
+# Core 0.4, Stage A1 (LABS-1.006): physical structure, first increment. Additive to core-0.3 and core-0.4-a0.
+# Types from World Ontology v0.2 (§3.4-3.5) and the Core 0.4 plan (Stage A); no new foundational categories.
+#
+# - constitution: what a particular is made from (a cover from a cut aluminium blank). Materials are not types: they are
+#   categories (classified-as(x, steel)); a category is marked as a material by classified-as(steel, material).
+# - positioned-in: a particular's position in a spatial frame, as per-axis ranges in metres (lower = upper for an exact
+#   value), with an optional orientation as a unit quaternion (w, x, y, z; Hamilton, active). The ranges are content
+#   parameters, so a different position is a different proposition (keys use 12 significant digits; U-3 open).
+# - anchored-to: a frame attached to a particular (the gearbox's own frame moves with the gearbox).
+# - frame-transform(parent P, child C): the pose of C's origin and axes in P, p_P = R(q)·p_C + t (plan 9.6). Stored and
+#   retrievable in A1; composing chains into derived poses is deferred to the next increment (A2).
+
+define
+attribute x-min, value double; attribute x-max, value double;
+attribute y-min, value double; attribute y-max, value double;
+attribute z-min, value double; attribute z-max, value double;
+attribute qw, value double; attribute qx, value double; attribute qy, value double; attribute qz, value double;
+attribute tx, value double; attribute ty, value double; attribute tz, value double;
+
+relation constitution sub proposition, relates constituted, relates constituent;
+relation positioned-in sub proposition, relates positioned, relates frame,
+  owns x-min, owns x-max, owns y-min, owns y-max, owns z-min, owns z-max, owns qw, owns qx, owns qy, owns qz;
+relation anchored-to sub proposition, relates frame, relates anchor;
+relation frame-transform sub proposition, relates parent, relates child,
+  owns tx, owns ty, owns tz, owns qw, owns qx, owns qy, owns qz;
+
+particular plays constitution:constituted, plays constitution:constituent, plays positioned-in:positioned,
+  plays anchored-to:anchor;
+spatial-frame plays positioned-in:frame, plays anchored-to:frame, plays frame-transform:parent,
+  plays frame-transform:child;
+# A category can be classified by another category (steel is a material), so material categories are identifiable
+# without a material type (decision D-A1-1, for review).
+concept plays classified-as:classified;

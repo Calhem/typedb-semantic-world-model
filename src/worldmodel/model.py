@@ -18,15 +18,18 @@ from typedb.driver import Credentials, DriverOptions, DriverTlsConfig, Transacti
 from . import typeql as q
 from . import keys
 from .keys import as_ids, check_new_id, proposition_key
+from .physical import PhysicalMixin
 from .semantics import (Answer, AttestationRecord, Identity, Replacement, Status, Window, acceptance_state,
                         answer_status, certainly_before, superseded, usable, verdict)
 
 READ, WRITE, SCHEMA = TransactionType.READ, TransactionType.WRITE, TransactionType.SCHEMA
 SCHEMA_DIR = Path(__file__).resolve().parents[2] / "schema"
 MODULES = {"core": ("0.3.0", ["core/core-0.3.tql"]),
-           "core-0.4-a0": ("0.4.0-a0", ["core/core-0.4-a0.tql", "core/core-0.4-a0-slots.tql"])}   # Stage A0 (LABS-1.002)
+           "core-0.4-a0": ("0.4.0-a0", ["core/core-0.4-a0.tql", "core/core-0.4-a0-slots.tql"]),  # Stage A0 (LABS-1.002)
+           "core-0.4-a": ("0.4.0-a1", ["core/core-0.4-a.tql"])}     # Stage A1 physical structure (LABS-1.006)
 DEFAULT_MODULES = ("core", "core-0.4-a0")
-CORE_MODULES = ("core", "core-0.4-a0")       # their types are the foundational (core) types; the rest are profiles
+PHYSICAL_MODULES = ("core", "core-0.4-a0", "core-0.4-a")   # opt-in in A1 (decision D-A1-3)
+CORE_MODULES = ("core", "core-0.4-a0", "core-0.4-a")   # their types are the foundational (core) types; others: profiles
 
 
 def _core_labels():
@@ -44,9 +47,13 @@ SYSTEM = "system"                     # the system's own agent: the default atte
 KINDS = ("physical-object", "social-object", "place", "information-object", "occurrence",
          "category", "social-role", "quality-kind", "clock", "spatial-frame", "unit")
 QUALITY_PARAMS = ("lower", "upper", "coverage-level")
+POSE_PARAMS = ("x-min", "x-max", "y-min", "y-max", "z-min", "z-max", "qw", "qx", "qy", "qz")
+TRANSFORM_PARAMS = ("tx", "ty", "tz", "qw", "qx", "qy", "qz")
+PARAMS = {"has-quality": QUALITY_PARAMS, "positioned-in": POSE_PARAMS, "frame-transform": TRANSFORM_PARAMS}
 # Functional slots of the core: one value at a time per slot. With the A0 module they are declared as data in TypeDB
 # (functional-slot entities, A0.3) at create or upgrade; without it (a Core 0.3 database) this constant is used.
 CORE_SLOTS = {"located-at": (("located",), "place")}
+MODULE_SLOTS = {"core-0.4-a": {"anchored-to": (("frame",), "anchor")}}    # a frame is attached to one thing at a time
 VARIANT_KINDS = ("hypothetical", "simulated")
 
 
@@ -79,7 +86,7 @@ class PropositionIdCollision(ValueError):
         self.pid, self.key, self.existing = pid, key, existing
 
 
-class WorldModel:
+class WorldModel(PhysicalMixin):
     def __init__(self, driver, database, clock=utcnow, selective=True):
         self.driver, self.database, self.clock = driver, database, clock
         self.selective = selective
@@ -126,6 +133,9 @@ class WorldModel:
         self._prop_ids = None
         self._lattice = None
         self._slots = None
+        if self.has_proposition_ids():
+            for predicate, (key_roles, value_role) in MODULE_SLOTS.get(name, {}).items():
+                self.declare_slot(predicate, key_roles, value_role)
 
     def has_proposition_ids(self):
         """True when the A0 module is installed (propositions own a `wm-id` key)."""
@@ -261,6 +271,10 @@ class WorldModel:
         declared = self.slots()
         return [(t, *c) for t in reversed(self.ancestors(label)) for c in declared.get(t, ())]
 
+    def _param_names(self, type):
+        """The content parameters a proposition type owns (by its nearest parameterised ancestor)."""
+        return next((PARAMS[t] for t in self.ancestors(type) if t in PARAMS), ())
+
     def proposition_types(self):
         """Concrete proposition types in the installed schema (core and profiles), by introspection."""
         if self._types is None:
@@ -356,7 +370,7 @@ class WorldModel:
         if type not in self.proposition_types():
             raise ValueError(f"{type!r} is not a proposition type in the installed schema")
         params = {k: v for k, v in (params or {}).items() if v is not None}
-        unknown = set(params) - set(QUALITY_PARAMS)
+        unknown = set(params) - set(self._param_names(type))
         if unknown:
             raise ValueError(f"unknown proposition parameters {sorted(unknown)}")
         key = proposition_key(type, roles, params)
@@ -426,7 +440,7 @@ class WorldModel:
                 out["roles"].setdefault(r.get("role").get_label().split(":")[-1], []).append(q.opt(r, "xid"))
                 scoped.setdefault(r.get("role").get_label(), set()).add(q.opt(r, "xid"))
             core_roles = self._role_maps(scoped)[0]
-            for name in QUALITY_PARAMS:
+            for name in (self._param_names(out["type"]) if out["type"] in self.proposition_types() else ()):
                 for r in q.rows(tx, f"match $c isa proposition, has proposition-key == $k, has {name} $v;",
                                 {"k": key_or_id}):
                     out["params"][name] = q.opt(r, "v")
@@ -649,12 +663,15 @@ class WorldModel:
                 recorded_at=q.parse_datetime(d["rec"]), credence=d["cr"], depth=depth)
         # Fetching `$c.lower` is rejected unless every possible type of $c can own it, so quality parameters are
         # fetched separately, only when the content can be has-quality.
-        if type is None or self.is_a(type, "has-quality") or self.is_a("has-quality", type):
-            for d in q.documents(tx, head + """ $c isa has-quality;
-                fetch { "aid": $aid, "lower": $c.lower, "upper": $c.upper, "coverage-level": $c.coverage-level };""",
-                                 params):
+        for ptype, names in PARAMS.items():        # has-quality (Core 0.3), positioned-in, frame-transform (A1)
+            if ptype not in self.proposition_types() or not (
+                    type is None or self.is_a(type, ptype) or self.is_a(ptype, type)):
+                continue
+            fields = ", ".join(f'"{n}": $c.{n}' for n in names)
+            for d in q.documents(tx, head + f""" $c isa {ptype};
+                fetch {{ "aid": $aid, {fields} }};""", params):
                 if d["aid"] in recs:
-                    recs[d["aid"]].params = {k: d[k] for k in ("lower", "upper", "coverage-level") if d[k] is not None}
+                    recs[d["aid"]].params = {k: d[k] for k in names if d[k] is not None}
             self.stats["queries"] += 1
         roles = {}
         if subject is None:

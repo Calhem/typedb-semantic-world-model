@@ -1,6 +1,8 @@
 # Core 0.4 Stage A0: groundwork (LABS-1.002 to LABS-1.005)
 
-**Status (2026-11-10): A0.1-A0.3 implemented on `feature/core-0.4-a0`; conditionally approved (LABS-1.003), with the
+**Merged into `main` on 2026-11-10 (c9750d2, LABS-1.006).** Stage A1 (physical structure): [stage-a1.md](stage-a1.md).
+
+**Status at approval: A0.1-A0.3 implemented on `feature/core-0.4-a0`; conditionally approved (LABS-1.003), with the
 shelf-dispute correction, additive constraint inheritance, the identity-equivalence correction (LABS-1.004) and the
 `holds` functional-dispute correction (F-4, LABS-1.005) applied; performance limits accepted as tracked risks
 (LABS-1.005). Not merged into `main`; Stage A not started.**
