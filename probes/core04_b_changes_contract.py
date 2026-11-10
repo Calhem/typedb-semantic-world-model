@@ -1,6 +1,7 @@
-"""LABS-1.014 probe: can `changes` report state transitions whose valid time intersects a requested interval,
-unambiguously, from the existing data model? Each case builds a small world (throwaway databases wm-chg-*) and prints
-the judged state at the relevant instants and what changes() reports today. No model code is changed.
+"""LABS-1.014 probe, rerun under LABS-1.015: the six `changes` cases. Each case builds a small world (throwaway
+databases wm-chg-*) and prints the judged state at the relevant instants and what changes() reports, one line per
+transition (track, before -> after, category, window, certainty relative to the interval, explanations).
+The LABS-1.014 output (two-instant sampling) is kept in core04_b_changes_contract.before.json.
 
     uv run python -I probes/core04_b_changes_contract.py > probes/core04_b_changes_contract.out.json
 """
@@ -34,10 +35,23 @@ def where(wm, w, t, **kw):
     return f"{a.status.value} {list(a.values)}"
 
 
+def state(st):
+    v = st.get("values", st.get("holds"))
+    return f"{st['status'].value} {v}"
+
+
 def summary(c):
-    return {"began": [x["roles"].get("place") for x in c["began"]], "ended": [x["roles"].get("place") for x in c["ended"]],
-            "claimed_events": {str(x["roles"].get("place")): [e["event"] for e in x["claimed_events"]]
-                               for x in c["began"] + c["ended"]}}
+    """changes() as one line per transition (LABS-1.015 structure)."""
+    out = []
+    for tr in c["transitions"]:
+        tk = tr["track"]
+        track = (f"slot {tk['type']}{tk['key']}" if tk["kind"] == "slot" else f"content {tk['type']}{tk['roles']}")
+        w = tr["window"]
+        win = f"{w[0]:%H:%M}" if w[0] == w[1] else f"{w[0]:%H:%M}..{w[1]:%H:%M}"
+        exp = [f"{e['event']} ({e['effect']}, {e['attribution']})" for e in tr["explanations"]]
+        out.append(f"{track}: {state(tr['before'])} -> {state(tr['after'])} | {tr['category']} | at {win} "
+                   f"({tr['within']}) | explained by {exp or 'none'}")
+    return out
 
 
 out = {}
@@ -50,20 +64,23 @@ try:
     wm.attest(w, "located-at", {"located": "box", "place": "a"}, start=T(11), until_superseded=True)
     out["1 transitions entirely inside [09:30, 12:00]"] = {
         "judged": {t: where(wm, w, T(*map(int, t.split(":")))) for t in ("9:30", "10:30", "12:00")},
-        "changes() today": summary(wm.changes(w, "box", T(9, 30), T(12)))}
+        "changes()": summary(wm.changes(w, "box", T(9, 30), T(12)))}
     # 2. an uncertain start window that straddles the interval's start
     wm, w = fresh(); dbs.append(wm)
     wm.attest(w, "located-at", {"located": "box", "place": "a"}, start=T(8), end=(T(10), T(10, 20)))
     wm.attest(w, "located-at", {"located": "box", "place": "b"}, start=(T(10), T(10, 20)), until_superseded=True)
     out["2 a transition known only within [10:00, 10:20], interval [10:15, 11:00]"] = {
         "judged": {t: where(wm, w, T(*map(int, t.split(":")))) for t in ("9:59", "10:05", "10:15", "10:20")},
+        "changes() [10:15, 11:00]": summary(wm.changes(w, "box", T(10, 15), T(11))),
+        "changes() [10:30, 11:00]": summary(wm.changes(w, "box", T(10, 30), T(11))),
+        "changes() [09:00, 11:00]": summary(wm.changes(w, "box", T(9), T(11))),
         "note": "the move happened at some time in [10:00, 10:20]; it may or may not lie in [10:15, 11:00]"}
     # 3. a state whose end is unknown (no stated end, not until superseded)
     wm, w = fresh(); dbs.append(wm)
     wm.attest(w, "located-at", {"located": "box", "place": "a"}, start=T(9))
     out["3 a state with an unknown end"] = {
         "judged": {t: where(wm, w, T(*map(int, t.split(":")))) for t in ("9:00", "9:01", "12:00")},
-        "changes() today [08:00, 12:00]": summary(wm.changes(w, "box", T(8), T(12))),
+        "changes() [08:00, 12:00]": summary(wm.changes(w, "box", T(8), T(12))),
         "note": "true at its start instant, undecided after: is true -> unknown an 'ended' transition?"}
     # 4. a state that becomes disputed inside the interval (no one ends it)
     wm, w = fresh(); dbs.append(wm)
@@ -72,7 +89,7 @@ try:
                         attester="cam"))
     out["4 a rival claim accepted from 10:00"] = {
         "judged": {t: where(wm, w, T(*map(int, t.split(":")))) for t in ("9:30", "10:30")},
-        "changes() today [09:30, 10:30]": summary(wm.changes(w, "box", T(9, 30), T(10, 30))),
+        "changes() [09:30, 10:30]": summary(wm.changes(w, "box", T(9, 30), T(10, 30))),
         "note": "a -> disputed(a, b): neither 'a ended' nor 'b began' is accepted; is it a transition?"}
     # 5. which event explains which transition: a content that begins twice, with an event for the second only
     wm, w = fresh(); dbs.append(wm)
@@ -84,8 +101,9 @@ try:
     e2 = wm.account(w, {"actor": "tech", "patient": "box"}, T(12, 50), T(13), occurrence="o-move-2", id="ev-move-2")
     wm.claim_effect(w, e2, "initiates", "located-at", {"located": "box", "place": "a"})
     out["5 'box at a' begins at 08:00 (no event) and again at 13:00 (ev-move-2)"] = {
-        "changes() today [07:00, 08:30]": summary(wm.changes(w, "box", T(7), T(8, 30))),
-        "note": "ev-move-2 (12:50-13:00) is listed for a transition at 08:00 that it cannot explain"}
+        "changes() [07:00, 08:30]": summary(wm.changes(w, "box", T(7), T(8, 30))),
+        "changes() [12:00, 14:00]": summary(wm.changes(w, "box", T(12), T(14))),
+        "note": "ev-move-2 (12:50-13:00) must not explain the 08:00 activation"}
     # 6. a delayed effect: the event ends at 10:00, the state it is claimed to initiate starts at 10:45
     wm, w = fresh(); dbs.append(wm)
     wm.add_entity("occurrence", "o-order", id="o-order")
@@ -94,7 +112,7 @@ try:
     e = wm.account(w, {"actor": "tech", "patient": "box"}, T(9, 50), T(10), occurrence="o-order", id="ev-order")
     wm.claim_effect(w, e, "initiates", "located-at", {"located": "box", "place": "b"})
     out["6 delayed effect: event 09:50-10:00, state from 10:45; interval [10:30, 11:00]"] = {
-        "changes() today": summary(wm.changes(w, "box", T(10, 30), T(11))),
+        "changes()": summary(wm.changes(w, "box", T(10, 30), T(11))),
         "note": "event before the interval, transition inside: allowed as provenance (supported)"}
 finally:
     for m in dbs:

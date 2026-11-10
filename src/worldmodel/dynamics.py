@@ -188,31 +188,169 @@ class DynamicsMixin:
         return out
 
     def changes(self, world, subject, t1, t2, as_of=None, perspective=SYSTEM):
-        """What changed about `subject` between t1 and t2, for the perspective: contents that hold at t2 but not at
-        t1 (began) and at t1 but not at t2 (ended), each with the sources of the state, and the events claimed to
-        have initiated or terminated it (with each claim's judgement). Accepted state is the answer; claimed events
-        are explanations, never the reason a state counts as changed."""
-        def key(f):
-            return f["type"], tuple(sorted((r, tuple(v)) for r, v in f["roles"].items())), tuple(sorted(f["params"].items()))
+        """State transitions of `subject` whose valid time intersects (t1, t2], judged for the world, perspective and
+        knowledge time (LABS-1.015 contract).
 
-        before = {key(f): f for f in self.facts_about(world, subject, t1, as_of, perspective)}
-        after = {key(f): f for f in self.facts_about(world, subject, t2, as_of, perspective)}
-        hist = {h["attestation"]: h for h in self.history(world, subject, as_of=as_of, perspective=perspective)}
+        The subject's records are loaded once. Every start and end bound of their windows is a boundary; the judged
+        state is constant between boundaries, so judging at each boundary gives the whole timeline (no extra queries).
+        Tracks: each functional slot whose key includes the subject (values judged as in value_at, conflicts
+        included), and each other content involving the subject (holds / does not hold / UNKNOWN / DISPUTED).
+        - category "world-state": between two accepted states; "judgement": into or out of UNKNOWN or DISPUTED, never
+          presented as proof of physical change. Accepted A, then only UNKNOWN, then accepted B != A is one world-state
+          transition whose window is the UNKNOWN gap: the instant is never invented.
+        - window [earliest, latest] and `within`: "certain" if inside (t1, t2], "possible" if it overlaps it;
+          transitions outside are not returned.
+        - explanations: only accepted initiates / terminates claims about a content that began / ended in the
+          transition, and only if the event did not certainly start after the transition. A claim that fits several
+          activations of the same content is listed on each as "ambiguous"; never chosen, never inferred from
+          proximity. `began` / `ended` are views over the returned transitions."""
+        from .keys import proposition_id
+        from .model import PARAMS_VALUE
+        from .semantics import answer_status
+        atts, ident = self._view(world, as_of, perspective, None, [subject])
+        me = set(ident.members(subject))
+        mine = {ident.canonical(x) for x in me}
+        recs = [a for a in atts.values() if a.kind not in ("event", "same-as") and any(me & set(ids) for ids in
+                                                                                     a.roles.values())]
+        slot_rivals = self._slot_rivals(world, as_of, perspective, recs, me, ident,
+                                   pool=None if self.selective else atts)          # Q-B2: slot rivals
+        attester = {a.id: a.attester for a in recs}
+        contents = {}
+        for a in recs:
+            contents.setdefault(self._class(a, ident), set()).add(a.content)
+        tracks, member = {}, {}
+        for cls in contents:
+            players = dict(cls[1])
+            keys_ = []
+            for decl, ks, v in self._constraints(cls[0]):
+                if any(mine & set(players.get(r, ())) for r in ks):
+                    key = ("slot", decl, ks, v, tuple(players.get(r) for r in ks))
+                    tracks[key] = {"kind": "slot", "type": decl, "key": {r: list(players.get(r, ())) for r in ks},
+                                   "value_role": v}
+                    keys_.append(key)
+            if not keys_:
+                key = ("content", cls)
+                tracks[key] = {"kind": "content", "type": cls[0], "roles": {r: list(i) for r, i in cls[1]},
+                               "params": dict(cls[2])}
+                keys_.append(key)
+            member[cls] = keys_
+        bounds = sorted({x for a in recs + slot_rivals for w in (a.start, a.end) if w is not None
+                         for x in (w.earliest, w.latest) if x is not None})
+        samples = ([bounds[0] - EPS] if bounds else []) + bounds
+
+        def state_at(s):
+            judged = self._judge(recs + slot_rivals, ident, s, perspective, as_of)
+            conf = self._conflicts([c for c, (val, _, _) in judged.items() if val is True])
+            out = {}
+            for key, info in tracks.items():
+                classes = [c for c in member if key in member[c] and c in judged]
+                held = {c for c in classes if judged[c][0] is True}
+                support = sorted({a.id for c in classes if judged[c][0] in (True, "disputed") for a in judged[c][1]})
+                rivals = sorted({a.id for c in classes for r in conf.get(c, ()) for a in judged[r][1]})
+                disputed = any(judged[c][0] == "disputed" or c in conf for c in classes)
+                sup = [a for c in classes if judged[c][0] in (True, False) for a in judged[c][1]]
+                if info["kind"] == "slot":
+                    v = info["value_role"]
+                    values = sorted((dict(c[2]) if v == PARAMS_VALUE else list(dict(c[1]).get(v, ())))
+                                    for c in classes if judged[c][0] in (True, "disputed"))
+                    values = [x for i, x in enumerate(values) if x not in values[:i]]
+                    status = Status.DISPUTED if disputed else answer_status(sup) if values else Status.UNKNOWN
+                    sig = ("disputed" if disputed else "accepted" if values else "unknown", str(values))
+                    state = {"status": status, "values": values}
+                else:
+                    c = key[1]
+                    val = judged[c][0] if c in judged else None
+                    holds = None if disputed or val is None else val
+                    status = (Status.DISPUTED if disputed else Status.UNKNOWN if val is None else
+                              answer_status(judged[c][1]))
+                    sig = ("disputed" if disputed else "unknown" if val is None else "accepted", holds)
+                    state = {"status": status, "holds": holds}
+                out[key] = (sig, {**state, "support": support, "conflicts": rivals}, held)
+            return out
+
+        timeline = [(s, state_at(s)) for s in samples]
+        found = []                                          # every transition on the whole timeline
+        for key, info in tracks.items():
+            segs = []
+            for s, st in timeline:
+                if not segs or segs[-1][1][0] != st[key][0]:
+                    segs.append((s, st[key]))
+            i = 0
+            while i + 1 < len(segs):
+                prev, nxt = segs[i], segs[i + 1]
+                if prev[1][0][0] == "accepted" and nxt[1][0][0] == "unknown":
+                    j = i + 1
+                    while j < len(segs) and segs[j][1][0][0] == "unknown":
+                        j += 1
+                    if j < len(segs) and segs[j][1][0][0] == "accepted" and segs[j][1][0] != prev[1][0]:
+                        found.append((key, prev[1], segs[j][1], nxt[0], segs[j][0], "world-state"))
+                        i = j
+                        continue
+                cat = "world-state" if prev[1][0][0] == nxt[1][0][0] == "accepted" else "judgement"
+                found.append((key, prev[1], nxt[1], nxt[0], nxt[0], cat))
+                i += 1
+        # explanations: accepted effect claims, attributed only to compatible activations of the claimed content
         memo = _Memo(self, world, as_of, perspective)
+        claims = {}
 
-        def entry(f, kind):
-            content = f["type"], {r: v for r, v in f["roles"].items()}
-            pid = self.proposition_id(self._key_of(f))
-            return {"type": f["type"], "roles": f["roles"], "params": f["params"], "status": f["status"],
-                    "stated_by": sorted({hist[a]["attester"] for a in f["support"] if a in hist}),
-                    "support": f["support"], "outcome_id": pid,
-                    "claimed_events": self._events_claiming(world, pid, kind, t2, as_of, perspective, memo) if pid else [],
-                    "content": content}
+        def claims_for(cls, kind):
+            if (cls, kind) not in claims:
+                claims[(cls, kind)] = [e for k in sorted(contents[cls]) for e in self._events_claiming(
+                    world, proposition_id(k), kind, t2, as_of, perspective, memo) if e["claim"] == "accepted"]
+            return claims[(cls, kind)]
 
-        began = [entry(f, "initiates") for k, f in sorted(after.items()) if k not in before]
-        ended = [entry(f, "terminates") for k, f in sorted(before.items()) if k not in after]
-        return {"subject": subject, "from": t1, "to": t2, "began": began, "ended": ended,
-                "unchanged": len(set(before) & set(after))}
+        def compatible(ev, latest):
+            return ev["start"] is None or ev["start"].earliest <= latest
+
+        activations = {}
+        for n, (key, before, after, early, late, cat) in enumerate(found):
+            for cls in after[2] - before[2]:
+                activations.setdefault((cls, "initiates"), []).append((n, late))
+            for cls in before[2] - after[2]:
+                activations.setdefault((cls, "terminates"), []).append((n, late))
+        explained = {}
+        for (cls, kind), acts in activations.items():
+            for ev in claims_for(cls, kind):
+                fits = [n for n, late in acts if compatible(ev, late)]
+                for n in fits:
+                    explained.setdefault(n, []).append({
+                        "event": ev["event"], "effect": kind, "content": {"type": cls[0], "roles": dict(cls[1])},
+                        "class": cls, "claim": ev["claim"], "claim_status": ev["claim_status"],
+                        "claimed_by": ev["claimed_by"], "start": ev["start"], "end": ev["end"],
+                        "occurrences": ev["occurrences"], "attribution": "unique" if len(fits) == 1 else "ambiguous"})
+
+        def describe(cls):
+            return {"type": cls[0], "roles": {r: list(i) for r, i in cls[1]}, "params": dict(cls[2])}
+
+        transitions, began, ended = [], [], []
+        for n, (key, before, after, early, late, cat) in enumerate(found):
+            if late <= t1 or early > t2:
+                continue
+            within = "certain" if early > t1 and late <= t2 else "possible"
+            exps = sorted(explained.get(n, []), key=lambda e: (e["effect"], e["event"]))
+            tr = {"track": tracks[key], "category": cat, "before": before[1], "after": after[1],
+                  "window": (early, late), "within": within,
+                  "began": [describe(c) for c in sorted(after[2] - before[2])],
+                  "ended": [describe(c) for c in sorted(before[2] - after[2])],
+                  "explanations": [{k: v for k, v in e.items() if k != "class"} for e in exps]}
+            transitions.append(tr)
+            for kind, side, lst in (("initiates", after, began), ("terminates", before, ended)):
+                changed = (after[2] - before[2]) if kind == "initiates" else (before[2] - after[2])
+                for cls in sorted(changed):
+                    sup = [i for i in side[1]["support"]]
+                    lst.append({**describe(cls), "status": side[1]["status"],
+                                "stated_by": sorted({attester[i] for i in sup if i in attester}),
+                                "support": sup, "outcome_id": proposition_id(sorted(contents[cls])[0]),
+                                "category": cat, "within": within, "window": (early, late),
+                                "claimed_events": [{k: v for k, v in e.items() if k not in ("class", "content")}
+                                                   for e in exps if e["class"] == cls and e["effect"] == kind],
+                                "content": (cls[0], {r: list(i) for r, i in cls[1]})})
+        transitions.sort(key=lambda x: (x["window"][0], x["window"][1], str(x["track"])))
+        moved = {str(tr["track"]) for tr in transitions}
+        return {"subject": subject, "from": t1, "to": t2,
+                "context": {"world": world, "perspective": perspective, "as_of": as_of},
+                "transitions": transitions, "began": began, "ended": ended,
+                "unchanged": sum(1 for info in tracks.values() if str(info) not in moved)}
 
     def _key_of(self, fact):
         from .keys import proposition_key
