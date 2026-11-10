@@ -27,6 +27,10 @@ T1 = datetime(2026, 11, 5, 14, 0, tzinfo=timezone.utc)     # bearing-1 replaced 
 BEFORE = datetime(2026, 11, 3, 12, 0, tzinfo=timezone.utc)
 AFTER = datetime(2026, 11, 6, 12, 0, tzinfo=timezone.utc)
 PLAN_AT = datetime(2026, 11, 7, 9, 0, tzinfo=timezone.utc)
+# Stage A2 additions (extend_spatial)
+OBSERVED = datetime(2026, 11, 6, 11, 0, tzinfo=timezone.utc)   # camera and tag-reader observations around AFTER
+T2 = datetime(2026, 11, 8, 10, 0, tzinfo=timezone.utc)         # the bench is moved and turned
+LATER = datetime(2026, 11, 8, 12, 0, tzinfo=timezone.utc)
 
 PLACES = [("workshop", "Workshop W1", "the building's ground-floor workshop"),
           ("bay-1", "Bay 1", "assembly bay in the workshop"),
@@ -137,3 +141,44 @@ def build(wm):
     wm.attest(plan, "classified-as", {"classified": "cover", "class": "steel"}, start=PLAN_AT, until_superseded=True)
     wm.deny(plan, "classified-as", {"classified": "cover", "class": "aluminium"}, start=PLAN_AT, until_superseded=True)
     return {"world": w, "plan": plan, "inspector_claim": claim, "measured_mass": measured, "design_mass": designed}
+
+
+def extend_spatial(wm, ids):
+    """Stage A2 additions to the reference world (LABS-1.007): position claims from other sources, an unlinked camera
+    frame, a moved bench (the workshop -> bench transform changes at T2) and a plan that moves the bench.
+    Returns the notable ids, merged into `ids`."""
+    w = ids["world"]
+    wm.add_entity("physical-object", "Ceiling camera 2", description="fixed camera over bay 1", id="cam-2")
+    wm.add_entity("physical-object", "Tag reader", description="RFID reader at the bay door", id="tag-reader")
+    wm.add_entity("spatial-frame", "Camera 2 image frame", id="f-cam-2")
+    # cam-2 observes the gearbox in the workshop frame (its own +-5 cm box), accepted by the system
+    seen = wm.position(w, "gbx-100", "f-workshop", (3.55, 3.65), (3.05, 3.15), (0.90, 0.94), attester="cam-2",
+                       basis="observation", start=OBSERVED, end=datetime(2026, 11, 6, 13, 0, tzinfo=timezone.utc))
+    wm.accept(seen)
+    # the tag reader puts it 1.5 m away: not accepted by the system
+    tag = wm.position(w, "gbx-100", "f-workshop", (5.0, 5.2), (3.0, 3.2), (0.8, 1.0), attester="tag-reader",
+                      basis="observation", start=OBSERVED, end=datetime(2026, 11, 6, 13, 0, tzinfo=timezone.utc))
+    # cam-2 also reports the pinion in its own image frame, which no transform relates to the others
+    pix = wm.position(w, "gear-in", "f-cam-2", (0.41, 0.43), (0.22, 0.24), (2.9, 3.1), attester="cam-2",
+                      basis="observation", start=OBSERVED, until_superseded=True)
+    wm.accept(pix)
+    # T2: the bench is moved to (6.0, 1.0) and no longer turned
+    old = [a for a in wm.history(w, "f-bench", type="frame-transform") if a["attester"] == "system"
+           and a["roles"]["parent"] == ["f-workshop"]]                       # only workshop -> bench changes
+    for a in old:
+        wm.end(w, a["attestation"], T2, reason="bench moved")
+    bench_pose = [a["attestation"] for a in wm.history(w, "bench-1", type="positioned-in")]
+    for a in bench_pose:
+        wm.end(w, a, T2, reason="bench moved")
+    moved = wm.relate_frames(w, "f-workshop", "f-bench", (6.0, 1.0, 0.0), start=T2, until_superseded=True)
+    wm.position(w, "bench-1", "f-workshop", (5.95, 6.05), (0.95, 1.05), 0.0, start=T2, until_superseded=True,
+                basis="observation")
+    # a plan: the bench at (1.0, 1.0), turned 180 degrees, from the plan time
+    plan = wm.create_world("Plan: bench by the door", kind="hypothetical", base=w, branch_at=PLAN_AT,
+                           id="plan-move-bench")
+    planned = wm.relate_frames(plan, "f-workshop", "f-bench", (1.0, 1.0, 0.0), yaw(math.pi), start=PLAN_AT,
+                               until_superseded=True)
+    ids.update({"camera_position": seen, "tag_position": tag, "camera_pixel": pix, "moved_transform": moved,
+                "bench_plan": plan, "planned_transform": planned})
+    return ids
+

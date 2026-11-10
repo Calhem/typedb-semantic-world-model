@@ -1,0 +1,20 @@
+# Core 0.4, Stage A2 (LABS-1.007): spatial reasoning support. Additive to core-0.4-a.
+#
+# frames_linked: every frame connected to $f through frame-transform facts attested in world $w, in either direction
+# and transitively (records only: time, acceptance and perspective are applied in Python, as with parts_in). Verified
+# to terminate on cyclic frame graphs (probes/core04_a2_probes.py). Distinct variable names per branch (REP44).
+#
+# The module also declares two functional constraints whose value is the content's parameters (`@params`, compared
+# by range overlap and rotation equality; see WorldModel.declare_slot): one position per thing per frame at a time,
+# and one transform per (parent, child) pair at a time.
+
+define
+fun frames_linked($f: spatial-frame, $w: world) -> { spatial-frame }:
+  match
+    { $c1 isa frame-transform (parent: $f, child: $g); attestation (content: $c1, context: $w); } or
+    { $c2 isa frame-transform (child: $f, parent: $g); attestation (content: $c2, context: $w); } or
+    { $c3 isa frame-transform (parent: $f, child: $m3); attestation (content: $c3, context: $w);
+      let $g in frames_linked($m3, $w); } or
+    { $c4 isa frame-transform (child: $f, parent: $m4); attestation (content: $c4, context: $w);
+      let $g in frames_linked($m4, $w); };
+  return { $g };
