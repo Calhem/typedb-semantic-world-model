@@ -46,3 +46,56 @@ Measurement, observation, assertion and acceptance stay separate:
   - a specification;
   - a later correction.
 - **Tests:** `tests/test_i_c1_measurements.py`, 10. Full suite: 242 passed on each path.
+
+## D-C-2 review (LABS-1.017): tying a result to its supporting attestation
+### What the probe shows (`probes/core04_c_dc2_identity.py`)
+| Case | C1 behaviour | Correct? |
+|---|---|---|
+| 1. Ana records two results at 09:00 on two balances, identical values | one content, two attestations; **each attestation is tied to both records** | no: provenance is wrong |
+| 2. the same, at 20 °C and at 35 °C | each attestation carries both records, so both condition sets; comparability would mix them | no |
+| 3. different values, same source and time | correct, but only because the contents differ | by accident |
+| (all) | the source-and-start match needs the activity's account to be accepted by the asking perspective; otherwise it falls back silently to "content only" | no: provenance must not depend on acceptance |
+
+**Why.** `reports(result, content)` links a record to *content*. Content is identical whenever two results state the
+same thing, by v0.2's identity rule (§4.2: structural identity of what is said), so it cannot identify *which
+statement* a record supports. The statement is the attestation. Nothing in C1 links an attestation to a record.
+
+### Options
+| Option | What | Assessment |
+|---|---|---|
+| A. **`rests-on(attestation, record)`**, a structural link in the stance layer, written in the same transaction as the attestation | each attestation names the result record(s) it rests on; immutable, like the attestation itself | **recommended.** Explicit, stable, independent of acceptance, and the "evidence → the measurement" link v0.2 §3.3 already describes for a measurement-supported proposition. It adds a relation in which `attestation` plays a role, so it is a stance-layer addition: **needs approval** |
+| B. Put the record in the content: `has-quality(bearer, quality, unit, record)` | each result gets its own content | rejected: it changes proposition identity (two results stating the same value would no longer be one content, contrary to v0.2 §4.2), and every query by bearer and quality would have to ignore the record |
+| C. Store the attestation id as an attribute of the record, or the record id on the attestation | a string reference | rejected as authoritative provenance: no referential integrity in TypeDB; acceptable only as a stop-gap |
+| D. Keep heuristic matching (C1) | source + activity start | rejected: the probe shows it is wrong for repeated measurements |
+
+### Proposed correction (Option A), not implemented pending approval
+- **Schema** (additive, module `core-0.4-c`):
+  ```
+  relation rests-on, relates attestation @card(1..1), relates record @card(1..);
+  attestation plays rests-on:attestation;
+  information-object plays rests-on:record;
+  ```
+  It is structural, not a proposition, and is never attested itself. It is written by `measure()` in the same
+  transaction as the content attestation, so it has that attestation's recorded time and knowledge-time visibility.
+- **Provenance read.** `measurements()` follows attestation → `rests-on` → record → `produced` → activity. It no longer
+  uses `reports` or any matching. `reports(result, content)` remains what the record says about the world (useful
+  when a record is held but no one has attested its content). It is no longer used to find a statement's evidence.
+- **Correction.** A corrected result is a new record (a record's content never changes) and a new content attestation
+  that supersedes the old one, with its own `rests-on`. The superseded attestation keeps its link to the original
+  record, so the history stays faithful: what was claimed, on what evidence, and when.
+- **Supersession** is per perspective (D14). A perspective that has not accepted the correction keeps the original
+  attestation and therefore the original record. A perspective that accepted it sees the new attestation and record.
+- **Disputes.** Rival attestations, whether a polarity denial or disjoint ranges, each rest on their own records.
+  Comparability then reads each attestation's own conditions and coverage, never a merged set.
+- **Perspectives.** The link is a fact about an attestation (what its source said it relied on), so it is not judged.
+  Which attestations count is acceptance, as now. A perspective that distrusts a record expresses that through the
+  attestations: rejecting them, or a `doubts` stance. The link is never edited.
+- **Hypothetical worlds.** A variant's own measurements rest on their records; inherited attestations bring their
+  links. Snapshots (branch time, knowledge time) filter attestations, and the links follow them.
+- **Migration.** Existing C1 data has no `rests-on`. Because C1 is unmerged, the reference worlds would simply be
+  rebuilt. For a database that holds C1 data, the link can be added from `measure()`'s own records only where one
+  record matches one attestation unambiguously; ambiguous ones stay unlinked and are reported.
+
+### Decision requested
+Approve Option A, the stance-layer structural link `rests-on(attestation, record)`, or choose another option. C2
+integration waits for this gate, as instructed.
