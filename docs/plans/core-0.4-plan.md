@@ -1,7 +1,8 @@
 # Core 0.4: World Representation, implementation plan (LABS-1.001)
 
-**Status: PLAN for review. Not approved. Nothing here is implemented.** Branch `planning/core-0.4`, from `main` at
-`b64f635` (Core 0.3). Implementation needs a separate numbered instruction.
+**Status: PLAN, refined under LABS-1.002 (2026-11-10).** Direction approved subject to the rulings in section 9;
+**Stage A0 authorised**; Stages A-E not yet authorised. Branch `planning/core-0.4`, from `main` at `b64f635` (Core 0.3).
+LABS-1.001 version: `1741c99`.
 
 **Labels:**
 - **[A]** established architecture: frozen [World Ontology v0.2](../architecture/world-ontology-v0.2.md) and
@@ -73,10 +74,10 @@ schema (P1) [V].
 | Addition | TypeDB (draft) | Notes | Label |
 |---|---|---|---|
 | Units | `unit owns dimension, owns si-factor, owns si-offset`; content stored in the canonical SI unit per dimension; originals kept on the measurement | v0.2 §3.3 [A] | [V] loads |
-| Measurements | **profile-independent core event subtype** `measurement sub event` (instrument = `instrument`, bearer = `patient`), owning raw value, unit, standard uncertainty, coverage level and conditions; the `has-quality` range content is linked to it by a `result-of(result: proposition, measurement: event)` proposition | keeps measurement uncertainty on the measuring act and credence on attestations, **without touching the epistemic layer** | **[R] deviation**: v0.2 models a measurement as an *observation* (epistemic layer, deferred D1) |
+| Measurements | **amended under DX-2, see section 9.2:** three distinct things: the measuring **activity** (an event description classified `measurement`), the **result record** (an `information-object` carrying raw value, unit, standard uncertainty, coverage factor and conditions), and the **reported content** (a `has-quality` range), linked by `produced(activity, result)` and `reports(result, content)` | no change to the epistemic layer | **[R]**, section 9.2 |
 | Comparability | Python: `compare(range a, range b)` → possibly compatible / incompatible / incomparable, with the reason (dimension, coverage level, conditions); **no reconciliation** | v0.2 clarification B [A]; overlap test in TypeQL [V B3] | [A] |
 | Roles | existing `classified-as(x, social-role, context)`; domain relations (`employment`) in profiles | v0.2 §3.4 [A] | [A], [V] (P7b) |
-| Capabilities | **option 1 (recommended):** `capability sub concept`, held via `classified-as(x, capability)` (no new relation). **Option 2:** `has-capability(bearer, capability)` proposition (probed, P7) | v0.2 defers dispositions to profiles; capability is a **missing specification** | **[R]** |
+| Capabilities | `capability sub concept`, held via `classified-as(x, capability, context?)`, no new relation (DX-3, approved provisionally); see section 9.5 | | [A] by ruling |
 | Agency check (E2, D7) | `classified-as(x, agent)` checked on `attest()`: report mode by default (a warning listed in a validation report), strict mode optional | strict by default would require every Core 0.3 test fixture to classify its attesters | **[R]** |
 
 ### Stage D: domain extensions (profiles)
@@ -172,7 +173,7 @@ All of these go through the existing selective and full-load paths, and must giv
 | **B** | tests for `initiates`/`terminates` written by `record_event`; state transitions listed; causal chains asserted, not inferred (succession alone gives none); occurrence-level causation through accepted `describes` only; single-valued participant disputes |
 | **C** | unit conversion round trips; canonical storage; comparability labels for overlap, disjoint and incomparable cases, with reasons; no reconciliation without a named policy; measurement uncertainty and credence stored separately (test); agency report lists unclassified attesters |
 | **D** | each profile installs after the core, adds only subtypes, specialised roles, new proposition types and metadata; **core-protection test**: every core test passes with all three profiles installed; **collision test**: no label collisions across core and profiles; each profile's scenario (section 3) answers as expected |
-| **E** | cross-domain suite green on both paths, twice, no leftover databases; equivalence (whole answers, evidence included) for every new query; Core 0.3 benchmark within **+10 % median** of the Core 0.3 baseline (43.5 ms; limited statistics, so three runs); a pose-update benchmark (1,000 updates) reporting latency and database growth per update; records-per-change table across the three domains |
+| **E** | cross-domain suite green on both paths, twice, no leftover databases; equivalence (whole answers, evidence included) for every new query; performance thresholds in section 9.4, kept separate for unchanged Core 0.3 workloads and for new Core 0.4 workloads; records-per-change table across the three domains |
 
 ## 6. Technical risks
 | Risk | Why | Mitigation |
@@ -215,7 +216,7 @@ All of these go through the existing selective and full-load paths, and must giv
 - *Measurement metadata on the `has-quality` attestation*: one record fewer, but it would put measurement
   uncertainty on a stance record, contradicting v0.2's separation of measurement uncertainty from credence.
 
-## 8. Decisions requiring approval
+## 8. Decisions requested under LABS-1.001 (see section 9.1 for the rulings)
 1. **A0 groundwork** as the first milestone, behaviour-neutral (proposition ids, type and role lattice, slot
    metadata).
 2. **DX-1 to DX-5** above.
@@ -225,3 +226,110 @@ All of these go through the existing selective and full-load paths, and must giv
 5. Stage E thresholds: +10 % on the Core 0.3 benchmark; measured growth per pose update, with no threshold until a
    first measurement exists.
 6. `clock-alignment` and `absence-of` remain deferred beyond Core 0.4.
+
+---
+
+## 9. Refinements under LABS-1.002
+
+### 9.1 Rulings recorded
+| Decision | Ruling (LABS-1.002) | Consequence for the plan |
+|---|---|---|
+| DX-1 proposition `wm-id` | approved conditionally: deterministic, immutable; existing identity and key semantics preserved; uniqueness, collision and migration tested | A0.1 |
+| DX-2 measurement | **amended**: separate the measuring activity from the observation/result; smallest v0.2-consistent form; no epistemic change | section 9.2 |
+| DX-3 capability | approved provisionally: concepts and classifications, changing over time and in context; no new machinery | section 9.5 |
+| DX-4 causes with occurrences | approved conditionally: keep occurrences and descriptions distinct; causation asserted, never inferred | section 9.3 |
+| DX-5 agency check | approved: diagnostic/report mode; Core 0.3 behaviour unchanged | Stage C |
+| A0 first | approved | implemented under LABS-1.002 |
+| Three extension categories | approved for later validation | Stage D |
+| Clock alignment, recorded absence | deferred; remain tracked limitations | section 7 |
+| Material or system types | not introduced without a demonstrated identity or modelling requirement | Stage A |
+
+### 9.2 Measurement: activity, result, reported content (DX-2 amended)
+v0.2 §3.3 treats a measurement as an observing act that yields a result with uncertainty, and a proposition supported
+by it. Observations as epistemic records are deferred (D1). The smallest representation that keeps the three apart,
+using only existing categories:
+
+| Thing | What it is | Representation | Time |
+|---|---|---|---|
+| **Measurement activity** (occurrence) | the act of measuring: who measured what with which instrument | an event description classified by the category `measurement` (actor: operator; patient: the measured bearer; instrument: the instrument), its occurrence attested by its source, and optionally linked to an `occurrence` by `describes` | occurrence interval |
+| **Result record** (observation/result) | what the act produced: raw value, unit, standard uncertainty *u*, coverage factor *k*, conditions, instrument calibration reference | an `information-object` (a result record) owning those attributes | the result's recorded time |
+| **Reported content** | what the result says about the world: "sample-12's mass lies in [3.47, 3.55] kg at k = 2" | a `has-quality` range proposition (canonical SI), attested by the lab with basis observation | the quality's valid time |
+| Links | the activity produced the result; the result reports the content | propositions `produced(activity: event, result: information-object)` and `reports(result: information-object, content: proposition)`, each attested | — |
+
+- *Uncertainty kinds stay apart:* measurement uncertainty is on the result record and fixes the range; credence and
+  stance are on attestations.
+- *No epistemic change:* the links are ordinary content. When v0.2 observations are implemented later, a result record
+  can be linked to them by evidence.
+- *Unresolved (U-1):* whether a result record should later **be** v0.2's `observation` type (a migration) or remain an
+  information object linked to it.
+
+### 9.3 Causal descriptions vs occurrence-level causal claims (DX-4)
+- **Description-level:** `causes(cause: e1, effect: e2)` between event descriptions is a source's claim that the
+  happenings *as it describes them* stood in a causal relation.
+- **Occurrence-level:** `causes(cause: o1, effect: o2)` between occurrences is a claim about the happenings
+  themselves, independent of any description.
+- **Lifting, per perspective:** a description-level claim answers an occurrence-level question only when both
+  descriptions have usable `describes` links (for that perspective) to the occurrences asked about. The answer keeps
+  the description-level claim as its support and cites the `describes` links. Mixed forms (description → occurrence)
+  are allowed and lift the same way.
+- **Never inferred:** not from temporal order, not from co-reference alone, not transitively in answers. A causal
+  *chain* query lists asserted links. It does not turn them into new causal claims.
+- *Unresolved (U-2):* the status label of a lifted answer: the original claim's status (current lean) or INFERRED.
+
+### 9.4 Performance thresholds (two separate families)
+**Unchanged Core 0.3 workloads.** The Core 0.3 benchmark (same workload, same harness, Python 3.13), with the median of
+three runs per measure:
+| Measure | Baseline (Core 0.3 + fetch) | Threshold after each stage |
+|---|---|---|
+| selective question median / p95 | 43.5 / 60.3 ms | ≤ 47.9 / 69.3 ms (+10 % / +15 %) |
+| full-load question median | 2,234 ms | ≤ 2,460 ms (+10 %) |
+| ingestion, 1,000 moves | 56.0 s | ≤ 61.6 s (+10 %) |
+| database size | 12.34 MB | ≤ +5 % (only schema additions should change it) |
+| answers | — | identical to Core 0.3 on both paths |
+
+**New Core 0.4 workloads** (no baseline exists yet). The first measurement establishes it, under provisional
+ceilings; later stages must stay within +10 % of it.
+| Workload | Provisional ceiling |
+|---|---|
+| pose in another frame via a chain of ≤ 4 transforms, p95 | ≤ 100 ms |
+| records written per pose update | ≤ 4 |
+| measurement series of 100 results: comparability report | ≤ 2 s |
+| profile installation (three profiles) | ≤ 5 s |
+
+### 9.5 Changing capabilities and contextual roles (DX-3)
+- **Capabilities** are concepts of the subtype `capability` (e.g. *can-drive*, *can-sample*). A particular holds one
+  through `classified-as(holder, capability, context?)`, attested over an interval: a rover gains *can-sample* when its
+  arm is fitted and loses it when the arm fails. Changes are new attestations or supersessions, and disputes and
+  perspectives work exactly as for any classification.
+- **Roles** are `social-role` concepts held through `classified-as(holder, role, context)`, where the context is the
+  organisation, site or activity in which the role applies.
+- **Distinction:** a role is a position assigned within a context (site manager); a capability is what something can
+  do (drive). Agency is the category `agent`. All three change without changing identity, because they are
+  classifications, never kinds.
+- **Not core:** conditions on capabilities ("only when charged"). If needed, they are expressed as the context or as
+  separate content in a profile, once a scenario requires it.
+
+### 9.6 Spatial and transformation conventions (Stage A)
+- **Frames:** right-handed Cartesian; lengths in metres; angles in radians.
+- **Rotations:** unit quaternions (w, x, y, z), Hamilton convention, active rotation, normalised on write. A norm more
+  than 1e-9 from 1 is rejected.
+- **Transform semantics:** `frame-transform(parent: P, child: C)` gives the pose of C's origin and axes expressed in P,
+  so a point p_C expressed in C is p_P = R·p_C + t, with (t, R) owned by the transform.
+- **Composition:** T_AC = T_AB ∘ T_BC (R_AC = R_AB·R_BC, t_AC = R_AB·t_BC + t_AB).
+- **Inverse:** T_CP = (Rᵀ, −Rᵀ·t). Inverse use is computed, never stored.
+- **Uncertainty:** an axis-aligned position range is transformed by mapping its 8 corners and taking their bounding
+  box (conservative). Rotations are treated as exact in Core 0.4.
+- **Time:** a derived pose holds only where every input attestation certainly holds (intersection of intervals); no
+  extrapolation. Its knowledge time is the latest recorded input.
+- **Chains:** the shortest chain found by `frames_reachable`; if several chains exist at t, they must agree within
+  1e-9 m, otherwise DISPUTED.
+- *Unresolved (U-3):* rounding policy for continuous parameters in proposition keys (proposition growth risk).
+
+### 9.7 Unresolved decisions (not resolved by implementation)
+| # | Question | Needed by |
+|---|---|---|
+| U-1 | Result record: an information object linked to future observations, or later migrated to v0.2's `observation` type? | Stage C |
+| U-2 | Status of a lifted occurrence-level causal answer: original status or INFERRED? | Stage B |
+| U-3 | Rounding or quantisation of continuous parameters in keys (positions, ranges) | Stage A |
+| U-4 | Where profile metadata lives: A0.3 stores functional-slot declarations as data in TypeDB (an implementation choice consistent with "TypeDB is the only store"); profile packaging is Stage D | Stage D |
+| U-5 | Whether a subtype of a functional predicate always inherits its slot, or may declare its own | A0.3 implements inheritance by default, with a declaration overriding it; review |
