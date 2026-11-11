@@ -1,8 +1,8 @@
 # Core 0.4 Stage D0: groundwork and profile architecture (LABS-1.022)
 
-**Status (2026-11-11): implemented on `feature/core-0.4-d0-groundwork` (from the review branch at b9fa45a), at the
-review gate. Not merged. No domain profile (D-1 to D-3) is implemented.** Decisions: `stage-d-review.md`, sections 8
-and 8a (D-D-1 to D-D-11, approved with qualifications under LABS-1.022).
+**Status (2026-11-11): merged into `main` under LABS-1.023, after atomic installation was added. No domain profile is
+part of D0.** Decisions: `stage-d-review.md`, sections 8 and 8a (D-D-1 to D-D-11, approved with qualifications under
+LABS-1.022).
 
 ## 1. Subtype-aware generic APIs (D-D-10)
 **Cause.** Three generic queries compared a content's stored type label with a core label, so a profile subtype was
