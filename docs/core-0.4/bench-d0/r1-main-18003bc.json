@@ -1,0 +1,107 @@
+{
+ "checkout": "wm-main-c",
+ "extended": true,
+ "dynamics": true,
+ "qualities": true,
+ "fixture_profiles": false,
+ "build_seconds": 3.53,
+ "database_bytes": 654812,
+ "questions": {
+  "poses(gear-in)": {
+   "median_ms": 21.27,
+   "queries": 14
+  },
+  "composition(gbx-100)": {
+   "median_ms": 351.89,
+   "queries": 218
+  },
+  "contents(workshop)": {
+   "median_ms": 206.49,
+   "queries": 114
+  },
+  "materials(cover)": {
+   "median_ms": 58.23,
+   "queries": 42
+  },
+  "frame_info(f-bench)": {
+   "median_ms": 26.4,
+   "queries": 16
+  },
+  "facts_about(housing)": {
+   "median_ms": 27.99,
+   "queries": 14
+  },
+  "where(gbx-100, f-workshop)": {
+   "median_ms": 127.93,
+   "queries": 39
+  },
+  "where(gear-in, f-workshop)": {
+   "median_ms": 53.92,
+   "queries": 33
+  },
+  "where(bench-1, f-gearbox)": {
+   "median_ms": 86.42,
+   "queries": 40
+  },
+  "transform_between(f-gearbox, f-workshop)": {
+   "median_ms": 11.25,
+   "queries": 7
+  },
+  "effects_of(ev-worklog-replacement)": {
+   "median_ms": 483.37,
+   "queries": 197
+  },
+  "changes(gbx-100, repair)": {
+   "median_ms": 196.38,
+   "queries": 71
+  },
+  "causes_of(o-test-run)": {
+   "median_ms": 202.46,
+   "queries": 129
+  },
+  "explain(operational)": {
+   "median_ms": 405.62,
+   "queries": 284
+  },
+  "process_steps(o-repair)": {
+   "median_ms": 199.71,
+   "queries": 144
+  },
+  "actions_of(technician)": {
+   "median_ms": 134.1,
+   "queries": 69
+  },
+  "value_of(condition)": {
+   "median_ms": 42.72,
+   "queries": 23
+  },
+  "measurements(housing, mass)": {
+   "median_ms": 137.26,
+   "queries": 100
+  },
+  "compare_measurements(housing, mass)": {
+   "median_ms": 129.71,
+   "queries": 100
+  },
+  "capable(technician, workshop)": {
+   "median_ms": 27.11,
+   "queries": 14
+  },
+  "is_agent(apprentice)": {
+   "median_ms": 17.08,
+   "queries": 14
+  },
+  "roles_of(apprentice)": {
+   "median_ms": 23.25,
+   "queries": 16
+  },
+  "check_action(worklog)": {
+   "median_ms": 148.92,
+   "queries": 105
+  },
+  "account_attestations(worklog)": {
+   "median_ms": 29.1,
+   "queries": 19
+  }
+ }
+}

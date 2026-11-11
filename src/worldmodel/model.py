@@ -22,6 +22,7 @@ from .keys import as_ids, check_new_id, proposition_key
 from .dynamics import DynamicsMixin
 from .qualities import QualitiesMixin
 from .agency import AgencyMixin
+from .profiles import ProfileMixin
 from .physical import PhysicalMixin
 from .spatial import params_compatible
 from .semantics import (Answer, AttestationRecord, Identity, Replacement, Status, Window, acceptance_state,
@@ -108,7 +109,7 @@ class _Batch:
         self.tx, self.recorded_at = tx, recorded_at
 
 
-class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin):
+class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, ProfileMixin):
     def __init__(self, driver, database, clock=utcnow, selective=True):
         self.driver, self.database, self.clock = driver, database, clock
         self.selective = selective
@@ -218,6 +219,11 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin):
 
     def is_a(self, label, ancestor):
         return ancestor in self.ancestors(label)
+
+    def is_a_any(self, label, types):
+        """Whether `label` is any of `types` or a subtype of one, at any depth (D-D-10: generic APIs recognise profile
+        subtypes). The one test generic code uses for a content's type; never compare labels directly."""
+        return any(self.is_a(label, t) for t in types)
 
     def core_type(self, label):
         """The nearest core (foundational) type of a label: itself for a core type, else its nearest core supertype."""

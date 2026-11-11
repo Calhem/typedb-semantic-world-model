@@ -1,0 +1,6 @@
+# TEST FIXTURE (LABS-1.022): a minimal organisation profile for installation and subtype tests. Not the D-2 profile.
+define
+entity person sub physical-object;
+entity organisation sub social-object;
+relation office-holding sub classified-as;                                     # single-holder offices (slot, as data)
+relation acting-appointment sub office-holding;                                # a deeper subtype; inherits the slot
