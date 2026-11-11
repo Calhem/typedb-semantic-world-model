@@ -1,0 +1,216 @@
+{
+ "P1 coexistence": {
+  "installed": {
+   "mechanical": [
+    "connected-to",
+    "replacement"
+   ],
+   "organisation": [
+    "authorisation",
+    "employment",
+    "exclusive-office",
+    "office-holding",
+    "official-act",
+    "organisation",
+    "person"
+   ],
+   "laboratory-draft": [
+    "calibration-of",
+    "sample",
+    "sampling"
+   ]
+  },
+  "profiles": {
+   "laboratory-draft": "0.0-draft",
+   "mechanical": "0.1",
+   "organisation": "0.1"
+  },
+  "D0 laboratory test fixture alongside the draft": "refused: profile 'laboratory-fixture' refused: redeclares existing types ['sample', 'sampling'] (core or another profile's; profiles never extend them)"
+ },
+ "P2 core answers unchanged after installing three profiles": true,
+ "P3 sampling and provenance": {
+  "account roles": {
+   "sampled": [
+    "sample-12"
+   ],
+   "sampler": [
+    "ana"
+   ],
+   "product": [
+    "s12-a"
+   ]
+  },
+  "events naming the specimen": [
+   "ev-sampling-1"
+  ],
+  "occurrence o-sampling-1 status": "not established",
+  "claimed effects (claim, state after)": [
+   [
+    "constitution",
+    "accepted",
+    true
+   ],
+   [
+    "existence",
+    "accepted",
+    null
+   ]
+  ],
+  "s12-a existence (no attestation of it)": [
+   "NOT_YET_KNOWN",
+   null
+  ],
+  "constitution chain (raw)": [
+   [
+    "s12-a",
+    "sample-12"
+   ],
+   [
+    "s12-b",
+    "s12-a"
+   ]
+  ],
+  "s12-a where, 16:00": [
+   "ASSERTED",
+   [
+    "freezer-2"
+   ]
+  ]
+ },
+ "P4 calibration at each activity's start (b3 certificate ends at 10:00)": {
+  "m-ana-b3-corr-result": {
+   "instrument": "balance-b3",
+   "stated calibration ref": "CAL-B3-2026-10",
+   "calibration at activity start": [
+    "ASSERTED",
+    true
+   ],
+   "usable": true
+  },
+  "m-ana-b3-late-result": {
+   "instrument": "balance-b3",
+   "stated calibration ref": "CAL-B3-2026-10",
+   "calibration at activity start": [
+    "ASSERTED",
+    false
+   ],
+   "usable": true
+  },
+  "m-ana-b3-result": {
+   "instrument": "balance-b3",
+   "stated calibration ref": "CAL-B3-2026-10",
+   "calibration at activity start": [
+    "ASSERTED",
+    true
+   ],
+   "usable": false
+  },
+  "m-ana-b9-result": {
+   "instrument": "balance-b9",
+   "stated calibration ref": null,
+   "calibration at activity start": "no certificate recorded",
+   "usable": true
+  },
+  "m-bo-b7-result": {
+   "instrument": "balance-b7",
+   "stated calibration ref": "CAL-B7-2026-09",
+   "calibration at activity start": [
+    "ASSERTED",
+    true
+   ],
+   "usable": true
+  },
+  "m-bo-k3-result": {
+   "instrument": "balance-b7",
+   "stated calibration ref": null,
+   "calibration at activity start": [
+    "ASSERTED",
+    true
+   ],
+   "usable": true
+  }
+ },
+ "P4 the measurement after expiry is still compared (not invalidated)": true,
+ "P5 b7 calibration disputed (qa's denial accepted)": {
+  "calibration at 10:00": [
+   "DISPUTED",
+   null
+  ],
+  "qa's own perspective": [
+   "ASSERTED",
+   false
+  ],
+  "bo's b7 result still usable": [
+   true
+  ]
+ },
+ "P6 activity / record / proposition / judgement": {
+  "activity (an event description)": [
+   "m-bo-b7-activity",
+   "event"
+  ],
+  "result record (an information object)": [
+   "m-bo-b7-result",
+   3490.0,
+   "u-g"
+  ],
+  "proposition (content, SI)": "has-quality|bearer=sample-12|quality=q-mass|unit=u-kg|coverage-level=0.954499736104|lower=3.46|upper=3.52",
+  "judgement, system": [
+   "accepted"
+  ],
+  "judgement, lab-2": [
+   "unreviewed"
+  ]
+ },
+ "P7 competing interpretations": {
+  "hydrated (ana hypothesises; accepted)": [
+   "UNKNOWN",
+   null
+  ],
+  "anhydrous (lab-2 asserts; unreviewed)": [
+   "UNKNOWN",
+   null
+  ],
+  "anhydrous, lab-2's perspective": [
+   "INFERRED",
+   true
+  ],
+  "interpretations resting on result records (raw)": [
+   [
+    "m-ana-b9-result",
+    "hydrated",
+    "ana",
+    "hypothesises"
+   ],
+   [
+    "m-lab2-result",
+    "anhydrous",
+    "lab-2",
+    "asserts"
+   ]
+  ],
+  "both accepted: anhydrous": [
+   "INFERRED",
+   true
+  ]
+ },
+ "P8 experiment steps": [
+  [
+   "o-sampling-1",
+   [
+    "ev-sampling-1"
+   ],
+   [
+    "ana"
+   ]
+  ]
+ ],
+ "DI-6 safety officers in the plan, day 12": {
+  "per holder": {
+   "dan": "ASSERTED",
+   "eve": "ASSERTED",
+   "fay": "STIPULATED"
+  },
+  "overall": "ASSERTED"
+ }
+}
