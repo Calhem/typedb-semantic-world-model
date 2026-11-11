@@ -1,7 +1,8 @@
 # Core 0.4 Stage D: domain generalisation review (LABS-1.021)
 
-**Status (2026-11-11): design review only, at the review gate. Nothing is implemented: `schema/` and `src/` are
-unchanged.** Branch `feature/core-0.4-d-review` from `main` at 18003bc.
+**Status (2026-11-11): reviewed; decisions D-D-1 to D-D-11 approved under LABS-1.022 with the qualifications in
+section 8a.** Review branch `feature/core-0.4-d-review` (b9fa45a) from `main` at 18003bc. Groundwork (D-0) on
+`feature/core-0.4-d0-groundwork`; domain implementations (D-1 to D-3) not yet authorised.
 
 The evidence in this review comes from three sources:
 - the exploratory profile drafts (`docs/core-0.4/stage-d/drafts/*.tql`);
@@ -233,7 +234,7 @@ Deferred (not in Stage D):
 - context containment, if D-D-4 is declined.
 
 ## 8. Decisions requiring approval
-| # | Decision | Recommendation |
+| # | Decision | Recommendation (all approved, LABS-1.022; see 8a) |
 |---|---|---|
 | D-D-1 | Stage D needs **no foundational change**. Profiles may add only sortals, proposition and event subtypes, roles, concepts and slot metadata | approve |
 | D-D-2 | Add the dependency `kind` to core `depends-on` (v0.2 §3.4 conformance; additive) and a kind filter to `dependencies()` | approve |
@@ -246,6 +247,19 @@ Deferred (not in Stage D):
 | D-D-9 | Profile packaging: one schema file plus a Python registry of slots and seed vocabulary per profile; profiles are never uninstalled; labels must not collide | approve (resolves U-4) |
 | D-D-10 | Fix the G4 exact-label defect as Stage D groundwork, not as a separate Stage C patch | approve |
 | D-D-11 | `component` and `instrument` are categories or roles, not sortals (deviation from the plan's Stage D table) | approve |
+
+## 8a. Rulings (LABS-1.022)
+All of D-D-1 to D-D-11 are **approved**. Qualifications, binding on the implementation:
+
+| # | Qualification |
+|---|---|
+| D-D-2 | Dependency kinds must preserve historical untyped dependencies as **unspecified**. A `depends-on` with no kind is never read as functional, or as any other kind. A kind filter excludes it, and reports it apart as "kind unspecified" |
+| D-D-3 | **Authority, capability, role occupancy and action remain distinct.** An authorisation claim does not establish that its grantor was entitled to confer the power. Whether the grantor held authority to grant is a separate question, about separate content |
+| D-D-5 | Single-holder offices are **exclusive within their defined organisational and temporal scope**. Conflicting appointments remain representable and are **judged** (DISPUTED), not rejected at write time |
+| D-D-6 | Event-role specialisation at most once per event type is a **TypeDB modelling constraint** (3.14.1 role cardinality), not an ontological universal |
+| D-D-9 | Profiles must be **independently installable and composable, without implicit cross-profile dependencies** |
+| D-D-10 | **Generic APIs must recognise profile subtypes** |
+| D-D-1, 4, 7, 8, 11 | approved as recommended |
 
 ## 9. Risks
 | Kind | Risk | Mitigation |
