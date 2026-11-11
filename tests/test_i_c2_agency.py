@@ -197,6 +197,23 @@ def test_a_capability_does_not_establish_an_action(shop):
     assert wm.actions_of(w, "inspector", gearbox.AFTER, gearbox.AFTER.replace(hour=23)) == []
 
 
+def test_the_stage_c_extension_composes_with_every_earlier_one(driver):
+    """The full reference chain A1 -> A2 -> B1 -> B2 -> C builds (the apprentice is shared with B2) and answers."""
+    name = f"wm-test-{uuid.uuid4().hex[:10]}"
+    wm = WorldModel.create(name, driver=driver, modules=QUALITY_MODULES, clock=FakeClock())
+    try:
+        ids = gearbox.extend_causality(wm, gearbox.extend_dynamics(wm, gearbox.extend_spatial(wm, gearbox.build(wm))))
+        ids = gearbox.extend_qualities_agency(wm, ids)
+        w = ids["world"]
+        assert wm.capable(w, "apprentice", "can-replace-bearing", gearbox.T1, "workshop")["judgement"] == \
+            "not established"
+        assert wm.is_agent(w, "apprentice", gearbox.T1)["holds"] is True
+        c = wm.compare_measurements(w, "housing", "mass", gearbox.AFTER)
+        assert [p["relation"] for p in c["pairs"]] == ["possibly compatible"] and len(c["statements"]) == 2
+    finally:
+        driver.databases.get(name).delete()
+
+
 # ---- worlds and perspectives --------------------------------------------------------------------------------------------
 def test_hypothetical_grants_stay_in_their_world(lab_world, shop):
     wm, w, ids = lab_world

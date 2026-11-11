@@ -389,8 +389,13 @@ def extend_qualities_agency(wm, ids):
     wm._set_attributes("kg", "unit", [("dimension", "mass"), ("si-factor", 1.0), ("si-offset", 0.0)])
     wm._set_attributes("mass", "quality-kind", [("dimension", "mass")])
     g = wm.define_unit("gram", "mass", 0.001, id="g")
+    from .. import typeql as q
+    from ..model import READ
+    with wm.driver.transaction(wm.database, READ) as tx:              # extend_causality already adds the apprentice
+        present = {i for i in ("scale-9", "apprentice") if q.rows(tx, "match $x has wm-id == $id;", {"id": i})}
     for i, n in (("scale-9", "Scale 9"), ("apprentice", "Apprentice J")):
-        wm.add_entity("physical-object", n, id=i)
+        if i not in present:
+            wm.add_entity("physical-object", n, id=i)
     for c in ("measurement", "agent", "action", "fitting"):
         if not wm.find(c):
             wm.add_entity("category", c, id=c)

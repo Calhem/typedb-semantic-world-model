@@ -23,7 +23,10 @@ ap.add_argument("checkout")
 ap.add_argument("--rounds", type=int, default=5)
 ap.add_argument("--extended", action="store_true", help="also build the A2 extensions (only for an A2 checkout)")
 ap.add_argument("--dynamics", action="store_true", help="also build the Stage B extensions and time B questions")
+ap.add_argument("--qualities", action="store_true", help="also build the Stage C extension and time C questions "
+                "(implies --dynamics; only for a Stage C checkout)")
 a = ap.parse_args()
+a.dynamics = a.dynamics or a.qualities
 sys.path.insert(0, str(Path(a.checkout).resolve() / "src"))
 import worldmodel.typeql as typeql  # noqa: E402
 import worldmodel  # noqa: E402
@@ -42,13 +45,16 @@ def counted(tx, body, params=None):
 typeql.run = counted
 name = f"wm-phys-{uuid.uuid4().hex[:8]}"
 s = time.perf_counter()
-wm = WorldModel.create(name, modules=worldmodel.DYNAMICS_MODULES if a.dynamics else PHYSICAL_MODULES)
+wm = WorldModel.create(name, modules=worldmodel.QUALITY_MODULES if a.qualities else
+                       worldmodel.DYNAMICS_MODULES if a.dynamics else PHYSICAL_MODULES)
 try:
     ids = g.build(wm)
     if a.extended:
         ids = g.extend_spatial(wm, ids)
     if a.dynamics:
         ids = g.extend_causality(wm, g.extend_dynamics(wm, ids))
+    if a.qualities:
+        ids = g.extend_qualities_agency(wm, ids)
     build_s = time.perf_counter() - s
     w = ids["world"]
     questions = {
@@ -77,6 +83,17 @@ try:
             "actions_of(technician)": lambda: wm.actions_of(w, "technician"),
             "value_of(condition)": lambda: wm.value_of(w, "has-quality", cond, g.AFTER),
         })
+    if a.qualities:
+        questions.update({
+            "measurements(housing, mass)": lambda: wm.measurements(w, "housing", "mass", g.AFTER),
+            "compare_measurements(housing, mass)": lambda: wm.compare_measurements(w, "housing", "mass", g.AFTER),
+            "capable(technician, workshop)": lambda: wm.capable(w, "technician", "can-replace-bearing", g.T1,
+                                                                 "workshop"),
+            "is_agent(apprentice)": lambda: wm.is_agent(w, "apprentice", g.T1),
+            "roles_of(apprentice)": lambda: wm.roles_of(w, "apprentice", g.T1),
+            "check_action(worklog)": lambda: wm.check_action(w, "ev-worklog-replacement", "can-replace-bearing",
+                                                             "workshop"),
+        })
     times = {k: [] for k in questions}
     queries = {}
     for _ in range(a.rounds):
@@ -89,7 +106,7 @@ try:
     size = subprocess.run(["docker", "exec", "wm-typedb", "du", "-sb", f"/var/lib/typedb/data/{name}"],
                           capture_output=True, text=True)
     print(json.dumps({"checkout": Path(a.checkout).resolve().name, "extended": a.extended, "dynamics": a.dynamics,
-                      "build_seconds": round(build_s, 2),
+                      "qualities": a.qualities, "build_seconds": round(build_s, 2),
                       "database_bytes": int(size.stdout.split()[0]) if size.returncode == 0 else None,
                       "questions": {k: {"median_ms": round(statistics.median(v) * 1000, 2), "queries": queries[k]}
                                     for k, v in times.items()}}, indent=1))

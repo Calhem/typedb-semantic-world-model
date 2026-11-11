@@ -28,6 +28,7 @@ Measurement, observation, assertion and acceptance stay separate:
 | # | Decision | Status |
 |---|---|---|
 | D-C-1 | Raw value, raw unit (`expressed-in`), standard uncertainty, coverage factor, conditions and calibration reference are intrinsic attributes of the result record; conversions are derived; the reported content is in SI | **provisionally approved (LABS-1.017)** |
+| D-C-3 | Capability reporting: `capable()` keeps the core judgement (`holds`, `status`, no new statuses) and adds `judgement` (established, denied, expired, not yet effective, disputed, not established); an ended holding is `holds False` (expired), as `holds()` treats any ended fact | **implemented (LABS-1.019), for review** |
 | D-C-2 | Each measurement-backed attestation names its own result record(s) through the structural link `rests-on(attestation, record)` (Option A below). No matching by source, time or content; written atomically with the attestation; immutable; no one-to-one constraint; it records evidential dependency, not truth or occurrence; `produced` and `reports` keep their meanings | **approved (LABS-1.018), implemented** |
 
 ## C1 (implemented)
@@ -191,3 +192,31 @@ an open question, not done (scope).
 `scripts/show_qualities_agency.py`, output in `docs/core-0.4/qualities-agency-output.md`. The same calls (`compare_measurements`,
 `convert`, `capable`, `is_agent`, `roles_of`, `check_action`, perspectives, `as_of`, hypothetical worlds) run against
 both worlds, followed by raw TypeQL over `rests-on`, `produced` and the capability, role and agent grants.
+
+## Validation (LABS-1.019)
+- **Tests:** 271 in the full suite, passed twice on each query path (selective and full load), with no test
+  databases left behind. Stage C: `test_i_c1_measurements.py` (10), `test_i_c1b_provenance.py` (11) and
+  `test_i_c2_agency.py` (18). The last includes a build of the full chain A1 → A2 → B1 → B2 → C, which found and fixed
+  a clash: the `apprentice` id was shared with B2.
+- **Performance and storage:** `docs/core-0.4/bench-c/README.md`. In short:
+  - no existing-query regression from Stage C code (identical query counts, latencies within noise);
+  - the larger world makes some unchanged queries slower (more data per query);
+  - the new measurement questions take about 100 queries, because records are loaded one at a time;
+  - the Stage C extension adds +8.9% storage.
+
+## Limitations and open questions
+1. **`measure()` is not one transaction.**
+   - Atomic: the content attestation, record, unit link and `rests-on`.
+   - Separate: the activity account (before) and the `produced` and `reports` attestations (after).
+   - So a failure can leave an activity description with no result.
+   - Should `measure()` be fully atomic? That needs a multi-statement write path.
+2. **An expired capability is `holds False`.** This is consistent with `holds()`, which treats an attested end as no
+   longer holding. Should "no longer held" be distinguished more strongly from a denial than by `judgement`?
+3. **"Held only elsewhere" is UNKNOWN; "nothing at all" is NOT_YET_KNOWN.** Both are judged "not established". Is that
+   distinction wanted?
+4. **The measurement read path is N+1:** 100 queries for the housing's 4 values, 2 of them with records. Batching is deferred to a performance pass.
+5. **Capabilities are not checked against actions.** `check_action` reports, never enforces. DX-5 stays in report
+   mode, and `agency_report` is diagnostic only.
+6. **Conditions are compared as exact strings.** No condition ontology (tolerances, units in conditions).
+7. **A record without an attestation is not reported as a measurement.** `reports(result, content)` alone does not
+   create one, as in C1.
