@@ -29,7 +29,10 @@ ap.add_argument("--fixture-profiles", action="store_true", help="install the thr
                 "core, before building (LABS-1.022; only for a Stage D0 checkout)")
 ap.add_argument("--mechanical", action="store_true", help="also install the mechanical profile, build its gearbox "
                 "extension and time D-1 questions (implies --qualities; only for a Stage D-1 checkout)")
+ap.add_argument("--organisation", action="store_true", help="also install the organisation profile, build the Acme "
+                "world in the same database and time D-2 reports (implies --mechanical; Stage D-2 checkout)")
 a = ap.parse_args()
+a.mechanical = a.mechanical or a.organisation
 a.qualities = a.qualities or a.mechanical
 a.dynamics = a.dynamics or a.qualities
 sys.path.insert(0, str(Path(a.checkout).resolve() / "src"))
@@ -69,6 +72,10 @@ try:
     if a.mechanical:
         wm.install_profile("mechanical")
         ids = g.extend_mechanical(wm, ids)
+    if a.organisation:
+        from worldmodel.examples import organisation as ex
+        wm.install_profile("organisation")
+        org = ex.build_organisation(wm)
     build_s = time.perf_counter() - s
     w = ids["world"]
     questions = {
@@ -118,6 +125,16 @@ try:
             "connections(input-shaft)": lambda: mech.connections(wm, w, "input-shaft", g.AFTER),
             "replacement(ev-cmms-replacement)": lambda: mech.replacement(wm, w, "ev-cmms-replacement", g.AFTER),
         })
+    if a.organisation:
+        from worldmodel import organisation as o
+        ow, OT = org["world"], ex.T
+        questions.update({
+            "office_holders(site-manager, day 9)": lambda: o.office_holders(wm, ow, "site-manager", "depot-7", OT(9)),
+            "offices_of(cal, day 9)": lambda: o.offices_of(wm, ow, "cal", OT(9)),
+            "authorised(bea)": lambda: o.authorised(wm, ow, "bea", "can-sign-off", "depot-7", OT(5)),
+            "official_act(ev-cal-signs)": lambda: o.official_act(wm, ow, "ev-cal-signs", power="can-sign-off"),
+            "employment(acme)": lambda: o.employment(wm, ow, "acme", OT(5)),
+        })
     times = {k: [] for k in questions}
     queries = {}
     for _ in range(a.rounds):
@@ -131,7 +148,7 @@ try:
                           capture_output=True, text=True)
     print(json.dumps({"checkout": Path(a.checkout).resolve().name, "extended": a.extended, "dynamics": a.dynamics,
                       "qualities": a.qualities, "fixture_profiles": a.fixture_profiles,
-                      "mechanical": a.mechanical, "build_seconds": round(build_s, 2),
+                      "mechanical": a.mechanical, "organisation": a.organisation, "build_seconds": round(build_s, 2),
                       "database_bytes": int(size.stdout.split()[0]) if size.returncode == 0 else None,
                       "questions": {k: {"median_ms": round(statistics.median(v) * 1000, 2), "queries": queries[k]}
                                     for k, v in times.items()}}, indent=1))

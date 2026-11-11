@@ -1,0 +1,148 @@
+{
+ "P1 install": {
+  "with mechanical": [
+   [
+    "connected-to",
+    "replacement"
+   ],
+   [
+    "authorisation",
+    "employment",
+    "office-holding",
+    "official-act",
+    "organisation",
+    "person"
+   ]
+  ],
+  "profiles": {
+   "organisation-draft": "0.0-draft",
+   "mechanical": "0.1"
+  }
+ },
+ "P2 who holds the office": {
+  "day 5": [
+   "ASSERTED",
+   [
+    "bea"
+   ]
+  ],
+  "day 9": [
+   "DISPUTED",
+   [
+    "bea",
+    "cal"
+   ]
+  ],
+  "day 12": [
+   "ASSERTED",
+   [
+    "cal"
+   ]
+  ]
+ },
+ "P2 as known before cal's appointment, day 9": [
+  "ASSERTED",
+  [
+   "bea"
+  ]
+ ],
+ "P3 roles_of during the overlap (functional conflict)": [
+  [
+   "site-manager",
+   "depot-7",
+   "DISPUTED"
+  ]
+ ],
+ "P5 authorisation": {
+  "judged (system)": [
+   "ASSERTED",
+   true
+  ],
+  "raw: grantor vs reporting source": [
+   {
+    "holder": "bea",
+    "reported by": "hr",
+    "grantor": "acme"
+   }
+  ],
+  "acme's own authority to grant (asked, not inferred)": [
+   "NOT_YET_KNOWN",
+   null
+  ]
+ },
+ "P6 office vs authority, day 12": {
+  "cal holds the office": [
+   "ASSERTED",
+   true
+  ],
+  "cal authorised": [
+   "NOT_YET_KNOWN",
+   null
+  ],
+  "dan holds the office": [
+   "INFERRED",
+   false
+  ],
+  "dan authorised": [
+   "ASSERTED",
+   true
+  ]
+ },
+ "P7 capable(bea, can-sign-off, depot-7): classification only": "not established",
+ "P8 official act": {
+  "content roles": {
+   "office": [
+    "site-manager"
+   ],
+   "official": [
+    "bea"
+   ],
+   "office-context": [
+    "depot-7"
+   ]
+  },
+  "account accepted": true,
+  "office at its time": [
+   "ASSERTED",
+   [
+    "bea"
+   ]
+  ],
+  "authority at its time": [
+   "ASSERTED",
+   true
+  ],
+  "occurrences claimed": []
+ },
+ "P4 bea's appointment denied by the auditor, accepted by the system, day 5": {
+  "holds": [
+   "DISPUTED",
+   null
+  ],
+  "value_of": [
+   "DISPUTED",
+   [
+    "bea"
+   ]
+  ],
+  "roles_of(bea)": [],
+  "auditor's perspective": [
+   "ASSERTED",
+   false
+  ]
+ },
+ "P10 hypothetical reorganisation, day 12": {
+  "plan": [
+   "STIPULATED",
+   [
+    "dan"
+   ]
+  ],
+  "actual": [
+   "ASSERTED",
+   [
+    "cal"
+   ]
+  ]
+ }
+}

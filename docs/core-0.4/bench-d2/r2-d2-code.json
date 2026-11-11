@@ -1,0 +1,125 @@
+{
+ "checkout": "wm-inc2",
+ "extended": true,
+ "dynamics": true,
+ "qualities": true,
+ "fixture_profiles": false,
+ "mechanical": true,
+ "organisation": false,
+ "build_seconds": 6.32,
+ "database_bytes": 720346,
+ "questions": {
+  "poses(gear-in)": {
+   "median_ms": 31.45,
+   "queries": 14
+  },
+  "composition(gbx-100)": {
+   "median_ms": 668.04,
+   "queries": 218
+  },
+  "contents(workshop)": {
+   "median_ms": 280.02,
+   "queries": 114
+  },
+  "materials(cover)": {
+   "median_ms": 98.03,
+   "queries": 42
+  },
+  "frame_info(f-bench)": {
+   "median_ms": 34.22,
+   "queries": 16
+  },
+  "facts_about(housing)": {
+   "median_ms": 37.58,
+   "queries": 14
+  },
+  "where(gbx-100, f-workshop)": {
+   "median_ms": 201.37,
+   "queries": 39
+  },
+  "where(gear-in, f-workshop)": {
+   "median_ms": 74.7,
+   "queries": 33
+  },
+  "where(bench-1, f-gearbox)": {
+   "median_ms": 88.27,
+   "queries": 40
+  },
+  "transform_between(f-gearbox, f-workshop)": {
+   "median_ms": 14.33,
+   "queries": 7
+  },
+  "effects_of(ev-worklog-replacement)": {
+   "median_ms": 459.73,
+   "queries": 197
+  },
+  "changes(gbx-100, repair)": {
+   "median_ms": 305.44,
+   "queries": 71
+  },
+  "causes_of(o-test-run)": {
+   "median_ms": 356.0,
+   "queries": 129
+  },
+  "explain(operational)": {
+   "median_ms": 617.83,
+   "queries": 284
+  },
+  "process_steps(o-repair)": {
+   "median_ms": 320.07,
+   "queries": 153
+  },
+  "actions_of(technician)": {
+   "median_ms": 171.57,
+   "queries": 73
+  },
+  "value_of(condition)": {
+   "median_ms": 56.53,
+   "queries": 23
+  },
+  "measurements(housing, mass)": {
+   "median_ms": 194.7,
+   "queries": 100
+  },
+  "compare_measurements(housing, mass)": {
+   "median_ms": 225.23,
+   "queries": 100
+  },
+  "capable(technician, workshop)": {
+   "median_ms": 32.54,
+   "queries": 14
+  },
+  "is_agent(apprentice)": {
+   "median_ms": 21.76,
+   "queries": 14
+  },
+  "roles_of(apprentice)": {
+   "median_ms": 28.62,
+   "queries": 16
+  },
+  "check_action(worklog)": {
+   "median_ms": 210.02,
+   "queries": 109
+  },
+  "account_attestations(worklog)": {
+   "median_ms": 34.77,
+   "queries": 19
+  },
+  "direct_dependencies(output-shaft)": {
+   "median_ms": 23.88,
+   "queries": 14
+  },
+  "dependencies(output-shaft, functional)": {
+   "median_ms": 42.68,
+   "queries": 5
+  },
+  "connections(input-shaft)": {
+   "median_ms": 26.29,
+   "queries": 14
+  },
+  "replacement(ev-cmms-replacement)": {
+   "median_ms": 255.43,
+   "queries": 110
+  }
+ }
+}

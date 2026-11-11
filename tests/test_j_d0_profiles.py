@@ -71,7 +71,7 @@ def test_all_profiles_install_together_in_any_order(make):
         two.install_profile(p)
     assert snapshot(one) == snapshot(two)                                                 # same schema ...
     assert one.slots() == two.slots() and one.profiles() == two.profiles()                # ... slots, records
-    for label in ("acting-appointment", "protocol-step-of", "scheduled-maintenance-kind", "core-sample", "sampling"):
+    for label in ("acting-post-holding", "protocol-step-of", "scheduled-maintenance-kind", "core-sample", "sampling"):
         assert one.ancestors(label) == two.ancestors(label)                               # ... and lattice
 
 
@@ -113,9 +113,9 @@ def test_collisions_between_profiles_are_refused_not_merged(make, tmp_path):
     wm = make()
     wm.install_profile(F.ORGANISATION)
     f = tmp_path / "hr.tql"
-    f.write_text("define entity person sub physical-object; entity contractor sub physical-object;")
+    f.write_text("define entity staff-member sub physical-object; entity contractor sub physical-object;")
     before = snapshot(wm)
-    with pytest.raises(ProfileError, match="redeclares existing types \\['person'\\]"):
+    with pytest.raises(ProfileError, match="redeclares existing types \\['staff-member'\\]"):
         wm.install_profile(Profile("hr", "1", (str(f),)))
     assert snapshot(wm) == before and set(wm.profiles()) == {"organisation-fixture"}
 
@@ -172,8 +172,8 @@ def world(driver):
         for p in F.ALL:
             wm.install_profile(p)
         w = wm.create_world("w", id="w")
-        wm.add_entity("person", "Bea", id="bea")
-        wm.add_entity("organisation", "Acme", id="acme")
+        wm.add_entity("staff-member", "Bea", id="bea")
+        wm.add_entity("company", "Acme", id="acme")
         wm.add_entity("place", "Depot 7", id="depot-7")
         for r in ("analyst", "deputy"):
             wm.add_entity("social-role", r, id=r)
@@ -181,10 +181,10 @@ def world(driver):
         ids = {"w": w, "site": site}
         ids["analyst"] = wm.attest(w, "classified-as", {"classified": "bea", "class": "analyst", "context": "depot-7"},
                                    start=T(1), until_superseded=True)                       # a core classification
-        ids["office"] = wm.attest(w, "office-holding", {"classified": "bea", "class": site, "context": "depot-7"},
+        ids["office"] = wm.attest(w, "post-holding", {"classified": "bea", "class": site, "context": "depot-7"},
                                   start=T(2), end=T(8))                                      # a profile subtype
         known = wm.clock.now
-        ids["acting"] = wm.attest(w, "acting-appointment", {"classified": "bea", "class": "deputy",
+        ids["acting"] = wm.attest(w, "acting-post-holding", {"classified": "bea", "class": "deputy",
                                                              "context": "acme"}, start=T(3), until_superseded=True,
                                   attester="acme")                                           # deeper; acme's claim
         ids["known_before_acting"] = known
@@ -220,7 +220,7 @@ def roles(wm, w, t, **kw):
 
 def test_lattice_handles_deeper_hierarchies(world):
     wm, _ = world
-    assert wm.ancestors("acting-appointment")[:3] == ["acting-appointment", "office-holding", "classified-as"]
+    assert wm.ancestors("acting-post-holding")[:3] == ["acting-post-holding", "post-holding", "classified-as"]
     assert wm.core_type("core-sample") == "physical-object" and wm.core_type("protocol-step-of") == "part-of"
     assert wm.is_a_any("scheduled-maintenance-kind", ("describes", "classified-as"))
     assert not wm.is_a_any("step-of", ("classified-as", "describes"))
@@ -248,14 +248,14 @@ def test_the_office_slot_is_inherited_by_a_deeper_subtype(make):
     wm.install_profile(F.ORGANISATION)
     w = wm.create_world("w", id="w")
     for p in ("bea", "cal"):
-        wm.add_entity("person", p, id=p)
+        wm.add_entity("staff-member", p, id=p)
     wm.add_entity("place", "Depot 7", id="depot-7")
     site = "organisation-fixture:site-manager"
-    wm.attest(w, "office-holding", {"classified": "bea", "class": site, "context": "depot-7"}, start=T(1),
+    wm.attest(w, "post-holding", {"classified": "bea", "class": site, "context": "depot-7"}, start=T(1),
               until_superseded=True)
-    wm.attest(w, "acting-appointment", {"classified": "cal", "class": site, "context": "depot-7"}, start=T(2),
+    wm.attest(w, "acting-post-holding", {"classified": "cal", "class": site, "context": "depot-7"}, start=T(2),
               until_superseded=True)                                       # accepted: the system's own attestations
-    got = wm.value_of(w, "office-holding", {"class": site, "context": "depot-7"}, T(3))
+    got = wm.value_of(w, "post-holding", {"class": site, "context": "depot-7"}, T(3))
     assert (got.status.value, got.values) == ("DISPUTED", ("bea", "cal"))   # judged, not refused at write (D-D-5)
 
 
@@ -322,13 +322,13 @@ def test_a_failure_while_writing_vocabulary_rolls_back_the_schema(make):
     _assert_untouched(wm, before, F.ORGANISATION)
     with wm.driver.transaction(wm.database, READ) as tx:
         from worldmodel import typeql as q
-        assert not q.rows(tx, 'match $s isa functional-slot, has slot-predicate "office-holding";')   # no slot row
+        assert not q.rows(tx, 'match $s isa functional-slot, has slot-predicate "post-holding";')   # no slot row
 
 
 def test_an_invalid_slot_is_refused_before_anything_is_written(make):
     wm = make()
     bad = Profile(F.ORGANISATION.name, "0.0-test", F.ORGANISATION.schema,
-                  slots=(("office-holding", ("class", "nowhere"), "classified"),))
+                  slots=(("post-holding", ("class", "nowhere"), "classified"),))
     before = snapshot(wm)
     with pytest.raises(ProfileError, match="invalid slot"):
         wm.install_profile(bad)

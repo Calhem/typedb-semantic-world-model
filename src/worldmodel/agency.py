@@ -32,16 +32,43 @@ class AgencyMixin:
             attest.setdefault("until_superseded", True)
         return self.attest(world, "classified-as", roles, polarity=polarity, **attest)
 
-    def _holdings(self, world, holder, concept, t, as_of, perspective):
-        """Every classified-as content of `holder` under `concept`, with its context and the perspective's judgement."""
+    def _holding_label(self, entry):
+        """One content's judgement for the perspective: accepted, denied, expired (an accepted holding whose interval
+        ended, with no accepted denial), disputed, not yet effective, or an attestation state (unreviewed...)."""
+        label = self._verdict_label(entry)
+        if label == "denied" and all(x["polarity"] for x in entry["attestations"] if x["acceptance"] == "accepted"):
+            label = "expired"
+        return label
+
+    @staticmethod
+    def _combine(applicable, any_found):
+        """(holds, status, judgement) for a set of applicable holdings, each {"judgement", "status"} (LABS-1.019 cases;
+        shared by capable() and the organisation profile's reports, LABS-1.026). any_found: whether anything at all was
+        found (UNKNOWN rather than NOT_YET_KNOWN when nothing applies)."""
+        labels = {h["judgement"] for h in applicable}
+        if "disputed" in labels or {"accepted", "denied"} <= labels:
+            holds, status = None, Status.DISPUTED
+        elif "accepted" in labels:
+            holds = True
+            status = next(h["status"] for h in applicable if h["judgement"] == "accepted")
+        elif labels & {"denied", "expired"}:
+            holds = False                        # denied, or an accepted holding that has ended (as in holds())
+            status = next(h["status"] for h in applicable if h["judgement"] in ("denied", "expired"))
+        else:
+            holds, status = None, Status.UNKNOWN if any_found else Status.NOT_YET_KNOWN
+        judgement = ("disputed" if status == Status.DISPUTED else "established" if holds else
+                     ("denied" if "denied" in labels else "expired") if holds is False else
+                     "not yet effective" if "not yet effective" in labels else "not established")
+        return holds, status, judgement
+
+    def _holdings(self, world, holder, concept, t, as_of, perspective, types=("classified-as",)):
+        """Every classified-as content (or of `types`) of `holder` under `concept`, with its context and the
+        perspective's judgement."""
         out = []
-        for e in self._claims(world, holder, ("classified-as",), t, as_of, perspective):
+        for e in self._claims(world, holder, types, t, as_of, perspective):
             if holder in e["roles"].get("classified", []) and concept in e["roles"].get("class", []):
                 ctx = e["roles"].get("context", [None])[0]
-                label = self._verdict_label(e)
-                if label == "denied" and all(x["polarity"] for x in e["attestations"] if x["acceptance"] == "accepted"):
-                    label = "expired"            # no accepted denial: an accepted holding whose interval ended before t
-                out.append({"context": ctx, "judgement": label, "status": e["status"],
+                out.append({"context": ctx, "judgement": self._holding_label(e), "status": e["status"],
                             "attestations": e["attestations"]})
         return sorted(out, key=lambda x: (x["context"] or "", x["judgement"]))
 
@@ -61,20 +88,7 @@ class AgencyMixin:
         A capability never establishes an action, and an action never establishes a capability."""
         found = self._holdings(world, holder, capability, t, as_of, perspective)
         applicable = [h for h in found if h["context"] is None or h["context"] == context]
-        labels = {h["judgement"] for h in applicable}
-        if "disputed" in labels or {"accepted", "denied"} <= labels:
-            holds, status = None, Status.DISPUTED
-        elif "accepted" in labels:
-            holds = True
-            status = next(h["status"] for h in applicable if h["judgement"] == "accepted")
-        elif labels & {"denied", "expired"}:
-            holds = False                        # denied, or an accepted holding that has ended (as in holds())
-            status = next(h["status"] for h in applicable if h["judgement"] in ("denied", "expired"))
-        else:
-            holds, status = None, Status.UNKNOWN if found else Status.NOT_YET_KNOWN
-        judgement = ("disputed" if status == Status.DISPUTED else "established" if holds else
-                     ("denied" if "denied" in labels else "expired") if holds is False else
-                     "not yet effective" if "not yet effective" in labels else "not established")
+        holds, status, judgement = self._combine(applicable, bool(found))
         return {"holder": holder, "capability": capability, "context": context, "holds": holds, "status": status,
                 "judgement": judgement,
                 "applicable": applicable,
