@@ -35,12 +35,14 @@ MODULES = {"core": ("0.3.0", ["core/core-0.3.tql"]),
            "core-0.4-a": ("0.4.0-a1", ["core/core-0.4-a.tql"]),     # Stage A1 physical structure (LABS-1.006)
            "core-0.4-a2": ("0.4.0-a2", ["core/core-0.4-a2.tql"]),   # Stage A2 spatial reasoning (LABS-1.007)
            "core-0.4-b": ("0.4.0-b", ["core/core-0.4-b.tql"]),      # Stage B dynamics and causality (LABS-1.010)
-           "core-0.4-c": ("0.4.0-c", ["core/core-0.4-c1.tql", "core/core-0.4-c2.tql"])}     # Stage C qualities and agency (LABS-1.016)
+           "core-0.4-c": ("0.4.0-c", ["core/core-0.4-c1.tql", "core/core-0.4-c2.tql"]),     # Stage C qualities and agency (LABS-1.016)
+           "core-0.4-d": ("0.4.0-d", ["core/core-0.4-d.tql"])}      # Stage D dependency kinds (LABS-1.023, D-D-2)
 DEFAULT_MODULES = ("core", "core-0.4-a0")
 PHYSICAL_MODULES = ("core", "core-0.4-a0", "core-0.4-a", "core-0.4-a2")   # opt-in (decision D-A1-3)
 DYNAMICS_MODULES = PHYSICAL_MODULES + ("core-0.4-b",)                     # opt-in, like the physical modules
 QUALITY_MODULES = DYNAMICS_MODULES + ("core-0.4-c",)                      # Stage C: qualities, measurement, agency
-CORE_MODULES = ("core", "core-0.4-a0", "core-0.4-a", "core-0.4-a2", "core-0.4-b", "core-0.4-c")   # the core types
+CORE_MODULES = ("core", "core-0.4-a0", "core-0.4-a", "core-0.4-a2", "core-0.4-b", "core-0.4-c",
+                "core-0.4-d")                                     # the core types; profiles need all of them
 
 
 def _core_labels():
@@ -65,6 +67,13 @@ PARAMS = {"has-quality": QUALITY_PARAMS, "positioned-in": POSE_PARAMS, "frame-tr
 # (functional-slot entities, A0.3) at create or upgrade; without it (a Core 0.3 database) this constant is used.
 CORE_SLOTS = {"located-at": (("located",), "place")}
 PARAMS_VALUE = "@params"     # a constraint whose value is the content's parameters (ranges, translation, rotation)
+# Concepts a core module seeds when installed (D-D-2): the core dependency kinds.
+MODULE_CONCEPTS = {"core-0.4-d": (("category", "dependency:physical", "physical dependency"),
+                                  ("category", "dependency:functional", "functional dependency"),
+                                  ("category", "dependency:informational", "informational dependency"),
+                                  ("category", "dependency:control", "control dependency"))}
+DEPENDENCY_KINDS = tuple(i for _, i, _ in MODULE_CONCEPTS["core-0.4-d"])
+UNSPECIFIED = "unspecified"   # the kind reported for a depends-on that names none (historical, untyped)
 MODULE_SLOTS = {"core-0.4-a": {"anchored-to": (("frame",), "anchor")},     # a frame is attached to one thing at a time
                 "core-0.4-a2": {"positioned-in": (("frame", "positioned"), PARAMS_VALUE),   # one position per frame
                                 "frame-transform": (("child", "parent"), PARAMS_VALUE)}}   # one transform per pair
@@ -159,6 +168,8 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
         if self.has_proposition_ids():
             for predicate, (key_roles, value_role) in MODULE_SLOTS.get(name, {}).items():
                 self.declare_slot(predicate, key_roles, value_role)
+        for kind, cid, label in MODULE_CONCEPTS.get(name, ()):
+            self.add_entity(kind, label, id=cid)
 
     def has_proposition_ids(self):
         """True when the A0 module is installed (propositions own a `wm-id` key)."""
@@ -1287,16 +1298,47 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
         """Transitive parts at t (application closure over the part-of content that holds for the perspective)."""
         return self._closure(world, "part-of", "whole", "part", whole, t, as_of, perspective)
 
-    def dependencies(self, world, dependent, t, as_of=None, perspective=SYSTEM):
-        return self._closure(world, "depends-on", "dependent", "dependee", dependent, t, as_of, perspective)
+    def depend(self, world, dependent, dependee, kind=None, **attest):
+        """Attest that `dependent` depends on `dependee`, of a dependency kind (a category, e.g. dependency:functional)
+        or of none (kind unspecified). Requires the core-0.4-d module for a kind. Returns the attestation id."""
+        roles = {"dependent": dependent, "dependee": dependee}
+        if kind is not None:
+            roles["kind"] = kind
+        if "end" not in attest:
+            attest.setdefault("until_superseded", True)
+        return self.attest(world, "depends-on", roles, **attest)
 
-    def _closure(self, world, type, from_role, to_role, start, t, as_of, perspective):
+    def dependencies(self, world, dependent, t, as_of=None, perspective=SYSTEM, kind=None):
+        """Transitive dependees at t. kind None: every dependency, whatever its kind (unchanged Core 0.3 behaviour).
+        kind given: only dependencies of exactly that kind, followed through dependencies of that kind; a dependency
+        with no kind is never counted as any kind (D-D-2) and is reported by direct_dependencies as unspecified."""
+        return self._closure(world, "depends-on", "dependent", "dependee", dependent, t, as_of, perspective,
+                             kind=kind)
+
+    def direct_dependencies(self, world, dependent, t, as_of=None, perspective=SYSTEM):
+        """What `dependent` directly depends on at t, one entry per dependency content that holds (or is disputed):
+        dependee, kind (a category id, or "unspecified" when the content names none), status and support. Asserted
+        dependencies only: nothing is inferred (no transitivity, no failure propagation)."""
+        out = []
+        for e in self._claims(world, dependent, ("depends-on",), t, as_of, perspective):
+            # held, or disputed (an accepted denial against an accepted assertion): a disputed dependency is listed as
+            # DISPUTED, never dropped (facts_about lists only holding contents)
+            if dependent in e["roles"].get("dependent", []) and e["judged"] in (True, "disputed"):
+                for dee in e["roles"].get("dependee", []):
+                    out.append({"dependee": dee, "kind": (e["roles"].get("kind") or [UNSPECIFIED])[0],
+                                "status": e["status"],
+                                "support": [a["attestation"] for a in e["attestations"] if a["acceptance"] == "accepted"]})
+        return sorted(out, key=lambda d: (d["dependee"], d["kind"]))
+
+    def _closure(self, world, type, from_role, to_role, start, t, as_of, perspective, kind=None):
         atts = self._load(world, as_of, types=[type], perspective=perspective)
         ident = Identity([], perspective, as_of)
         edges = {}
         for cls, (val, _, _) in self._judge(list(atts.values()), ident, t, perspective, as_of).items():
             if val is True:
                 roles = dict(cls[1])
+                if kind is not None and tuple(roles.get("kind", ())) != (kind,):
+                    continue                      # another kind, or no kind (unspecified): not this kind (D-D-2)
                 for a in roles.get(from_role, ()):
                     edges.setdefault(a, set()).update(roles.get(to_role, ()))
         seen, todo = set(), [start]

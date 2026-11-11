@@ -1,6 +1,6 @@
 # TEST FIXTURE (LABS-1.022): a minimal mechanical profile for installation and subtype tests. Not the D-1 profile.
 define
-relation replacement sub event, relates removed as patient, relates fitted;     # one specialisation (D-D-6)
-physical-object plays replacement:removed, plays replacement:fitted;
+relation part-swap sub event, relates swapped-out as patient, relates swapped-in;   # one specialisation (D-D-6)
+physical-object plays part-swap:swapped-out, plays part-swap:swapped-in;
 relation maintenance-kind sub classified-as;                                   # how a maintenance event is classified
 relation scheduled-maintenance-kind sub maintenance-kind;                      # a deeper subtype

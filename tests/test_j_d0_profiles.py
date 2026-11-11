@@ -12,7 +12,7 @@ import pytest
 
 import profile_fixtures as F
 from conftest import FakeClock
-from worldmodel import QUALITY_MODULES, Profile, ProfileError, WorldModel
+from worldmodel import CORE_MODULES, Profile, ProfileError, WorldModel
 from worldmodel.model import DEFAULT_MODULES
 from worldmodel.examples import gearbox
 from worldmodel.model import READ
@@ -30,7 +30,7 @@ def T(day, h=9):
 def make(driver):
     made = []
 
-    def _make(modules=QUALITY_MODULES):
+    def _make(modules=CORE_MODULES):
         name = f"wm-test-{uuid.uuid4().hex[:10]}"
         made.append(name)
         return WorldModel.create(name, driver=driver, modules=modules, clock=FakeClock())
@@ -167,7 +167,7 @@ def test_installing_profiles_changes_no_core_answer(make):
 @pytest.fixture(scope="module")
 def world(driver):
     name = f"wm-test-{uuid.uuid4().hex[:10]}"
-    wm = WorldModel.create(name, driver=driver, modules=QUALITY_MODULES, clock=FakeClock())
+    wm = WorldModel.create(name, driver=driver, modules=CORE_MODULES, clock=FakeClock())
     try:
         for p in F.ALL:
             wm.install_profile(p)
@@ -283,8 +283,8 @@ def test_profile_events_and_core_events_keep_their_cardinality(world):
     w = ids["w"]
     for i in ("b1", "b3", "tool"):
         wm.add_entity("physical-object", i, id=i)
-    rep = wm.account(w, {"actor": "bea", "removed": "b1", "fitted": "b3"}, T(6), type="replacement", id="ev-rep")
-    assert wm.content(rep)["roles"] == {"actor": ["bea"], "removed": ["b1"], "fitted": ["b3"]}
+    rep = wm.account(w, {"actor": "bea", "swapped-out": "b1", "swapped-in": "b3"}, T(6), type="part-swap", id="ev-rep")
+    assert wm.content(rep)["roles"] == {"actor": ["bea"], "swapped-out": ["b1"], "swapped-in": ["b3"]}
     core = wm.account(w, {"actor": "bea", "patient": "b1", "instrument": "tool"}, T(6), id="ev-core")
     assert set(wm.content(core)["roles"]) == {"actor", "patient", "instrument"}
     assert {e["event"] for e in wm.events(w, participant="b1")} >= {"ev-rep", "ev-core"}

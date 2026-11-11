@@ -427,3 +427,84 @@ def extend_qualities_agency(wm, ids):
     ids.update({"housing_measurements": weighed, "g": g, "agency_grants": grants, "can_replace": replace,
                 "can_sign_off": sign_off, "can_press": press, "apprentice_event": attempt, "plan_apprentice": plan})
     return ids
+
+
+# Stage D-1 (LABS-1.023): the mechanical profile on the gearbox
+PROFILE_AT = datetime(2026, 11, 8, 9, 0, tzinfo=timezone.utc)      # when the typed records were made
+
+
+def extend_mechanical(wm, ids):
+    """Mechanical-profile additions, on top of extend_dynamics. Needs CORE_MODULES and the mechanical profile.
+
+    - assemblies: gbx-100 and shaft-asm-in classified as assemblies (their parts are the A1 part-of structure);
+    - connections with joint kinds; bearing-1's press fit on the input shaft ends at the replacement, bearing-3's
+      begins;
+    - dependencies of every core kind, an untyped (historical) claim beside a typed one for the same pair, and a
+      dependency the inspector denies;
+    - the bearing replacement described with the profile's roles (removed bearing-1, fitted bearing-3) by the
+      maintenance system and accepted, and the inspector's own, conflicting account (removed bearing-2), not accepted;
+    - a hypothetical control upgrade of the test rig."""
+    from .. import mechanical as m
+    w = ids["world"]
+    from .. import typeql as q
+    from ..model import READ
+    with wm.driver.transaction(wm.database, READ) as tx:
+        present = {i for i in ("rig-controller", "plc-2", "manual-gbx", "cmms")
+                   if q.rows(tx, "match $x has wm-id == $id;", {"id": i})}
+    for i, kind, n in (("rig-controller", "physical-object", "Test rig controller"),
+                       ("plc-2", "physical-object", "Replacement PLC"),
+                       ("manual-gbx", "information-object", "GBX-100 maintenance manual"),
+                       ("cmms", "social-object", "Maintenance management system")):
+        if i not in present:
+            wm.add_entity(kind, n, id=i)
+    for a in ("gbx-100", "shaft-asm-in"):
+        wm.attest(w, "classified-as", {"classified": a, "class": "mechanical:assembly"}, start=T0,
+                  until_superseded=True)
+    # connections (design office, from assembly)
+    conn = {}
+    for a, b, joint in (("gear-in", "input-shaft", "mechanical:splined"), ("gear-out", "output-shaft",
+                        "mechanical:splined"), ("cover", "housing", "mechanical:bolted"),
+                        ("bearing-2", "output-shaft", "mechanical:pressed")):
+        conn[(a, b)] = m.connect(wm, w, a, b, joint, start=T0, attester="design-office")
+    for c in conn.values():
+        wm.accept(c)
+    old_fit = m.connect(wm, w, "bearing-1", "input-shaft", "mechanical:pressed", start=T0, end=T1,
+                        attester="technician")
+    new_fit = m.connect(wm, w, "bearing-3", "input-shaft", "mechanical:pressed", start=T1, attester="technician")
+    for c in (old_fit, new_fit):
+        wm.accept(c)
+    # dependencies: one untyped (as recorded before kinds existed) and typed ones of every core kind
+    untyped = wm.depend(w, "output-shaft", "input-shaft", start=T0, attester="design-office")
+    wm.accept(untyped)                                             # accepted when it was recorded, before any kind
+    known_before_kinds = wm._now()
+    deps = {"untyped": untyped,
+            "functional": wm.depend(w, "output-shaft", "input-shaft", "dependency:functional", start=T0,
+                                    attester="design-office"),
+            "physical": wm.depend(w, "gear-in", "input-shaft", "dependency:physical", start=T0,
+                                  attester="design-office"),
+            "informational": wm.depend(w, "gbx-100", "manual-gbx", "dependency:informational", start=T0,
+                                       attester="design-office"),
+            "control": wm.depend(w, "test-rig", "rig-controller", "dependency:control", start=T0,
+                                 attester="technician"),
+            "gear-out on bearing-2": wm.depend(w, "gear-out", "bearing-2", "dependency:functional", start=T0,
+                                               attester="technician")}
+    for a in deps.values():
+        wm.accept(a)
+    denial = wm.deny(w, "depends-on", {"dependent": "gear-out", "dependee": "bearing-2",
+                                       "kind": "dependency:functional"}, start=T0, until_superseded=True,
+                     attester="inspector")                        # the inspector's own view; not accepted by the system
+    # the replacement, with the profile's roles
+    rep = m.replace_part(wm, w, "shaft-asm-in", "bearing-1", "bearing-3", *REPLACEMENT, actor="technician",
+                         instrument="bearing-press", location="bay-1", occurrence="o-bearing-replacement",
+                         attester="cmms", id="ev-cmms-replacement")
+    for a in wm.account_attestations(w, rep["event"], attester="cmms") + rep["effects"]:
+        wm.accept(a)
+    wrong = m.replace_part(wm, w, "shaft-asm-in", "bearing-2", "bearing-3", *REPLACEMENT, actor="technician",
+                           occurrence="o-bearing-replacement", attester="inspector", id="ev-inspector-replacement")
+    plan = wm.create_world("Plan: rig control upgrade", kind="hypothetical", base=w, branch_at=PROFILE_AT,
+                           id="plan-rig-control")
+    wm.depend(plan, "test-rig", "plc-2", "dependency:control", start=PROFILE_AT)
+    ids.update({"connections": conn, "old_fit": old_fit, "new_fit": new_fit, "dependencies": deps,
+                "dependency_denial": denial, "known_before_kinds": known_before_kinds, "typed_replacement": rep,
+                "inspector_replacement": wrong, "plan_rig_control": plan})
+    return ids
