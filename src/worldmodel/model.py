@@ -10,6 +10,7 @@ Division of labour (v0.2 §8.1):
 import os
 import re
 import uuid
+from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -19,6 +20,8 @@ from . import typeql as q
 from . import keys
 from .keys import as_ids, check_new_id, proposition_key
 from .dynamics import DynamicsMixin
+from .qualities import QualitiesMixin
+from .agency import AgencyMixin
 from .physical import PhysicalMixin
 from .spatial import params_compatible
 from .semantics import (Answer, AttestationRecord, Identity, Replacement, Status, Window, acceptance_state,
@@ -30,11 +33,13 @@ MODULES = {"core": ("0.3.0", ["core/core-0.3.tql"]),
            "core-0.4-a0": ("0.4.0-a0", ["core/core-0.4-a0.tql", "core/core-0.4-a0-slots.tql"]),  # Stage A0 (LABS-1.002)
            "core-0.4-a": ("0.4.0-a1", ["core/core-0.4-a.tql"]),     # Stage A1 physical structure (LABS-1.006)
            "core-0.4-a2": ("0.4.0-a2", ["core/core-0.4-a2.tql"]),   # Stage A2 spatial reasoning (LABS-1.007)
-           "core-0.4-b": ("0.4.0-b", ["core/core-0.4-b.tql"])}      # Stage B dynamics and causality (LABS-1.010)
+           "core-0.4-b": ("0.4.0-b", ["core/core-0.4-b.tql"]),      # Stage B dynamics and causality (LABS-1.010)
+           "core-0.4-c": ("0.4.0-c", ["core/core-0.4-c1.tql", "core/core-0.4-c2.tql"])}     # Stage C qualities and agency (LABS-1.016)
 DEFAULT_MODULES = ("core", "core-0.4-a0")
 PHYSICAL_MODULES = ("core", "core-0.4-a0", "core-0.4-a", "core-0.4-a2")   # opt-in (decision D-A1-3)
 DYNAMICS_MODULES = PHYSICAL_MODULES + ("core-0.4-b",)                     # opt-in, like the physical modules
-CORE_MODULES = ("core", "core-0.4-a0", "core-0.4-a", "core-0.4-a2", "core-0.4-b")   # the core types; others: profiles
+QUALITY_MODULES = DYNAMICS_MODULES + ("core-0.4-c",)                      # Stage C: qualities, measurement, agency
+CORE_MODULES = ("core", "core-0.4-a0", "core-0.4-a", "core-0.4-a2", "core-0.4-b", "core-0.4-c")   # the core types
 
 
 def _core_labels():
@@ -94,7 +99,16 @@ class PropositionIdCollision(ValueError):
         self.pid, self.key, self.existing = pid, key, existing
 
 
-class WorldModel(PhysicalMixin, DynamicsMixin):
+class _Batch:
+    """The writes of one API operation sharing one write transaction and one transaction time (LABS-1.020). Used by
+    measure() only; not a general transaction API. Writers given a batch neither open nor commit a transaction."""
+    __slots__ = ("tx", "recorded_at")
+
+    def __init__(self, tx, recorded_at):
+        self.tx, self.recorded_at = tx, recorded_at
+
+
+class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin):
     def __init__(self, driver, database, clock=utcnow, selective=True):
         self.driver, self.database, self.clock = driver, database, clock
         self.selective = selective
@@ -301,6 +315,23 @@ class WorldModel(PhysicalMixin, DynamicsMixin):
         self._last_recorded = now
         return now
 
+    @contextmanager
+    def _batch(self):
+        """One write transaction with one transaction time, committed only if every write in it succeeds."""
+        with self.driver.transaction(self.database, WRITE) as tx:
+            yield _Batch(tx, self._now())
+            tx.commit()
+
+    @contextmanager
+    def _writing(self, batch):
+        """The batch's transaction, or a write transaction of the caller's own, committed on success."""
+        if batch is not None:
+            yield batch.tx
+            return
+        with self.driver.transaction(self.database, WRITE) as tx:
+            yield tx
+            tx.commit()
+
     @staticmethod
     def _mint(prefix):
         return f"{prefix}:{uuid.uuid4().hex[:16]}"
@@ -418,21 +449,20 @@ class WorldModel(PhysicalMixin, DynamicsMixin):
             tx.commit()
         return key
 
-    def describe_event(self, roles, description=None, id=None, type="event"):
+    def describe_event(self, roles, description=None, id=None, type="event", batch=None):
         """An event description: one account of an occurrence, with its participants. Identified by id, not by
         content: two descriptions with the same participants are two descriptions. Asserts nothing by itself.
         `type` may be a profile subtype of `event` (A0.2); roles are then that type's own role names."""
         if not self.is_a(type, "event"):
             raise ValueError(f"{type!r} is not an event type")
         eid = check_new_id(id or self._mint("event"))
-        with self.driver.transaction(self.database, WRITE) as tx:
+        with self._writing(batch) as tx:
             patterns, links, values = self._players(tx, roles)
             values["id"] = eid
             extra = ""
             if description:
                 extra, values["d"] = ", has description == $d", description
             q.run(tx, f"match {patterns} insert $e isa {q.label(type)} ({links}), has wm-id == $id{extra};", values)
-            tx.commit()
         return eid
 
     # ---- reading: content ----------------------------------------------------------------------------------------
@@ -473,7 +503,7 @@ class WorldModel(PhysicalMixin, DynamicsMixin):
 
     def attest(self, world, type=None, roles=None, *, event=None, params=None, start=None, end=None,
                until_superseded=False, polarity=True, stance=None, basis=None, attester=SYSTEM, credence=None,
-               clock=None, supersedes=None, id=None):
+               clock=None, supersedes=None, id=None, evidence=None, batch=None):
         """Record that `attester` takes a stance on a content in `world` over a valid interval. Returns its id.
 
         Content: a proposition (`type`, `roles`, `params`; stored once) or an event description (`event` id).
@@ -481,6 +511,10 @@ class WorldModel(PhysicalMixin, DynamicsMixin):
         UNKNOWN unless `until_superseded` (the attester commits that it holds until it records otherwise).
         Defaults: stance `stipulates` in hypothetical and simulated worlds, `asserts` otherwise; basis follows stance.
         supersedes: the id of an earlier attestation by the same attester that this one replaces (a correction).
+        evidence (Stage C, D-C-2): functions f(tx) -> record id that create the evidence records this attestation rests
+        on, run in the attestation's own transaction; each record is linked by rests-on(attestation, record), so the
+        attestation, its records and the links are written atomically.
+        batch (LABS-1.020): write into a shared transaction (see _batch) with its transaction time; not committed here.
         """
         if supersedes is not None and self._attestation(supersedes)["attester"] != attester:
             raise ValueError("an attestation can only be superseded by its own attester (E3)")
@@ -497,7 +531,7 @@ class WorldModel(PhysicalMixin, DynamicsMixin):
         end_basis = "stated" if end is not None else ("until-superseded" if until_superseded else "unknown")
         aid = check_new_id(id or self._mint("att"))
         values = {"world": world, "attester": attester, "id": aid, "st": stance, "pol": polarity, "bs": basis,
-                  "eb": end_basis, "rec": self._now()}
+                  "eb": end_basis, "rec": batch.recorded_at if batch is not None else self._now()}
         attrs = ""
         for name, w in (("valid-from", start), ("valid-to", end)):
             if w is not None:
@@ -510,7 +544,7 @@ class WorldModel(PhysicalMixin, DynamicsMixin):
         if credence is not None:
             attrs += ", has credence == $cr"
             values["cr"] = float(credence)
-        with self.driver.transaction(self.database, WRITE) as tx:
+        with self._writing(batch) as tx:
             if event is not None:
                 content = "$c isa event, has wm-id == $content;"
                 values["content"] = event
@@ -533,7 +567,13 @@ class WorldModel(PhysicalMixin, DynamicsMixin):
                 has recorded-at == $rec{attrs};{old_link}""", values).as_concept_rows())
             if not rows:
                 raise ValueError(f"world {world!r}, attester {attester!r}, content or clock not found")
-            tx.commit()
+            for make in evidence or ():
+                record = make(tx)
+                linked = list(q.run(tx, """match $n isa attestation, has wm-id == $id;
+                    $r isa information-object, has wm-id == $r_id;
+                    insert rests-on (attestation: $n, record: $r);""", {"id": aid, "r_id": record}).as_concept_rows())
+                if len(linked) != 1:             # never commit an attestation without the link it was meant to have
+                    raise ValueError(f"evidence record {record!r} not found: nothing was written")
         return aid
 
     def deny(self, world, type=None, roles=None, **kw):

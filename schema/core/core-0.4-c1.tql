@@ -1,0 +1,46 @@
+# Core 0.4, Stage C1 (LABS-1.016): qualities, units and measurements. Additive; World Ontology v0.2 §3.3 and the
+# Core 0.4 plan 9.2 (DX-2 amended). No new foundational category.
+#
+# - Units and quality kinds have a dimension (mass, length, temperature...). A unit converts to the dimension's SI
+#   unit by si = raw * si-factor + si-offset. Reported content (has-quality ranges) is stored in the SI unit.
+# - A measurement is three things: the measuring activity (an event description classified `measurement`), the
+#   result record (an information-object: what the act produced, with its raw value, standard uncertainty, coverage
+#   factor, conditions and calibration reference, intrinsic to the record), and the reported content (a has-quality
+#   range). produced(activity, result) and reports(result, content) link them; both are ordinary attested content.
+# - expressed-in(record, unit): the unit the record's raw value is written in. Structural, like the record's other
+#   attributes (what the record says does not change), so it is not an attested proposition (decision D-C-1,
+#   provisionally approved LABS-1.017).
+
+define
+attribute dimension, value string;
+attribute si-factor, value double;
+attribute si-offset, value double;
+attribute raw-value, value double;
+attribute standard-uncertainty, value double;
+attribute coverage-factor, value double;
+attribute condition, value string;
+attribute calibration-ref, value string;
+
+unit owns dimension, owns si-factor, owns si-offset;
+quality-kind owns dimension;
+information-object owns raw-value, owns standard-uncertainty, owns coverage-factor, owns condition @card(0..),
+  owns calibration-ref;
+
+relation expressed-in, relates record @card(1..1), relates unit @card(1..1);
+information-object plays expressed-in:record;
+unit plays expressed-in:unit;
+
+# rests-on(attestation, record): the evidential dependency of one statement (an attestation) on a result record
+# (D-C-2, approved LABS-1.018). Structural and immutable: written in the same transaction as the attestation and the
+# record, never attested, never edited. It ties provenance to the attestation, not to proposition content (identical
+# results stay one content) and not to source or time. It establishes neither truth nor occurrence. No one-to-one
+# constraint: an attestation may rest on several records, and a record may support several attestations.
+relation rests-on, relates attestation @card(1..1), relates record @card(1..1);
+attestation plays rests-on:attestation;
+information-object plays rests-on:record;
+
+relation produced sub proposition, relates activity, relates result;
+relation reports sub proposition, relates result, relates content;
+event plays produced:activity;
+information-object plays produced:result, plays reports:result;
+proposition plays reports:content;

@@ -1,0 +1,102 @@
+{
+ "checkout": "typedb-semantic-world-model",
+ "extended": true,
+ "dynamics": true,
+ "qualities": true,
+ "build_seconds": 3.22,
+ "database_bytes": 662521,
+ "questions": {
+  "poses(gear-in)": {
+   "median_ms": 21.94,
+   "queries": 14
+  },
+  "composition(gbx-100)": {
+   "median_ms": 353.62,
+   "queries": 218
+  },
+  "contents(workshop)": {
+   "median_ms": 203.52,
+   "queries": 114
+  },
+  "materials(cover)": {
+   "median_ms": 71.19,
+   "queries": 42
+  },
+  "frame_info(f-bench)": {
+   "median_ms": 28.87,
+   "queries": 16
+  },
+  "facts_about(housing)": {
+   "median_ms": 29.16,
+   "queries": 14
+  },
+  "where(gbx-100, f-workshop)": {
+   "median_ms": 85.12,
+   "queries": 39
+  },
+  "where(gear-in, f-workshop)": {
+   "median_ms": 48.01,
+   "queries": 33
+  },
+  "where(bench-1, f-gearbox)": {
+   "median_ms": 77.4,
+   "queries": 40
+  },
+  "transform_between(f-gearbox, f-workshop)": {
+   "median_ms": 10.74,
+   "queries": 7
+  },
+  "effects_of(ev-worklog-replacement)": {
+   "median_ms": 663.24,
+   "queries": 197
+  },
+  "changes(gbx-100, repair)": {
+   "median_ms": 199.32,
+   "queries": 71
+  },
+  "causes_of(o-test-run)": {
+   "median_ms": 198.21,
+   "queries": 129
+  },
+  "explain(operational)": {
+   "median_ms": 431.75,
+   "queries": 284
+  },
+  "process_steps(o-repair)": {
+   "median_ms": 191.61,
+   "queries": 144
+  },
+  "actions_of(technician)": {
+   "median_ms": 135.99,
+   "queries": 69
+  },
+  "value_of(condition)": {
+   "median_ms": 39.86,
+   "queries": 23
+  },
+  "measurements(housing, mass)": {
+   "median_ms": 180.2,
+   "queries": 100
+  },
+  "compare_measurements(housing, mass)": {
+   "median_ms": 192.17,
+   "queries": 100
+  },
+  "capable(technician, workshop)": {
+   "median_ms": 23.39,
+   "queries": 14
+  },
+  "is_agent(apprentice)": {
+   "median_ms": 18.07,
+   "queries": 14
+  },
+  "roles_of(apprentice)": {
+   "median_ms": 21.64,
+   "queries": 16
+  },
+  "check_action(worklog)": {
+   "median_ms": 140.81,
+   "queries": 105
+  }
+ }
+}

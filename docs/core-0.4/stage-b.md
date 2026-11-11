@@ -19,6 +19,7 @@ demonstrated conflict.
 | Perf-1 | World-wide event and describes loads are made once per question (per-question memo; no cache across questions) | LABS-1.012 |
 | Q-B1 | `changes` reports transitions whose valid time intersects the requested interval, with uncertain windows, world-state vs judgement categories and explanations only from accepted effect claims (rulings Q-B1.1, Q-B1.2, Q-B1.4) | LABS-1.015 |
 | Q-B2 | One functional-conflict judgement for `value_at`, `holds`, `facts_about` and `changes` | LABS-1.015 |
+| B-time | **Causal timing rule:** an event cannot explain a transition that certainly precedes the start of its occurrence. Occurrence time is the event's accepted occurrence interval (valid time), never the time its account was recorded. If the occurrence time is uncertain (its start window overlaps the transition window) or unavailable (no accepted account), the explanation is kept, with `timing: "unresolved"`; otherwise `timing: "consistent"`. Tests: `tests/test_h_b6_causal_timing.py` | LABS-1.016 |
 
 Implemented within the approved architecture and recorded for review, but not ruled on individually:
 - **D-B-1:** effects are written by `claim_effect` / `account`; `record_event` is unchanged.
