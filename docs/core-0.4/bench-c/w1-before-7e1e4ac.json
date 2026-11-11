@@ -1,0 +1,17 @@
+{
+ "checkout": "wm-prev",
+ "n": 40,
+ "median_ms": 66.92,
+ "mean_ms": 77.4,
+ "queries_per_measure": [
+  36,
+  40
+ ],
+ "write_tx_per_measure": [
+  6
+ ],
+ "read_tx_per_measure": [
+  12
+ ],
+ "database_bytes": 696684
+}

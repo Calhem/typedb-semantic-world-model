@@ -10,6 +10,7 @@ Division of labour (v0.2 §8.1):
 import os
 import re
 import uuid
+from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -96,6 +97,15 @@ class PropositionIdCollision(ValueError):
     def __init__(self, pid, key, existing):
         super().__init__(f"proposition id {pid} already belongs to {existing!r}; refusing {key!r}")
         self.pid, self.key, self.existing = pid, key, existing
+
+
+class _Batch:
+    """The writes of one API operation sharing one write transaction and one transaction time (LABS-1.020). Used by
+    measure() only; not a general transaction API. Writers given a batch neither open nor commit a transaction."""
+    __slots__ = ("tx", "recorded_at")
+
+    def __init__(self, tx, recorded_at):
+        self.tx, self.recorded_at = tx, recorded_at
 
 
 class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin):
@@ -305,6 +315,23 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin):
         self._last_recorded = now
         return now
 
+    @contextmanager
+    def _batch(self):
+        """One write transaction with one transaction time, committed only if every write in it succeeds."""
+        with self.driver.transaction(self.database, WRITE) as tx:
+            yield _Batch(tx, self._now())
+            tx.commit()
+
+    @contextmanager
+    def _writing(self, batch):
+        """The batch's transaction, or a write transaction of the caller's own, committed on success."""
+        if batch is not None:
+            yield batch.tx
+            return
+        with self.driver.transaction(self.database, WRITE) as tx:
+            yield tx
+            tx.commit()
+
     @staticmethod
     def _mint(prefix):
         return f"{prefix}:{uuid.uuid4().hex[:16]}"
@@ -422,21 +449,20 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin):
             tx.commit()
         return key
 
-    def describe_event(self, roles, description=None, id=None, type="event"):
+    def describe_event(self, roles, description=None, id=None, type="event", batch=None):
         """An event description: one account of an occurrence, with its participants. Identified by id, not by
         content: two descriptions with the same participants are two descriptions. Asserts nothing by itself.
         `type` may be a profile subtype of `event` (A0.2); roles are then that type's own role names."""
         if not self.is_a(type, "event"):
             raise ValueError(f"{type!r} is not an event type")
         eid = check_new_id(id or self._mint("event"))
-        with self.driver.transaction(self.database, WRITE) as tx:
+        with self._writing(batch) as tx:
             patterns, links, values = self._players(tx, roles)
             values["id"] = eid
             extra = ""
             if description:
                 extra, values["d"] = ", has description == $d", description
             q.run(tx, f"match {patterns} insert $e isa {q.label(type)} ({links}), has wm-id == $id{extra};", values)
-            tx.commit()
         return eid
 
     # ---- reading: content ----------------------------------------------------------------------------------------
@@ -477,7 +503,7 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin):
 
     def attest(self, world, type=None, roles=None, *, event=None, params=None, start=None, end=None,
                until_superseded=False, polarity=True, stance=None, basis=None, attester=SYSTEM, credence=None,
-               clock=None, supersedes=None, id=None, evidence=None):
+               clock=None, supersedes=None, id=None, evidence=None, batch=None):
         """Record that `attester` takes a stance on a content in `world` over a valid interval. Returns its id.
 
         Content: a proposition (`type`, `roles`, `params`; stored once) or an event description (`event` id).
@@ -488,6 +514,7 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin):
         evidence (Stage C, D-C-2): functions f(tx) -> record id that create the evidence records this attestation rests
         on, run in the attestation's own transaction; each record is linked by rests-on(attestation, record), so the
         attestation, its records and the links are written atomically.
+        batch (LABS-1.020): write into a shared transaction (see _batch) with its transaction time; not committed here.
         """
         if supersedes is not None and self._attestation(supersedes)["attester"] != attester:
             raise ValueError("an attestation can only be superseded by its own attester (E3)")
@@ -504,7 +531,7 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin):
         end_basis = "stated" if end is not None else ("until-superseded" if until_superseded else "unknown")
         aid = check_new_id(id or self._mint("att"))
         values = {"world": world, "attester": attester, "id": aid, "st": stance, "pol": polarity, "bs": basis,
-                  "eb": end_basis, "rec": self._now()}
+                  "eb": end_basis, "rec": batch.recorded_at if batch is not None else self._now()}
         attrs = ""
         for name, w in (("valid-from", start), ("valid-to", end)):
             if w is not None:
@@ -517,7 +544,7 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin):
         if credence is not None:
             attrs += ", has credence == $cr"
             values["cr"] = float(credence)
-        with self.driver.transaction(self.database, WRITE) as tx:
+        with self._writing(batch) as tx:
             if event is not None:
                 content = "$c isa event, has wm-id == $content;"
                 values["content"] = event
@@ -547,7 +574,6 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin):
                     insert rests-on (attestation: $n, record: $r);""", {"id": aid, "r_id": record}).as_concept_rows())
                 if len(linked) != 1:             # never commit an attestation without the link it was meant to have
                     raise ValueError(f"evidence record {record!r} not found: nothing was written")
-            tx.commit()
         return aid
 
     def deny(self, world, type=None, roles=None, **kw):

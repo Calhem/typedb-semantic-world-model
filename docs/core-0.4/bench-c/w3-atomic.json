@@ -1,0 +1,17 @@
+{
+ "checkout": "typedb-semantic-world-model",
+ "n": 40,
+ "median_ms": 43.53,
+ "mean_ms": 46.99,
+ "queries_per_measure": [
+  34,
+  38
+ ],
+ "write_tx_per_measure": [
+  1
+ ],
+ "read_tx_per_measure": [
+  10
+ ],
+ "database_bytes": 520250
+}

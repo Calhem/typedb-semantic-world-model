@@ -59,13 +59,14 @@ class DynamicsMixin:
         """A source's account of a happening: an event description with its participants, attested by `attester`
         over [start, end] (an instant when end is None), optionally classified (`kind`: a category or list) and
         linked to an `occurrence` by a describes claim of the same source. Returns the description id."""
-        eid = self.describe_event(roles, id=id, type=type)
+        batch = attest.get("batch")              # measure(): one transaction for the whole measurement
+        eid = self.describe_event(roles, id=id, type=type, batch=batch)
         self.attest(world, event=eid, start=start, end=end or start, attester=attester, **attest)
         for k in ([kind] if isinstance(kind, str) else kind or []):
             self.attest(world, "classified-as", {"classified": eid, "class": k}, until_superseded=True,
-                        attester=attester)
+                        attester=attester, batch=batch)
         if occurrence is not None:
-            self.describe_occurrence(world, eid, occurrence, attester=attester)
+            self.describe_occurrence(world, eid, occurrence, attester=attester, batch=batch)
         return eid
 
     def describe_occurrence(self, world, description, occurrence, **attest):

@@ -1,8 +1,7 @@
-# Core 0.4 Stage C: qualities, measurements and agency (LABS-1.016 to LABS-1.019)
+# Core 0.4 Stage C: qualities, measurements and agency (LABS-1.016 to LABS-1.020)
 
-**Status (2026-11-11): C1 and C2 implemented on `feature/core-0.4-c-qualities-agency`; D-C-2 approved and implemented
-(LABS-1.018); Stage C validation complete, at the review gate. Not merged; Stage D not started.** Base: `main` at
-8963734.
+**Status (2026-11-11): Stage C ontology and API approved (LABS-1.020); full `measure()` atomicity implemented; merged
+into `main` after validation (see the merge record at the end). Stage D not started.** Base: `main` at 8963734.
 
 ## C0: architecture review (no foundational change)
 | Need | v0.2 / plan | Representation |
@@ -27,9 +26,14 @@ Measurement, observation, assertion and acceptance stay separate:
 ## Decisions
 | # | Decision | Status |
 |---|---|---|
-| D-C-1 | Raw value, raw unit (`expressed-in`), standard uncertainty, coverage factor, conditions and calibration reference are intrinsic attributes of the result record; conversions are derived; the reported content is in SI | **provisionally approved (LABS-1.017)** |
-| D-C-3 | Capability reporting: `capable()` keeps the core judgement (`holds`, `status`, no new statuses) and adds `judgement` (established, denied, expired, not yet effective, disputed, not established); an ended holding is `holds False` (expired), as `holds()` treats any ended fact | **implemented (LABS-1.019), for review** |
-| D-C-2 | Each measurement-backed attestation names its own result record(s) through the structural link `rests-on(attestation, record)` (Option A below). No matching by source, time or content; written atomically with the attestation; immutable; no one-to-one constraint; it records evidential dependency, not truth or occurrence; `produced` and `reports` keep their meanings | **approved (LABS-1.018), implemented** |
+| D-C-1 | Raw value, raw unit (`expressed-in`), standard uncertainty, coverage factor, conditions and calibration reference are intrinsic attributes of the result record; conversions are derived; the reported content is in SI | **approved (LABS-1.020, with the Stage C design)** |
+| D-C-2 | Each measurement-backed attestation names its own result record(s) through the structural link `rests-on(attestation, record)` (Option A below). No matching by source, time or content; immutable; no one-to-one constraint; it records evidential dependency, not truth or occurrence; `produced` and `reports` keep their meanings | **approved (LABS-1.018), implemented** |
+| D-C-3 | Capability reporting: `capable()` keeps the core judgement (`holds`, `status`, no new statuses) and adds `judgement` (established, denied, expired, not yet effective, disputed, not established) | **approved (LABS-1.020)** |
+| D-C-4 | An expired capability keeps `holds=False` with `judgement="expired"` (as `holds()` treats any ended fact) | **approved (LABS-1.020)** |
+| D-C-5 | UNKNOWN (something is held, but nothing applicable: only elsewhere, unreviewed or rejected) and NOT_YET_KNOWN (nothing at all) stay distinct | **approved (LABS-1.020)** |
+| D-C-6 | Batching of measurement reads is deferred (N+1 reads accepted for now) | **approved (LABS-1.020)** |
+| D-C-7 | Measurement conditions are compared as exact text: conservative (any difference is incomparable) and documented | **approved (LABS-1.020)** |
+| D-C-8 | `measure()` is fully atomic: activity and account, result record with its original value, unit, uncertainty, conditions and calibration reference, content attestation, `rests-on`, `produced` and `reports` commit together in one transaction with one transaction time, or nothing does | **required (LABS-1.020), implemented** |
 
 ## C1 (implemented)
 - **Schema:** module `core-0.4-c`, file `schema/core/core-0.4-c1.tql`. Installed by `QUALITY_MODULES` (opt-in).
@@ -46,7 +50,7 @@ Measurement, observation, assertion and acceptance stay separate:
   - a result at 35 °C, and one at k = 3;
   - a specification;
   - a later correction.
-- **Tests:** `tests/test_i_c1_measurements.py` (10) and `tests/test_i_c1b_provenance.py` (11, D-C-2 regressions
+- **Tests:** `tests/test_i_c1_measurements.py` (10) and `tests/test_i_c1b_provenance.py` (22, D-C-2 regressions
   and failure injection).
 
 ## D-C-2 review (LABS-1.017): tying a result to its supporting attestation
@@ -125,24 +129,45 @@ statement* a record supports. The statement is the attestation. Nothing in C1 li
   - a link establishes neither acceptance nor occurrence;
   - selective/full-load agreement.
 
-## Atomicity (LABS-1.019, failure injection)
-`tests/test_i_c1b_provenance.py::test_failure_injection_rolls_back_everything` counts attestations, records, `rests-on`
-links and propositions before and after four injected failures:
+## Atomicity (LABS-1.019, LABS-1.020)
+**Transaction boundary (D-C-8).** `measure()` opens one write transaction (`WorldModel._batch()`) and writes into it,
+in order:
+1. the activity's event description (`describe_event`);
+2. its account attestation and its `measurement` classification (`account`), plus a `describes` claim when an
+   occurrence is given;
+3. the reported content proposition, if new, and the content attestation (with a `supersession` link when
+   correcting);
+4. the result record, with its raw value, unit (`expressed-in`), standard uncertainty, coverage factor, conditions and
+   calibration reference;
+5. `rests-on(attestation, record)`;
+6. the `produced` and `reports` propositions and attestations.
 
-| Failure | Result |
-|---|---|
-| the result-record writer raises | nothing written (all four counts unchanged) |
-| the link's record does not exist | refused (`ValueError`), nothing written. **Fixed here:** before, the insert matched nothing and the attestation committed with no link |
-| the attestation itself fails (unknown attester) | refused before any evidence is written; nothing written |
-| inside `measure()`, the `rests-on` insert raises after the record was inserted | content attestation, record, unit link and `rests-on` all rolled back |
+It commits once. Every attestation in it has the same `recorded-at`, so a knowledge-time (`as_of`) query sees all of
+the measurement or none of it.
 
-**Boundary.** The atomic unit is: the content attestation, its new proposition if any, the result record, `expressed-in`
-and `rests-on`. `measure()` also writes the activity account first, and the `produced` and `reports` attestations
-afterwards, each in its own transaction (as every other attestation). The last injected failure therefore leaves the
-activity account (its event attestation and `measurement` classification) behind, with no record and no measurement
-(tested). That account is an ordinary event description and changes no measurement answer, but it is a partial write.
-Making all of `measure()` one transaction needs a multi-statement write path in `attest()` and `account()`; recorded as
-an open question, not done (scope).
+**Mechanism (the smallest one).**
+- A `_Batch` holds the transaction and its transaction time.
+- `describe_event`, `attest` and `account` accept an optional `batch` parameter: they then write into that transaction
+  and do not commit. Without it they behave exactly as before.
+- `measure()` is the only caller. It is not a general transaction API, and no other write API changed.
+- The reported content's id is derived from its canonical key (A0.1), so `reports` can name it before it is committed.
+- Proposition identity, attestation identity, supersession and knowledge-time semantics are unchanged.
+
+**Failure injection** (`tests/test_i_c1b_provenance.py`):
+- `test_measure_is_atomic_at_every_stage` injects a failure at each write stage in turn:
+  - activity description, activity account, activity classification;
+  - content proposition, content attestation;
+  - result record, `rests-on`, `produced`, `reports`;
+  - the final commit.
+- Each case checks that the failure hit exactly that stage. It then checks that no event, attestation, record,
+  `rests-on` link or proposition was added and that neither measurement id exists, and that the next measurement
+  succeeds.
+- `test_attest_evidence_failures_roll_back` covers `attest()` with evidence directly:
+  - a failing record writer;
+  - a missing record, which before LABS-1.019 committed the attestation without its link;
+  - an unknown attester.
+- `test_a_measurement_has_one_transaction_time` checks that the five attestations of one measurement share one
+  recorded-at. Querying at that time shows it with its record and activity; one microsecond earlier shows none of it.
 
 ## C2: capabilities, contextual roles and agency (implemented)
 - **Schema:** `schema/core/core-0.4-c2.tql` in module `core-0.4-c`: `entity capability sub concept;` (nothing else;
@@ -204,19 +229,20 @@ both worlds, followed by raw TypeQL over `rests-on`, `produced` and the capabili
   - the new measurement questions take about 100 queries, because records are loaded one at a time;
   - the Stage C extension adds +8.9% storage.
 
-## Limitations and open questions
-1. **`measure()` is not one transaction.**
-   - Atomic: the content attestation, record, unit link and `rests-on`.
-   - Separate: the activity account (before) and the `produced` and `reports` attestations (after).
-   - So a failure can leave an activity description with no result.
-   - Should `measure()` be fully atomic? That needs a multi-statement write path.
-2. **An expired capability is `holds False`.** This is consistent with `holds()`, which treats an attested end as no
-   longer holding. Should "no longer held" be distinguished more strongly from a denial than by `judgement`?
-3. **"Held only elsewhere" is UNKNOWN; "nothing at all" is NOT_YET_KNOWN.** Both are judged "not established". Is that
-   distinction wanted?
-4. **The measurement read path is N+1:** 100 queries for the housing's 4 values, 2 of them with records. Batching is deferred to a performance pass.
-5. **Capabilities are not checked against actions.** `check_action` reports, never enforces. DX-5 stays in report
+**LABS-1.020 (full atomicity).**
+- 282 tests in the full suite, passed twice on each query path, with no test databases left behind.
+- `test_i_c1b_provenance.py` now has 22 tests, including 10 failure-injection cases.
+- The cross-domain demo is unchanged apart from random ids (and so the order within pairs).
+- Write cost: `docs/core-0.4/bench-c/README.md`, last section. The atomic `measure()` is about 30% faster, with 1
+  write transaction instead of 6.
+
+## Remaining limitations
+1. **Measurement reads are N+1** (D-C-6, deferred): 100 queries for the housing's 4 values, 2 of them with records.
+2. **Conditions are compared as exact text** (D-C-7): no condition ontology, tolerances or units in conditions.
+3. **Capabilities are not checked against actions.** `check_action` reports, never enforces. DX-5 stays in report
    mode, and `agency_report` is diagnostic only.
-6. **Conditions are compared as exact strings.** No condition ontology (tolerances, units in conditions).
-7. **A record without an attestation is not reported as a measurement.** `reports(result, content)` alone does not
-   create one, as in C1.
+4. **A record without an attestation is not reported as a measurement.** `reports(result, content)` alone does not
+   create one.
+5. **Only `measure()` is atomic as a whole.** Other multi-step writers (`account()` alone, the reference-world
+   builders) still commit step by step, as in Stage B. That is unchanged by design (LABS-1.020: no general
+   transaction framework).

@@ -13,7 +13,9 @@ import pytest
 from conftest import FakeClock
 from worldmodel import QUALITY_MODULES, WorldModel
 from worldmodel.examples import lab
-from worldmodel.model import READ
+from datetime import timedelta
+
+from worldmodel.model import READ, WRITE
 from worldmodel import typeql as q
 from worldmodel.semantics import Status
 
@@ -153,59 +155,122 @@ def test_hypothetical_worlds_inherit_attestations_with_their_records(space):
 
 
 def counts(wm):
-    """How many attestations, records, rests-on links and propositions are stored."""
+    """How many event descriptions, attestations, records, rests-on links and propositions are stored."""
     with wm.driver.transaction(wm.database, READ) as tx:
         return {k: len(q.rows(tx, f"match $x isa {k};"))
-                for k in ("attestation", "information-object", "rests-on", "proposition")}
+                for k in ("event", "attestation", "information-object", "rests-on", "proposition")}
 
 
 MASS = {"bearer": "sample", "quality": "q-mass", "unit": "u-kg"}
 
 
-def test_failure_injection_rolls_back_everything(space, monkeypatch):
-    """LABS-1.019: if the attestation, the result record or the rests-on link fails to write, nothing is written."""
+def test_attest_evidence_failures_roll_back(space):
+    """attest() with evidence: the record writer, the link and the attestation each fail without a trace."""
     wm, w = space
-    weigh(wm, w)                                                     # some data already present
+    weigh(wm, w)
     before = counts(wm)
 
     def boom(tx):
         raise RuntimeError("record writer failed")
-
-    # 1. the record fails: no attestation, no new content, no link
     with pytest.raises(RuntimeError):
         wm.attest(w, "has-quality", MASS, params={"lower": 1.0, "upper": 2.0}, start=T(9), until_superseded=True,
                   evidence=[boom], id="att-x")
     assert counts(wm) == before
-    # 2. the link fails (its record does not exist): refused, nothing written (it used to commit silently unlinked)
-    with pytest.raises(ValueError, match="not found"):
+    with pytest.raises(ValueError, match="not found"):           # the link's record does not exist
         wm.attest(w, "has-quality", MASS, params={"lower": 1.0, "upper": 2.0}, start=T(9), until_superseded=True,
                   evidence=[lambda tx: "no-such-record"], id="att-y")
     assert counts(wm) == before
-    # 3. the attestation fails (unknown attester): the record writer never commits
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError):                               # unknown attester
         wm.attest(w, "has-quality", MASS, params={"lower": 1.0, "upper": 2.0}, start=T(9), until_superseded=True,
                   attester="nobody", evidence=[lambda tx: pytest.fail("evidence written before the attestation")])
     assert counts(wm) == before
-    # 4. through measure(): the rests-on insert itself fails mid-transaction, after the record was inserted
-    real = q.run
+
+
+def _attestation_of(prefix):
+    return lambda body, params: "insert $n isa attestation" in body and str(params.get("content", "")).startswith(prefix)
+
+
+# Each write stage of measure(), in the order it runs (LABS-1.020). The activity's id is "m-fail-activity".
+STAGES = {
+    "activity description": lambda b, p: "isa event" in b and p.get("id") == "m-fail-activity",
+    "activity account": lambda b, p: "insert $n isa attestation" in b and p.get("content") == "m-fail-activity",
+    "activity classification": _attestation_of("classified-as|"),
+    "content proposition": lambda b, p: "insert $p isa has-quality" in b,
+    "content attestation": _attestation_of("has-quality|"),
+    "result record": lambda b, p: "insert $r isa information-object" in b,
+    "rests-on": lambda b, p: "insert rests-on" in b,
+    "produced": _attestation_of("produced|"),
+    "reports": _attestation_of("reports|"),
+}
+
+
+@pytest.mark.parametrize("stage", [*STAGES, "final commit"])
+def test_measure_is_atomic_at_every_stage(space, monkeypatch, stage):
+    """LABS-1.020: a failure at any write stage of measure(), or of its commit, leaves no partial measurement."""
+    wm, w = space
+    weigh(wm, w)                                                  # existing data: unchanged by the failure
+    before = counts(wm)
+    real, hit = q.run, []
 
     def failing(tx, body, params=None):
-        if "insert rests-on" in body:
-            raise RuntimeError("injected rests-on failure")
+        if stage in STAGES and STAGES[stage](body, params or {}):
+            hit.append(stage)
+            raise RuntimeError(f"injected failure: {stage}")
         return real(tx, body, params)
     monkeypatch.setattr(q, "run", failing)
+    if stage == "final commit":
+        driver = wm.driver
+
+        class FailingCommit:
+            def __init__(self, tx):
+                self._tx = tx
+
+            def __enter__(self):
+                self._tx.__enter__()
+                return self
+
+            def __exit__(self, *exc):
+                return self._tx.__exit__(*exc)
+
+            def commit(self):
+                hit.append(stage)
+                raise RuntimeError("injected failure: final commit")
+
+            def __getattr__(self, name):
+                return getattr(self._tx, name)
+
+        class Driver:
+            databases = driver.databases
+
+            def transaction(self, database, kind):
+                tx = driver.transaction(database, kind)
+                return FailingCommit(tx) if kind == WRITE else tx
+        monkeypatch.setattr(wm, "driver", Driver())
     with pytest.raises(RuntimeError, match="injected"):
         wm.measure(w, "sample", "q-mass", 9.99, "u-kg", 0.02, start=T(11), end=T(11, 5), instrument="b7",
                    operator="ana", conditions=AT20, attester="ana", persists=True, id="m-fail")
-    monkeypatch.setattr(q, "run", real)
-    after = counts(wm)
-    assert {k: after[k] - before[k] for k in after} == {"attestation": 2, "information-object": 0, "rests-on": 0,
-                                                        "proposition": 1}
-    # ... only the activity account, written earlier in its own transaction (its event attestation and its
-    # `measurement` classification), survives; no content attestation, record or link (see stage-c.md, limitations)
+    monkeypatch.undo()
+    assert hit == [stage]                                         # the failure happened where intended
+    assert counts(wm) == before                                   # nothing of the measurement remains
     with wm.driver.transaction(wm.database, READ) as tx:
-        assert not q.rows(tx, 'match $r isa information-object, has wm-id "m-fail-result";')
-    assert not [m for m in wm.measurements(w, "sample", "q-mass") if m["range"] and m["range"][0] > 9]
+        assert not q.rows(tx, 'match $x has wm-id $i; { $i == "m-fail-activity"; } or { $i == "m-fail-result"; };')
+    ok = weigh(wm, w, value=3.52, instrument="b7")                # the next measurement is unaffected
+    assert wm.evidence_of(ok["content"]) == [ok["result"]]
+
+
+def test_a_measurement_has_one_transaction_time(space):
+    """All parts share one recorded-at, so no knowledge time sees part of a measurement."""
+    wm, w = space
+    m = weigh(wm, w, accept=False)                                # the world's only attestations by ana
+    mine = [a for a in wm.visible(w).values() if a.attester == "ana"]
+    assert len(mine) == 5                                         # account, classification, content, produced, reports
+    assert {m["content"], m["produced"], m["reports"]} <= {a.id for a in mine}
+    (t,) = {a.recorded_at for a in mine}
+    seen = {x["attestation"]: x for x in wm.measurements(w, "sample", "q-mass", as_of=t, perspective="ana")}
+    assert seen[m["content"]]["records"][0]["record"] == m["result"]
+    assert seen[m["content"]]["records"][0]["activities"][0]["activity"] == m["activity"]
+    earlier = wm.measurements(w, "sample", "q-mass", as_of=t - timedelta(microseconds=1), perspective="ana")
+    assert m["content"] not in {x["attestation"] for x in earlier}
 
 
 def test_not_one_to_one(space):

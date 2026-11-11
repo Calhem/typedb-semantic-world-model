@@ -16,6 +16,7 @@ clarification B).
 import math
 from datetime import datetime, timezone
 
+from . import keys
 from .keys import check_new_id
 from .semantics import Status, acceptance_state, superseded, usable, verdict
 
@@ -106,8 +107,9 @@ class QualitiesMixin:
         """Record a measurement of `quality` of `bearer`: the activity (start..end), the result record (value in `unit`
         with standard uncertainty and coverage factor k, conditions, calibration reference) and the reported content
         (the SI range [v - k u, v + k u] with its coverage level), linked by produced and reports, all attested by
-        `attester` (basis observation). The content attestation, the result record and rests-on(attestation, record)
-        are written in one transaction (D-C-2). The content is attested over the activity's interval, or from its start until
+        `attester` (basis observation). Everything (the activity and its account, the result record, the content
+        attestation, rests-on, produced and reports) is written in one transaction with one transaction time, or
+        nothing is (LABS-1.020). The content is attested over the activity's interval, or from its start until
         superseded when `persists` (the source asserts the value lasts). `supersedes`: the attestation id of an earlier
         reported content this corrects. The unit's dimension must be the quality kind's. Returns the ids."""
         dim = self._dimension_of(quality)
@@ -122,8 +124,6 @@ class QualitiesMixin:
             roles["actor"] = operator
         if instrument:
             roles["instrument"] = instrument
-        activity = self.account(world, roles, start, end, kind="measurement", occurrence=occurrence, attester=attester,
-                                id=f"{id}-activity" if id else None)
         record = check_new_id(f"{id}-result" if id else self._mint("result"))
         lo, hi = sorted((self.convert(value - k * uncertainty, unit), self.convert(value + k * uncertainty, unit)))
         params = {"lower": lo, "upper": hi, "coverage-level": coverage_level(k)}
@@ -133,7 +133,7 @@ class QualitiesMixin:
                   ("coverage-factor", float(k))] + [("condition", c) for c in sorted(set(conditions))]
                  + ([("calibration-ref", calibration)] if calibration else []))
 
-        def write_record(tx):             # inside the content attestation's transaction (D-C-2: atomic)
+        def write_record(tx):             # inside the measurement's transaction
             from . import typeql as q
             parts = "".join(f", has {name} == $v{i}" for i, (name, _) in enumerate(attrs))
             q.run(tx, f"""match $u isa unit, has wm-id == $unit;
@@ -143,13 +143,18 @@ class QualitiesMixin:
                    **{f"v{i}": v for i, (_, v) in enumerate(attrs)}})
             return record
 
-        content = self.attest(world, "has-quality", content_roles, params=params, basis="observation",
-                              attester=attester, supersedes=supersedes, evidence=[write_record], **valid)
-        produced = self.attest(world, "produced", {"activity": activity, "result": record}, until_superseded=True,
-                               attester=attester)
-        key = self._content_key(content)
-        reports = self.attest(world, "reports", {"result": record, "content": self.proposition_id(key)},
-                              until_superseded=True, attester=attester)
+        # the reported content's A0.1 id, known before it is stored: it is derived from the canonical key
+        content_id = keys.proposition_id(keys.proposition_key("has-quality", content_roles, params))
+        with self._batch() as batch:
+            activity = self.account(world, roles, start, end, kind="measurement", occurrence=occurrence,
+                                    attester=attester, id=f"{id}-activity" if id else None, batch=batch)
+            content = self.attest(world, "has-quality", content_roles, params=params, basis="observation",
+                                  attester=attester, supersedes=supersedes, evidence=[write_record], batch=batch,
+                                  **valid)
+            produced = self.attest(world, "produced", {"activity": activity, "result": record},
+                                   until_superseded=True, attester=attester, batch=batch)
+            reports = self.attest(world, "reports", {"result": record, "content": content_id},
+                                  until_superseded=True, attester=attester, batch=batch)
         return {"activity": activity, "result": record, "content": content, "produced": produced, "reports": reports,
                 "range": (lo, hi), "coverage_level": params["coverage-level"]}
 

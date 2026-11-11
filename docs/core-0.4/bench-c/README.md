@@ -65,3 +65,21 @@ Database size (bytes, on disk): B 608,230–608,349; C-code 608,247–608,460; C
   - `check_action` costs 105 queries (146 ms), mostly the occurrence and capability judgements it reports.
 - **Storage growth:** +54 KB (+8.9%) for the Stage C extension. The Stage C schema alone, on the Stage B world, adds
   under 0.02% (C-code vs B).
+
+## Measurement write cost, before and after full atomicity (LABS-1.020)
+`scripts/measure_write_cost.py`: the laboratory world, then 40 `measure()` calls. Three interleaved rounds of each:
+7e1e4ac (`measure()` in six transactions) and the atomic version (one transaction). Files `w*-before-7e1e4ac.json`
+and `w*-atomic.json`.
+
+| | before (7e1e4ac) | atomic |
+|---|---:|---:|
+| median ms per measurement (3 rounds) | 66.9, 62.2, 55.4 | 42.0, 42.7, 43.5 |
+| mean ms per measurement | 77.4, 64.1, 58.7 | 43.4, 47.5, 47.0 |
+| TypeQL queries per measurement | 36–40 | 34–38 |
+| write transactions per measurement | 6 | 1 |
+| read transactions per measurement | 12 | 10 |
+| database bytes after the run | 696,684–696,726 | 520,250–520,397 |
+
+Atomicity does not cost latency. Each measurement is about 30% faster: five fewer commits, and two fewer lookups (the
+content's id is derived from its key instead of being read back). The database is 25% smaller after the same writes.
+That is plausibly per-commit storage overhead, but it was not investigated. Reads were not changed (D-C-6).

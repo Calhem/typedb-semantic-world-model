@@ -7,26 +7,26 @@ Databases `wm-reference-gearbox-c` (workshop) and `wm-reference-lab` (laboratory
 ### Q1 What is the mass, and on what evidence? (each attestation with its own records)
 **Workshop: housing mass, 11-06 12:00**
 - status ASSERTED
-  - measurements (usable): att:0b8e74dca9fa4ca1 by technician (observation, accepted) SI [12.350 .. 12.450] <- record m-housing-scale-3-result: 12.4 kg u=0.025 k=2.0 conditions ['bench scale on bench-1', 'temperature=19C'] instrument ['scale-3']
-  - measurements (usable): att:95ee8557d42541ac by technician (observation, accepted) SI [12.370 .. 12.450] <- record m-housing-scale-9-result: 12410.0 g u=20.0 k=2.0 conditions ['bench scale on bench-1', 'temperature=19C'] instrument ['scale-9']
-  - statements (no record): att:378bf5b46a0d4a7f by design-office (testimony, accepted) SI [12.500 .. 12.500] 
-  - statements (no record): att:c1da90266ef8404b by scale-3 (observation, accepted) SI [12.350 .. 12.450] 
-  - pair att:0b8e74dca9fa4ca1 / att:95ee8557d42541ac: possibly compatible
+  - measurements (usable): att:1eb62187a81747d4 by technician (observation, accepted) SI [12.350 .. 12.450] <- record m-housing-scale-3-result: 12.4 kg u=0.025 k=2.0 conditions ['bench scale on bench-1', 'temperature=19C'] instrument ['scale-3']
+  - measurements (usable): att:32b5c19c22ad4167 by technician (observation, accepted) SI [12.370 .. 12.450] <- record m-housing-scale-9-result: 12410.0 g u=20.0 k=2.0 conditions ['bench scale on bench-1', 'temperature=19C'] instrument ['scale-9']
+  - statements (no record): att:31d3df6e1d3f4263 by design-office (testimony, accepted) SI [12.500 .. 12.500] 
+  - statements (no record): att:def15787b16e4448 by scale-3 (observation, accepted) SI [12.350 .. 12.450] 
+  - pair att:1eb62187a81747d4 / att:32b5c19c22ad4167: possibly compatible
 **Laboratory: sample-12 mass, 11-10 15:00**
 - status ASSERTED
-  - measurements (usable): att:272d2bb0dfcc43ad by bo (observation, accepted) SI [3.470 .. 3.530] <- record m-bo-k3-result: 3.5 u-kg u=0.01 k=3.0 conditions ['humidity=40%', 'temperature=20C'] instrument ['balance-b7']
-  - measurements (usable): att:74d21119ee6b488c by bo (observation, accepted) SI [3.460 .. 3.520] <- record m-bo-b7-result: 3490.0 u-g u=15.0 k=2.0 conditions ['humidity=40%', 'temperature=20C'] instrument ['balance-b7']
-  - measurements (usable): att:f99eea5d6c06488f by ana (observation, accepted) SI [3.490 .. 3.570] <- record m-ana-b3-corr-result: 3.53 u-kg u=0.02 k=2.0 conditions ['humidity=40%', 'temperature=20C'] instrument ['balance-b3']
-  - measurements (usable): att:fd1ae9f694a54a76 by ana (observation, accepted) SI [3.490 .. 3.570] <- record m-ana-b9-result: 3.53 u-kg u=0.02 k=2.0 conditions ['humidity=40%', 'temperature=35C'] instrument ['balance-b9']
-  - alternatives: att:9c8c18ec4018437e by ana (observation, superseded) SI [3.470 .. 3.550] <- record m-ana-b3-result: 3.51 u-kg u=0.02 k=2.0 conditions ['humidity=40%', 'temperature=20C'] instrument ['balance-b3']
-  - alternatives: att:c4684dc64a6943dc by lab-2 (observation, unreviewed) SI [3.660 .. 3.740] <- record m-lab2-result: 3.7 u-kg u=0.02 k=2.0 conditions ['humidity=40%', 'temperature=20C'] instrument []
-  - statements (no record): att:4d32cad44fac4b2b by qa (testimony, accepted) SI [3.500 .. 3.500] 
-  - pair att:272d2bb0dfcc43ad / att:74d21119ee6b488c: incomparable (different coverage levels (0.9973002039367398 vs 0.9544997361036416))
-  - pair att:272d2bb0dfcc43ad / att:f99eea5d6c06488f: incomparable (different coverage levels (0.9973002039367398 vs 0.9544997361036416))
-  - pair att:272d2bb0dfcc43ad / att:fd1ae9f694a54a76: incomparable (different coverage levels (0.9973002039367398 vs 0.9544997361036416))
-  - pair att:74d21119ee6b488c / att:f99eea5d6c06488f: possibly compatible
-  - pair att:74d21119ee6b488c / att:fd1ae9f694a54a76: incomparable (different measurement conditions ([('humidity=40%', 'temperature=20C')] vs [('humidity=40%', 'temperature=35C')]))
-  - pair att:f99eea5d6c06488f / att:fd1ae9f694a54a76: incomparable (different measurement conditions ([('humidity=40%', 'temperature=20C')] vs [('humidity=40%', 'temperature=35C')]))
+  - measurements (usable): att:3bd9ddb532d14e69 by bo (observation, accepted) SI [3.460 .. 3.520] <- record m-bo-b7-result: 3490.0 u-g u=15.0 k=2.0 conditions ['humidity=40%', 'temperature=20C'] instrument ['balance-b7']
+  - measurements (usable): att:447f813de2bd446f by ana (observation, accepted) SI [3.490 .. 3.570] <- record m-ana-b9-result: 3.53 u-kg u=0.02 k=2.0 conditions ['humidity=40%', 'temperature=35C'] instrument ['balance-b9']
+  - measurements (usable): att:5e9107f334314f98 by bo (observation, accepted) SI [3.470 .. 3.530] <- record m-bo-k3-result: 3.5 u-kg u=0.01 k=3.0 conditions ['humidity=40%', 'temperature=20C'] instrument ['balance-b7']
+  - measurements (usable): att:64996c4601814625 by ana (observation, accepted) SI [3.490 .. 3.570] <- record m-ana-b3-corr-result: 3.53 u-kg u=0.02 k=2.0 conditions ['humidity=40%', 'temperature=20C'] instrument ['balance-b3']
+  - alternatives: att:b94e4a31617c4768 by lab-2 (observation, unreviewed) SI [3.660 .. 3.740] <- record m-lab2-result: 3.7 u-kg u=0.02 k=2.0 conditions ['humidity=40%', 'temperature=20C'] instrument []
+  - alternatives: att:fc2d51b06a084449 by ana (observation, superseded) SI [3.470 .. 3.550] <- record m-ana-b3-result: 3.51 u-kg u=0.02 k=2.0 conditions ['humidity=40%', 'temperature=20C'] instrument ['balance-b3']
+  - statements (no record): att:7c089b7e1dc446b2 by qa (testimony, accepted) SI [3.500 .. 3.500] 
+  - pair att:3bd9ddb532d14e69 / att:447f813de2bd446f: incomparable (different measurement conditions ([('humidity=40%', 'temperature=20C')] vs [('humidity=40%', 'temperature=35C')]))
+  - pair att:3bd9ddb532d14e69 / att:5e9107f334314f98: incomparable (different coverage levels (0.9544997361036416 vs 0.9973002039367398))
+  - pair att:3bd9ddb532d14e69 / att:64996c4601814625: possibly compatible
+  - pair att:447f813de2bd446f / att:5e9107f334314f98: incomparable (different coverage levels (0.9544997361036416 vs 0.9973002039367398))
+  - pair att:447f813de2bd446f / att:64996c4601814625: incomparable (different measurement conditions ([('humidity=40%', 'temperature=35C')] vs [('humidity=40%', 'temperature=20C')]))
+  - pair att:5e9107f334314f98 / att:64996c4601814625: incomparable (different coverage levels (0.9973002039367398 vs 0.9544997361036416))
 
 ### Q2 Units: the same conversion rules in both worlds
 - workshop: 12410 g = 12.410 kg; lab: 3490 g = 3.490 kg; 20 degC = 293.15 K
@@ -60,27 +60,27 @@ Databases `wm-reference-gearbox-c` (workshop) and `wm-reference-lab` (laboratory
 ### Q6 Perspectives, knowledge time and hypothetical worlds
 **Laboratory, the external lab's perspective:**
 - status ASSERTED
-  - measurements (usable): att:c4684dc64a6943dc by lab-2 (observation, accepted) SI [3.660 .. 3.740] <- record m-lab2-result: 3.7 u-kg u=0.02 k=2.0 conditions ['humidity=40%', 'temperature=20C'] instrument []
-  - alternatives: att:272d2bb0dfcc43ad by bo (observation, unreviewed) SI [3.470 .. 3.530] <- record m-bo-k3-result: 3.5 u-kg u=0.01 k=3.0 conditions ['humidity=40%', 'temperature=20C'] instrument ['balance-b7']
-  - alternatives: att:74d21119ee6b488c by bo (observation, unreviewed) SI [3.460 .. 3.520] <- record m-bo-b7-result: 3490.0 u-g u=15.0 k=2.0 conditions ['humidity=40%', 'temperature=20C'] instrument ['balance-b7']
-  - alternatives: att:9c8c18ec4018437e by ana (observation, unreviewed) SI [3.470 .. 3.550] <- record m-ana-b3-result: 3.51 u-kg u=0.02 k=2.0 conditions ['humidity=40%', 'temperature=20C'] instrument ['balance-b3']
-  - alternatives: att:f99eea5d6c06488f by ana (observation, unreviewed) SI [3.490 .. 3.570] <- record m-ana-b3-corr-result: 3.53 u-kg u=0.02 k=2.0 conditions ['humidity=40%', 'temperature=20C'] instrument ['balance-b3']
-  - alternatives: att:fd1ae9f694a54a76 by ana (observation, unreviewed) SI [3.490 .. 3.570] <- record m-ana-b9-result: 3.53 u-kg u=0.02 k=2.0 conditions ['humidity=40%', 'temperature=35C'] instrument ['balance-b9']
-  - statements (no record): att:4d32cad44fac4b2b by qa (testimony, unreviewed) SI [3.500 .. 3.500] 
+  - measurements (usable): att:b94e4a31617c4768 by lab-2 (observation, accepted) SI [3.660 .. 3.740] <- record m-lab2-result: 3.7 u-kg u=0.02 k=2.0 conditions ['humidity=40%', 'temperature=20C'] instrument []
+  - alternatives: att:3bd9ddb532d14e69 by bo (observation, unreviewed) SI [3.460 .. 3.520] <- record m-bo-b7-result: 3490.0 u-g u=15.0 k=2.0 conditions ['humidity=40%', 'temperature=20C'] instrument ['balance-b7']
+  - alternatives: att:447f813de2bd446f by ana (observation, unreviewed) SI [3.490 .. 3.570] <- record m-ana-b9-result: 3.53 u-kg u=0.02 k=2.0 conditions ['humidity=40%', 'temperature=35C'] instrument ['balance-b9']
+  - alternatives: att:5e9107f334314f98 by bo (observation, unreviewed) SI [3.470 .. 3.530] <- record m-bo-k3-result: 3.5 u-kg u=0.01 k=3.0 conditions ['humidity=40%', 'temperature=20C'] instrument ['balance-b7']
+  - alternatives: att:64996c4601814625 by ana (observation, unreviewed) SI [3.490 .. 3.570] <- record m-ana-b3-corr-result: 3.53 u-kg u=0.02 k=2.0 conditions ['humidity=40%', 'temperature=20C'] instrument ['balance-b3']
+  - alternatives: att:fc2d51b06a084449 by ana (observation, unreviewed) SI [3.470 .. 3.550] <- record m-ana-b3-result: 3.51 u-kg u=0.02 k=2.0 conditions ['humidity=40%', 'temperature=20C'] instrument ['balance-b3']
+  - statements (no record): att:7c089b7e1dc446b2 by qa (testimony, unreviewed) SI [3.500 .. 3.500] 
 **Laboratory, as known before the correction:**
 - status ASSERTED
-  - measurements (usable): att:272d2bb0dfcc43ad by bo (observation, accepted) SI [3.470 .. 3.530] <- record m-bo-k3-result: 3.5 u-kg u=0.01 k=3.0 conditions ['humidity=40%', 'temperature=20C'] instrument ['balance-b7']
-  - measurements (usable): att:74d21119ee6b488c by bo (observation, accepted) SI [3.460 .. 3.520] <- record m-bo-b7-result: 3490.0 u-g u=15.0 k=2.0 conditions ['humidity=40%', 'temperature=20C'] instrument ['balance-b7']
-  - measurements (usable): att:9c8c18ec4018437e by ana (observation, accepted) SI [3.470 .. 3.550] <- record m-ana-b3-result: 3.51 u-kg u=0.02 k=2.0 conditions ['humidity=40%', 'temperature=20C'] instrument ['balance-b3']
-  - measurements (usable): att:fd1ae9f694a54a76 by ana (observation, accepted) SI [3.490 .. 3.570] <- record m-ana-b9-result: 3.53 u-kg u=0.02 k=2.0 conditions ['humidity=40%', 'temperature=35C'] instrument ['balance-b9']
-  - alternatives: att:c4684dc64a6943dc by lab-2 (observation, unreviewed) SI [3.660 .. 3.740] <- record m-lab2-result: 3.7 u-kg u=0.02 k=2.0 conditions ['humidity=40%', 'temperature=20C'] instrument []
-  - statements (no record): att:4d32cad44fac4b2b by qa (testimony, accepted) SI [3.500 .. 3.500] 
-  - pair att:272d2bb0dfcc43ad / att:74d21119ee6b488c: incomparable (different coverage levels (0.9973002039367398 vs 0.9544997361036416))
-  - pair att:272d2bb0dfcc43ad / att:9c8c18ec4018437e: incomparable (different coverage levels (0.9973002039367398 vs 0.9544997361036416))
-  - pair att:272d2bb0dfcc43ad / att:fd1ae9f694a54a76: incomparable (different coverage levels (0.9973002039367398 vs 0.9544997361036416))
-  - pair att:74d21119ee6b488c / att:9c8c18ec4018437e: possibly compatible
-  - pair att:74d21119ee6b488c / att:fd1ae9f694a54a76: incomparable (different measurement conditions ([('humidity=40%', 'temperature=20C')] vs [('humidity=40%', 'temperature=35C')]))
-  - pair att:9c8c18ec4018437e / att:fd1ae9f694a54a76: incomparable (different measurement conditions ([('humidity=40%', 'temperature=20C')] vs [('humidity=40%', 'temperature=35C')]))
+  - measurements (usable): att:3bd9ddb532d14e69 by bo (observation, accepted) SI [3.460 .. 3.520] <- record m-bo-b7-result: 3490.0 u-g u=15.0 k=2.0 conditions ['humidity=40%', 'temperature=20C'] instrument ['balance-b7']
+  - measurements (usable): att:447f813de2bd446f by ana (observation, accepted) SI [3.490 .. 3.570] <- record m-ana-b9-result: 3.53 u-kg u=0.02 k=2.0 conditions ['humidity=40%', 'temperature=35C'] instrument ['balance-b9']
+  - measurements (usable): att:5e9107f334314f98 by bo (observation, accepted) SI [3.470 .. 3.530] <- record m-bo-k3-result: 3.5 u-kg u=0.01 k=3.0 conditions ['humidity=40%', 'temperature=20C'] instrument ['balance-b7']
+  - measurements (usable): att:fc2d51b06a084449 by ana (observation, accepted) SI [3.470 .. 3.550] <- record m-ana-b3-result: 3.51 u-kg u=0.02 k=2.0 conditions ['humidity=40%', 'temperature=20C'] instrument ['balance-b3']
+  - alternatives: att:b94e4a31617c4768 by lab-2 (observation, unreviewed) SI [3.660 .. 3.740] <- record m-lab2-result: 3.7 u-kg u=0.02 k=2.0 conditions ['humidity=40%', 'temperature=20C'] instrument []
+  - statements (no record): att:7c089b7e1dc446b2 by qa (testimony, accepted) SI [3.500 .. 3.500] 
+  - pair att:3bd9ddb532d14e69 / att:447f813de2bd446f: incomparable (different measurement conditions ([('humidity=40%', 'temperature=20C')] vs [('humidity=40%', 'temperature=35C')]))
+  - pair att:3bd9ddb532d14e69 / att:5e9107f334314f98: incomparable (different coverage levels (0.9544997361036416 vs 0.9973002039367398))
+  - pair att:3bd9ddb532d14e69 / att:fc2d51b06a084449: possibly compatible
+  - pair att:447f813de2bd446f / att:5e9107f334314f98: incomparable (different coverage levels (0.9544997361036416 vs 0.9973002039367398))
+  - pair att:447f813de2bd446f / att:fc2d51b06a084449: incomparable (different measurement conditions ([('humidity=40%', 'temperature=35C')] vs [('humidity=40%', 'temperature=20C')]))
+  - pair att:5e9107f334314f98 / att:fc2d51b06a084449: incomparable (different coverage levels (0.9973002039367398 vs 0.9544997361036416))
 - lab plan 'lab-plan-tom': tom can-weigh in lab-1 at 14:00: established: holds True [STIPULATED] applicable [('lab-1', 'accepted')]; actual: not established: holds None [NOT_YET_KNOWN] applicable []
 - workshop plan 'plan-apprentice': apprentice can-replace-bearing in workshop: established: holds True [STIPULATED] applicable [('workshop', 'accepted')]; actual: not established: holds None [NOT_YET_KNOWN] applicable []
 
@@ -94,8 +94,8 @@ match $l isa rests-on (attestation: $a, record: $r); $a has wm-id $aid; $a links
       $r has wm-id $rid, has raw-value $v; expressed-in (record: $r, unit: $u); $u has wm-id $uid;
 fetch { "attestation": $aid, "by": $by, "record": $rid, "raw": $v, "unit": $uid, "conditions": [ $r.condition ] };
 ```
-  {"attestation": "att:0b8e74dca9fa4ca1", "by": "technician", "conditions": ["bench scale on bench-1", "temperature=19C"], "raw": 12.4, "record": "m-housing-scale-3-result", "unit": "kg"}
-  {"attestation": "att:95ee8557d42541ac", "by": "technician", "conditions": ["bench scale on bench-1", "temperature=19C"], "raw": 12410.0, "record": "m-housing-scale-9-result", "unit": "g"}
+  {"attestation": "att:1eb62187a81747d4", "by": "technician", "conditions": ["bench scale on bench-1", "temperature=19C"], "raw": 12.4, "record": "m-housing-scale-3-result", "unit": "kg"}
+  {"attestation": "att:32b5c19c22ad4167", "by": "technician", "conditions": ["bench scale on bench-1", "temperature=19C"], "raw": 12410.0, "record": "m-housing-scale-9-result", "unit": "g"}
 
 #### R2 produced: which activity produced which record (a proposition, attested)
 ```
@@ -133,12 +133,12 @@ match $l isa rests-on (attestation: $a, record: $r); $a has wm-id $aid; $a links
       $r has wm-id $rid, has raw-value $v; expressed-in (record: $r, unit: $u); $u has wm-id $uid;
 fetch { "attestation": $aid, "by": $by, "record": $rid, "raw": $v, "unit": $uid, "conditions": [ $r.condition ] };
 ```
-  {"attestation": "att:272d2bb0dfcc43ad", "by": "bo", "conditions": ["humidity=40%", "temperature=20C"], "raw": 3.5, "record": "m-bo-k3-result", "unit": "u-kg"}
-  {"attestation": "att:74d21119ee6b488c", "by": "bo", "conditions": ["humidity=40%", "temperature=20C"], "raw": 3490.0, "record": "m-bo-b7-result", "unit": "u-g"}
-  {"attestation": "att:9c8c18ec4018437e", "by": "ana", "conditions": ["humidity=40%", "temperature=20C"], "raw": 3.51, "record": "m-ana-b3-result", "unit": "u-kg"}
-  {"attestation": "att:c4684dc64a6943dc", "by": "lab-2", "conditions": ["humidity=40%", "temperature=20C"], "raw": 3.7, "record": "m-lab2-result", "unit": "u-kg"}
-  {"attestation": "att:f99eea5d6c06488f", "by": "ana", "conditions": ["humidity=40%", "temperature=20C"], "raw": 3.53, "record": "m-ana-b3-corr-result", "unit": "u-kg"}
-  {"attestation": "att:fd1ae9f694a54a76", "by": "ana", "conditions": ["humidity=40%", "temperature=35C"], "raw": 3.53, "record": "m-ana-b9-result", "unit": "u-kg"}
+  {"attestation": "att:3bd9ddb532d14e69", "by": "bo", "conditions": ["humidity=40%", "temperature=20C"], "raw": 3490.0, "record": "m-bo-b7-result", "unit": "u-g"}
+  {"attestation": "att:447f813de2bd446f", "by": "ana", "conditions": ["humidity=40%", "temperature=35C"], "raw": 3.53, "record": "m-ana-b9-result", "unit": "u-kg"}
+  {"attestation": "att:5e9107f334314f98", "by": "bo", "conditions": ["humidity=40%", "temperature=20C"], "raw": 3.5, "record": "m-bo-k3-result", "unit": "u-kg"}
+  {"attestation": "att:64996c4601814625", "by": "ana", "conditions": ["humidity=40%", "temperature=20C"], "raw": 3.53, "record": "m-ana-b3-corr-result", "unit": "u-kg"}
+  {"attestation": "att:b94e4a31617c4768", "by": "lab-2", "conditions": ["humidity=40%", "temperature=20C"], "raw": 3.7, "record": "m-lab2-result", "unit": "u-kg"}
+  {"attestation": "att:fc2d51b06a084449", "by": "ana", "conditions": ["humidity=40%", "temperature=20C"], "raw": 3.51, "record": "m-ana-b3-result", "unit": "u-kg"}
 
 #### R2 produced: which activity produced which record (a proposition, attested)
 ```
