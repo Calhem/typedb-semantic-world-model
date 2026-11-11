@@ -1,7 +1,7 @@
 # Core 0.4 Stage D-1: the mechanical profile (LABS-1.023)
 
-**Status (2026-11-11): implemented and validated on `feature/core-0.4-d1-mechanical` from merged D0 (`main` 8c60f04),
-at the review gate. Not merged; D-2 not started.** Decisions: D-D-1, D-D-2, D-D-6, D-D-9, D-D-11 (`stage-d-review.md`).
+**Status (2026-11-11): merged into `main` (153c2f2) under LABS-1.025. Limitations 1-4 are tracked in
+`deferred-issues.md` (DI-1 to DI-4).** Decisions: D-D-1, D-D-2, D-D-6, D-D-9, D-D-11 (`stage-d-review.md`).
 
 ## 1. What was added
 | Piece | Where | Kind of change |

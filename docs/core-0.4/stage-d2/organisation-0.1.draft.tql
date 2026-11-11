@@ -1,0 +1,24 @@
+# DESIGN DRAFT (LABS-1.025): profile organisation-0.1. Not installed; loaded only into throwaway probe databases by
+# probes/core04_d2_design.py. Additive vocabulary only (D-D-1, D-D-9); nothing in the core changes.
+define
+# sortals: identity criteria of a person and of an organisation (v0.2 §3.1: physical vs social object)
+entity person sub physical-object;
+entity organisation sub social-object;
+# employment: a contingent social relation (v0.2 §3.4's own example); membership stays core member-of
+relation employment sub proposition, relates employer, relates employee;
+organisation plays employment:employer;
+person plays employment:employee;
+# a single-holder office held in a context (an organisation or one of its units): a subtype of classified-as, so the
+# slot (class, context) -> classified applies to offices only, never to ordinary roles or categories (D-D-5)
+relation office-holding sub classified-as;
+# authority conferred: who (grantor) conferred which power, on whom (holder), within what (scope). Who reports it is the
+# attestation's attester, independent of the grantor. It says nothing about the grantor's own entitlement (D-D-3).
+relation authorisation sub proposition, relates grantor, relates holder, relates power, relates scope;
+particular plays authorisation:grantor, plays authorisation:holder, plays authorisation:scope;
+capability plays authorisation:power;
+# an act undertaken in an office: the official (as actor, one specialisation, D-D-6), the office concept and the
+# context the office is held in (own roles)
+relation official-act sub event, relates official as actor, relates office, relates office-context;
+particular plays official-act:official;
+social-role plays official-act:office;
+particular plays official-act:office-context;
