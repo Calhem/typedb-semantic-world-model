@@ -476,7 +476,7 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin):
 
     def attest(self, world, type=None, roles=None, *, event=None, params=None, start=None, end=None,
                until_superseded=False, polarity=True, stance=None, basis=None, attester=SYSTEM, credence=None,
-               clock=None, supersedes=None, id=None):
+               clock=None, supersedes=None, id=None, evidence=None):
         """Record that `attester` takes a stance on a content in `world` over a valid interval. Returns its id.
 
         Content: a proposition (`type`, `roles`, `params`; stored once) or an event description (`event` id).
@@ -484,6 +484,9 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin):
         UNKNOWN unless `until_superseded` (the attester commits that it holds until it records otherwise).
         Defaults: stance `stipulates` in hypothetical and simulated worlds, `asserts` otherwise; basis follows stance.
         supersedes: the id of an earlier attestation by the same attester that this one replaces (a correction).
+        evidence (Stage C, D-C-2): functions f(tx) -> record id that create the evidence records this attestation rests
+        on, run in the attestation's own transaction; each record is linked by rests-on(attestation, record), so the
+        attestation, its records and the links are written atomically.
         """
         if supersedes is not None and self._attestation(supersedes)["attester"] != attester:
             raise ValueError("an attestation can only be superseded by its own attester (E3)")
@@ -536,6 +539,10 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin):
                 has recorded-at == $rec{attrs};{old_link}""", values).as_concept_rows())
             if not rows:
                 raise ValueError(f"world {world!r}, attester {attester!r}, content or clock not found")
+            for make in evidence or ():
+                record = make(tx)
+                q.run(tx, """match $n isa attestation, has wm-id == $id; $r isa information-object, has wm-id == $r_id;
+                    insert rests-on (attestation: $n, record: $r);""", {"id": aid, "r_id": record})
             tx.commit()
         return aid
 

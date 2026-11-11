@@ -28,7 +28,7 @@ Measurement, observation, assertion and acceptance stay separate:
 | # | Decision | Status |
 |---|---|---|
 | D-C-1 | Raw value, raw unit (`expressed-in`), standard uncertainty, coverage factor, conditions and calibration reference are intrinsic attributes of the result record; conversions are derived; the reported content is in SI | **provisionally approved (LABS-1.017)** |
-| D-C-2 | Associating a reported-content attestation with the result record(s) behind it | **under review (LABS-1.017):** the C1 implementation matches by source and activity start, which is a heuristic; see the proposal below |
+| D-C-2 | Each measurement-backed attestation names its own result record(s) through the structural link `rests-on(attestation, record)` (Option A below). No matching by source, time or content; written atomically with the attestation; immutable; no one-to-one constraint; it records evidential dependency, not truth or occurrence; `produced` and `reports` keep their meanings | **approved (LABS-1.018), implemented** |
 
 ## C1 (implemented)
 - **Schema:** module `core-0.4-c`, file `schema/core/core-0.4-c1.tql`. Installed by `QUALITY_MODULES` (opt-in).
@@ -45,7 +45,7 @@ Measurement, observation, assertion and acceptance stay separate:
   - a result at 35 °C, and one at k = 3;
   - a specification;
   - a later correction.
-- **Tests:** `tests/test_i_c1_measurements.py`, 10. Full suite: 242 passed on each path.
+- **Tests:** `tests/test_i_c1_measurements.py` (10) and `tests/test_i_c1b_provenance.py` (10, D-C-2 regressions).
 
 ## D-C-2 review (LABS-1.017): tying a result to its supporting attestation
 ### What the probe shows (`probes/core04_c_dc2_identity.py`)
@@ -68,10 +68,10 @@ statement* a record supports. The statement is the attestation. Nothing in C1 li
 | C. Store the attestation id as an attribute of the record, or the record id on the attestation | a string reference | rejected as authoritative provenance: no referential integrity in TypeDB; acceptable only as a stop-gap |
 | D. Keep heuristic matching (C1) | source + activity start | rejected: the probe shows it is wrong for repeated measurements |
 
-### Proposed correction (Option A), not implemented pending approval
+### Correction (Option A): approved and implemented in LABS-1.018
 - **Schema** (additive, module `core-0.4-c`):
   ```
-  relation rests-on, relates attestation @card(1..1), relates record @card(1..);
+  relation rests-on, relates attestation @card(1..1), relates record @card(1..1);
   attestation plays rests-on:attestation;
   information-object plays rests-on:record;
   ```
@@ -96,6 +96,29 @@ statement* a record supports. The statement is the attestation. Nothing in C1 li
   rebuilt. For a database that holds C1 data, the link can be added from `measure()`'s own records only where one
   record matches one attestation unambiguously; ambiguous ones stay unlinked and are reported.
 
-### Decision requested
-Approve Option A, the stance-layer structural link `rests-on(attestation, record)`, or choose another option. C2
-integration waits for this gate, as instructed.
+### As implemented (LABS-1.018)
+- **One link per (attestation, record) pair.** Each `rests-on` relates exactly one attestation and one record. An
+  attestation may rest on several records and a record may support several attestations: there is no one-to-one
+  constraint (tested).
+- **Atomic.** `attest()` takes an `evidence` list of writers that run inside the attestation's own transaction.
+  `measure()` uses it to write the result record, its `expressed-in` unit and the `rests-on` link together with the
+  content attestation. If a writer fails, nothing is committed: no attestation, no record, no link (tested).
+- **Read.** `evidence_of(attestation)` returns the linked records. `measurements()` uses only this. The C1 heuristic
+  (and its `match` field) is removed.
+- **Judged parts stay judged.** For each record, `report` (whether the `reports` claim is accepted) and the
+  activity's times (from its account) depend on the perspective. The link, the record's values and conditions, and
+  the activity's operator and instrument do not (tested).
+- **Probe rerun.** `probes/core04_c_dc2_identity.out.json` (the C1 output is kept as `.before.json`): each attestation
+  now names exactly its own record and conditions in all three cases.
+- **Regression tests** (`tests/test_i_c1b_provenance.py`):
+  - identical values on two instruments;
+  - identical values at 20 °C and 35 °C (no condition leak; the pair is incomparable);
+  - three results from one source at one time;
+  - correction and supersession: both links kept, supersession per perspective, the `as_of` view before the
+    correction;
+  - disputed and unreviewed results with their own conditions;
+  - perspectives;
+  - hypothetical inheritance;
+  - atomicity and many-to-many;
+  - a link establishes neither acceptance nor occurrence;
+  - selective/full-load agreement.

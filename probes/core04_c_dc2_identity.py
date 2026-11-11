@@ -1,5 +1,6 @@
-"""LABS-1.017 probe for D-C-2: can the C1 implementation tell which result record supports which reported-content
-attestation, when one source records two results at the same time? Throwaway databases (wm-dc2-*), deleted afterwards.
+"""LABS-1.017 probe for D-C-2, rerun under LABS-1.018 with rests-on(attestation, record): which result record supports
+which reported-content attestation, when one source records two results at the same time? Throwaway databases
+(wm-dc2-*), deleted afterwards. The LABS-1.017 (heuristic) output is kept in core04_c_dc2_identity.before.json.
 
     uv run python -I probes/core04_c_dc2_identity.py > probes/core04_c_dc2_identity.out.json
 """
@@ -32,8 +33,8 @@ def view(wm, w, ids):
     out = {}
     for m in wm.measurements(w, "sample", "q-mass"):
         label = next((k for k, v in ids.items() if v["content"] == m["attestation"]), m["attestation"])
-        out[label] = [{"record_of": names.get(r["record"], r["record"]), "match": r["match"],
-                       "conditions": r["conditions"]} for r in m["records"]]
+        out[label] = [{"record_of": names.get(r["record"], r["record"]), "conditions": r["conditions"]}
+                      for r in m["records"]]
     return out
 
 

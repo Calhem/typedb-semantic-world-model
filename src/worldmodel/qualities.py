@@ -16,6 +16,7 @@ clarification B).
 import math
 from datetime import datetime, timezone
 
+from .keys import check_new_id
 from .semantics import Status, acceptance_state, superseded, usable, verdict
 
 SYSTEM = "system"
@@ -105,7 +106,8 @@ class QualitiesMixin:
         """Record a measurement of `quality` of `bearer`: the activity (start..end), the result record (value in `unit`
         with standard uncertainty and coverage factor k, conditions, calibration reference) and the reported content
         (the SI range [v - k u, v + k u] with its coverage level), linked by produced and reports, all attested by
-        `attester` (basis observation). The content is attested over the activity's interval, or from its start until
+        `attester` (basis observation). The content attestation, the result record and rests-on(attestation, record)
+        are written in one transaction (D-C-2). The content is attested over the activity's interval, or from its start until
         superseded when `persists` (the source asserts the value lasts). `supersedes`: the attestation id of an earlier
         reported content this corrects. The unit's dimension must be the quality kind's. Returns the ids."""
         dim = self._dimension_of(quality)
@@ -122,33 +124,42 @@ class QualitiesMixin:
             roles["instrument"] = instrument
         activity = self.account(world, roles, start, end, kind="measurement", occurrence=occurrence, attester=attester,
                                 id=f"{id}-activity" if id else None)
-        record = self.add_entity("information-object", f"result of {activity}", id=f"{id}-result" if id else None)
-        self._set_attributes(record, "information-object",
-                             [("raw-value", float(value)), ("standard-uncertainty", float(uncertainty)),
-                              ("coverage-factor", float(k))] + [("condition", c) for c in sorted(set(conditions))]
-                             + ([("calibration-ref", calibration)] if calibration else []))
-        self._link_unit(record, unit)
-        produced = self.attest(world, "produced", {"activity": activity, "result": record}, until_superseded=True,
-                               attester=attester)
+        record = check_new_id(f"{id}-result" if id else self._mint("result"))
         lo, hi = sorted((self.convert(value - k * uncertainty, unit), self.convert(value + k * uncertainty, unit)))
         params = {"lower": lo, "upper": hi, "coverage-level": coverage_level(k)}
         content_roles = {"bearer": bearer, "quality": quality, "unit": self.si_unit(dim)}
         valid = {"start": start, "until_superseded": True} if persists else {"start": start, "end": end}
+        attrs = ([("raw-value", float(value)), ("standard-uncertainty", float(uncertainty)),
+                  ("coverage-factor", float(k))] + [("condition", c) for c in sorted(set(conditions))]
+                 + ([("calibration-ref", calibration)] if calibration else []))
+
+        def write_record(tx):             # inside the content attestation's transaction (D-C-2: atomic)
+            from . import typeql as q
+            parts = "".join(f", has {name} == $v{i}" for i, (name, _) in enumerate(attrs))
+            q.run(tx, f"""match $u isa unit, has wm-id == $unit;
+                insert $r isa information-object, has wm-id == $id, has name == $n{parts};
+                expressed-in (record: $r, unit: $u);""",
+                  {"id": record, "n": f"result of {activity}", "unit": unit,
+                   **{f"v{i}": v for i, (_, v) in enumerate(attrs)}})
+            return record
+
         content = self.attest(world, "has-quality", content_roles, params=params, basis="observation",
-                              attester=attester, supersedes=supersedes, **valid)
+                              attester=attester, supersedes=supersedes, evidence=[write_record], **valid)
+        produced = self.attest(world, "produced", {"activity": activity, "result": record}, until_superseded=True,
+                               attester=attester)
         key = self._content_key(content)
         reports = self.attest(world, "reports", {"result": record, "content": self.proposition_id(key)},
                               until_superseded=True, attester=attester)
         return {"activity": activity, "result": record, "content": content, "produced": produced, "reports": reports,
                 "range": (lo, hi), "coverage_level": params["coverage-level"]}
 
-    def _link_unit(self, record, unit):
+    def evidence_of(self, attestation):
+        """The result records an attestation rests on (rests-on links; D-C-2). Structural: not judged."""
         from . import typeql as q
-        from .model import WRITE
-        with self.driver.transaction(self.database, WRITE) as tx:
-            q.run(tx, """match $r isa information-object, has wm-id == $r_id; $u isa unit, has wm-id == $u_id;
-                insert expressed-in (record: $r, unit: $u);""", {"r_id": record, "u_id": unit})
-            tx.commit()
+        from .model import READ
+        with self.driver.transaction(self.database, READ) as tx:
+            return sorted({q.opt(r, "rid") for r in q.rows(tx, """match $a isa attestation, has wm-id == $id;
+                rests-on (attestation: $a, record: $r); $r has wm-id $rid;""", {"id": attestation})})
 
     def _content_key(self, attestation):
         return self._attestation(attestation)["content"]
@@ -173,7 +184,8 @@ class QualitiesMixin:
     def measurements(self, world, bearer, quality, t=None, as_of=None, perspective=SYSTEM):
         """Every stated value of `quality` of `bearer`, each with its attestation's judgement for the perspective
         (accepted, unreviewed, rejected, retracted, superseded) and its provenance. Values reported by a result record
-        are measurements (with the record and the activity that produced it); values without one are statements, with
+        rest on result records (rests-on) and are measurements (with each record and the activity that produced it);
+        values without one are statements, with
         their basis (a design specification by testimony, a reading noted without a record). If t is given, only
         attestations that hold at t."""
         from .keys import proposition_id
@@ -187,32 +199,23 @@ class QualitiesMixin:
                 continue
             records = []
             pid = proposition_id(a.content)
-            for link in self._claims(world, pid, ("reports",), t or FAR, as_of, perspective):
-                for rec in link["roles"].get("result", []):
-                    detail = self._record(rec) or {"record": rec}
-                    acts = [x for e in self._claims(world, rec, ("produced",), t or FAR, as_of, perspective)
-                            for x in e["roles"].get("activity", [])]
-                    detail["report"] = self._verdict_label(link)
-                    detail["activities"] = []
-                    for act in acts:
-                        span = self.interval(world, act, as_of, perspective)
-                        roles = (self.content(act) or {}).get("roles", {})
-                        detail["activities"].append({
-                            "activity": act, "start": span[0] if span else None, "end": span[1] if span else None,
-                            "source": span[2].attester if span else None,
-                            "operator": roles.get("actor", []), "instrument": roles.get("instrument", []),
-                            "occurrences": self.occurrences_of(world, act, as_of, perspective)})
-                    records.append(detail)
-            # Identical content may be reported by several results (one content, several attestations). PROVISIONAL
-            # (D-C-2, under review in LABS-1.017): an attestation is matched to the records whose activity has the same
-            # source and start; if none matches, every record reporting the content is kept, marked as matched by
-            # content only. This is a heuristic, not authoritative provenance: two results from one source at one time
-            # cannot be told apart (probes/core04_c_dc2_identity.py).
-            own = [r for r in records if any(x["source"] == a.attester and x["start"] == a.start
-                                             for x in r["activities"])]
-            for r in records:
-                r["match"] = "source and time" if r in own else "content only"
-            records = own or records
+            # Provenance is the attestation's own rests-on links (D-C-2): never matched by source, time or content.
+            for rec in self.evidence_of(a.id):
+                detail = self._record(rec) or {"record": rec}
+                reports = [e for e in self._claims(world, rec, ("reports",), t or FAR, as_of, perspective)
+                           if pid in e["roles"].get("content", [])]
+                detail["report"] = self._verdict_label(reports[0]) if reports else "none"
+                acts = [x for e in self._claims(world, rec, ("produced",), t or FAR, as_of, perspective)
+                        for x in e["roles"].get("activity", [])]
+                detail["activities"] = []
+                for act in acts:
+                    span = self.interval(world, act, as_of, perspective)
+                    roles = (self.content(act) or {}).get("roles", {})
+                    detail["activities"].append({
+                        "activity": act, "start": span[0] if span else None, "end": span[1] if span else None,
+                        "operator": roles.get("actor", []), "instrument": roles.get("instrument", []),
+                        "occurrences": self.occurrences_of(world, act, as_of, perspective)})
+                records.append(detail)
             state = "superseded" if superseded(a, perspective, as_of) else acceptance_state(a, perspective, as_of)
             out.append({"attestation": a.id, "content": a.content, "kind": "measurement" if records else "statement",
                         "range": (a.params["lower"], a.params["upper"]), "unit": a.roles.get("unit", [None])[0],

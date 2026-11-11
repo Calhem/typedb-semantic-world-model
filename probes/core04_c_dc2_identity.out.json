@@ -1,32 +1,16 @@
 {
  "1 identical values, same source and time: records each attestation is tied to": {
-  "b7": [
+  "b3": [
    {
     "record_of": "b3",
-    "match": "content only",
-    "conditions": [
-     "T=20C"
-    ]
-   },
-   {
-    "record_of": "b7",
-    "match": "content only",
     "conditions": [
      "T=20C"
     ]
    }
   ],
-  "b3": [
-   {
-    "record_of": "b3",
-    "match": "content only",
-    "conditions": [
-     "T=20C"
-    ]
-   },
+  "b7": [
    {
     "record_of": "b7",
-    "match": "content only",
     "conditions": [
      "T=20C"
     ]
@@ -34,33 +18,17 @@
   ]
  },
  "2 identical values, same source and time, different conditions": {
-  "T=20C": [
-   {
-    "record_of": "T=35C",
-    "match": "content only",
-    "conditions": [
-     "T=35C"
-    ]
-   },
-   {
-    "record_of": "T=20C",
-    "match": "content only",
-    "conditions": [
-     "T=20C"
-    ]
-   }
-  ],
   "T=35C": [
    {
     "record_of": "T=35C",
-    "match": "content only",
     "conditions": [
      "T=35C"
     ]
-   },
+   }
+  ],
+  "T=20C": [
    {
     "record_of": "T=20C",
-    "match": "content only",
     "conditions": [
      "T=20C"
     ]
@@ -69,17 +37,15 @@
  },
  "2b comparison of those two": [],
  "3 different values, same source and time": {
-  "3.6": [
-   {
-    "record_of": "3.6",
-    "match": "content only",
-    "conditions": []
-   }
-  ],
   "3.51": [
    {
     "record_of": "3.51",
-    "match": "content only",
+    "conditions": []
+   }
+  ],
+  "3.6": [
+   {
+    "record_of": "3.6",
     "conditions": []
    }
   ]
