@@ -71,7 +71,7 @@ def test_all_profiles_install_together_in_any_order(make):
         two.install_profile(p)
     assert snapshot(one) == snapshot(two)                                                 # same schema ...
     assert one.slots() == two.slots() and one.profiles() == two.profiles()                # ... slots, records
-    for label in ("acting-post-holding", "protocol-step-of", "scheduled-maintenance-kind", "core-sample", "sampling"):
+    for label in ("acting-post-holding", "protocol-step-of", "scheduled-maintenance-kind", "core-aliquot", "aliquoting"):
         assert one.ancestors(label) == two.ancestors(label)                               # ... and lattice
 
 
@@ -221,7 +221,7 @@ def roles(wm, w, t, **kw):
 def test_lattice_handles_deeper_hierarchies(world):
     wm, _ = world
     assert wm.ancestors("acting-post-holding")[:3] == ["acting-post-holding", "post-holding", "classified-as"]
-    assert wm.core_type("core-sample") == "physical-object" and wm.core_type("protocol-step-of") == "part-of"
+    assert wm.core_type("core-aliquot") == "physical-object" and wm.core_type("protocol-step-of") == "part-of"
     assert wm.is_a_any("scheduled-maintenance-kind", ("describes", "classified-as"))
     assert not wm.is_a_any("step-of", ("classified-as", "describes"))
 
@@ -376,9 +376,9 @@ def test_schema_changed_outside_install_profile_is_a_conflict(make):
     wm = make()
     from worldmodel.model import SCHEMA
     with wm.driver.transaction(wm.database, SCHEMA) as tx:          # a manual define of one of the profile's types
-        tx.query("define entity sample sub physical-object;").resolve()
+        tx.query("define entity aliquot sub physical-object;").resolve()
         tx.commit()
     assert wm.profile_status(F.LABORATORY) == "conflict" and "laboratory-fixture" not in wm.profiles()
-    with pytest.raises(ProfileError, match="redeclares existing types \\['sample'\\]"):
+    with pytest.raises(ProfileError, match="redeclares existing types \\['aliquot'\\]"):
         wm.install_profile(F.LABORATORY)
     assert wm.profile_status(F.LABORATORY) == "conflict"

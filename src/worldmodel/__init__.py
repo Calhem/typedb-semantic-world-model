@@ -5,6 +5,7 @@ from .model import CORE_MODULES, DYNAMICS_MODULES, PHYSICAL_MODULES, QUALITY_MOD
 from .profiles import PROFILES, Profile, ProfileError
 from . import mechanical  # noqa: E402,F401  (registers the mechanical profile)
 from . import organisation  # noqa: E402,F401  (registers the organisation profile)
+from . import laboratory  # noqa: E402,F401  (registers the laboratory profile)
 from .semantics import Window
 
-__all__ = ["WorldModel", "connect", "Window", "SYSTEM", "proposition_key", "proposition_id", "PropositionIdCollision", "PHYSICAL_MODULES", "DYNAMICS_MODULES", "QUALITY_MODULES", "Profile", "ProfileError", "PROFILES", "CORE_MODULES", "mechanical", "organisation"]
+__all__ = ["WorldModel", "connect", "Window", "SYSTEM", "proposition_key", "proposition_id", "PropositionIdCollision", "PHYSICAL_MODULES", "DYNAMICS_MODULES", "QUALITY_MODULES", "Profile", "ProfileError", "PROFILES", "CORE_MODULES", "mechanical", "organisation", "laboratory"]

@@ -1,0 +1,21 @@
+# Profile laboratory-0.1 (Core 0.4 Stage D-3, LABS-1.028). Additive vocabulary only (D-D-1, D-D-9): installed after
+# the full core with WorldModel.install_profile("laboratory"). Measurement (activity, result record, proposition),
+# rests-on, comparability, units, corrections, constitution, location, hypotheses (stance) and processes are core
+# (Stage B and C). Specimens and experiments are classifications (laboratory:specimen, laboratory:experiment).
+define
+# a sample: a sortal whose identity is its portion of matter (v0.2 §3.1), so splitting or consuming it ends it and
+# each sub-sample is a new particular. Material provenance is core constitution(constituted, constituent), attested
+entity sample sub physical-object;
+# a sampling activity, as a source's account: who took it (sampler, as actor), from what (sampled, as origin) and the
+# sample produced (product, as destination); one specialisation per core role (D-D-6). An account establishes
+# neither its occurrence nor the product's existence or constitution: those are judged from their own attestations
+relation sampling sub event, relates sampler as actor, relates sampled as origin, relates product as destination;
+particular plays sampling:sampler;
+physical-object plays sampling:sampled;
+sample plays sampling:product;
+# a calibration: the certificate (an information object) says the instrument is calibrated, attested over the
+# certificate's valid time and resting on the certificate (rests-on). Calibration is evidence-aware content: it is
+# judged per perspective and never invalidates a measurement
+relation calibration-of sub proposition, relates certificate, relates calibrated;
+information-object plays calibration-of:certificate;
+physical-object plays calibration-of:calibrated;

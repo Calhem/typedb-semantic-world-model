@@ -1,8 +1,9 @@
-# TEST FIXTURE (LABS-1.022): a minimal laboratory profile for installation and subtype tests. Not the D-3 profile.
+# TEST FIXTURE (LABS-1.022): a minimal laboratory profile for installation and subtype tests. Not the D-3 profile:
+# its labels differ from the real laboratory profile's, so both install together (LABS-1.028, D-D3-5).
 define
-entity sample sub physical-object;
-entity core-sample sub sample;                                                 # a deeper sortal
+entity aliquot sub physical-object;
+entity core-aliquot sub aliquot;                                                 # a deeper sortal
 relation step-of sub part-of;                                                  # a step of an experiment
 relation protocol-step-of sub step-of;                                         # a deeper subtype
-relation sampling sub event, relates sampler as actor, relates sampled as origin, relates product as destination;
-particular plays sampling:sampler, plays sampling:sampled, plays sampling:product;
+relation aliquoting sub event, relates taker as actor, relates taken-from as origin, relates portion as destination;
+particular plays aliquoting:taker, plays aliquoting:taken-from, plays aliquoting:portion;

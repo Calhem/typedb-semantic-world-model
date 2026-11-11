@@ -15,4 +15,4 @@ LABORATORY = Profile("laboratory-fixture", "0.0-test", (str(HERE / "laboratory" 
 ALL = (MECHANICAL, ORGANISATION, LABORATORY)
 NEW_TYPES = {"mechanical-fixture": ["maintenance-kind", "part-swap", "scheduled-maintenance-kind"],
              "organisation-fixture": ["acting-post-holding", "company", "post-holding", "staff-member"],
-             "laboratory-fixture": ["core-sample", "protocol-step-of", "sample", "sampling", "step-of"]}
+             "laboratory-fixture": ["aliquot", "aliquoting", "core-aliquot", "protocol-step-of", "step-of"]}

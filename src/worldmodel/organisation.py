@@ -48,11 +48,8 @@ def _public(rows):
 
 
 def _judged(wm, entry):
-    """One content's judgement, in the capable() vocabulary, with its evidence."""
-    label = wm._holding_label(entry)
-    holds, status, judgement = wm._combine([{"judgement": label, "status": entry["status"]}], True)
-    return {"judgement": judgement, "holds": holds, "status": status, "evidence": entry["attestations"],
-            "_label": label}
+    """One content's judgement, in the capable() vocabulary, with its evidence (the shared helper)."""
+    return wm._judgement(entry)
 
 
 # ---- employment ----------------------------------------------------------------------------------------------------------

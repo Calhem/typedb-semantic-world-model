@@ -40,6 +40,14 @@ class AgencyMixin:
             label = "expired"
         return label
 
+    def _judgement(self, entry):
+        """One content's judgement (a _claims entry) in the capable() vocabulary, with its evidence: the shared
+        per-content report of the profiles (organisation, LABS-1.026; laboratory, LABS-1.028)."""
+        label = self._holding_label(entry)
+        holds, status, judgement = self._combine([{"judgement": label, "status": entry["status"]}], True)
+        return {"judgement": judgement, "holds": holds, "status": status, "evidence": entry["attestations"],
+                "_label": label}
+
     @staticmethod
     def _combine(applicable, any_found):
         """(holds, status, judgement) for a set of applicable holdings, each {"judgement", "status"} (LABS-1.019 cases;
