@@ -91,7 +91,7 @@ class AgencyMixin:
         from .model import READ
         out = []
         for f in self.facts_about(world, holder, t, as_of, perspective):
-            if f["type"] != "classified-as" or holder not in f["roles"].get("classified", []):
+            if not self.is_a(f["type"], "classified-as") or holder not in f["roles"].get("classified", []):
                 continue
             for c in f["roles"].get("class", []):
                 with self.driver.transaction(self.database, READ) as tx:

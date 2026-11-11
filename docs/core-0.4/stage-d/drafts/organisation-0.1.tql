@@ -1,0 +1,21 @@
+# EXPLORATORY DRAFT (LABS-1.021, Stage D review): profile organisation-0.1. Not installed.
+# person and organisation are sortals (identity criteria differ from a generic physical/social object). Holding a role
+# (an office) and having authority to act are kept apart: the office is a classification in a context; authority is a
+# separate, attested conferral by a grantor, of a power, within a scope.
+define
+entity person sub physical-object;
+entity organisation sub social-object;
+relation employment sub proposition, relates employer, relates employee;
+organisation plays employment:employer;
+person plays employment:employee;
+# single-holder offices: a subtype of classified-as, so a functional slot (class, context) -> classified can be
+# declared for offices only, not for every classification
+relation office-holding sub classified-as;
+# authority: who conferred which power on whom, within what scope (an organisation, site or process)
+relation authorisation sub proposition, relates grantor, relates holder, relates power, relates scope;
+particular plays authorisation:grantor, plays authorisation:holder, plays authorisation:scope;
+capability plays authorisation:power;
+# an act performed in the capacity of an office (e.g. a sign-off as site manager)
+relation decision sub event, relates decider as actor, relates capacity;
+particular plays decision:decider;
+social-role plays decision:capacity;

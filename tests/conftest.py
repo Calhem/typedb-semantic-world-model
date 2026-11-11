@@ -45,3 +45,48 @@ def wm(driver):
         yield model
     finally:
         driver.databases.get(name).delete()
+
+
+AUTO_PROFILES = {"on": False}
+
+
+def pytest_configure(config):
+    config.addinivalue_line("markers", "own_profiles: the test installs profiles itself (no core-protection install)")
+
+
+@pytest.fixture(autouse=True)
+def _own_profiles(request):
+    """Tests marked own_profiles test installation on a bare core, so the core-protection run leaves them alone."""
+    if os.environ.get("WM_PROFILES") != "1":
+        yield
+        return
+    AUTO_PROFILES["on"] = request.node.get_closest_marker("own_profiles") is None
+    yield
+    AUTO_PROFILES["on"] = True
+
+
+@pytest.fixture(scope="session", autouse=True)
+def core_protection():
+    """WM_PROFILES=1 (LABS-1.022, core-protection run): every test database created with the full core also gets all
+    three fixture profiles installed before the test writes anything, so the whole suite checks that profile
+    vocabulary changes no core answer. Off by default."""
+    if os.environ.get("WM_PROFILES") != "1":
+        yield
+        return
+    AUTO_PROFILES["on"] = True
+    import profile_fixtures
+    from worldmodel.model import CORE_MODULES
+    original = WorldModel.create.__func__
+
+    def create(cls, database, *args, **kwargs):
+        wm = original(cls, database, *args, **kwargs)
+        modules = kwargs.get("modules", args[1] if len(args) > 1 else None)
+        if AUTO_PROFILES["on"] and modules is not None and set(CORE_MODULES) <= set(modules) and not wm.profiles():
+            for p in profile_fixtures.ALL:
+                wm.install_profile(p)
+        return wm
+    WorldModel.create = classmethod(create)
+    try:
+        yield
+    finally:
+        WorldModel.create = classmethod(original)

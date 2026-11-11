@@ -114,7 +114,8 @@ class DynamicsMixin:
         out = [a.id for a in self._load(world, as_of, types=["event"]).values() if a.content == description
                and (attester is None or a.attester == attester)]
         out += [h["attestation"] for h in self.history(world, description, as_of=as_of)
-                if h["type"] in ("classified-as", "describes") and (attester is None or h["attester"] == attester)]
+                if self.is_a_any(h["type"], ("classified-as", "describes"))
+                and (attester is None or h["attester"] == attester)]
         return sorted(out)
 
     def _claims(self, world, subject, types, t, as_of, perspective):
@@ -542,7 +543,7 @@ class DynamicsMixin:
         kinds = {e["event"]: e for e in self.events(world, as_of=as_of, perspective=perspective)}
         steps = []
         for f in self.facts_about(world, process, t, as_of, perspective):
-            if f["type"] != "part-of" or process not in f["roles"].get("whole", []):
+            if not self.is_a(f["type"], "part-of") or process not in f["roles"].get("whole", []):
                 continue
             for occ in f["roles"]["part"]:
                 descs = self.descriptions(world, occ, as_of, perspective)

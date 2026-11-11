@@ -1,0 +1,6 @@
+# EXPLORATORY DRAFT (LABS-1.021, Stage D review). Not installed; loaded only into throwaway probe databases.
+# Core conformance: v0.2 §3.4 specifies depends-on "with a dependency-kind concept (functional, existential,
+# informational)"; Core 0.3/0.4 implement depends-on without it. Additive: existing depends-on content keeps its key.
+define
+relation depends-on, relates kind;
+category plays depends-on:kind;
