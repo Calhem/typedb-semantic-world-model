@@ -1,0 +1,13 @@
+# EXPLORATORY DRAFT (LABS-1.021, Stage D review): profile mechanical-0.1. Not installed.
+# Mostly vocabulary (categories: gearbox, bearing, steel...; joint kinds; seat positions as role concepts). Schema adds
+# only what the core cannot say: a symmetric connection between two parts, and a replacement event whose removed and
+# fitted parts are distinguished (today both are a generic `patient`, so two accounts naming different patients look
+# like a disagreement).
+define
+relation connected-to sub proposition, relates endpoint @card(2..2), relates joint-kind;
+particular plays connected-to:endpoint;
+category plays connected-to:joint-kind;
+# `fitted` is the profile's own role, not a second specialisation of `patient`: in TypeDB 3.14.1 two specialisations
+# of one role share the parent's default @card(0..1), so an event naming both is rejected at commit (probe D1c-alt).
+relation replacement sub event, relates removed as patient, relates fitted;
+physical-object plays replacement:removed, plays replacement:fitted;

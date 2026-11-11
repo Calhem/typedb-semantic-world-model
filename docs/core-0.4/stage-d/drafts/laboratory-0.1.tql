@@ -1,0 +1,11 @@
+# EXPLORATORY DRAFT (LABS-1.021, Stage D review): profile laboratory-0.1. Not installed.
+# Samples are sortals (a portion taken from a specimen; constitution links it to its origin). Instruments, operators
+# and experiments need no type: they are categories and event roles. Calibration becomes attested content about an
+# instrument, backed by a certificate (an information object), instead of only a text reference on the result record.
+define
+entity sample sub physical-object;
+relation sampling sub event, relates sampler as actor, relates sampled as origin, relates product as destination;
+particular plays sampling:sampler, plays sampling:sampled, plays sampling:product;
+relation calibration-of sub proposition, relates certificate, relates calibrated;
+information-object plays calibration-of:certificate;
+physical-object plays calibration-of:calibrated;

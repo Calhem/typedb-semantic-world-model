@@ -1,0 +1,191 @@
+{
+ "D0 install": {
+  "installed": [
+   "draft-core-dependency-kind",
+   "draft-laboratory-0.1",
+   "draft-mechanical-0.1",
+   "draft-organisation-0.1"
+  ],
+  "new proposition types": [
+   "authorisation",
+   "calibration-of",
+   "connected-to",
+   "employment",
+   "office-holding"
+  ],
+  "lattice": {
+   "person": "physical-object",
+   "organisation": "social-object",
+   "sample": "physical-object",
+   "office-holding": "classified-as",
+   "replacement": "event",
+   "decision": "event",
+   "sampling": "event"
+  },
+  "specialised roles": {
+   "replacement:removed": "patient",
+   "replacement:fitted": "fitted",
+   "decision:decider": "actor",
+   "sampling:sampled": "origin"
+  }
+ },
+ "D1a context scope": {
+  "in workshop": "established",
+  "in bay-1 (part of workshop)": "not established"
+ },
+ "D1b dependency kind": {
+  "kind-less key unchanged by the draft": true,
+  "dependencies(pump) mixes kinds": [
+   "manual",
+   "motor"
+  ],
+  "functional only (via holds)": [
+   "ASSERTED",
+   true
+  ]
+ },
+ "D1c-alt two specialisations of patient": "rejected: [CNT5] Constraint '@card(0..1)' has been violated: found 2 instances. Caused: [DVL11] Instance [1F00 2200 0000 0000 0000 00] of relation type 'swap-alt' has a r",
+ "D1c replacement roles": {
+  "content roles": {
+   "removed": [
+    "b1"
+   ],
+   "fitted": [
+    "b3"
+   ],
+   "actor": [
+    "tech"
+   ]
+  },
+  "core view": null,
+  "events naming b1 (lattice)": [
+   "ev-rep"
+  ]
+ },
+ "D2a single-holder office": {
+  "who is site manager at depot-7 (two accepted accounts)": [
+   [
+    "DISPUTED",
+    null
+   ],
+   [
+    "bea",
+    "cal"
+   ]
+  ],
+  "analysts are not exclusive": [
+   "ASSERTED"
+  ],
+  "roles_of(bea) sees the office": [
+   [
+    "analyst",
+    "depot-7"
+   ]
+  ],
+  "capable(bea, site-manager) sees it (is_a)": "established"
+ },
+ "D2b office vs authority": {
+  "before any authorisation": {
+   "bea holds the office": [
+    "ASSERTED",
+    true
+   ],
+   "authorisation": [
+    "NOT_YET_KNOWN",
+    null
+   ],
+   "capable(bea, can-sign-off, depot-7)": "not established"
+  },
+  "after acme's grant (accepted) and the auditor's denial (unreviewed)": {
+   "authorisation": [
+    "ASSERTED",
+    true
+   ],
+   "auditor's perspective": [
+    "ASSERTED",
+    false
+   ],
+   "capable(bea, can-sign-off, depot-7) (classification only)": "not established"
+  },
+  "after the system also accepts the denial": [
+   "DISPUTED",
+   null
+  ]
+ },
+ "D2c capacity": {
+  "content roles": {
+   "location": [
+    "depot-7"
+   ],
+   "capacity": [
+    "site-manager"
+   ],
+   "decider": [
+    "bea"
+   ]
+  },
+  "events naming bea": [
+   "ev-sign"
+  ]
+ },
+ "D2d employment": {
+  "transitions of bea (2-12 Nov)": [
+   [
+    "authorisation",
+    "judgement"
+   ],
+   [
+    "employment",
+    "world-state"
+   ],
+   [
+    "office-holding",
+    "judgement"
+   ]
+  ],
+  "acme is an agent (social object)": "established"
+ },
+ "D3a sampling": {
+  "events naming the rock": [
+   "ev-smp"
+  ],
+  "s12 facts": [
+   "constitution"
+  ]
+ },
+ "D3b calibration": {
+  "rests on the certificate": [
+   "cert-1"
+  ],
+  "calibrated on 5 Nov": [
+   "ASSERTED",
+   true
+  ],
+  "calibrated on 9 Nov": [
+   "ASSERTED",
+   false
+  ]
+ },
+ "raw TypeQL (review section 6)": {
+  "authority at depot-7": [
+   {
+    "by": "acme",
+    "polarity": true,
+    "holder": "bea",
+    "grantor": "acme"
+   },
+   {
+    "grantor": "acme",
+    "by": "auditor",
+    "polarity": false,
+    "holder": "bea"
+   }
+  ],
+  "functional dependencies only": [
+   {
+    "dependent": "pump",
+    "dependee": "motor"
+   }
+  ]
+ }
+}
