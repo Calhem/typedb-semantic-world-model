@@ -15,6 +15,7 @@ tests.
 | DI-2 | conflicting accounts of single-valued event participants are not judged | D-1 (v0.2 D9) | before Stage E | open |
 | DI-3 | conflicting mechanical joint kinds are not judged | D-1 | no deadline | open (limitation) |
 | DI-4 | dependency-kind vocabulary is not validated | D-1 | no deadline | open (limitation) |
+| DI-5 | a not-yet-effective accepted holding is labelled by a pending counter-claim | D-2 (LABS-1.026) | no deadline | open (limitation) |
 
 ## DI-1: `facts_about` omits content disputed by polarity
 **What happens.** `facts_about(world, subject, t)` lists only content whose judgement at t is "holds". Two kinds of
@@ -92,3 +93,18 @@ are reported, and neither is DISPUTED.
   write;
 - or accept an open vocabulary.
 - **Current:** accepted limitation (open vocabulary, documented).
+
+## DI-5: a not-yet-effective holding is labelled by a pending counter-claim
+**What happens.** The shared per-content label (`_holding_label`, from `capable()`) ranks attestation states
+(unreviewed, rejected...) before "not yet effective". An accepted appointment or capability that begins after t is
+therefore reported "not established" instead of "not yet effective" whenever an unreviewed claim exists for the same
+content.
+
+**Concrete case** (Acme world): on day 5, Cal's site-manager appointment (accepted, from day 8) shows "not established",
+because the auditor's unreviewed denial ranks first.
+
+**Why not fixed in D-2.** The label is shared with `capable()`, whose answers had to stay identical (LABS-1.026
+equivalence test).
+
+**Option:** rank "not yet effective" before attestation states when an accepted attestation begins after t. This changes
+`capable()` answers in such cases, and needs a decision and an updated baseline.
