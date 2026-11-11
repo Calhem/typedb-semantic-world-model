@@ -345,14 +345,38 @@ def test_testimony_and_hypothesis_are_told_apart(world):
                                                                      M["bo-b7-k3"]["result"])
              for i in lb.interpretations(wm, w, rec, T(16)) if i["type"] == "classified-as"}
     ana, lab2, bo = found[("ana", "hydrated")], found[("lab-2", "anhydrous")], found[("bo", "hydrated")]
-    assert (ana["mode"], ana["stance"], ana["acceptance"], ana["supporting"]) == ("hypothesis", "hypothesises",
+    assert (ana["mode"], ana["stance"], ana["acceptance"], ana["supports_answer"]) == ("hypothesis", "hypothesises",
                                                                                   "accepted", False)
-    assert (lab2["mode"], lab2["basis"], lab2["acceptance"], lab2["supporting"]) == ("testimony", "testimony",
+    assert (lab2["mode"], lab2["basis"], lab2["acceptance"], lab2["supports_answer"]) == ("testimony", "testimony",
                                                                                      "unreviewed", False)
-    assert (bo["mode"], bo["acceptance"], bo["supporting"]) == ("testimony", "accepted", True)
+    assert (bo["mode"], bo["acceptance"], bo["supports_answer"]) == ("testimony", "accepted", True)
     assert all(i["derivation"] == lb.NO_DERIVATION for i in found.values())
     measured = [i for i in lb.interpretations(wm, w, M["ana-b9-35C"]["result"], T(16)) if i["type"] == "has-quality"]
     assert [i["mode"] for i in measured] == ["observation"]                       # the measurement it reports
+
+
+def test_supports_answer_is_the_judgement_s_support_not_acceptance(make):
+    """Accepted is not enough: an attestation supports the answer at t only if the judgement at t rests on it."""
+    wm = make()
+    ids = lab.build_lab(wm)
+    w, rec = ids["world"], ids["measurements"]["bo-b7-k3"]["result"]
+    wm.install_profile("laboratory")
+    wm.add_entity("category", "hydrated", id="hydrated")
+    roles = {"classified": "sample-12", "class": "hydrated"}
+    bo = lb.interpret(wm, w, rec, "classified-as", roles, "bo", start=T(13), end=T(14))
+    ana = lb.interpret(wm, w, rec, "classified-as", roles, "ana", start=T(18))
+    hyp = lb.interpret(wm, w, rec, "classified-as", roles, "tom", tentative=True, start=T(12))
+    for a in (bo, ana, hyp):
+        wm.accept(a)
+
+    def flags(t):
+        return {i["attestation"]: (i["acceptance"], i["supports_answer"]) for i in lb.interpretations(wm, w, rec, t)
+                if i["type"] == "classified-as"}
+    assert flags(T(13, 30)) == {bo: ("accepted", True), ana: ("accepted", False), hyp: ("accepted", False)}
+    assert flags(T(19)) == {bo: ("accepted", False), ana: ("accepted", True), hyp: ("accepted", False)}
+    for t in (T(13, 30), T(19)):
+        held = wm.holds(w, "classified-as", roles, t)
+        assert {a for a, (_, s) in flags(t).items() if s} == set(held.support)   # the same set as the core answer
 
 
 def test_an_accepted_hypothesis_alone_never_supports_an_answer(world):

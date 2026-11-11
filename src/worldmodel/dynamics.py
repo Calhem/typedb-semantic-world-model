@@ -121,7 +121,8 @@ class DynamicsMixin:
     def _claims(self, world, subject, types, t, as_of, perspective):
         """Every attestation of a content of `types` involving `subject`, grouped by content, with the perspective's
         judgement of the content at t and each attestation's acceptance state (accepted, unreviewed, rejected,
-        retracted, superseded). Nothing is dropped: unaccepted and rejected claims are listed, marked."""
+        retracted, superseded) and `support`: the attestations the judgement at t rests on. Nothing is dropped:
+        unaccepted and rejected claims are listed, marked."""
         atts, ident = self._view(world, as_of, perspective, None, [subject])
         mine = [a for a in atts.values() if any(self.is_a(a.ctype, ty) for ty in types)
                 and any(subject in ids for ids in a.roles.values())]
@@ -130,7 +131,7 @@ class DynamicsMixin:
         for a in mine:
             cls = self._class(a, ident)
             entry = out.setdefault(cls, {"type": a.ctype, "roles": {r: list(v) for r, v in a.roles.items()},
-                                         "judged": None, "status": None, "attestations": []})
+                                         "judged": None, "status": None, "attestations": [], "support": []})
             state = "superseded" if superseded(a, perspective, as_of) else acceptance_state(a, perspective, as_of)
             entry["attestations"].append({"attestation": a.id, "attester": a.attester, "polarity": a.polarity,
                                           "basis": a.basis, "stance": a.stance, "acceptance": state})
@@ -139,6 +140,7 @@ class DynamicsMixin:
                 val, support, _ = judged[cls]
                 entry["judged"] = val
                 entry["status"] = Status.DISPUTED if val == "disputed" else self._status(support)
+                entry["support"] = sorted(x.id for x in support)    # the attestations the judgement at t rests on
             entry["attestations"].sort(key=lambda x: x["attestation"])
         return sorted(out.values(), key=lambda e: (e["type"], str(e["roles"])))
 

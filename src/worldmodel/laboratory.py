@@ -26,7 +26,6 @@ from . import typeql as q
 from .keys import check_new_id
 from .model import READ, SCHEMA_DIR, SYSTEM
 from .profiles import PROFILES, Profile
-from .semantics import SUPPORTING_STANCES
 
 NAME = "laboratory"
 PROFILE = Profile(NAME, "0.1", (str(SCHEMA_DIR / "profiles" / "laboratory" / "laboratory-0.1.tql"),),
@@ -252,9 +251,10 @@ def interpret(wm, world, record, type, roles, attester, tentative=False, polarit
 def interpretations(wm, world, record, t, as_of=None, perspective=SYSTEM):
     """Every attestation resting on `record` (rests-on; any content, including the measurement it reports), each
     with its source, stance, basis and acceptance, a plain `mode` (hypothesis, doubt, testimony, observation,
-    stipulation, or recorded inference without derivation structure), whether it is `supporting` (accepted, with a
-    supporting stance: a hypothesis never is), and its content's own judgement at t (which other sources' attestations
-    of the same content can establish). Each
+    stipulation, or recorded inference without derivation structure), `supports_answer` (whether the content's
+    judgement at t rests on this attestation: accepted is not enough, since its stance must support, its interval
+    must apply at t and it must not be superseded; a hypothesis never does), and its content's own judgement at t
+    (which other sources' attestations of the same content can establish). Each
     content is judged on its own: rival interpretations are not judged against each other (D-D3-6). `derivation` is
     always the NO_DERIVATION note: no attestation here carries a named rule and premises."""
     _require(wm)
@@ -279,7 +279,7 @@ def interpretations(wm, world, record, t, as_of=None, perspective=SYSTEM):
         out.append({"attestation": aid, "attester": a["attester"], "type": content["type"], "roles": content["roles"],
                     "params": content.get("params") or {}, "polarity": a["polarity"], "stance": a["stance"],
                     "basis": a["basis"], "mode": mode, "acceptance": mine["acceptance"],
-                    "supporting": mine["acceptance"] == "accepted" and a["stance"] in SUPPORTING_STANCES,
+                    "supports_answer": aid in entry["support"],
                     "content_judgement": {k: judged[k] for k in ("judgement", "holds", "status")},
                     "derivation": NO_DERIVATION})
     return sorted(out, key=lambda x: (x["type"], str(x["roles"]), x["attestation"]))

@@ -125,7 +125,7 @@ def main():
             for i in lb.interpretations(wm, w, rec, T(16)):
                 if i["type"] == "classified-as":
                     print(f"- {rec}: {i['attester']} says {i['roles']['classified'][0]} is {i['roles']['class'][0]}: "
-                          f"{i['mode']}, {i['acceptance']}, supporting {i['supporting']}; content "
+                          f"{i['mode']}, {i['acceptance']}, supports answer {i['supports_answer']}; content "
                           f"{i['content_judgement']['judgement']} [{s(i['content_judgement']['status'])}]")
         print(f"- formal derivation: {lb.NO_DERIVATION}")
         for persp in ("system", "qa", "lab-2"):
