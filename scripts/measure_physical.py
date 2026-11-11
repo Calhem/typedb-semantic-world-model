@@ -31,7 +31,10 @@ ap.add_argument("--mechanical", action="store_true", help="also install the mech
                 "extension and time D-1 questions (implies --qualities; only for a Stage D-1 checkout)")
 ap.add_argument("--organisation", action="store_true", help="also install the organisation profile, build the Acme "
                 "world in the same database and time D-2 reports (implies --mechanical; Stage D-2 checkout)")
+ap.add_argument("--laboratory", action="store_true", help="also install the laboratory profile, build the D-3 "
+                "laboratory world in the same database and time D-3 reports (implies --organisation; D-3 checkout)")
 a = ap.parse_args()
+a.organisation = a.organisation or a.laboratory
 a.mechanical = a.mechanical or a.organisation
 a.qualities = a.qualities or a.mechanical
 a.dynamics = a.dynamics or a.qualities
@@ -76,6 +79,10 @@ try:
         from worldmodel.examples import organisation as ex
         wm.install_profile("organisation")
         org = ex.build_organisation(wm)
+    if a.laboratory:
+        from worldmodel.examples import laboratory as lx
+        wm.install_profile("laboratory")
+        labids = lx.build_laboratory(wm)
     build_s = time.perf_counter() - s
     w = ids["world"]
     questions = {
@@ -135,6 +142,16 @@ try:
             "official_act(ev-cal-signs)": lambda: o.official_act(wm, ow, "ev-cal-signs", power="can-sign-off"),
             "employment(acme)": lambda: o.employment(wm, ow, "acme", OT(5)),
         })
+    if a.laboratory:
+        from worldmodel import laboratory as lb
+        lw, LT = labids["world"], lx.T
+        questions.update({
+            "provenance(s12-b)": lambda: lb.provenance(wm, lw, "s12-b", LT(16)),
+            "calibration_status(balance-b7)": lambda: lb.calibration_status(wm, lw, "balance-b7", LT(10)),
+            "measurement_calibration(sample-12)": lambda: lb.measurement_calibration(wm, lw, "sample-12", "q-mass"),
+            "interpretations(m-lab2-result)": lambda: lb.interpretations(wm, lw, "m-lab2-result", LT(16)),
+            "compare_measurements(sample-12)": lambda: wm.compare_measurements(lw, "sample-12", "q-mass", LT(16)),
+        })
     times = {k: [] for k in questions}
     queries = {}
     for _ in range(a.rounds):
@@ -148,7 +165,8 @@ try:
                           capture_output=True, text=True)
     print(json.dumps({"checkout": Path(a.checkout).resolve().name, "extended": a.extended, "dynamics": a.dynamics,
                       "qualities": a.qualities, "fixture_profiles": a.fixture_profiles,
-                      "mechanical": a.mechanical, "organisation": a.organisation, "build_seconds": round(build_s, 2),
+                      "mechanical": a.mechanical, "organisation": a.organisation,
+                      "laboratory": a.laboratory, "build_seconds": round(build_s, 2),
                       "database_bytes": int(size.stdout.split()[0]) if size.returncode == 0 else None,
                       "questions": {k: {"median_ms": round(statistics.median(v) * 1000, 2), "queries": queries[k]}
                                     for k, v in times.items()}}, indent=1))

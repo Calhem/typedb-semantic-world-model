@@ -16,8 +16,8 @@ import pytest
 
 import profile_fixtures as F
 from conftest import FakeClock
-from worldmodel import CORE_MODULES, WorldModel, laboratory as lb
-from worldmodel.examples import lab, laboratory as ex
+from worldmodel import CORE_MODULES, WorldModel, laboratory as lb, mechanical as mech, organisation as o
+from worldmodel.examples import gearbox as g, lab, laboratory as ex, organisation as orgex
 from worldmodel import typeql as q
 from worldmodel.model import READ
 from worldmodel.profiles import schema_snapshot
@@ -137,6 +137,30 @@ def test_core_answers_are_unchanged_by_installing_the_three_profiles(make):
     for p in ("organisation", "laboratory", "mechanical"):
         wm.install_profile(p)
     assert answers() == before
+
+
+def test_the_three_reference_worlds_share_one_database(ref, make):
+    """Gearbox (with its D-1 extension), Acme (D-2) and the laboratory (D-3) in one database, all profiles installed:
+    shared concepts are reused, not redefined, and each world's profile answers match its own database's."""
+    wm = make()
+    for p in ("laboratory", "organisation", "mechanical"):
+        wm.install_profile(p)
+    gids = g.build(wm)
+    gids = g.extend_mechanical(wm, g.extend_qualities_agency(wm, g.extend_causality(wm, g.extend_dynamics(
+        wm, g.extend_spatial(wm, gids)))))
+    oids = orgex.build_organisation(wm)
+    lids = ex.build_laboratory(wm)
+    alone, aids = ref
+
+    def lab_answers(m, ids):
+        w = ids["world"]
+        return ([cal(m, w, i, t) for i, t in (("balance-b3", T(9)), ("balance-b3", T(15)), ("balance-b7", T(10)))],
+                {k: (v["attested"]["judgement"] if v["attested"] else None, v["reference_check"]["check"], v["usable"])
+                 for k, v in rows(m, w).items()},
+                [(c["sample"], c["from"], c["judgement"]) for c in lb.provenance(m, w, "s12-b", T(16))["chain"]])
+    assert lab_answers(wm, lids) == lab_answers(alone, aids)
+    assert o.office_holders(wm, oids["world"], "site-manager", "depot-7", orgex.T(9))["status"] == Status.DISPUTED
+    assert mech.connections(wm, gids["world"], "input-shaft", g.AFTER)
 
 
 # ---- samples, sampling and provenance -----------------------------------------------------------------------------------

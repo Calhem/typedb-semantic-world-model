@@ -25,7 +25,8 @@ def build_lab(wm):
         wm.add_entity("physical-object", n, id=i)
     for i, n in (("lab-1", "Laboratory 1"), ("lab-2", "External laboratory 2"), ("qa", "Quality office")):
         wm.add_entity("social-object", n, id=i)
-    wm.add_entity("category", "measurement", id="measurement")
+    if not wm.find("measurement"):                   # shared with the gearbox world when both are in one database
+        wm.add_entity("category", "measurement", id="measurement")
     kg = wm.define_unit("kilogram", "mass", id="u-kg")
     g = wm.define_unit("gram", "mass", 0.001, id="u-g")
     wm.define_unit("metre", "length", id="u-m")
