@@ -67,16 +67,39 @@ configuration files:
   - installation order cannot change meaning: the same schema, slots and lattice result in either order (tested);
   - a collision fails loudly.
 - **Re-installing** the same version is a no-op; another version is refused (profiles are not replaced in place).
-- **Limitation:** TypeDB cannot commit schema and data in one transaction. Vocabulary, slots and finally the module
-  record follow the schema commit, and a profile counts as installed only once its record exists. If that step fails,
-  a retry is refused as a partial install (stated in the error), which needs manual repair.
+- **Atomic installation (LABS-1.023).**
+  - Schema, seed vocabulary, slot declarations and the module record are written in **one schema transaction**:
+    TypeDB 3.14.1 schema transactions also write data (verified). It commits only after every check passes.
+  - A failure at any point (a refusal, a vocabulary id collision, an invalid slot, or the commit itself) leaves the
+    database unchanged, and the profile is never reported as installed (all tested).
+  - This replaces the D0 sequence, in which vocabulary, slots and the record were written after the schema commit.
+    The D0 report's statement that "TypeDB cannot commit schema and data together" was wrong.
+
+### Incomplete installation: detection and recovery
+- `profiles()` lists only profiles with a module record. `profile_status(p)` returns:
+  - "installed" when the record exists;
+  - "absent" when none of the profile's declared types is in the schema;
+  - "conflict" when some are present without a record.
+- Since installation is atomic, `install_profile` never produces "conflict". It arises only from schema changed
+  outside it (a manual `define`), or from another profile owning the same labels. `install_profile` then refuses
+  with the colliding labels (tested).
+- **Manual recovery** (no tool, by design):
+  1. Find which types are present:
+     `match { entity $t; } or { relation $t; } or { attribute $t; };`, compared with the profile's schema files.
+  2. If they belong to another profile, the two profiles collide: rename the labels in the new profile. Profiles are
+     never merged.
+  3. If they came from a manual define of this profile's schema, and no data uses them, remove them in a schema
+     transaction (`undefine` the `plays`/`owns` lines, then the types), and install again.
+  4. If data already uses them, do not undefine. Record the decision before writing anything: there is no migration
+     tool, and profiles are never replaced in place.
+- Profiles still may not modify existing core types; the restriction is unchanged.
 
 **Fixtures** (`tests/fixtures/profiles/`, registered in `tests/profile_fixtures.py`) are minimal schemas for the
 installation and subtype tests only. They are not the D-1 to D-3 profiles. No domain profile is registered in
 `PROFILES` yet.
 
 ## 3. Validation
-- `tests/test_j_d0_profiles.py` (22 tests) covers:
+- `tests/test_j_d0_profiles.py` (26 tests; 4 added in LABS-1.023 for atomic installation) covers:
   - each profile alone over the full core;
   - all together, in both orders, with the same snapshot, slots and lattice;
   - seven refusal cases with the schema unchanged;

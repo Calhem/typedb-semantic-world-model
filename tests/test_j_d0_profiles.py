@@ -304,3 +304,81 @@ def test_selective_and_full_load_agree(world):
         assert answers() == a
     finally:
         wm.selective = True
+
+
+# ---- atomic installation (LABS-1.023) ----------------------------------------------------------------------------------
+def _assert_untouched(wm, before, profile):
+    assert snapshot(wm) == before                                   # no type of the profile was committed
+    assert profile.name not in wm.profiles()                         # never reported as installed
+    assert wm.profile_status(profile) == "absent"
+
+
+def test_a_failure_while_writing_vocabulary_rolls_back_the_schema(make):
+    wm = make()
+    wm.add_entity("social-role", "already here", id="organisation-fixture:site-manager")   # the profile's seed id
+    before = snapshot(wm)
+    with pytest.raises(ProfileError, match="nothing committed"):
+        wm.install_profile(F.ORGANISATION)
+    _assert_untouched(wm, before, F.ORGANISATION)
+    with wm.driver.transaction(wm.database, READ) as tx:
+        from worldmodel import typeql as q
+        assert not q.rows(tx, 'match $s isa functional-slot, has slot-predicate "office-holding";')   # no slot row
+
+
+def test_an_invalid_slot_is_refused_before_anything_is_written(make):
+    wm = make()
+    bad = Profile(F.ORGANISATION.name, "0.0-test", F.ORGANISATION.schema,
+                  slots=(("office-holding", ("class", "nowhere"), "classified"),))
+    before = snapshot(wm)
+    with pytest.raises(ProfileError, match="invalid slot"):
+        wm.install_profile(bad)
+    _assert_untouched(wm, before, bad)
+
+
+def test_a_failure_at_commit_installs_nothing(make, monkeypatch):
+    wm = make()
+    from worldmodel.model import SCHEMA
+    from typedb.driver import TypeDBDriverException
+    driver = wm.driver
+    before = snapshot(wm)
+
+    class FailingCommit:
+        def __init__(self, tx):
+            self._tx = tx
+
+        def __enter__(self):
+            self._tx.__enter__()
+            return self
+
+        def __exit__(self, *exc):
+            return self._tx.__exit__(*exc)
+
+        def commit(self):
+            raise TypeDBDriverException("injected commit failure")
+
+        def __getattr__(self, name):
+            return getattr(self._tx, name)
+
+    class Driver:
+        databases = driver.databases
+
+        def transaction(self, database, kind):
+            tx = driver.transaction(database, kind)
+            return FailingCommit(tx) if kind == SCHEMA else tx
+    monkeypatch.setattr(wm, "driver", Driver())
+    with pytest.raises(Exception, match="injected commit failure|nothing committed"):
+        wm.install_profile(F.LABORATORY)
+    monkeypatch.undo()
+    _assert_untouched(wm, before, F.LABORATORY)
+
+
+def test_schema_changed_outside_install_profile_is_a_conflict(make):
+    wm = make()
+    from worldmodel.model import SCHEMA
+    with wm.driver.transaction(wm.database, SCHEMA) as tx:          # a manual define of one of the profile's types
+        tx.query("define entity sample sub physical-object;").resolve()
+        tx.commit()
+    assert wm.profile_status(F.LABORATORY) == "conflict" and "laboratory-fixture" not in wm.profiles()
+    with pytest.raises(ProfileError, match="redeclares existing types \\['sample'\\]"):
+        wm.install_profile(F.LABORATORY)
+    assert wm.profile_status(F.LABORATORY) == "conflict"

@@ -16,6 +16,8 @@ Rules, checked by `install_profile` before anything is committed:
 - an event type may specialise a given core role at most once (D-D-6: a TypeDB 3.14.1 cardinality constraint, not an
   ontological rule).
 
+Installation is atomic: schema, vocabulary, slots and the module record commit in one schema transaction.
+
 Ownership: a profile's schema lives in `schema/profiles/<name>/`; its registry entry is in PROFILES below; its example
 worlds are in `src/worldmodel/examples/`; its tests are in `tests/`. No domain profile is registered yet (Stage D
 domain work is not authorised); the tests use minimal fixtures under `tests/fixtures/profiles/`.
@@ -105,19 +107,64 @@ def _violations(profile, declared, before, after):
     return new, out
 
 
+def _core_role(role, role_parents, core_labels):
+    """The core role a scoped role specialises (its own name if it specialises none), as the lattice computes it."""
+    parents = dict(role_parents)
+    r = role
+    while r.split(":")[0] not in core_labels and r in parents:
+        r = parents[r]
+    return (r if r.split(":")[0] in core_labels else role).split(":")[-1]
+
+
+def _slot_problems(profile, new, after, core_labels):
+    """Slot declarations must name the profile's own proposition types and their (core-named) roles."""
+    out = []
+    stray = sorted({p for p, _, _ in profile.slots} - new)
+    if stray:
+        out.append(f"declares slots on types it does not own: {stray}")
+    for predicate, key_roles, value_role in profile.slots:
+        if predicate in stray:
+            continue
+        roles = {_core_role(r, after["role_parents"], core_labels) for t, r in after["relates"] if t == predicate}
+        keys = set(key_roles)
+        if not roles:
+            out.append(f"slot predicate {predicate!r} is not a relation")
+        elif not keys or (keys | {value_role}) - roles or value_role in keys:
+            out.append(f"invalid slot for {predicate!r}: key roles {sorted(keys)}, value role {value_role!r} "
+                       f"(roles: {sorted(roles)})")
+    return out
+
+
 class ProfileMixin:
     def profiles(self):
         """{profile name: version} of the profiles installed in this database."""
         return {m[len(PROFILE_PREFIX):]: v for m, v in self.modules().items() if m.startswith(PROFILE_PREFIX)}
 
+    def profile_status(self, profile):
+        """"installed" (its module record exists), "absent" (none of its declared types is in the schema), or
+        "conflict" (some of its types are in the schema but it has no record). install_profile is atomic, so it never
+        leaves the last state; it arises only from schema changed outside install_profile (a manual define), or from
+        another profile owning the same labels. See docs/core-0.4/stage-d0.md, "Incomplete installation"."""
+        from .model import READ
+        if isinstance(profile, str):
+            profile = PROFILES[profile]
+        if profile.module in self.modules():
+            return "installed"
+        declared = _declared_labels("\n".join(Path(f).read_text() for f in profile.schema))
+        with self.driver.transaction(self.database, READ) as tx:
+            present = declared & schema_snapshot(tx)["types"]
+        return "conflict" if present else "absent"
+
     def install_profile(self, profile):
         """Install a profile after the full core (see the module docstring for the rules). Re-installing the same
-        version is a no-op; another version is refused. Returns the profile's new type labels. The schema is checked
-        in its own uncommitted schema transaction and refused (ProfileError) before anything is committed. TypeDB
-        cannot commit schema and data together, so vocabulary, slots and finally the module record follow; the
-        profile counts as installed only once its record exists, and a retry after a failure there is refused as a
-        partial install."""
-        from .model import CORE_MODULES, READ, SCHEMA, WRITE
+        version is a no-op; another version is refused. Returns the profile's new type labels.
+
+        **Atomic (LABS-1.023).** The schema, its seed vocabulary, its slot declarations and the module record are
+        written in **one schema transaction** (TypeDB 3.14.1 schema transactions also write data) and committed only
+        after every check passed, so a profile is either completely installed and recorded, or not at all. Refusals
+        raise ProfileError; any failure, including at commit, leaves the database unchanged."""
+        from .model import CORE_LABELS, CORE_MODULES, READ, SCHEMA
+        from .keys import check_new_id
         if isinstance(profile, str):
             profile = PROFILES[profile]
         installed = self.modules()
@@ -132,6 +179,8 @@ class ProfileMixin:
         bad_ids = [i for _, i, _ in profile.vocabulary if not i.startswith(profile.name + ":")]
         if bad_ids:
             raise ProfileError(f"vocabulary ids must start with {profile.name + ':'!r}: {bad_ids}")
+        for _, i, _ in profile.vocabulary:
+            check_new_id(i)
         text = "\n".join(Path(f).read_text() for f in profile.schema)
         declared = _declared_labels(text)
         with self.driver.transaction(self.database, READ) as tx:
@@ -146,21 +195,29 @@ class ProfileMixin:
                                    + " ".join(str(e).split())[:400]) from None
             new, problems = _violations(profile, declared, before, after)
             if not new and not problems:
-                problems = ["adds no types: its schema is already present without its module record "
-                            "(a partial install) or it is empty"]
-            stray = sorted({p for p, _, _ in profile.slots} - new)
-            if stray:
-                problems.append(f"declares slots on types it does not own: {stray}")
+                problems = ["adds no types: its schema is empty"]
+            problems += _slot_problems(profile, new, after, CORE_LABELS)
+            concepts = {t for t, r in after["plays"] if r == "classified-as:class"}   # concept types, incl. new ones
+            bad_kinds = sorted({k for k, _, _ in profile.vocabulary if k not in concepts})
+            if bad_kinds:
+                problems.append(f"vocabulary kinds must be concept types: {bad_kinds}")
             if problems:
                 raise ProfileError(f"profile {profile.name!r} refused: " + "; ".join(problems))
-            tx.commit()
+            try:
+                for kind, cid, name in profile.vocabulary:
+                    q.run(tx, f"insert $c isa {q.label(kind)}, has wm-id == $id, has name == $n;", {"id": cid, "n": name})
+                for predicate, key_roles, value_role in profile.slots:
+                    key_roles = tuple(sorted(set(key_roles)))
+                    attrs = "".join(f", has slot-role == $k{i}" for i in range(len(key_roles)))
+                    q.run(tx, f"""insert $s isa functional-slot, has slot-id == $id, has slot-predicate == $p,
+                        has value-role == $v{attrs};""",
+                          {"id": f"{predicate}|{','.join(key_roles)}|{value_role}", "p": predicate, "v": value_role,
+                           **{f"k{i}": r for i, r in enumerate(key_roles)}})
+                q.run(tx, "insert $m isa schema-module, has module-name == $n, has module-version == $v;",
+                      {"n": profile.module, "v": profile.version})
+                tx.commit()
+            except TypeDBDriverException as e:
+                raise ProfileError(f"profile {profile.name!r} not installed (nothing committed): "
+                                   + " ".join(str(e).split())[:400]) from None
         self._types = self._prop_ids = self._lattice = self._slots = None
-        for kind, cid, name in profile.vocabulary:
-            self.add_entity(kind, name, id=cid)
-        for predicate, key_roles, value_role in profile.slots:
-            self.declare_slot(predicate, key_roles, value_role)
-        with self.driver.transaction(self.database, WRITE) as tx:      # last: installed only when complete
-            q.run(tx, "insert $m isa schema-module, has module-name == $n, has module-version == $v;",
-                  {"n": profile.module, "v": profile.version})
-            tx.commit()
         return sorted(new)
