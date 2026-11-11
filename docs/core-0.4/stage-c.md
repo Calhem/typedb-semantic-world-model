@@ -1,7 +1,8 @@
 # Core 0.4 Stage C: qualities, measurements and agency (LABS-1.016 to LABS-1.020)
 
-**Status (2026-11-11): Stage C ontology and API approved (LABS-1.020); full `measure()` atomicity implemented; merged
-into `main` after validation (see the merge record at the end). Stage D not started.** Base: `main` at 8963734.
+**Status (2026-11-11): Stage C ontology and API approved (LABS-1.020); full `measure()` atomicity implemented;
+merged into `main` from `feature/core-0.4-c-qualities-agency` (LABS-1.020). Stage D not started.** Base: `main` at
+8963734.
 
 ## C0: architecture review (no foundational change)
 | Need | v0.2 / plan | Representation |
