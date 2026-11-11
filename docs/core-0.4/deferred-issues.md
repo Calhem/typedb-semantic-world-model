@@ -1,21 +1,23 @@
 # Deferred correctness issues (register)
 
-**Opened 2026-11-11 under LABS-1.025.** These are known correctness issues, tracked apart from the stage documents.
+**Opened 2026-11-11 under LABS-1.025; DI-5 added under LABS-1.026, DI-6 under LABS-1.027.** These are known correctness issues, tracked apart from the stage documents.
 None of them has had its semantics changed yet.
 
-- **DI-1** and **DI-2** must be resolved **before Stage E** (final validation).
-- **DI-3** and **DI-4** are accepted limitations until a decision says otherwise.
+- **DI-1**, **DI-2** and **DI-6** must be **reviewed before Stage E** (final validation); DI-1 and DI-2 must be
+  resolved.
+- **DI-3**, **DI-4** and **DI-5** are accepted limitations until a decision says otherwise.
 
 Each entry gives a concrete case, what it affects, and the options. A resolution needs its own approved decision and
 tests.
 
 | # | Issue | Found | Must be resolved | Status |
 |---|---|---|---|---|
-| DI-1 | `facts_about` omits content disputed by polarity | D-1 (LABS-1.023) | before Stage E | open |
-| DI-2 | conflicting accounts of single-valued event participants are not judged | D-1 (v0.2 D9) | before Stage E | open |
+| DI-1 | disputed content omitted from generic fact and role reports (`facts_about`, `roles_of`) | D-1 (LABS-1.023) | before Stage E | open |
+| DI-2 | conflicting event participants are not judged together (single-valued roles) | D-1 (v0.2 D9) | before Stage E | open |
 | DI-3 | conflicting mechanical joint kinds are not judged | D-1 | no deadline | open (limitation) |
 | DI-4 | dependency-kind vocabulary is not validated | D-1 | no deadline | open (limitation) |
-| DI-5 | a not-yet-effective accepted holding is labelled by a pending counter-claim | D-2 (LABS-1.026) | no deadline | open (limitation) |
+| DI-5 | a future-effective appointment (or holding) with an unreviewed counter-claim is labelled "not established" | D-2 (LABS-1.026) | no deadline | open (limitation) |
+| DI-6 | aggregate organisational reports can return ASSERTED despite mixed constituent statuses | D-2 (LABS-1.026) | review before Stage E | open |
 
 ## DI-1: `facts_about` omits content disputed by polarity
 **What happens.** `facts_about(world, subject, t)` lists only content whose judgement at t is "holds". Two kinds of
@@ -108,3 +110,22 @@ equivalence test).
 
 **Option:** rank "not yet effective" before attestation states when an accepted attestation begins after t. This changes
 `capable()` answers in such cases, and needs a decision and an updated baseline.
+
+## DI-6: aggregate reports can return ASSERTED despite mixed constituent statuses
+**What happens.** `organisation.office_holders` reports one overall status for the office. When the established
+holders have different support statuses, it returns ASSERTED, and only the per-holder statuses tell the truth. The
+same can arise wherever a report folds several judged contents into one status.
+
+**Concrete case:** a hypothetical plan stipulates a second holder of a non-exclusive office whose first holder is
+inherited from the actual world. The holders are then ASSERTED (inherited) and STIPULATED (the plan's), and the office
+is reported as ASSERTED overall.
+
+**Affected:** `office_holders` (overall `status`); any future aggregate report.
+
+**Options:**
+- **(a)** A defined aggregation rule, for example "the weakest standing among the constituents", or a status set rather
+  than one value.
+- **(b)** Report no overall support status, only per-constituent statuses, plus DISPUTED/UNKNOWN as appropriate.
+- **(c)** Keep it, and document.
+- **Recommendation:** (b) for support statuses. It removes a summary that can mislead, and keeps DISPUTED, UNKNOWN and
+  NOT_YET_KNOWN, which are well defined for the set. To be reviewed before Stage E. Semantics unchanged until decided.
