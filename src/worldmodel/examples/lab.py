@@ -5,7 +5,8 @@ data; masses and instruments are illustrative, not real specifications.
 
 Stage C1 (build_lab): a sample weighed on three balances by two analysts, a result from an external lab that the
 system has not accepted, a measurement at another temperature, one at another coverage level, a design specification
-(a statement, not a measurement), and a later correction of one result.
+(a statement, not a measurement), and a later correction of one result. Stage C2 (extend_lab_agency): roles,
+capabilities in context, agency, and actions.
 """
 
 from datetime import datetime, timedelta, timezone
@@ -69,3 +70,35 @@ def accept_measurement(wm, world, ids, holder="system"):
         wm.accept(a, holder=holder)
     for key in ("produced", "reports", "content"):
         wm.accept(ids[key], holder=holder)
+
+
+def extend_lab_agency(wm, ids):
+    """Stage C2 additions to the laboratory world: who may do what, where, and what they did."""
+    w = ids["world"]
+    for c in ("agent", "action"):
+        if not wm.find(c):
+            wm.add_entity("category", c, id=c)
+    for r in ("analyst", "supervisor"):
+        wm.add_entity("social-role", r, id=r)
+    weigh = wm.define_capability("can weigh samples", id="can-weigh")
+    measure_mass = wm.define_capability("can measure mass", id="can-measure-mass")
+    grants = {}
+    for person in ("ana", "bo", "tom"):
+        grants[f"{person}-agent"] = wm.grant(w, person, "agent", start=T(7))
+    grants["ana-analyst"] = wm.grant(w, "ana", "analyst", context="lab-1", start=T(7))
+    grants["bo-analyst"] = wm.grant(w, "bo", "analyst", context="lab-1", start=T(7))
+    grants["ana-weigh"] = wm.grant(w, "ana", weigh, context="lab-1", start=T(7))          # only in lab 1
+    grants["bo-weigh"] = wm.grant(w, "bo", weigh, context="lab-1", start=T(7), end=T(12))  # lapses at 12:00
+    for b in ("balance-b3", "balance-b7", "balance-b9"):
+        grants[f"{b}-measure"] = wm.grant(w, b, measure_mass, start=T(7))   # a capability without agency
+    # Tom, an agent without the capability, records weighing the sample at 14:00
+    tom = wm.account(w, {"actor": "tom", "patient": "sample-12", "instrument": "balance-b3"}, T(14), T(14, 5),
+                     kind=["measurement", "action"], attester="tom", id="ev-tom-weighs")
+    for a in wm.account_attestations(w, tom, attester="tom"):
+        wm.accept(a)                          # the lab log of Tom's weighing is accepted; his qualification is not
+    plan = wm.create_world("Plan: Tom qualified", kind="hypothetical", base=w, branch_at=T(13), id="lab-plan-tom")
+    wm.grant(plan, "tom", weigh, context="lab-1", start=T(13))
+    ids.update({"grants": grants, "tom_event": tom, "plan_tom": plan, "can_weigh": weigh,
+                "can_measure_mass": measure_mass})
+    return ids
+

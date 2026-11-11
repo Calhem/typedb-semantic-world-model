@@ -155,8 +155,10 @@ class DynamicsMixin:
         if entry["judged"] == "disputed":
             return "disputed"
         states = {x["acceptance"] for x in entry["attestations"]}
-        return next(s for s in ("unreviewed", "rejected", "retracted", "superseded") if s in states) \
-            if states else "unknown"
+        if not states:
+            return "unknown"
+        return next((s for s in ("unreviewed", "rejected", "retracted", "superseded") if s in states),
+                    "not yet effective")                 # accepted, but its interval has not begun at t
 
     # ---- reading: effects and changes (B1) --------------------------------------------------------------------------
     def effects_of(self, world, event, t, as_of=None, perspective=SYSTEM):

@@ -1,8 +1,8 @@
-# Core 0.4 Stage C: qualities, measurements and agency (LABS-1.016, LABS-1.017)
+# Core 0.4 Stage C: qualities, measurements and agency (LABS-1.016 to LABS-1.019)
 
-**Status (2026-11-10): C1 implemented on `feature/core-0.4-c-qualities-agency`; D-C-2 (how a measurement result is
-tied to its supporting attestation) is under review (LABS-1.017). C2 is written but not integrated. Not merged; Stage
-D not started.** Base: `main` at 8963734.
+**Status (2026-11-11): C1 and C2 implemented on `feature/core-0.4-c-qualities-agency`; D-C-2 approved and implemented
+(LABS-1.018); Stage C validation complete, at the review gate. Not merged; Stage D not started.** Base: `main` at
+8963734.
 
 ## C0: architecture review (no foundational change)
 | Need | v0.2 / plan | Representation |
@@ -45,7 +45,8 @@ Measurement, observation, assertion and acceptance stay separate:
   - a result at 35 °C, and one at k = 3;
   - a specification;
   - a later correction.
-- **Tests:** `tests/test_i_c1_measurements.py` (10) and `tests/test_i_c1b_provenance.py` (10, D-C-2 regressions).
+- **Tests:** `tests/test_i_c1_measurements.py` (10) and `tests/test_i_c1b_provenance.py` (11, D-C-2 regressions
+  and failure injection).
 
 ## D-C-2 review (LABS-1.017): tying a result to its supporting attestation
 ### What the probe shows (`probes/core04_c_dc2_identity.py`)
@@ -122,3 +123,71 @@ statement* a record supports. The statement is the attestation. Nothing in C1 li
   - atomicity and many-to-many;
   - a link establishes neither acceptance nor occurrence;
   - selective/full-load agreement.
+
+## Atomicity (LABS-1.019, failure injection)
+`tests/test_i_c1b_provenance.py::test_failure_injection_rolls_back_everything` counts attestations, records, `rests-on`
+links and propositions before and after four injected failures:
+
+| Failure | Result |
+|---|---|
+| the result-record writer raises | nothing written (all four counts unchanged) |
+| the link's record does not exist | refused (`ValueError`), nothing written. **Fixed here:** before, the insert matched nothing and the attestation committed with no link |
+| the attestation itself fails (unknown attester) | refused before any evidence is written; nothing written |
+| inside `measure()`, the `rests-on` insert raises after the record was inserted | content attestation, record, unit link and `rests-on` all rolled back |
+
+**Boundary.** The atomic unit is: the content attestation, its new proposition if any, the result record, `expressed-in`
+and `rests-on`. `measure()` also writes the activity account first, and the `produced` and `reports` attestations
+afterwards, each in its own transaction (as every other attestation). The last injected failure therefore leaves the
+activity account (its event attestation and `measurement` classification) behind, with no record and no measurement
+(tested). That account is an ordinary event description and changes no measurement answer, but it is a partial write.
+Making all of `measure()` one transaction needs a multi-statement write path in `attest()` and `account()`; recorded as
+an open question, not done (scope).
+
+## C2: capabilities, contextual roles and agency (implemented)
+- **Schema:** `schema/core/core-0.4-c2.tql` in module `core-0.4-c`: `entity capability sub concept;` (nothing else;
+  holdings reuse the core `classified-as(classified, class, context?)`).
+- **API** (`src/worldmodel/agency.py`, `AgencyMixin`):
+  - `define_capability`; `grant(world, holder, concept, context=None, polarity=True, ...)` attests a capability, role
+    or category holding (a denial with `polarity=False`);
+  - `capable(world, holder, capability, t, context=None, as_of, perspective)`;
+  - `is_agent` (agency = the category `agent`, a classification); `roles_of` (social roles with their contexts);
+  - `check_action(world, event, capability=None, context=None, ...)`: reports the account's acceptance and interval, its
+    kinds, the occurrences it is accepted as describing with **their own** status, and each actor's agency and
+    capability at the event's start, separately; it concludes nothing;
+  - `agency_report`: diagnostic only (DX-5 report mode), sources not accepted as agents; nothing is rejected.
+- **Semantics preserved:**
+  - agency is a contextual classification; a balance can have a capability without agency; an apprentice can be an
+    agent with a role and without the capability;
+  - a capability does not establish an action (the inspector can sign off and has no action that day);
+  - participation does not establish capability (Tom's accepted log of weighing gives him no capability);
+  - roles are contextual (analyst in lab-1; fitter in the workshop);
+  - an accepted account of an action does not establish its occurrence (`check_action` reports the occurrence's own
+    status: `o-bearing-replacement` is "not established" although the work log is accepted; Tom's log claims none).
+- **Capability judgement (LABS-1.019).** `holds` and `status` are the core judgement; no status was added.
+  `judgement` names the case:
+
+  | judgement | holds | status | when |
+  |---|---|---|---|
+  | established | True | ASSERTED / STIPULATED... | an applicable holding is accepted at t |
+  | denied | False | ASSERTED | an accepted denial (polarity false) covers t |
+  | expired | False | ASSERTED | an accepted holding ended before t and no accepted denial; as `holds()` treats any ended fact |
+  | not yet effective | None | UNKNOWN | an accepted holding begins after t |
+  | disputed | None | DISPUTED | accepted grant and accepted denial, or rival accepted attestations |
+  | not established | None | UNKNOWN or NOT_YET_KNOWN | nothing applicable is accepted: no holding at all (NOT_YET_KNOWN), only unreviewed or rejected ones, or holdings only in other contexts (`only_in`) |
+
+  Each applicable holding stays listed in `applicable` with its attestations and their acceptance states.
+- **Reference worlds:**
+  - lab: `lab.extend_lab_agency`;
+  - workshop: `gearbox.extend_qualities_agency`, on top of `extend_dynamics`, with:
+    - the housing weighed on scale-3 (kg) and scale-9 (g);
+    - a technician who may replace bearings only in the workshop;
+    - an apprentice who is an agent with a fitter role, but has no capability;
+    - an inspector who may sign off;
+    - a bearing press with a capability and no agency;
+    - a plan world in which the apprentice is qualified.
+- **Tests:** `tests/test_i_c2_agency.py` (17), both domains.
+
+## Cross-domain demonstration
+`scripts/show_qualities_agency.py`, output in `docs/core-0.4/qualities-agency-output.md`. The same calls (`compare_measurements`,
+`convert`, `capable`, `is_agent`, `roles_of`, `check_action`, perspectives, `as_of`, hypothetical worlds) run against
+both worlds, followed by raw TypeQL over `rests-on`, `produced` and the capability, role and agent grants.

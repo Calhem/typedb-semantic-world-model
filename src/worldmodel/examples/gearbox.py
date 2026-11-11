@@ -367,3 +367,58 @@ def extend_second_repair(wm, ids):
                 "known_before_claim_2_accepted": known_before_claim_2_accepted, "qa_log": qa})
     return ids
 
+
+
+# Stage C (LABS-1.018): the same quality, measurement and capability semantics as the laboratory world
+WEIGHING = datetime(2026, 11, 6, 9, 0, tzinfo=timezone.utc)
+SHOP = ["temperature=19C", "bench scale on bench-1"]
+
+
+def extend_qualities_agency(wm, ids):
+    """Stage C additions (LABS-1.018), on top of extend_dynamics. Needs QUALITY_MODULES.
+
+    - units and dimensions for the existing kilogram and mass, plus the gram;
+    - the housing weighed on scale-3 (kg) and scale-9 (g) by the technician: two measurements with records; the A1
+      scale-3 observation and the design value have no record, so they are statements;
+    - agency: the technician, the inspector and an apprentice are agents; the bearing press can press bearings
+      (a capability without agency); the technician can replace bearings only in the workshop; the apprentice holds the
+      fitter role in the workshop but not the capability, and records fitting a bearing; the inspector can sign off;
+    - a plan in which the apprentice is qualified."""
+    from .lab import accept_measurement
+    w = ids["world"]
+    wm._set_attributes("kg", "unit", [("dimension", "mass"), ("si-factor", 1.0), ("si-offset", 0.0)])
+    wm._set_attributes("mass", "quality-kind", [("dimension", "mass")])
+    g = wm.define_unit("gram", "mass", 0.001, id="g")
+    for i, n in (("scale-9", "Scale 9"), ("apprentice", "Apprentice J")):
+        wm.add_entity("physical-object", n, id=i)
+    for c in ("measurement", "agent", "action", "fitting"):
+        if not wm.find(c):
+            wm.add_entity("category", c, id=c)
+    weighed = {}
+    for key, scale, value, unit, u in (("scale-3", "scale-3", 12.40, "kg", 0.025), ("scale-9", "scale-9", 12410.0, g, 20.0)):
+        m = wm.measure(w, "housing", "mass", value, unit, u, start=WEIGHING, end=WEIGHING.replace(minute=10),
+                       instrument=scale, operator="technician", conditions=SHOP, calibration=f"CAL-{scale.upper()}",
+                       attester="technician", persists=True, id=f"m-housing-{key}")
+        accept_measurement(wm, w, m)
+        weighed[key] = m
+    # agency and capabilities
+    wm.add_entity("social-role", "fitter", id="fitter")
+    replace = wm.define_capability("can replace bearings", id="can-replace-bearing")
+    sign_off = wm.define_capability("can sign off repairs", id="can-sign-off")
+    press = wm.define_capability("can press bearings", id="can-press-bearing")
+    grants = {f"{p}-agent": wm.grant(w, p, "agent", start=T0) for p in ("technician", "inspector", "apprentice")}
+    grants["technician-fitter"] = wm.grant(w, "technician", "fitter", context="workshop", start=T0)
+    grants["apprentice-fitter"] = wm.grant(w, "apprentice", "fitter", context="workshop", start=T0)
+    grants["technician-replace"] = wm.grant(w, "technician", replace, context="workshop", start=T0)
+    grants["inspector-sign-off"] = wm.grant(w, "inspector", sign_off, start=T0)
+    grants["press"] = wm.grant(w, "bearing-press", press, start=T0)        # a capability without agency
+    attempt = wm.account(w, {"actor": "apprentice", "patient": "bearing-1", "instrument": "bearing-press",
+                             "location": "bay-1"}, datetime(2026, 11, 6, 10, 0, tzinfo=timezone.utc),
+                         datetime(2026, 11, 6, 10, 20, tzinfo=timezone.utc), kind=["fitting", "action"],
+                         attester="apprentice", id="ev-apprentice-fits")
+    plan = wm.create_world("Plan: apprentice qualified", kind="hypothetical", base=w, branch_at=PLAN_AT,
+                           id="plan-apprentice")
+    wm.grant(plan, "apprentice", replace, context="workshop", start=PLAN_AT)
+    ids.update({"housing_measurements": weighed, "g": g, "agency_grants": grants, "can_replace": replace,
+                "can_sign_off": sign_off, "can_press": press, "apprentice_event": attempt, "plan_apprentice": plan})
+    return ids

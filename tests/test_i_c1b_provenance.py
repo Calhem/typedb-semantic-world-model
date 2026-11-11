@@ -152,21 +152,67 @@ def test_hypothetical_worlds_inherit_attestations_with_their_records(space):
     assert stip["acceptance"] == "accepted" and stip["records"][0]["record"] == own["result"]
 
 
-def test_atomic_and_not_one_to_one(space):
+def counts(wm):
+    """How many attestations, records, rests-on links and propositions are stored."""
+    with wm.driver.transaction(wm.database, READ) as tx:
+        return {k: len(q.rows(tx, f"match $x isa {k};"))
+                for k in ("attestation", "information-object", "rests-on", "proposition")}
+
+
+MASS = {"bearer": "sample", "quality": "q-mass", "unit": "u-kg"}
+
+
+def test_failure_injection_rolls_back_everything(space, monkeypatch):
+    """LABS-1.019: if the attestation, the result record or the rests-on link fails to write, nothing is written."""
     wm, w = space
+    weigh(wm, w)                                                     # some data already present
+    before = counts(wm)
 
     def boom(tx):
         raise RuntimeError("record writer failed")
 
+    # 1. the record fails: no attestation, no new content, no link
     with pytest.raises(RuntimeError):
-        wm.attest(w, "has-quality", {"bearer": "sample", "quality": "q-mass", "unit": "u-kg"},
-                  params={"lower": 1.0, "upper": 2.0}, start=T(9), until_superseded=True, evidence=[boom], id="att-x")
+        wm.attest(w, "has-quality", MASS, params={"lower": 1.0, "upper": 2.0}, start=T(9), until_superseded=True,
+                  evidence=[boom], id="att-x")
+    assert counts(wm) == before
+    # 2. the link fails (its record does not exist): refused, nothing written (it used to commit silently unlinked)
+    with pytest.raises(ValueError, match="not found"):
+        wm.attest(w, "has-quality", MASS, params={"lower": 1.0, "upper": 2.0}, start=T(9), until_superseded=True,
+                  evidence=[lambda tx: "no-such-record"], id="att-y")
+    assert counts(wm) == before
+    # 3. the attestation fails (unknown attester): the record writer never commits
+    with pytest.raises(ValueError):
+        wm.attest(w, "has-quality", MASS, params={"lower": 1.0, "upper": 2.0}, start=T(9), until_superseded=True,
+                  attester="nobody", evidence=[lambda tx: pytest.fail("evidence written before the attestation")])
+    assert counts(wm) == before
+    # 4. through measure(): the rests-on insert itself fails mid-transaction, after the record was inserted
+    real = q.run
+
+    def failing(tx, body, params=None):
+        if "insert rests-on" in body:
+            raise RuntimeError("injected rests-on failure")
+        return real(tx, body, params)
+    monkeypatch.setattr(q, "run", failing)
+    with pytest.raises(RuntimeError, match="injected"):
+        wm.measure(w, "sample", "q-mass", 9.99, "u-kg", 0.02, start=T(11), end=T(11, 5), instrument="b7",
+                   operator="ana", conditions=AT20, attester="ana", persists=True, id="m-fail")
+    monkeypatch.setattr(q, "run", real)
+    after = counts(wm)
+    assert {k: after[k] - before[k] for k in after} == {"attestation": 2, "information-object": 0, "rests-on": 0,
+                                                        "proposition": 1}
+    # ... only the activity account, written earlier in its own transaction (its event attestation and its
+    # `measurement` classification), survives; no content attestation, record or link (see stage-c.md, limitations)
     with wm.driver.transaction(wm.database, READ) as tx:
-        assert not q.rows(tx, 'match $a isa attestation, has wm-id "att-x";')     # nothing was written
+        assert not q.rows(tx, 'match $r isa information-object, has wm-id "m-fail-result";')
+    assert not [m for m in wm.measurements(w, "sample", "q-mass") if m["range"] and m["range"][0] > 9]
+
+
+def test_not_one_to_one(space):
+    wm, w = space
     a = weigh(wm, w)
-    both = wm.attest(w, "has-quality", {"bearer": "sample", "quality": "q-mass", "unit": "u-kg"},
-                     params={"lower": 3.49, "upper": 3.53}, start=T(9), until_superseded=True, attester="ana",
-                     evidence=[lambda tx: a["result"]])                            # a second statement, same record
+    both = wm.attest(w, "has-quality", MASS, params={"lower": 3.49, "upper": 3.53}, start=T(9), until_superseded=True,
+                     attester="ana", evidence=[lambda tx: a["result"]])     # a second statement, same record
     assert wm.evidence_of(both) == [a["result"]] and wm.evidence_of(a["content"]) == [a["result"]]
     with wm.driver.transaction(wm.database, READ) as tx:
         assert len(q.rows(tx, "match $l isa rests-on;")) == 2

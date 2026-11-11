@@ -1,0 +1,7 @@
+# Core 0.4, Stage C2 (LABS-1.016): capabilities. Plan 9.5 (DX-3, approved provisionally).
+# A capability is a concept (what something can do: can-weigh, can-sign-off), held through
+# classified-as(holder, capability, context?) over an attested interval, like a social role. Agency is not a type: it
+# is the category `agent`, held the same way (World Ontology v0.2: "agency is a capacity, not a kind").
+
+define
+entity capability sub concept;
