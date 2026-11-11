@@ -1,0 +1,32 @@
+# Profile organisation-0.1 (Core 0.4 Stage D-2, LABS-1.026). Additive vocabulary only (D-D-1, D-D-9): installed after
+# the full core with WorldModel.install_profile("organisation"). Membership (member-of), organisational structure
+# (part-of), ordinary roles, abilities (capability classifications) and agency are core.
+define
+# sortals: a person and an organisation (or one of its units) have different identity criteria (v0.2 §3.1)
+entity person sub physical-object;
+entity organisation sub social-object;
+# employment: a contingent social relation between an organisation and a person (v0.2 §3.4)
+relation employment sub proposition, relates employer, relates employee;
+organisation plays employment:employer;
+person plays employment:employee;
+# holding an office (a social-role concept) in a context (an organisation or unit). A subtype of classified-as, so
+# generic role queries see it; no functional slot is declared: exclusivity is the attested constraint below, and
+# nothing is ever inferred about people no appointment mentions (LABS-1.026)
+relation office-holding sub classified-as;
+# a single-holder constraint on one office within one context, attested over its own valid time (and disputable like
+# any content). When it holds and several accepted appointments overlap, the reports say DISPUTED and cite both
+relation exclusive-office sub proposition, relates office, relates context;
+social-role plays exclusive-office:office;
+particular plays exclusive-office:context;
+# conferred authority: who (grantor) conferred which power (a capability concept) on whom (holder) within what
+# (scope). The reporting source is the attestation's attester, independent of the grantor. It establishes nothing
+# about the grantor's own entitlement (D-D-3); there are no delegation chains
+relation authorisation sub proposition, relates grantor, relates holder, relates power, relates scope;
+particular plays authorisation:grantor, plays authorisation:holder, plays authorisation:scope;
+capability plays authorisation:power;
+# an act undertaken in an office: the official (as actor; one specialisation, D-D-6), the office and its context.
+# An account of it establishes neither its occurrence, nor the office, nor any authority
+relation official-act sub event, relates official as actor, relates office, relates office-context;
+particular plays official-act:official;
+social-role plays official-act:office;
+particular plays official-act:office-context;
