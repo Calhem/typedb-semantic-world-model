@@ -13,6 +13,6 @@ ORGANISATION = Profile("organisation-fixture", "0.0-test", (str(HERE / "organisa
                        vocabulary=(("social-role", "organisation-fixture:site-manager", "site manager"),))
 LABORATORY = Profile("laboratory-fixture", "0.0-test", (str(HERE / "laboratory" / "laboratory.tql"),))
 ALL = (MECHANICAL, ORGANISATION, LABORATORY)
-NEW_TYPES = {"mechanical-fixture": ["maintenance-kind", "replacement", "scheduled-maintenance-kind"],
+NEW_TYPES = {"mechanical-fixture": ["maintenance-kind", "part-swap", "scheduled-maintenance-kind"],
              "organisation-fixture": ["acting-appointment", "office-holding", "organisation", "person"],
              "laboratory-fixture": ["core-sample", "protocol-step-of", "sample", "sampling", "step-of"]}

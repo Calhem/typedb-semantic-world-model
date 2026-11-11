@@ -67,22 +67,27 @@ def _own_profiles(request):
 
 @pytest.fixture(scope="session", autouse=True)
 def core_protection():
-    """WM_PROFILES=1 (LABS-1.022, core-protection run): every test database created with the full core also gets all
-    three fixture profiles installed before the test writes anything, so the whole suite checks that profile
-    vocabulary changes no core answer. Off by default."""
+    """WM_PROFILES=1 (LABS-1.022, core-protection run): every test database created with at least the Stage C core
+    gets the rest of the core (core-0.4-d, LABS-1.023), the registered domain profiles (mechanical) and the three
+    fixture profiles, before the test writes anything, so the whole suite checks that profile vocabulary changes no
+    core answer. Off by default."""
     if os.environ.get("WM_PROFILES") != "1":
         yield
         return
     AUTO_PROFILES["on"] = True
     import profile_fixtures
-    from worldmodel.model import CORE_MODULES
+    from worldmodel import PROFILES
+    from worldmodel.model import CORE_MODULES, QUALITY_MODULES
     original = WorldModel.create.__func__
 
     def create(cls, database, *args, **kwargs):
         wm = original(cls, database, *args, **kwargs)
         modules = kwargs.get("modules", args[1] if len(args) > 1 else None)
-        if AUTO_PROFILES["on"] and modules is not None and set(CORE_MODULES) <= set(modules) and not wm.profiles():
-            for p in profile_fixtures.ALL:
+        if AUTO_PROFILES["on"] and modules is not None and set(QUALITY_MODULES) <= set(modules) and not wm.profiles():
+            for m in CORE_MODULES:
+                if m not in wm.modules():
+                    wm.install_module(m)
+            for p in (*PROFILES.values(), *profile_fixtures.ALL):
                 wm.install_profile(p)
         return wm
     WorldModel.create = classmethod(create)

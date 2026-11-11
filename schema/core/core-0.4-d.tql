@@ -1,0 +1,9 @@
+# Core 0.4 Stage D (LABS-1.023; decision D-D-2): the dependency kind of World Ontology v0.2 §3.4 ("depends-on with a
+# dependency-kind concept"). Core conformance, not a profile: profiles never modify core types.
+# Additive: a depends-on without a kind keeps its canonical key and its provenance, and is read as "kind unspecified",
+# never as any particular kind. A typed dependency is a different proposition from the untyped one for the same pair.
+# The kinds are categories; the core seeds physical, functional, informational and control (model.MODULE_CONCEPTS),
+# and profiles may add their own.
+define
+relation depends-on, relates kind @card(0..1);
+category plays depends-on:kind;

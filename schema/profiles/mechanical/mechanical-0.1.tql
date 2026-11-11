@@ -1,0 +1,15 @@
+# Profile mechanical-0.1 (Core 0.4 Stage D-1, LABS-1.023). Additive vocabulary only (D-D-1, D-D-9): installed after the
+# full core with WorldModel.install_profile("mechanical"). Assemblies and components use core part-of; part kinds,
+# materials, joint kinds and the assembly/component categories are vocabulary (D-D-11: "component" is a category, not
+# a kind). Dependency kinds are core (core-0.4-d).
+define
+# A mechanical connection between two parts (symmetric: both are endpoints), optionally of a joint kind (a category:
+# bolted, pressed, splined). Distinct from part-of (parthood) and from depends-on (dependency).
+relation connected-to sub proposition, relates endpoint @card(2..2), relates joint-kind @card(0..1);
+physical-object plays connected-to:endpoint;
+category plays connected-to:joint-kind;
+# A replacement: the removed part is the event's patient (specialised once, D-D-6); the fitted part has a role of its
+# own, because in TypeDB 3.14.1 a second specialisation of `patient` would share its @card(0..1). A replacement is an
+# event description: its acceptance never establishes that the replacement occurred.
+relation replacement sub event, relates removed as patient, relates fitted;
+physical-object plays replacement:removed, plays replacement:fitted;
