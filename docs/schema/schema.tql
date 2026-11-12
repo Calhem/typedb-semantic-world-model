@@ -1,0 +1,453 @@
+define
+
+attribute wm-id,
+ value string;
+attribute name,
+ value string;
+attribute alt-name,
+ value string;
+attribute description,
+ value string;
+attribute module-name,
+ value string;
+attribute module-version,
+ value string;
+attribute proposition-key,
+ value string;
+attribute time-point @abstract,
+ value datetime-tz;
+attribute valid-from-earliest,
+  sub time-point;
+attribute valid-from-latest,
+  sub time-point;
+attribute valid-to-earliest,
+  sub time-point;
+attribute valid-to-latest,
+  sub time-point;
+attribute recorded-at,
+  sub time-point;
+attribute branch-at,
+  sub time-point;
+attribute knowledge-at,
+  sub time-point;
+attribute end-basis,
+ value string @values("stated", "unknown", "until-superseded");
+attribute stance,
+ value string @values("asserts", "believes", "doubts", "hypothesises", "stipulates");
+attribute polarity,
+ value boolean;
+attribute basis,
+ value string @values("observation", "testimony", "inference", "stipulation");
+attribute credence,
+ value double @range(0.0..1.0);
+attribute verdict,
+ value string @values("accepted", "rejected", "retracted");
+attribute reason,
+ value string;
+attribute world-kind,
+ value string @values("actual", "hypothetical", "simulated");
+attribute lower,
+ value double;
+attribute upper,
+ value double;
+attribute coverage-level,
+ value double @range(0.0..1.0);
+attribute slot-id,
+ value string;
+attribute slot-predicate,
+ value string;
+attribute slot-role,
+ value string;
+attribute value-role,
+ value string;
+attribute x-min,
+ value double;
+attribute x-max,
+ value double;
+attribute y-min,
+ value double;
+attribute y-max,
+ value double;
+attribute z-min,
+ value double;
+attribute z-max,
+ value double;
+attribute qw,
+ value double;
+attribute qx,
+ value double;
+attribute qy,
+ value double;
+attribute qz,
+ value double;
+attribute tx,
+ value double;
+attribute ty,
+ value double;
+attribute tz,
+ value double;
+attribute dimension,
+ value string;
+attribute si-factor,
+ value double;
+attribute si-offset,
+ value double;
+attribute raw-value,
+ value double;
+attribute standard-uncertainty,
+ value double;
+attribute coverage-factor,
+ value double;
+attribute condition,
+ value string;
+attribute calibration-ref,
+ value string;
+entity schema-module,
+  owns module-name @key,
+  owns module-version;
+entity particular @abstract,
+  owns alt-name,
+  owns description,
+  owns name,
+  owns wm-id @key,
+  plays anchored-to:anchor,
+  plays authorisation:grantor,
+  plays authorisation:holder,
+  plays authorisation:scope,
+  plays classified-as:classified,
+  plays classified-as:context,
+  plays constitution:constituent,
+  plays constitution:constituted,
+  plays depends-on:dependee,
+  plays depends-on:dependent,
+  plays event:actor,
+  plays event:destination,
+  plays event:instrument,
+  plays event:location,
+  plays event:origin,
+  plays event:patient,
+  plays exclusive-office:context,
+  plays existence:existent,
+  plays has-quality:bearer,
+  plays member-of:group,
+  plays member-of:member,
+  plays official-act:office-context,
+  plays official-act:official,
+  plays part-of:part,
+  plays part-of:whole,
+  plays positioned-in:positioned,
+  plays same-as:same,
+  plays sampling:sampler;
+entity physical-object,
+  sub particular,
+  plays acceptance:holder,
+  plays attestation:attester,
+  plays calibration-of:calibrated,
+  plays connected-to:endpoint,
+  plays located-at:located,
+  plays replacement:fitted,
+  plays replacement:removed,
+  plays sampling:sampled;
+entity social-object,
+  sub particular,
+  plays acceptance:holder,
+  plays attestation:attester;
+entity place,
+  sub particular,
+  plays located-at:located,
+  plays located-at:place;
+entity information-object,
+  sub particular,
+  owns calibration-ref,
+  owns condition @card(0..),
+  owns coverage-factor,
+  owns raw-value,
+  owns standard-uncertainty,
+  plays calibration-of:certificate,
+  plays expressed-in:record,
+  plays produced:result,
+  plays reports:result,
+  plays rests-on:record;
+entity occurrence,
+  sub particular,
+  plays causes:cause,
+  plays causes:effect,
+  plays describes:occurrence;
+entity concept @abstract,
+  owns description,
+  owns name,
+  owns wm-id @key,
+  plays classified-as:class,
+  plays classified-as:classified,
+  plays has-quality:value;
+entity category,
+  sub concept,
+  plays connected-to:joint-kind,
+  plays depends-on:kind;
+entity social-role,
+  sub concept,
+  plays exclusive-office:office,
+  plays official-act:office;
+entity quality-kind,
+  sub concept,
+  owns dimension,
+  plays has-quality:quality;
+entity reference-system @abstract,
+  owns description,
+  owns name,
+  owns wm-id @key;
+entity clock,
+  sub reference-system,
+  plays attestation:clock;
+entity spatial-frame,
+  sub reference-system,
+  plays anchored-to:frame,
+  plays frame-transform:child,
+  plays frame-transform:parent,
+  plays positioned-in:frame;
+entity unit,
+  sub reference-system,
+  owns dimension,
+  owns si-factor,
+  owns si-offset,
+  plays expressed-in:unit,
+  plays has-quality:unit;
+entity world,
+  owns description,
+  owns name,
+  owns wm-id @key,
+  owns world-kind,
+  plays attestation:context,
+  plays branching:base,
+  plays branching:variant;
+entity functional-slot,
+  owns slot-id @key,
+  owns slot-predicate @card(1..1),
+  owns slot-role @card(1..),
+  owns value-role @card(1..1);
+entity capability,
+  sub concept,
+  plays authorisation:power;
+entity person,
+  sub physical-object,
+  plays employment:employee;
+entity organisation,
+  sub social-object,
+  plays employment:employer;
+entity sample,
+  sub physical-object,
+  plays sampling:product;
+relation branching,
+  relates base,
+  relates variant,
+  owns branch-at,
+  owns knowledge-at,
+  owns recorded-at;
+relation proposition @abstract,
+  owns proposition-key @key,
+  owns wm-id @key,
+  plays attestation:content,
+  plays initiates:outcome,
+  plays reports:content,
+  plays terminates:outcome;
+relation existence,
+  sub proposition,
+  relates existent;
+relation located-at,
+  sub proposition,
+  relates located,
+  relates place;
+relation part-of,
+  sub proposition,
+  relates part,
+  relates whole;
+relation member-of,
+  sub proposition,
+  relates group,
+  relates member;
+relation depends-on,
+  sub proposition,
+  relates dependee,
+  relates dependent,
+  relates kind @card(0..1);
+relation classified-as,
+  sub proposition,
+  relates class,
+  relates classified,
+  relates context;
+relation has-quality,
+  sub proposition,
+  relates bearer,
+  relates quality,
+  relates unit,
+  relates value,
+  owns coverage-level,
+  owns lower,
+  owns upper;
+relation same-as,
+  sub proposition,
+  relates same @card(2..2);
+relation describes,
+  sub proposition,
+  relates description,
+  relates occurrence;
+relation initiates,
+  sub proposition,
+  relates event,
+  relates outcome;
+relation terminates,
+  sub proposition,
+  relates event,
+  relates outcome;
+relation event,
+  relates actor,
+  relates destination,
+  relates instrument,
+  relates location,
+  relates origin,
+  relates patient,
+  owns description,
+  owns wm-id @key,
+  plays attestation:content,
+  plays causes:cause,
+  plays causes:effect,
+  plays classified-as:classified,
+  plays describes:description,
+  plays initiates:event,
+  plays produced:activity,
+  plays terminates:event;
+relation attestation,
+  relates attester @card(1..1),
+  relates clock @card(0..1),
+  relates content @card(1..1),
+  relates context @card(1..1),
+  owns basis,
+  owns credence,
+  owns description,
+  owns end-basis,
+  owns polarity,
+  owns recorded-at,
+  owns stance,
+  owns valid-from-earliest,
+  owns valid-from-latest,
+  owns valid-to-earliest,
+  owns valid-to-latest,
+  owns wm-id @key,
+  plays acceptance:accepted,
+  plays rests-on:attestation,
+  plays supersession:new,
+  plays supersession:old;
+relation supersession,
+  relates new @card(1..1),
+  relates old @card(1..1),
+  owns recorded-at;
+relation acceptance,
+  relates accepted @card(1..1),
+  relates holder @card(1..1),
+  owns reason,
+  owns recorded-at,
+  owns verdict,
+  owns wm-id @key;
+relation constitution,
+  sub proposition,
+  relates constituent,
+  relates constituted;
+relation positioned-in,
+  sub proposition,
+  relates frame,
+  relates positioned,
+  owns qw,
+  owns qx,
+  owns qy,
+  owns qz,
+  owns x-max,
+  owns x-min,
+  owns y-max,
+  owns y-min,
+  owns z-max,
+  owns z-min;
+relation anchored-to,
+  sub proposition,
+  relates anchor,
+  relates frame;
+relation frame-transform,
+  sub proposition,
+  relates child,
+  relates parent,
+  owns qw,
+  owns qx,
+  owns qy,
+  owns qz,
+  owns tx,
+  owns ty,
+  owns tz;
+relation causes,
+  sub proposition,
+  relates cause,
+  relates effect;
+relation expressed-in,
+  relates record @card(1..1),
+  relates unit @card(1..1);
+relation rests-on,
+  relates attestation @card(1..1),
+  relates record @card(1..1);
+relation produced,
+  sub proposition,
+  relates activity,
+  relates result;
+relation reports,
+  sub proposition,
+  relates content,
+  relates result;
+relation connected-to,
+  sub proposition,
+  relates endpoint @card(2..2),
+  relates joint-kind @card(0..1);
+relation replacement,
+  sub event,
+  relates fitted,
+  relates removed as patient;
+relation employment,
+  sub proposition,
+  relates employee,
+  relates employer;
+relation office-holding,
+  sub classified-as;
+relation exclusive-office,
+  sub proposition,
+  relates context,
+  relates office;
+relation authorisation,
+  sub proposition,
+  relates grantor,
+  relates holder,
+  relates power,
+  relates scope;
+relation official-act,
+  sub event,
+  relates office,
+  relates office-context,
+  relates official as actor;
+relation sampling,
+  sub event,
+  relates product as destination,
+  relates sampled as origin,
+  relates sampler as actor;
+relation calibration-of,
+  sub proposition,
+  relates calibrated,
+  relates certificate;
+fun parts_in($whole: particular, $w: world) -> { particular }:
+  match
+    { $c isa part-of (whole: $whole, part: $p); attestation (content: $c, context: $w); } or
+    { $c isa part-of (whole: $whole, part: $m); attestation (content: $c, context: $w); let $p in parts_in($m, $w); };
+  return { $p };
+fun frames_linked($f: spatial-frame, $w: world) -> { spatial-frame }:
+  match
+    { $c1 isa frame-transform (parent: $f, child: $g); attestation (content: $c1, context: $w); } or
+    { $c2 isa frame-transform (child: $f, parent: $g); attestation (content: $c2, context: $w); } or
+    { $c3 isa frame-transform (parent: $f, child: $m3); attestation (content: $c3, context: $w);
+      let $g in frames_linked($m3, $w); } or
+    { $c4 isa frame-transform (child: $f, parent: $m4); attestation (content: $c4, context: $w);
+      let $g in frames_linked($m4, $w); };
+  return { $g };

@@ -6,11 +6,13 @@ Increment 3: attribution of every fact to modules by verified replay, and the fo
 Increment 4: the versioned JSON export, its sources, its JSON Schema, the files and the manifest.
 Increment 5: documentation from the repository's comments, and module data.
 Increment 6: the standalone HTML explorer (its data is exactly the export; no network access).
+Increment 7: the committed reference export (docs/schema/) is current and its files are consistent.
 """
 
 import copy
 import dataclasses
 import hashlib
+import itertools
 import json
 import uuid
 
@@ -275,9 +277,10 @@ def test_module_data_is_attributed_by_replay(attributed):
     assert by_id["located-at|located|place"]["modules"] == [SETUP]     # declared by WorldModel.create, not a module
 
 
-def test_install_order_does_not_change_attribution(driver, attributed):
+@pytest.mark.parametrize("order", [o for o in itertools.permutations(PROFILES3) if o != PROFILES3])
+def test_install_order_does_not_change_attribution(driver, attributed, order):
     _, a = attributed
-    wm = make_db(driver, profiles=("organisation", "laboratory", "mechanical"))
+    wm = make_db(driver, profiles=order)
     try:
         snap = snapshot(driver, wm.database)
         b = attribute(driver, snap, facts(parse_schema(snap.text)), prefix=TMP)
@@ -656,3 +659,31 @@ def test_export_to_writes_the_explorer_with_the_manifest(reference, tmp_path):
     assert extract_json(html) == json.loads((tmp_path / "schema.json").read_text()) == doc
     m = json.loads((tmp_path / "manifest.json").read_text())
     assert m["files"]["schema-explorer.html"]["sha256"] == hashlib.sha256(html.encode()).hexdigest()
+
+
+# ---- increment 7: the committed reference export ---------------------------------------------------------------------
+from pathlib import Path  # noqa: E402
+
+REF = Path(conftest.__file__).resolve().parents[1] / "docs" / "schema"
+REGENERATE = "docs/schema/ is stale: regenerate with `uv run python scripts/export_schema.py --reference`"
+
+
+def test_the_reference_export_is_current(exported):
+    """The committed export equals a fresh export of the same modules (core, then every registered profile in
+    registration order), apart from the time, the code commit and the database name."""
+    doc, text, _ = exported
+    committed = json.loads((REF / "schema.json").read_text())
+    assert ex.masked(committed) == ex.masked(doc), REGENERATE
+    assert (REF / "schema.tql").read_text() == text, REGENERATE
+
+
+def test_the_reference_files_are_consistent():
+    committed = json.loads((REF / "schema.json").read_text())
+    assert validate(committed) == []
+    assert committed["source"]["database"] == "wm-schema-reference"
+    assert committed["attribution"]["verification"] == "verified" and committed["attribution"]["unresolved"] == []
+    assert committed["module_data"]["verification"] == "verified"
+    assert (REF / "schema-explorer.html").read_text() == render_explorer(committed), REGENERATE
+    files = {name: (REF / name).read_bytes() for name in ("schema.tql", "schema.json", "schema-explorer.html")}
+    assert json.loads((REF / "manifest.json").read_text()) == ex.manifest(committed, files)
+    assert hashlib.sha256(files["schema.tql"]).hexdigest() == committed["source"]["schema_sha256"]

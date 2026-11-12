@@ -1,0 +1,64 @@
+{
+ "format": "wm-schema-export-manifest/1",
+ "source": {
+  "provenance": "database",
+  "database": "wm-schema-reference",
+  "server_version": "TypeDB CE 3.14.1",
+  "schema_sha256": "bba547c25973ff97b3e12f979cfbb3dffc858ae3b6a53c932c4ef621805d73c5",
+  "schema_characters": 10502,
+  "modules": {
+   "core": "0.3.0",
+   "core-0.4-a": "0.4.0-a1",
+   "core-0.4-a0": "0.4.0-a0",
+   "core-0.4-a2": "0.4.0-a2",
+   "core-0.4-b": "0.4.0-b",
+   "core-0.4-c": "0.4.0-c",
+   "core-0.4-d": "0.4.0-d",
+   "profile:laboratory": "0.1",
+   "profile:mechanical": "0.1",
+   "profile:organisation": "0.1"
+  }
+ },
+ "export": {
+  "exporter": "worldmodel.schema_export 1.0.0",
+  "exported_at": "2026-11-12T17:08:28+00:00",
+  "code_commit": "50d48f37868a198639ac5a16f37b694d7b8ef91e",
+  "code_dirty": false
+ },
+ "schema_sha256": "bba547c25973ff97b3e12f979cfbb3dffc858ae3b6a53c932c4ef621805d73c5",
+ "verification": {
+  "parse": true,
+  "query_cross_check": true,
+  "round_trip": true
+ },
+ "replay_verification": "verified",
+ "replay_problems": [],
+ "attribution_counts": {
+  "attributed": 487,
+  "shared": 0,
+  "consistent_unverified": 0,
+  "unresolved": 0
+ },
+ "unresolved": [],
+ "files": {
+  "schema-explorer.html": {
+   "sha256": "a66043cfe499df3705d050297d8028a81097a5c7c03e5db26c1b0ea404e509c7",
+   "bytes": 354887
+  },
+  "schema.json": {
+   "sha256": "9ece5141b6635d437009af60c1c0608306ed99d7aaf677b4d70daebc7b79d5f7",
+   "bytes": 424220
+  },
+  "schema.tql": {
+   "sha256": "bba547c25973ff97b3e12f979cfbb3dffc858ae3b6a53c932c4ef621805d73c5",
+   "bytes": 10502
+  }
+ },
+ "module_data_verification": "verified",
+ "module_data_unresolved": [],
+ "documentation": {
+  "provenance": "repository",
+  "types_documented": 36,
+  "unknown_labels": []
+ }
+}
