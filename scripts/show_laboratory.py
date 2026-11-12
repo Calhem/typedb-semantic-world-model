@@ -78,6 +78,8 @@ def main():
         print("\n### Q1 Samples: provenance, accounts, occurrences, existence (16:00)")
         pr = lb.provenance(wm, w, "s12-b", T(16))
         print(f"- s12-b is made from: {[(c['sample'], c['from'], c['judgement'], s(c['status'])) for c in pr['chain']]}")
+        print(f"- s12-b's established ancestry (routes on which every link is established): "
+              f"{[(c['sample'], c['from'], c['paths']) for c in pr['established']]}")
         for sample, accounts in pr["sampling"].items():
             for acc in accounts:
                 print(f"- account {acc['event']} (product {sample}, by {acc['sampler']}): {acc['account']}; occurrences "

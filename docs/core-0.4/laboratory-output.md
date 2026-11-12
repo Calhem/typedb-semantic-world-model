@@ -6,6 +6,7 @@ Profiles installed: {'mechanical': '0.1', 'organisation': '0.1', 'laboratory': '
 
 ### Q1 Samples: provenance, accounts, occurrences, existence (16:00)
 - s12-b is made from: [('s12-b', 's12-a', 'established', 'ASSERTED'), ('s12-a', 'sample-12', 'established', 'ASSERTED')]
+- s12-b's established ancestry (routes on which every link is established): [('s12-b', 's12-a', [[['s12-b', 's12-a']]]), ('s12-a', 'sample-12', [[['s12-b', 's12-a'], ['s12-a', 'sample-12']]])]
 - account ev-split-b (product s12-b, by ['bo']): accepted; occurrences [('o-split-b', 'accepted')]; claimed effects [('constitution', 'accepted'), ('existence', 'accepted')]
 - account ev-sampling-1 (product s12-a, by ['ana']): accepted; occurrences [('o-sampling-1', 'not established')]; claimed effects [('constitution', 'accepted'), ('existence', 'accepted')]
 - s12-c: accounts [('ev-split-c', 'not accepted', ['unreviewed', 'unreviewed'])]; made from nothing attested; existence attested: not established

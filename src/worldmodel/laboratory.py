@@ -97,32 +97,65 @@ def _sampling_accounts(wm, world, sample, t, as_of, perspective):
 
 def provenance(wm, world, sample, t, as_of=None, perspective=SYSTEM):
     """Where `sample` came from, for the perspective at t, as separate fields that conclude nothing beyond them:
-    - chain: every constitution content naming a sample in the chain as constituted (the sample, what it is said to be
-      made from, and that link's own judgement and evidence), followed back to the original specimen. A listing of
-      attested links, not an inference: an unaccepted link is listed with its judgement, never dropped;
-    - sampling: for each sample in the chain, the sampling accounts naming it as product: the account's acceptance,
+    - chain: every constitution content met by following "constituted from" links back from `sample`, each once (the
+      sample, what it is said to be made from, and that link's own judgement and evidence). A listing of attested
+      links, not an inference: an unaccepted, disputed or denied link is listed with its judgement, never dropped, and
+      followed. Each link also carries (LABS-1.031):
+      - paths: every distinct route from `sample` to and including the link (as [sample, from] steps), with
+        `established` (every step on the route is established at t in this world, perspective and knowledge time),
+        `blocked_by` (each step that is not, with its own judgement and evidence) and `closes_cycle` (the link leads
+        back to a material already on the route, so the route stops there);
+      - ancestry: "established" when at least one of its paths is established, else "not established". A link that
+        is itself established, but reached only through an unestablished step, is not established ancestry;
+    - established: the established-provenance view: only the links with an established path, with those paths;
+    - materials: every material reached (other than `sample`), with each route to it and whether that route is
+      established. Converging routes to one material are kept apart;
+    - sampling: for each material reached, the sampling accounts naming it as product: the account's acceptance,
       the occurrences it describes with their own status, and the effects it claims with the claim's judgement;
     - existence: the sample's attested existence (its own judgement), and the core `exists` answer beside it (which
       also infers existence from participation in holding content);
-    - locations: every location attestation of the sample (place, source, interval, acceptance), and where it is at t."""
+    - locations: every location attestation of the sample (place, source, interval, acceptance), and where it is at t.
+    Routes are simple (no material twice), so cyclic claims terminate; their number can grow with converging
+    lineages. Each material's claims are read once."""
     _require(wm)
-    chain, seen, todo = [], [sample], [sample]
+    claims, links, materials, order = {}, {}, {}, [sample]
+
+    def claims_of(x):
+        if x not in claims:
+            claims[x] = [(src, wm._judgement(e)) for e in wm._claims(world, x, ("constitution",), t, as_of, perspective)
+                         if x in e["roles"].get("constituted", []) for src in e["roles"].get("constituent", [])]
+        return claims[x]
+
+    todo = [(sample, [], (sample,))]                     # breadth first: (material, route so far, materials on it)
     while todo:
-        x = todo.pop(0)
-        for e in wm._claims(world, x, ("constitution",), t, as_of, perspective):
-            if x not in e["roles"].get("constituted", []):
-                continue
-            source = e["roles"]["constituent"][0]
-            chain.append({"sample": x, "from": source, **wm._judgement(e)})
-            if source not in seen:
-                seen.append(source)
-                todo.append(source)
+        x, route, on_route = todo.pop(0)
+        for source, j in claims_of(x):
+            key = (x, source)
+            link = links.setdefault(key, {"sample": x, "from": source, **j, "paths": []})
+            steps = route + [key]
+            blocked = [{"sample": a, "from": b, **{k: links[(a, b)][k] for k in ("judgement", "status", "evidence")}}
+                       for a, b in steps if links[(a, b)]["judgement"] != "established"]
+            cycle = source in on_route
+            link["paths"].append({"path": [list(k) for k in steps], "established": not blocked,
+                                  "blocked_by": blocked, "closes_cycle": cycle})
+            if not cycle:
+                materials.setdefault(source, []).append({"path": [list(k) for k in steps], "established": not blocked})
+                if source not in order:
+                    order.append(source)
+                todo.append((source, steps, on_route + (source,)))
+    chain = list(links.values())
+    for link in chain:
+        link["ancestry"] = "established" if any(p["established"] for p in link["paths"]) else "not established"
+    established = [{"sample": c["sample"], "from": c["from"], "judgement": c["judgement"], "status": c["status"],
+                    "evidence": c["evidence"], "paths": [p["path"] for p in c["paths"] if p["established"]]}
+                   for c in chain if c["ancestry"] == "established"]
     existence = [wm._judgement(e) for e in wm._claims(world, sample, ("existence",), t, as_of, perspective)
                  if sample in e["roles"].get("existent", [])]
     core = wm.exists(world, sample, t, as_of, perspective)
     here = wm.value_of(world, "located-at", {"located": sample}, t, as_of, perspective)
-    return {"sample": sample, "t": t, "chain": _public(chain),
-            "sampling": {x: _sampling_accounts(wm, world, x, t, as_of, perspective) for x in seen},
+    return {"sample": sample, "t": t, "chain": _public(chain), "established": established,
+            "materials": {x: {"established": any(p["established"] for p in ps), "paths": ps} for x, ps in materials.items()},
+            "sampling": {x: _sampling_accounts(wm, world, x, t, as_of, perspective) for x in order},
             "existence": {"attested": _public(existence)[0] if existence else
                           {"judgement": "not established", "holds": None, "status": None, "evidence": []},
                           "core_exists": {"status": core.status, "holds": core.holds}},
