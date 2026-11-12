@@ -1,6 +1,6 @@
 # Core 0.4 Stage D-3: scientific (laboratory) profile, design review (LABS-1.027)
 
-**Status (2026-11-11): design for approval; no D-3 implementation code is written.** Branch
+**Status (2026-11-11): approved (LABS-1.028) and implemented: see `stage-d3.md`.** Originally the design for approval. Branch
 `feature/core-0.4-d3-science` from `main` 8461e23 (D-2 merged).
 - Evidence: the draft `docs/core-0.4/stage-d3/laboratory-0.1.draft.tql`, and the executed probe
   `probes/core04_d3_design.py` (output `probes/core04_d3_design.out.json`).

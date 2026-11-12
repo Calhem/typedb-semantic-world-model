@@ -1,10 +1,11 @@
 # Deferred correctness issues (register)
 
-**Opened 2026-11-11 under LABS-1.025; DI-5 added under LABS-1.026, DI-6 under LABS-1.027.** These are known correctness issues, tracked apart from the stage documents.
+**Opened 2026-11-11 under LABS-1.025; DI-5 added under LABS-1.026, DI-6 under LABS-1.027, DI-7 under LABS-1.028.** These are known correctness issues, tracked apart from the stage documents.
 None of them has had its semantics changed yet.
 
 - **DI-1**, **DI-2** and **DI-6** must be **reviewed before Stage E** (final validation); DI-1 and DI-2 must be
   resolved.
+- **DI-7** is a general semantic requirement to be designed **in Stage E**.
 - **DI-3**, **DI-4** and **DI-5** are accepted limitations until a decision says otherwise.
 
 Each entry gives a concrete case, what it affects, and the options. A resolution needs its own approved decision and
@@ -18,6 +19,7 @@ tests.
 | DI-4 | dependency-kind vocabulary is not validated | D-1 | no deadline | open (limitation) |
 | DI-5 | a future-effective appointment (or holding) with an unreviewed counter-claim is labelled "not established" | D-2 (LABS-1.026) | no deadline | open (limitation) |
 | DI-6 | aggregate organisational reports can return ASSERTED despite mixed constituent statuses | D-2 (LABS-1.026) | review before Stage E | open |
+| DI-7 | formal derivation provenance: no record of a named rule and named premises, yet basis "inference" gives INFERRED | D-3 (LABS-1.027 G-1, LABS-1.028) | Stage E requirement | open |
 
 ## DI-1: `facts_about` omits content disputed by polarity
 **What happens.** `facts_about(world, subject, t)` lists only content whose judgement at t is "holds". Two kinds of
@@ -129,3 +131,36 @@ is reported as ASSERTED overall.
 - **(c)** Keep it, and document.
 - **Recommendation:** (b) for support statuses. It removes a summary that can mislead, and keeps DISPUTED, UNKNOWN and
   NOT_YET_KNOWN, which are well defined for the set. To be reviewed before Stage E. Semantics unchanged until decided.
+
+## DI-7: formal derivation provenance is not recorded
+**What happens.** v0.2 (E6) reserves derived answers (INFERRED) for attestations derived under a **named rule** from
+**named premises**. The model records neither. Any attestation written with basis `inference` is reported INFERRED
+by the core judgement, whether or not a rule produced it. `rests-on` records evidence (premises, in effect), but not a
+rule.
+
+**Concrete case** (`tests/test_n_d3_laboratory.py`, `test_interpret_refuses_basis_inference_and_flags_it_where_recorded`):
+lab 2's conclusion "sample 12 is anhydrous", written directly with basis `inference` and accepted, is INFERRED. That
+is an analyst's conclusion, not a formal derivation.
+
+**What D-3 does (D-D3-4, LABS-1.028), without changing the core:**
+- the profile's writing function, `laboratory.interpret`, records an interpretation as **testimony**, or as a
+  **hypothesis** (stance `hypothesises`), and refuses basis `inference`;
+- the profile's report, `laboratory.interpretations`, flags any attestation with basis `inference` as "recorded as
+  inference without derivation structure". Every row carries the note that no formal derivation is recorded;
+- the core judgement is unchanged (it still says INFERRED).
+
+The convention is not enforced outside the laboratory profile.
+
+**Affected.** Every reader that reports INFERRED from an attestation's basis (`holds`, `value_of`, and everything
+built on `_claims`). This does not include the Core 0.3 existence inference (`exists`: INFERRED from participation in
+holding content), which is a rule the model applies itself.
+
+**Options (Stage E):**
+- (a) a derivation record: an attestation names its rule (a concept) and its premises (attestations). Only such
+  attestations are reported INFERRED; others with basis `inference` are reported as testimony;
+- (b) refuse basis `inference` on write unless a derivation record is given;
+- (c) keep it as documentation only.
+
+Recommended: (a), with (b) as its write-time check. No inference engine is implied: derivations would be recorded,
+not computed.
+
