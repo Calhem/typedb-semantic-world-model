@@ -1,7 +1,7 @@
 # LABS-1.024: authoritative schema export and explorer, design and fidelity review
 
-**Status: design for approval. Nothing is implemented** (LABS-1.030 item 6). The exporter and the explorer are built
-only after approval.
+**Status: approved** (LABS-1.032, LABS-1.033), with the amended decisions in section 10, which take precedence over
+sections 1 to 9 where they differ. The review baseline of sections 1 to 9 is commit `ca3aede`.
 
 **Evidence.** Three executed probes against TypeDB CE 3.14.1. Each builds the full core with all three domain profiles
 in a throwaway database, and deletes it afterwards:
@@ -223,3 +223,45 @@ validate exports against it with a small built-in checker, not a new library.
 | E-7 | A versioned JSON format (`wm-schema-export/1`) with its own JSON Schema, checked without a new dependency | yes |
 
 **Out of scope:** exporting data (instances), editing the schema, and Stage E.
+
+## 10. Approved decisions (LABS-1.032, LABS-1.033)
+The owner approved the architecture with two requirements, and then E-1 to E-7 in the amended wording below.
+
+**Requirement 1: the live TypeDB schema is authoritative.** Every exported fact is labelled with its source:
+- **`database`**: read from TypeDB (the `schema()` text, query answers, module records, server version), or computed by
+  the exporter from those reads alone (for example "inherited from X", reverse indexes, parsed function signatures);
+- **`reconstructed`**: needs the repository's code as well as the database (core and profile attribution by replay).
+  Checked against the database, but not stored in it;
+- **`repository`**: taken from the repository only and never checked against the database (comments in `.tql` files).
+
+**Requirement 2: attribution per declaration and per contribution.** Each fact has one of four statuses (LABS-1.033):
+
+| Status | Meaning |
+|---|---|
+| `attributed` | proven by a complete matching replay: one module contributes it |
+| `shared` | proven by a complete matching replay: more than one module contributes it. All are listed; none is the owner |
+| `consistent_unverified` | local replay evidence points to a module, but the complete replay did not match the database |
+| `unresolved` | attribution cannot be established |
+
+A partial replay never produces `attributed` or `shared`. The manifest records the overall replay verification status
+and every unresolved contribution.
+
+**Schema fidelity (LABS-1.033).** If parsing or cross-checking cannot account for every declaration, annotation, role,
+constraint and function in the database's schema, the export fails, rather than produce a schema that looks complete
+but is not. Annotations and functions have a single database source (the `schema()` text). They are accepted on that
+text plus a successful round trip, and the export states that limitation.
+
+| # | Approved decision |
+|---|---|
+| E-1 | Sources: `schema()` text and concept queries, with a required exact cross-check. Every exported fact is labelled `database`, `reconstructed` or `repository`. Facts with only one database source (annotations, functions) are marked as such |
+| E-2 | Attribution by verified replay, labelled `reconstructed`, per declaration and per annotation, with the four statuses above. Types show what introduced them and each addition separately, and are never given a single owner. A partial replay proves nothing (E-2a) |
+| E-3 | Outputs and layout: `schema.tql` (exactly `schema()`), `schema.json`, `schema-explorer.html`, `manifest.json`; code in `worldmodel.schema_export` and `scripts/export_schema.py`. The export of the reference database (core and three profiles) is committed under `docs/schema/`, with a test that fails when it is stale. The manifest also records the git commit used for the replay and the comments, the replay verification status, and the counts of attributed, shared, unverified and unresolved facts, with every unresolved one listed |
+| E-4 | Option (b): repository comments in a separate field labelled `repository`, with file, line and commit; they never affect attribution or any database field; comments on labels absent from the database are reported |
+| E-5 | Installed module data (vocabulary concepts and functional slots) read from the database and shown in a separate "module data" section, never mixed with the schema. The records are `database`; which module they belong to is `reconstructed` |
+| E-6 | The explorer: a single file with no external libraries or network access. It shows the three sources and the attribution statuses with text badges and a legend (never colour alone), with filters for both, and repository comments in a separate, labelled box |
+| E-7 | A versioned JSON format (`wm-schema-export/1`) with its own JSON Schema, checked without a new dependency. Version 1 requires a source on every section and a status on every attribution |
+
+**Known gap in replay, stated in the export.** TypeDB accepts a declaration that repeats one already in the schema, and
+a replay cannot see the repeat. Such a fact is attributed to the module that first introduced it; a repeat found in
+another module's source text is reported as a `repository` note, not as shared ownership. Sharing between two
+profiles is provable (each is replayed onto the core on its own) and is reported as `shared`.
