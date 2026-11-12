@@ -1,0 +1,182 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "wm-schema-export-1.schema.json",
+ "title": "wm-schema-export/1",
+ "description": "The schema export of a TypeDB database (LABS-1.024). Every top-level section states its source: database, reconstructed or repository. Every attribution has one of four statuses.",
+ "type": "object",
+ "required": ["format", "provenance", "source", "export", "verification", "schema", "attribution"],
+ "additionalProperties": false,
+ "properties": {
+  "format": {"const": "wm-schema-export/1"},
+  "provenance": {
+   "type": "object", "required": ["database", "reconstructed", "repository"], "additionalProperties": false,
+   "properties": {"database": {"type": "string"}, "reconstructed": {"type": "string"}, "repository": {"type": "string"}}
+  },
+  "source": {
+   "type": "object", "additionalProperties": false,
+   "required": ["provenance", "database", "server_version", "schema_sha256", "schema_characters", "modules"],
+   "properties": {
+    "provenance": {"const": "database"},
+    "database": {"type": ["string", "null"]},
+    "server_version": {"type": "string"},
+    "schema_sha256": {"$ref": "#/$defs/sha256"},
+    "schema_characters": {"type": "integer", "minimum": 0},
+    "modules": {"type": "object", "additionalProperties": {"type": "string"}}
+   }
+  },
+  "export": {
+   "type": "object", "additionalProperties": false,
+   "required": ["exporter", "exported_at", "code_commit", "code_dirty"],
+   "properties": {
+    "exporter": {"type": "string"},
+    "exported_at": {"type": ["string", "null"]},
+    "code_commit": {"type": ["string", "null"]},
+    "code_dirty": {"type": ["boolean", "null"]}
+   }
+  },
+  "verification": {
+   "type": "object", "additionalProperties": false,
+   "required": ["provenance", "parse", "query_cross_check", "round_trip", "single_source"],
+   "properties": {
+    "provenance": {"const": "database"},
+    "parse": {"type": "object", "required": ["passed", "exact", "facts"], "additionalProperties": false,
+              "properties": {"passed": {"const": true}, "exact": {"const": true}, "facts": {"type": "integer", "minimum": 0}}},
+    "query_cross_check": {"type": "object", "required": ["passed", "compared"], "additionalProperties": false,
+                          "properties": {"passed": {"const": true},
+                                         "compared": {"type": "object", "additionalProperties": {"type": "integer"}}}},
+    "round_trip": {"type": "object", "required": ["passed", "identical_schema_text", "characters"], "additionalProperties": false,
+                   "properties": {"passed": {"const": true}, "identical_schema_text": {"const": true},
+                                  "characters": {"type": "integer", "minimum": 0}}},
+    "single_source": {"$ref": "#/$defs/single_source"}
+   }
+  },
+  "schema": {
+   "type": "object", "additionalProperties": false,
+   "required": ["provenance", "computed_fields", "single_source", "counts", "types", "roles", "attributes_owned_by",
+                "functions", "facts", "typeql"],
+   "properties": {
+    "provenance": {"const": "database"},
+    "computed_fields": {"type": "array", "items": {"type": "string"}},
+    "single_source": {"$ref": "#/$defs/single_source"},
+    "counts": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0}},
+    "types": {"type": "object", "additionalProperties": {"$ref": "#/$defs/type"}},
+    "roles": {"type": "object", "additionalProperties": {"$ref": "#/$defs/role"}},
+    "attributes_owned_by": {"type": "object", "additionalProperties": {"$ref": "#/$defs/labels"}},
+    "functions": {"type": "object", "additionalProperties": {"$ref": "#/$defs/function"}},
+    "facts": {"type": "object", "additionalProperties": {"$ref": "#/$defs/fact"}},
+    "typeql": {"type": "string"}
+   }
+  },
+  "attribution": {
+   "type": "object", "additionalProperties": false,
+   "required": ["provenance", "method", "verification", "problems", "statuses", "counts", "modules", "facts", "types",
+                "functions", "unresolved", "limitations", "repository_notes"],
+   "properties": {
+    "provenance": {"const": "reconstructed"},
+    "method": {"type": "string"},
+    "verification": {"enum": ["verified", "failed"]},
+    "problems": {"$ref": "#/$defs/strings"},
+    "statuses": {"type": "object", "required": ["attributed", "shared", "consistent_unverified", "unresolved"],
+                 "additionalProperties": false,
+                 "properties": {"attributed": {"type": "string"}, "shared": {"type": "string"},
+                                "consistent_unverified": {"type": "string"}, "unresolved": {"type": "string"}}},
+    "counts": {"type": "object", "required": ["attributed", "shared", "consistent_unverified", "unresolved"],
+               "additionalProperties": false,
+               "properties": {"attributed": {"type": "integer", "minimum": 0}, "shared": {"type": "integer", "minimum": 0},
+                              "consistent_unverified": {"type": "integer", "minimum": 0},
+                              "unresolved": {"type": "integer", "minimum": 0}}},
+    "modules": {"type": "array", "items": {"$ref": "#/$defs/module"}},
+    "facts": {"type": "object", "additionalProperties": {"$ref": "#/$defs/attribution"}},
+    "types": {"type": "object", "additionalProperties": {"$ref": "#/$defs/type_attribution"}},
+    "functions": {"type": "object", "additionalProperties": {"$ref": "#/$defs/attribution"}},
+    "unresolved": {"$ref": "#/$defs/strings"},
+    "limitations": {"$ref": "#/$defs/strings"},
+    "repository_notes": {
+     "type": "object", "required": ["provenance", "also_declared_in_source", "scan"], "additionalProperties": false,
+     "properties": {
+      "provenance": {"const": "repository"},
+      "also_declared_in_source": {"type": "object", "additionalProperties": {"$ref": "#/$defs/strings"}},
+      "scan": {"type": "object", "additionalProperties": {
+       "type": "object", "required": ["files", "statements", "unread", "missing_from_scan"], "additionalProperties": false,
+       "properties": {"files": {"$ref": "#/$defs/strings"}, "statements": {"type": "integer", "minimum": 0},
+                      "unread": {"$ref": "#/$defs/strings"},
+                      "missing_from_scan": {"type": ["array", "null"], "items": {"type": "string"}}}}}
+     }
+    }
+   }
+  }
+ },
+ "$defs": {
+  "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+  "strings": {"type": "array", "items": {"type": "string"}},
+  "labels": {"type": "array", "items": {"type": "string"}},
+  "annotations": {"type": "array", "items": {"type": "string", "pattern": "^@[a-z]+"}},
+  "single_source": {"type": "object", "required": ["annotations", "functions"], "additionalProperties": false,
+                    "properties": {"annotations": {"type": "string"}, "functions": {"type": "string"}}},
+  "status": {"enum": ["attributed", "shared", "consistent_unverified", "unresolved"]},
+  "attribution": {"type": "object", "required": ["status", "modules"], "additionalProperties": false,
+                  "properties": {"status": {"$ref": "#/$defs/status"}, "modules": {"$ref": "#/$defs/strings"}}},
+  "type_attribution": {
+   "type": "object", "required": ["introduced_by", "extended_by", "contributions", "unresolved"], "additionalProperties": false,
+   "properties": {"introduced_by": {"$ref": "#/$defs/attribution"}, "extended_by": {"$ref": "#/$defs/strings"},
+                  "contributions": {"type": "object", "additionalProperties": {"$ref": "#/$defs/strings"}},
+                  "unresolved": {"$ref": "#/$defs/strings"}}
+  },
+  "module": {
+   "type": "object", "required": ["name", "kind", "recorded_version", "code_version", "replay", "facts"], "additionalProperties": false,
+   "properties": {"name": {"type": "string"}, "kind": {"enum": ["core", "profile", "setup", "unknown"]},
+                  "recorded_version": {"type": ["string", "null"]}, "code_version": {"type": ["string", "null"]},
+                  "replay": {"enum": ["replayable", "unknown", "version-mismatch", "replay-failed"]},
+                  "facts": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0}}}
+  },
+  "capability": {
+   "type": "object", "required": ["annotations", "from", "declared"],
+   "properties": {"attribute": {"type": "string"}, "role": {"type": "string"}, "name": {"type": "string"},
+                  "specialises": {"type": ["string", "null"]}, "annotations": {"$ref": "#/$defs/annotations"},
+                  "from": {"type": "string"}, "declared": {"type": "boolean"}},
+   "additionalProperties": false
+  },
+  "type": {
+   "type": "object", "additionalProperties": false,
+   "required": ["label", "kind", "annotations", "abstract", "supertype", "supertypes", "subtypes", "value_type", "owns",
+                "plays", "relates", "statement", "facts", "functions"],
+   "properties": {
+    "label": {"type": "string"}, "kind": {"enum": ["entity", "relation", "attribute"]},
+    "annotations": {"$ref": "#/$defs/annotations"}, "abstract": {"type": "boolean"},
+    "supertype": {"type": ["string", "null"]}, "supertypes": {"$ref": "#/$defs/labels"}, "subtypes": {"$ref": "#/$defs/labels"},
+    "value_type": {"type": ["object", "null"], "required": ["type", "from", "declared", "annotations"], "additionalProperties": false,
+                   "properties": {"type": {"type": "string"}, "from": {"type": "string"}, "declared": {"type": "boolean"},
+                                  "annotations": {"$ref": "#/$defs/annotations"}}},
+    "owns": {"type": "array", "items": {"$ref": "#/$defs/capability"}},
+    "plays": {"type": "array", "items": {"$ref": "#/$defs/capability"}},
+    "relates": {"type": "array", "items": {"$ref": "#/$defs/capability"}},
+    "statement": {"type": "string"}, "facts": {"$ref": "#/$defs/strings"}, "functions": {"$ref": "#/$defs/strings"}
+   }
+  },
+  "role": {
+   "type": "object", "additionalProperties": false,
+   "required": ["role", "relation", "name", "specialises", "annotations", "specialised_by", "related_by",
+                "played_by_declared", "played_by"],
+   "properties": {"role": {"type": "string"}, "relation": {"type": "string"}, "name": {"type": "string"},
+                  "specialises": {"type": ["string", "null"]}, "annotations": {"$ref": "#/$defs/annotations"},
+                  "specialised_by": {"$ref": "#/$defs/labels"}, "related_by": {"$ref": "#/$defs/labels"},
+                  "played_by_declared": {"$ref": "#/$defs/labels"}, "played_by": {"$ref": "#/$defs/labels"}}
+  },
+  "function": {
+   "type": "object", "additionalProperties": false,
+   "required": ["name", "params", "returns", "stream", "return_types", "types_named", "text"],
+   "properties": {"name": {"type": "string"},
+                  "params": {"type": "array", "items": {"type": "object", "required": ["variable", "type"], "additionalProperties": false,
+                                                         "properties": {"variable": {"type": "string"}, "type": {"type": "string"}}}},
+                  "returns": {"type": "string"}, "stream": {"type": "boolean"}, "return_types": {"$ref": "#/$defs/labels"},
+                  "types_named": {"$ref": "#/$defs/labels"}, "text": {"type": "string"}}
+  },
+  "fact": {
+   "type": "object", "required": ["subject", "kind"], "additionalProperties": false,
+   "properties": {"subject": {"type": "string"},
+                  "kind": {"enum": ["type", "annotation", "sub", "value", "owns", "plays", "relates", "specialisation", "function"]},
+                  "type_kind": {"enum": ["entity", "relation", "attribute"]}, "of": {"type": "string"},
+                  "annotation": {"type": "string"}, "target": {"type": "string"}, "specialises": {"type": "string"}}
+  }
+ }
+}

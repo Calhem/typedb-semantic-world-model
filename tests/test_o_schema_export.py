@@ -3,9 +3,13 @@
 Increments 1 and 2: the canonical schema text is parsed with every character accounted for, and the parse is checked
 two independent ways (TypeDB's query answers, and an exact round trip into an empty database). Every mismatch fails.
 Increment 3: attribution of every fact to modules by verified replay, and the four statuses.
+Increment 4: the versioned JSON export, its sources, its JSON Schema, the files and the manifest.
 """
 
+import copy
 import dataclasses
+import hashlib
+import json
 import uuid
 
 import pytest
@@ -18,7 +22,9 @@ from worldmodel.schema_export import SchemaExportError, SchemaParseError, facts,
 from worldmodel.schema_export.crosscheck import Lattice, compare_answers, cross_check, round_trip
 from worldmodel.profiles import PROFILES, Profile
 from worldmodel.schema_export.attribution import SETUP, attribute, classify
+from worldmodel.schema_export import export as ex
 from worldmodel.schema_export.introspect import snapshot
+from worldmodel.schema_export.validate import errors, format_schema, validate
 from worldmodel.model import SCHEMA, WRITE
 
 pytestmark = pytest.mark.own_profiles
@@ -382,3 +388,139 @@ def test_two_profiles_declaring_the_same_type(driver, tmp_path, monkeypatch):
         assert leftovers(driver) == []
     finally:
         drop(wm)
+
+
+# ---- increment 4: versioned JSON export and JSON Schema validation --------------------------------------------------
+@pytest.fixture(scope="module")
+def exported(reference):
+    wm, snap = reference
+    doc, text, attr, _ = ex.build_export(wm.driver, wm.database, prefix=TMP)
+    return doc, text, snap
+
+
+def test_export_validates_against_its_json_schema(exported):
+    doc, _, _ = exported
+    assert validate(doc) == []
+    assert doc["format"] == "wm-schema-export/1"
+
+
+def test_every_section_states_its_source(exported):
+    doc, _, _ = exported
+    assert doc["source"]["provenance"] == doc["verification"]["provenance"] == doc["schema"]["provenance"] == "database"
+    assert doc["attribution"]["provenance"] == "reconstructed"
+    assert doc["attribution"]["repository_notes"]["provenance"] == "repository"
+    assert set(doc["provenance"]) == {"database", "reconstructed", "repository"}
+    assert set(doc["schema"]["single_source"]) == {"annotations", "functions"}       # their limitation is stated
+
+
+@pytest.mark.parametrize("mutate, expected", [
+    (lambda d: d["schema"].update(provenance="repository"), "$.schema.provenance: must be 'database'"),
+    (lambda d: d["attribution"].update(provenance="database"), "$.attribution.provenance: must be 'reconstructed'"),
+    (lambda d: d["attribution"].pop("repository_notes"), "$.attribution: missing 'repository_notes'"),
+    (lambda d: d["attribution"]["facts"]["entity sample"].update(status="probable"),
+     "$.attribution.facts.entity sample.status: 'probable' is not one of"),
+    (lambda d: d["attribution"]["facts"]["entity sample"].pop("status"), "$.attribution.facts.entity sample: missing 'status'"),
+    (lambda d: d["schema"]["types"]["sample"].update(owner="profile:laboratory"), "$.schema.types.sample: unexpected 'owner'"),
+    (lambda d: d["verification"]["round_trip"].update(passed=False), "$.verification.round_trip.passed: must be True"),
+    (lambda d: d.update(format="wm-schema-export/2"), "$.format: must be 'wm-schema-export/1'"),
+])
+def test_json_schema_rejects_an_unlabelled_or_unknown_export(exported, mutate, expected):
+    doc = copy.deepcopy(exported[0])
+    mutate(doc)
+    assert any(e.startswith(expected) for e in validate(doc)), validate(doc)[:5]
+
+
+def test_the_checker_refuses_keywords_it_does_not_support():
+    assert errors(1, {"type": "integer", "multipleOf": 2}) == ["$: the checker does not support ['multipleOf']"]
+    assert errors([1, "x"], {"type": "array", "items": {"type": "integer"}}) == ["$[1]: expected integer, found str"]
+    assert errors(True, {"type": "integer"}) == ["$: expected integer, found bool"]
+    assert format_schema()["title"] == "wm-schema-export/1"
+
+
+def test_schema_section_equals_the_database(exported):
+    doc, text, snap = exported
+    s = doc["schema"]
+    a = snap.answers
+    assert s["typeql"] == text == snap.text
+    assert {k: t["kind"] for k, t in s["types"].items()} == a["kinds"]
+    assert {(k, t["supertype"]) for k, t in s["types"].items() if t["supertype"]} == a["sub"]
+    assert {(k, o["attribute"]) for k, t in s["types"].items() for o in t["owns"]} == a["owns"]
+    assert {(k, p["role"]) for k, t in s["types"].items() for p in t["plays"]} == a["plays"]
+    assert {(k, r["role"]) for k, t in s["types"].items() for r in t["relates"]} == a["relates"]
+    assert {(r, x["specialises"]) for r, x in s["roles"].items() if x["specialises"]} == a["role_parents"]
+    assert {k: [t["value_type"]["type"]] for k, t in s["types"].items() if t["value_type"]} == a["value_types"]
+    assert set(s["facts"]) == set(facts(parse_schema(text)))
+    assert "".join(t["statement"] for t in s["types"].values()).count("@") == text.split("\nfun ")[0].count("@")
+
+
+def test_inherited_capabilities_and_contributions(exported):
+    doc, _, _ = exported
+    sample = doc["schema"]["types"]["sample"]
+    wm_id = next(o for o in sample["owns"] if o["attribute"] == "wm-id")
+    assert wm_id == {"attribute": "wm-id", "annotations": ["@key"], "from": "particular", "declared": False}
+    assert next(p for p in sample["plays"] if p["role"] == "sampling:product")["declared"] is True
+    att = doc["attribution"]["types"]
+    assert att["sample"]["introduced_by"] == {"status": "attributed", "modules": ["profile:laboratory"]}
+    assert att["sample"]["extended_by"] == []
+    assert att["particular"]["introduced_by"]["modules"] == ["core"]
+    assert "profile:laboratory" in att["particular"]["extended_by"]                 # extended, never owned by it
+    assert att["particular"]["contributions"]["profile:laboratory"] == ["particular plays sampling:sampler"]
+    role = doc["schema"]["roles"]["event:actor"]
+    assert "sampling:sampler" in role["specialised_by"] and "sample" in role["played_by"]
+    assert doc["attribution"]["functions"]["frames_linked"]["modules"] == ["core-0.4-a2"]
+    assert doc["schema"]["functions"]["parts_in"]["types_named"] == ["attestation", "part-of", "particular", "world"]
+
+
+def test_two_exports_of_one_schema_differ_only_in_volatile_fields(exported, reference):
+    doc, _, _ = exported
+    wm, _ = reference
+    again, _, _, _ = ex.build_export(wm.driver, wm.database, prefix=TMP)
+    assert ex.masked(again) == ex.masked(doc)
+
+
+def test_write_export_and_manifest(exported, tmp_path):
+    doc, text, _ = exported
+    written = ex.write_export(doc, text, tmp_path)
+    assert written == ["manifest.json", "schema.json", "schema.tql"]
+    assert (tmp_path / "schema.tql").read_text() == text
+    assert json.loads((tmp_path / "schema.json").read_text()) == doc
+    m = json.loads((tmp_path / "manifest.json").read_text())
+    for name in ("schema.json", "schema.tql"):
+        assert m["files"][name]["sha256"] == hashlib.sha256((tmp_path / name).read_bytes()).hexdigest()
+    assert m["replay_verification"] == "verified" and m["unresolved"] == [] and m["replay_problems"] == []
+    assert m["schema_sha256"] == hashlib.sha256(text.encode()).hexdigest()
+
+
+def test_manifest_lists_unresolved_contributions(driver, tmp_path):
+    wm = make_db(driver, profiles=("laboratory",))
+    try:
+        run(wm, SCHEMA, "define entity gadget sub physical-object;")
+        doc, written, _ = ex.export_to(driver, wm.database, tmp_path, prefix=TMP)
+        m = json.loads((tmp_path / "manifest.json").read_text())
+        assert m["replay_verification"] == "failed"
+        assert m["unresolved"] == ["entity gadget", "gadget sub physical-object"]
+        assert m["attribution_counts"]["attributed"] == 0 and m["attribution_counts"]["shared"] == 0
+        assert validate(doc) == []
+    finally:
+        drop(wm)
+
+
+def test_the_export_is_refused_when_the_queries_disagree(reference, monkeypatch, tmp_path):
+    wm, snap = reference
+    tampered = dataclasses.replace(snap, answers={**snap.answers, "plays": snap.answers["plays"] - {("sample", "sampling:product")}})
+    monkeypatch.setattr(ex, "snapshot", lambda driver, database: tampered)
+    with pytest.raises(SchemaExportError, match="disagree"):
+        ex.export_to(wm.driver, wm.database, tmp_path / "out", prefix=TMP)
+    assert not (tmp_path / "out").exists()
+
+
+def test_the_command_line(reference, tmp_path, capsys):
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("export_schema", conftest.__file__.replace("tests/conftest.py", "scripts/export_schema.py"))
+    cli = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(cli)
+    wm, _ = reference
+    assert cli.main([wm.database, "--out", str(tmp_path), "--require-verified"]) == 0
+    assert "attribution: verified" in capsys.readouterr().out
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["manifest.json", "schema.json", "schema.tql"]
+    assert cli.main(["wm-test-no-such-database", "--out", str(tmp_path / "x")]) == 1
