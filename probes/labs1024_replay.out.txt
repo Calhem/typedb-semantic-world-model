@@ -1,0 +1,7 @@
+driver.server_version: TypeDB CE 3.14.1
+driver.version: absent
+declarations: target 439 | core 375 | per profile {'mechanical': 12, 'organisation': 36, 'laboratory': 16}
+target == core + profiles (as declaration sets): True | missing: [] | extra: []
+declared by two profiles: []
+laboratory's declarations on core types: [('information-object', 'plays calibration-of:certificate'), ('particular', 'plays sampling:sampler'), ('physical-object', 'plays calibration-of:calibrated'), ('physical-object', 'plays sampling:sampled')]
+schema sha256: a9c0f7abb2d2a838 | total probe time 3.0 s

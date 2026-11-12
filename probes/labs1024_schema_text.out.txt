@@ -1,0 +1,85 @@
+statements: 107 | first words: Counter({'attribute': 51, 'relation': 35, 'entity': 21})
+annotations used: [('@abstract', 5), ('@card(0..)', 1), ('@card(0..1)', 3), ('@card(1..)', 1), ('@card(1..1)', 13), ('@card(2..2)', 2), ('@key', 11), ('@range(0.0..1.0)', 2), ('@values("accepted", "rejected", "retracted")', 1), ('@values("actual", "hypothetical", "simulated")', 1), ('@values("asserts", "believes", "doubts", "hypothesises", "stipulates")', 1), ('@values("observation", "testimony", "inference", "stipulation")', 1), ('@values("stated", "unknown", "until-superseded")', 1)]
+--- schema-module:
+  entity schema-module,
+    owns module-name @key,
+    owns module-version
+--- particular:
+  entity particular @abstract,
+    owns alt-name,
+    owns description,
+    owns name,
+    owns wm-id @key,
+    plays anchored-to:anchor,
+    plays authorisation:grantor,
+    plays authorisation:holder,
+    plays authorisation:scope,
+    plays classified-as:classified,
+    plays classified-as:context,
+    plays constitution:constituent,
+    plays constitution:constituted,
+    plays depends-on:dependee,
+    plays depends-on:dependent,
+    plays event:actor,
+    plays event:destination,
+    plays event:instrument,
+    plays event:location,
+    plays event:origin,
+    plays event:patient,
+    plays exclusive-office:context,
+    plays existence:existent,
+    plays has-quality:bearer,
+    plays member-of:group,
+    plays member-of:member,
+    plays official-act:office-context,
+    plays official-act:official,
+    plays part-of:part,
+    plays part-of:whole,
+    plays positioned-in:positioned,
+    plays same-as:same,
+    plays sampling:sampler
+--- sampling:
+  relation sampling,
+    sub event,
+    relates product as destination,
+    relates sampled as origin,
+    relates sampler as actor
+--- sample:
+  entity sample,
+    sub physical-object,
+    plays sampling:product
+--- coverage-level:
+  attribute coverage-level,
+   value double @range(0.0..1.0)
+--- event:
+  relation event,
+    relates actor,
+    relates destination,
+    relates instrument,
+    relates location,
+    relates origin,
+    relates patient,
+    owns description,
+    owns wm-id @key,
+    plays attestation:content,
+    plays causes:cause,
+    plays causes:effect,
+    plays classified-as:classified,
+    plays describes:description,
+    plays initiates:event,
+    plays produced:activity,
+    plays terminates:event
+functions in repository .tql files: ['frames_linked', 'parts_in'] | in the database: ['frames_linked', 'parts_in']
+sample statement repeats inherited 'owns wm-id': False
+types: 107 | core (from a core-only schema()): 95 | per profile: {'mechanical': 2, 'organisation': 7, 'laboratory': 3} | unattributed: [] | attributed but absent: [] | in two modules: []
+--- physical-object after profiles (core type extended by profiles):
+  entity physical-object,
+    sub particular,
+    plays acceptance:holder,
+    plays attestation:attester,
+    plays calibration-of:calibrated,
+    plays connected-to:endpoint,
+    plays located-at:located,
+    plays replacement:fitted,
+    plays replacement:removed,
+    plays sampling:sampled
