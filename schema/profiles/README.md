@@ -8,5 +8,6 @@ example worlds are in `src/worldmodel/examples/`, and its tests are in `tests/`.
 A profile only adds vocabulary of its own; `install_profile` refuses anything else before committing. See the
 docstring of `src/worldmodel/profiles.py` and `docs/core-0.4/stage-d0.md` for the rules.
 
-No domain profile is registered yet: Stage D domain work (D-1 to D-3) awaits authorisation. Minimal test fixtures are
-in `tests/fixtures/profiles/`.
+Registered profiles: `mechanical` 0.1 (Stage D-1), `organisation` 0.1 (D-2) and `laboratory` 0.1 (D-3). They install
+independently and together, in any order. Minimal test fixtures, with labels of their own, are in
+`tests/fixtures/profiles/`.

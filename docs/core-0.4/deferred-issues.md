@@ -1,21 +1,29 @@
 # Deferred correctness issues (register)
 
-**Opened 2026-11-11 under LABS-1.025.** These are known correctness issues, tracked apart from the stage documents.
+**Opened 2026-11-11 under LABS-1.025; DI-5 added under LABS-1.026, DI-6 under LABS-1.027, DI-7 under LABS-1.028, DI-8 and DI-9 under LABS-1.030.** These are known correctness issues (DI-1 to DI-8) and one
+tracked performance concern (DI-9), kept apart from the stage documents.
 None of them has had its semantics changed yet.
 
-- **DI-1** and **DI-2** must be resolved **before Stage E** (final validation).
-- **DI-3** and **DI-4** are accepted limitations until a decision says otherwise.
+- **DI-1**, **DI-2**, **DI-6** and **DI-8** must be **reviewed before Stage E** (final validation); DI-1, DI-2 and
+  DI-8 must be resolved.
+- **DI-7** is a general semantic requirement to be designed **in Stage E**.
+- **DI-9** is a performance concern tracked **into Stage E**.
+- **DI-3**, **DI-4** and **DI-5** are accepted limitations until a decision says otherwise.
 
 Each entry gives a concrete case, what it affects, and the options. A resolution needs its own approved decision and
 tests.
 
 | # | Issue | Found | Must be resolved | Status |
 |---|---|---|---|---|
-| DI-1 | `facts_about` omits content disputed by polarity | D-1 (LABS-1.023) | before Stage E | open |
-| DI-2 | conflicting accounts of single-valued event participants are not judged | D-1 (v0.2 D9) | before Stage E | open |
+| DI-1 | disputed content omitted from generic fact and role reports (`facts_about`, `roles_of`) | D-1 (LABS-1.023) | before Stage E | open |
+| DI-2 | conflicting event participants are not judged together (single-valued roles) | D-1 (v0.2 D9) | before Stage E | open |
 | DI-3 | conflicting mechanical joint kinds are not judged | D-1 | no deadline | open (limitation) |
 | DI-4 | dependency-kind vocabulary is not validated | D-1 | no deadline | open (limitation) |
-| DI-5 | a not-yet-effective accepted holding is labelled by a pending counter-claim | D-2 (LABS-1.026) | no deadline | open (limitation) |
+| DI-5 | a future-effective appointment (or holding) with an unreviewed counter-claim is labelled "not established" | D-2 (LABS-1.026) | no deadline | open (limitation) |
+| DI-6 | aggregate organisational reports can return ASSERTED despite mixed constituent statuses | D-2 (LABS-1.026) | review before Stage E | open |
+| DI-7 | formal derivation provenance: no record of a named rule and named premises, yet basis "inference" gives INFERRED | D-3 (LABS-1.027 G-1, LABS-1.028) | Stage E requirement | open |
+| DI-8 | `take_sample` (and `replace_part`) write an account and its claimed effects in separate transactions | D-3 (LABS-1.028; registered LABS-1.030) | before Stage E | open |
+| DI-9 | performance: high query counts in the D-3 reports, and questions slowing as other worlds' data grows | D-3 benchmark (LABS-1.029; registered LABS-1.030) | tracked into Stage E | open (performance) |
 
 ## DI-1: `facts_about` omits content disputed by polarity
 **What happens.** `facts_about(world, subject, t)` lists only content whose judgement at t is "holds". Two kinds of
@@ -108,3 +116,96 @@ equivalence test).
 
 **Option:** rank "not yet effective" before attestation states when an accepted attestation begins after t. This changes
 `capable()` answers in such cases, and needs a decision and an updated baseline.
+
+## DI-6: aggregate reports can return ASSERTED despite mixed constituent statuses
+**What happens.** `organisation.office_holders` reports one overall status for the office. When the established
+holders have different support statuses, it returns ASSERTED, and only the per-holder statuses tell the truth. The
+same can arise wherever a report folds several judged contents into one status.
+
+**Concrete case:** a hypothetical plan stipulates a second holder of a non-exclusive office whose first holder is
+inherited from the actual world. The holders are then ASSERTED (inherited) and STIPULATED (the plan's), and the office
+is reported as ASSERTED overall.
+
+**Affected:** `office_holders` (overall `status`); any future aggregate report.
+
+**Options:**
+- **(a)** A defined aggregation rule, for example "the weakest standing among the constituents", or a status set rather
+  than one value.
+- **(b)** Report no overall support status, only per-constituent statuses, plus DISPUTED/UNKNOWN as appropriate.
+- **(c)** Keep it, and document.
+- **Recommendation:** (b) for support statuses. It removes a summary that can mislead, and keeps DISPUTED, UNKNOWN and
+  NOT_YET_KNOWN, which are well defined for the set. To be reviewed before Stage E. Semantics unchanged until decided.
+
+## DI-7: formal derivation provenance is not recorded
+**What happens.** v0.2 (E6) reserves derived answers (INFERRED) for attestations derived under a **named rule** from
+**named premises**. The model records neither. Any attestation written with basis `inference` is reported INFERRED
+by the core judgement, whether or not a rule produced it. `rests-on` records evidence (premises, in effect), but not a
+rule.
+
+**Concrete case** (`tests/test_n_d3_laboratory.py`, `test_interpret_refuses_basis_inference_and_flags_it_where_recorded`):
+lab 2's conclusion "sample 12 is anhydrous", written directly with basis `inference` and accepted, is INFERRED. That
+is an analyst's conclusion, not a formal derivation.
+
+**What D-3 does (D-D3-4, LABS-1.028), without changing the core:**
+- the profile's writing function, `laboratory.interpret`, records an interpretation as **testimony**, or as a
+  **hypothesis** (stance `hypothesises`), and refuses basis `inference`;
+- the profile's report, `laboratory.interpretations`, flags any attestation with basis `inference` as "recorded as
+  inference without derivation structure". Every row carries the note that no formal derivation is recorded;
+- the core judgement is unchanged (it still says INFERRED).
+
+The convention is not enforced outside the laboratory profile.
+
+**Affected.** Every reader that reports INFERRED from an attestation's basis (`holds`, `value_of`, and everything
+built on `_claims`). This does not include the Core 0.3 existence inference (`exists`: INFERRED from participation in
+holding content), which is a rule the model applies itself.
+
+**Options (Stage E):**
+- (a) a derivation record: an attestation names its rule (a concept) and its premises (attestations). Only such
+  attestations are reported INFERRED; others with basis `inference` are reported as testimony;
+- (b) refuse basis `inference` on write unless a derivation record is given;
+- (c) keep it as documentation only.
+
+Recommended: (a), with (b) as its write-time check. No inference engine is implied: derivations would be recorded,
+not computed.
+
+## DI-8: `take_sample` is not atomic
+**What happens.** `laboratory.take_sample` writes the `sampling` account, then each claimed effect (`initiates
+existence(sample)`, `initiates constitution(sample, specimen)`) in its own transaction, as `mechanical.replace_part`
+does. If a write fails part-way, the database keeps an account with fewer claimed effects than its source gave.
+
+**Concrete case.** If the TypeDB connection drops after the account is written, Ana's sampling account for s12-a
+exists with one claimed effect, or none. Nothing is judged wrongly (each claim is judged on its own, and a missing
+claim establishes nothing), but the record no longer says everything the source said, and nothing marks it as
+incomplete.
+
+**Affected.** `take_sample` and `replace_part`. Unaffected: `register_certificate`, `calibrate`, `interpret` and
+`measure()` (atomic since Stage C, D-C-8).
+
+**Options:**
+- (a) write the account and its effect claims in one transaction, with the `batch=` mechanism `measure()` uses;
+- (b) keep separate writes, but record the intended number of claims, so an incomplete account can be reported.
+
+Recommended: (a), applied to both functions. **Must be resolved before Stage E.** The behaviour was left unchanged
+when D-3 was merged (LABS-1.030).
+
+## DI-9: report query counts and cross-world scaling (performance)
+**What was measured** (`stage-d3.md` section 7, `bench-d3/README.md`; four interleaved rounds):
+- `provenance(s12-b)` costs **336 queries** (about 640 ms), and `measurement_calibration(sample-12)` **411** (about
+  610 ms). Each composes core readers per link, per account, per record and per instrument (N+1 reads, as in the
+  Stage C measurement readers);
+- **cross-world slowdown:** with the laboratory world in the same database as the gearbox and Acme worlds, some
+  gearbox questions take 1.6–2.8 times as long at identical query counts: `where` ×2.5–2.8; `effects_of`, `contents`
+  and `value_of` ×1.6–1.7. Installing the profile alone (no laboratory world) causes none of it, so the cost is the
+  other world's data. The likely cause (queries matching by type across every world before narrowing to one) is not
+  verified.
+
+**Not a correctness issue:** answers are identical (tests: three worlds in one database).
+
+**Options (Stage E):**
+- (a) batch the per-item reads in the reports;
+- (b) narrow queries to the world (and its bases) first;
+- (c) accept the cost and set a budget for each report.
+
+Recommended: first verify the cause of the cross-world slowdown with query plans, then (b) and (a), measured against
+`bench-d3`.
+

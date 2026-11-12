@@ -1,0 +1,15 @@
+# DESIGN DRAFT (LABS-1.027): profile laboratory-0.1. Not installed; loaded only into throwaway probe databases by
+# probes/core04_d3_design.py. Additive vocabulary only (D-D-1, D-D-9); the core (Stage C measurement model) unchanged.
+define
+# a sample: a portion of matter taken for study. Sharper identity than a physical object (v0.2 §3.1, "portion"): it
+# is its matter, so splitting or consuming it ends it; sub-samples are new particulars constituted from it
+entity sample sub physical-object;
+# taking a sample: who took it (as actor), from what (the specimen, as origin) and the product (as destination);
+# one specialisation of each core role (D-D-6). An account of it establishes neither the occurrence nor the sample
+relation sampling sub event, relates sampler as actor, relates sampled as origin, relates product as destination;
+particular plays sampling:sampler, plays sampling:sampled, plays sampling:product;
+# calibration as attested content (D-D-7): a certificate (an information object) covers an instrument over the
+# attestation's valid time; disputable and perspective-dependent like any content; never invalidates a measurement
+relation calibration-of sub proposition, relates certificate, relates calibrated;
+information-object plays calibration-of:certificate;
+physical-object plays calibration-of:calibrated;

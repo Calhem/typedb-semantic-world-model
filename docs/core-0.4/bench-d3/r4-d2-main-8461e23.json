@@ -1,0 +1,145 @@
+{
+ "checkout": "wt-main",
+ "extended": true,
+ "dynamics": true,
+ "qualities": true,
+ "fixture_profiles": false,
+ "mechanical": true,
+ "organisation": true,
+ "build_seconds": 4.64,
+ "database_bytes": 801500,
+ "questions": {
+  "poses(gear-in)": {
+   "median_ms": 24.2,
+   "queries": 14
+  },
+  "composition(gbx-100)": {
+   "median_ms": 406.21,
+   "queries": 218
+  },
+  "contents(workshop)": {
+   "median_ms": 207.78,
+   "queries": 114
+  },
+  "materials(cover)": {
+   "median_ms": 62.0,
+   "queries": 42
+  },
+  "frame_info(f-bench)": {
+   "median_ms": 26.46,
+   "queries": 16
+  },
+  "facts_about(housing)": {
+   "median_ms": 29.96,
+   "queries": 14
+  },
+  "where(gbx-100, f-workshop)": {
+   "median_ms": 105.15,
+   "queries": 39
+  },
+  "where(gear-in, f-workshop)": {
+   "median_ms": 49.7,
+   "queries": 33
+  },
+  "where(bench-1, f-gearbox)": {
+   "median_ms": 65.38,
+   "queries": 40
+  },
+  "transform_between(f-gearbox, f-workshop)": {
+   "median_ms": 11.72,
+   "queries": 7
+  },
+  "effects_of(ev-worklog-replacement)": {
+   "median_ms": 384.41,
+   "queries": 197
+  },
+  "changes(gbx-100, repair)": {
+   "median_ms": 211.78,
+   "queries": 71
+  },
+  "causes_of(o-test-run)": {
+   "median_ms": 206.69,
+   "queries": 129
+  },
+  "explain(operational)": {
+   "median_ms": 455.5,
+   "queries": 284
+  },
+  "process_steps(o-repair)": {
+   "median_ms": 288.41,
+   "queries": 153
+  },
+  "actions_of(technician)": {
+   "median_ms": 165.0,
+   "queries": 73
+  },
+  "value_of(condition)": {
+   "median_ms": 52.4,
+   "queries": 23
+  },
+  "measurements(housing, mass)": {
+   "median_ms": 178.85,
+   "queries": 100
+  },
+  "compare_measurements(housing, mass)": {
+   "median_ms": 139.92,
+   "queries": 100
+  },
+  "capable(technician, workshop)": {
+   "median_ms": 27.97,
+   "queries": 14
+  },
+  "is_agent(apprentice)": {
+   "median_ms": 20.0,
+   "queries": 14
+  },
+  "roles_of(apprentice)": {
+   "median_ms": 22.8,
+   "queries": 16
+  },
+  "check_action(worklog)": {
+   "median_ms": 226.71,
+   "queries": 109
+  },
+  "account_attestations(worklog)": {
+   "median_ms": 34.29,
+   "queries": 19
+  },
+  "direct_dependencies(output-shaft)": {
+   "median_ms": 20.88,
+   "queries": 14
+  },
+  "dependencies(output-shaft, functional)": {
+   "median_ms": 39.98,
+   "queries": 5
+  },
+  "connections(input-shaft)": {
+   "median_ms": 23.71,
+   "queries": 14
+  },
+  "replacement(ev-cmms-replacement)": {
+   "median_ms": 185.48,
+   "queries": 110
+  },
+  "office_holders(site-manager, day 9)": {
+   "median_ms": 81.96,
+   "queries": 29
+  },
+  "offices_of(cal, day 9)": {
+   "median_ms": 63.12,
+   "queries": 44
+  },
+  "authorised(bea)": {
+   "median_ms": 19.98,
+   "queries": 15
+  },
+  "official_act(ev-cal-signs)": {
+   "median_ms": 190.16,
+   "queries": 115
+  },
+  "employment(acme)": {
+   "median_ms": 21.49,
+   "queries": 14
+  }
+ }
+}

@@ -1,8 +1,7 @@
 # Core 0.4 Stage D-2: the organisational profile (LABS-1.026)
 
-**Status (2026-11-11): implemented on `feature/core-0.4-d2-organisation` from `main` 153c2f2, at the review gate. Not
-merged; D-3 not started.** Design: `stage-d2-design.md` (D-D2-1 to D-D2-7, approved with the LABS-1.026
-qualifications). Next on the roadmap after D-2: **LABS-1.024**, the explorable schema export.
+**Status (2026-11-11): merged into `main` (8461e23) under LABS-1.027.** Design: `stage-d2-design.md` (D-D2-1 to
+D-D2-7, approved with the LABS-1.026 qualifications). DI-6 (aggregate status) registered under LABS-1.027.
 
 ## 1. Schema (`schema/profiles/organisation/organisation-0.1.tql`; additive only)
 | Type | Roles | Notes |
