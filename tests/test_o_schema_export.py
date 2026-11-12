@@ -4,6 +4,7 @@ Increments 1 and 2: the canonical schema text is parsed with every character acc
 two independent ways (TypeDB's query answers, and an exact round trip into an empty database). Every mismatch fails.
 Increment 3: attribution of every fact to modules by verified replay, and the four statuses.
 Increment 4: the versioned JSON export, its sources, its JSON Schema, the files and the manifest.
+Increment 5: documentation from the repository's comments, and module data.
 """
 
 import copy
@@ -524,3 +525,81 @@ def test_the_command_line(reference, tmp_path, capsys):
     assert "attribution: verified" in capsys.readouterr().out
     assert sorted(p.name for p in tmp_path.iterdir()) == ["manifest.json", "schema.json", "schema.tql"]
     assert cli.main(["wm-test-no-such-database", "--out", str(tmp_path / "x")]) == 1
+
+
+# ---- increment 5: repository documentation and module data -----------------------------------------------------------
+def test_documentation_is_repository_evidence_with_its_location(exported):
+    doc, _, _ = exported
+    d = doc["documentation"]
+    assert d["provenance"] == "repository" and d["unknown_labels"] == []
+    sample = d["types"]["sample"][0]
+    assert sample["module"] == "profile:laboratory" and sample["file"] == "schema/profiles/laboratory/laboratory-0.1.tql"
+    assert sample["line"] == 8 and sample["comment"].startswith("a sample: a sortal whose identity is its portion")
+    assert sample["declares"] == ["entity sample", "sample sub physical-object"]
+    alt = d["types"]["alt-name"][0]                                     # a comment after the statement, on its line
+    assert alt["comment"] == "`alias` is reserved in TypeQL" and alt["module"] == "core"
+    assert d["functions"]["parts_in"][0]["comment"].startswith("database-side reasoning")
+    assert d["modules"]["profile:laboratory"]["header"].startswith("Profile laboratory-0.1")
+    assert set(d["undocumented"]) <= set(doc["schema"]["types"])
+
+
+def test_repository_comments_never_enter_database_or_reconstructed_sections(exported):
+    doc, _, _ = exported
+    phrase = "portion of matter"
+    assert phrase in json.dumps(doc["documentation"])
+    for section in ("source", "verification", "schema", "attribution", "module_data"):
+        assert phrase not in json.dumps(doc[section]), section
+
+
+def test_module_data_records_and_their_attribution(exported):
+    doc, _, _ = exported
+    md = doc["module_data"]
+    assert md["provenance"] == "database" and md["attribution_provenance"] == "reconstructed"
+    assert md["verification"] == "verified" and md["unresolved"] == [] and md["problems"] == []
+    rows = {r["id"]: r for r in md["records"]}
+    assert rows["laboratory:specimen"] == {"kind": "concept", "type": "category", "id": "laboratory:specimen",
+                                           "name": "specimen", "source": "database",
+                                           "attribution": {"status": "attributed", "modules": ["profile:laboratory"]}}
+    assert rows["located-at|located|place"]["attribution"]["modules"] == [SETUP]
+    assert rows["anchored-to|frame|anchor"]["key_roles"] == ["frame"]
+    assert all(r["source"] == "database" for r in md["records"])
+
+
+def test_missing_module_data_is_listed_as_reconstructed(driver, tmp_path):
+    wm = make_db(driver, profiles=("laboratory",))
+    try:
+        run(wm, WRITE, 'match $c isa category, has wm-id "laboratory:calibration"; delete $c;')
+        doc, _, _ = ex.export_to(driver, wm.database, tmp_path, prefix=TMP)
+        rows = {r["id"]: r for r in doc["module_data"]["records"]}
+        assert rows["laboratory:calibration"]["source"] == "reconstructed"
+        assert rows["laboratory:calibration"]["attribution"]["status"] == "unresolved"
+        assert doc["module_data"]["verification"] == "failed"
+        assert doc["attribution"]["verification"] == "verified"         # the schema attribution is unaffected
+        m = json.loads((tmp_path / "manifest.json").read_text())
+        assert m["module_data_verification"] == "failed" and m["module_data_unresolved"] == ["laboratory:calibration"]
+        assert validate(doc) == []
+    finally:
+        drop(wm)
+
+
+def test_code_that_drifted_from_the_database(driver, tmp_path):
+    """The profile's file changed after installation, at the same version: the replay no longer matches (nothing is
+    proven), and the comment on the type the database lacks is reported, not dropped."""
+    (tmp_path / "gamma.tql").write_text("define\n# a widget\nentity widget sub physical-object;\n")
+    profiles = {**PROFILES, "gamma": Profile("gamma", "1", (str(tmp_path / "gamma.tql"),))}
+    wm = make_db(driver, profiles=())
+    try:
+        wm.install_profile(profiles["gamma"])
+        (tmp_path / "gamma.tql").write_text("define\n# a widget\nentity widget sub physical-object;\n"
+                                            "# added later\nentity sprocket sub physical-object;\n")
+        doc, _, _, _ = ex.build_export(driver, wm.database, profiles=profiles, prefix=TMP)
+        a = doc["attribution"]
+        assert a["verification"] == "failed"
+        assert "in the replay but not in the database: entity sprocket" in a["problems"]
+        assert a["facts"]["entity widget"] == {"status": "consistent_unverified", "modules": ["profile:gamma"]}
+        d = doc["documentation"]
+        assert d["types"]["widget"][0]["comment"] == "a widget"
+        assert d["unknown_labels"] == [{"label": "sprocket", "module": "profile:gamma", "file": "gamma.tql", "line": 5}]
+        assert validate(doc) == []
+    finally:
+        drop(wm)

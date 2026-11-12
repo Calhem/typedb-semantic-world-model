@@ -4,7 +4,8 @@
  "title": "wm-schema-export/1",
  "description": "The schema export of a TypeDB database (LABS-1.024). Every top-level section states its source: database, reconstructed or repository. Every attribution has one of four statuses.",
  "type": "object",
- "required": ["format", "provenance", "source", "export", "verification", "schema", "attribution"],
+ "required": ["format", "provenance", "source", "export", "verification", "schema", "attribution", "documentation",
+              "module_data"],
  "additionalProperties": false,
  "properties": {
   "format": {"const": "wm-schema-export/1"},
@@ -104,9 +105,52 @@
      }
     }
    }
+  },
+  "documentation": {
+   "type": "object", "additionalProperties": false,
+   "required": ["provenance", "description", "modules", "types", "functions", "unknown_labels", "undocumented"],
+   "properties": {
+    "provenance": {"const": "repository"},
+    "description": {"type": "string"},
+    "modules": {"type": "object", "additionalProperties": {
+     "type": "object", "required": ["files", "header"], "additionalProperties": false,
+     "properties": {"files": {"$ref": "#/$defs/strings"}, "header": {"type": "string"}}}},
+    "types": {"type": "object", "additionalProperties": {"type": "array", "items": {"$ref": "#/$defs/doc_entry"}}},
+    "functions": {"type": "object", "additionalProperties": {"type": "array", "items": {"$ref": "#/$defs/doc_entry"}}},
+    "unknown_labels": {"type": "array", "items": {
+     "type": "object", "required": ["label", "module", "file", "line"], "additionalProperties": false,
+     "properties": {"label": {"type": "string"}, "module": {"type": "string"}, "file": {"type": "string"},
+                    "line": {"type": "integer", "minimum": 1}}}},
+    "undocumented": {"$ref": "#/$defs/labels"}
+   }
+  },
+  "module_data": {
+   "type": "object", "additionalProperties": false,
+   "required": ["provenance", "attribution_provenance", "description", "verification", "problems", "records", "unresolved"],
+   "properties": {
+    "provenance": {"const": "database"},
+    "attribution_provenance": {"const": "reconstructed"},
+    "description": {"type": "string"},
+    "verification": {"enum": ["verified", "failed"]},
+    "problems": {"$ref": "#/$defs/strings"},
+    "records": {"type": "array", "items": {"$ref": "#/$defs/module_record"}},
+    "unresolved": {"$ref": "#/$defs/strings"}
+   }
   }
  },
  "$defs": {
+  "doc_entry": {
+   "type": "object", "required": ["module", "file", "line", "comment", "declares"], "additionalProperties": false,
+   "properties": {"module": {"type": "string"}, "file": {"type": "string"}, "line": {"type": "integer", "minimum": 1},
+                  "comment": {"type": "string"}, "declares": {"$ref": "#/$defs/strings"}}
+  },
+  "module_record": {
+   "type": "object", "required": ["kind", "id", "source", "attribution"], "additionalProperties": false,
+   "properties": {"kind": {"enum": ["concept", "functional-slot"]}, "type": {"type": "string"}, "id": {"type": "string"},
+                  "name": {"type": "string"}, "predicate": {"type": "string"}, "key_roles": {"$ref": "#/$defs/strings"},
+                  "value_role": {"type": "string"}, "source": {"enum": ["database", "reconstructed"]},
+                  "attribution": {"$ref": "#/$defs/attribution"}}
+  },
   "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
   "strings": {"type": "array", "items": {"type": "string"}},
   "labels": {"type": "array", "items": {"type": "string"}},

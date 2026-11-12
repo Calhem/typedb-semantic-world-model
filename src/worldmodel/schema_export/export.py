@@ -26,6 +26,7 @@ from pathlib import Path
 from ..model import SCHEMA_DIR
 from .attribution import SETUP, attribute
 from .crosscheck import Lattice, cross_check, round_trip
+from .docs import documentation, module_data
 from .introspect import snapshot
 from .parse import facts, parse_schema, render_type
 
@@ -246,6 +247,9 @@ def build_export(driver, database, profiles=None, prefix="wm-export-tmp-", now=N
                          "single_source": SINGLE_SOURCE},
         "schema": _schema_section(parsed, lattice, fact_map),
         "attribution": _attribution_section(attr, parsed, fact_map),
+        "documentation": documentation(list(snap.modules), {t.label: t.kind for t in parsed.types.values()},
+                                       set(parsed.functions), profiles=profiles),
+        "module_data": module_data(attr),
     }
     timings = {"read": t1 - t0, "parse_and_cross_check": t2 - t1, "round_trip": t3 - t2, "replay": t4 - t3,
                "model": time.perf_counter() - t4}
@@ -268,9 +272,10 @@ def manifest(doc, files):
            "attribution_counts": a["counts"], "unresolved": a["unresolved"],
            "files": {name: {"sha256": hashlib.sha256(data).hexdigest(), "bytes": len(data)}
                      for name, data in sorted(files.items())}}
-    if "module_data" in doc:
-        out["module_data_verification"] = doc["module_data"]["verification"]
-        out["module_data_unresolved"] = doc["module_data"]["unresolved"]
+    out["module_data_verification"] = doc["module_data"]["verification"]
+    out["module_data_unresolved"] = doc["module_data"]["unresolved"]
+    out["documentation"] = {"provenance": "repository", "types_documented": len(doc["documentation"]["types"]),
+                            "unknown_labels": [u["label"] for u in doc["documentation"]["unknown_labels"]]}
     return out
 
 
