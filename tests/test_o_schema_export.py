@@ -5,6 +5,7 @@ two independent ways (TypeDB's query answers, and an exact round trip into an em
 Increment 3: attribution of every fact to modules by verified replay, and the four statuses.
 Increment 4: the versioned JSON export, its sources, its JSON Schema, the files and the manifest.
 Increment 5: documentation from the repository's comments, and module data.
+Increment 6: the standalone HTML explorer (its data is exactly the export; no network access).
 """
 
 import copy
@@ -523,7 +524,8 @@ def test_the_command_line(reference, tmp_path, capsys):
     wm, _ = reference
     assert cli.main([wm.database, "--out", str(tmp_path), "--require-verified"]) == 0
     assert "attribution: verified" in capsys.readouterr().out
-    assert sorted(p.name for p in tmp_path.iterdir()) == ["manifest.json", "schema.json", "schema.tql"]
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["manifest.json", "schema-explorer.html", "schema.json",
+                                                          "schema.tql"]
     assert cli.main(["wm-test-no-such-database", "--out", str(tmp_path / "x")]) == 1
 
 
@@ -603,3 +605,54 @@ def test_code_that_drifted_from_the_database(driver, tmp_path):
         assert validate(doc) == []
     finally:
         drop(wm)
+
+
+# ---- increment 6: the standalone HTML explorer -----------------------------------------------------------------------
+from worldmodel.schema_export.explorer import TEMPLATE, extract_json, render_explorer  # noqa: E402
+
+
+def test_the_explorer_embeds_exactly_the_export(exported):
+    doc, _, _ = exported
+    html = render_explorer(doc)
+    assert extract_json(html) == doc
+    assert html.startswith("<!doctype html>") and html.count('id="export-data"') == 1
+
+
+def test_the_explorer_needs_no_network(exported):
+    html = render_explorer(exported[0])
+    assert "default-src 'none'" in html                       # the browser refuses every request the page could make
+    code = html.split('<script type="application/json" id="export-data">')[0] + html.split("</script>", 1)[1]
+    import re
+    assert re.findall(r'<(?:link|img|iframe|object|embed)\b|\bsrc=|@import|url\(|fetch\(|XMLHttpRequest|https?://(?!json-schema|www\.w3)', code) == [], \
+        "external references"
+
+
+def test_the_explorer_escapes_data_that_looks_like_markup(exported):
+    doc = copy.deepcopy(exported[0])
+    hostile = "</script><script>alert(1)</script><!-- x"
+    doc["documentation"]["types"]["sample"][0]["comment"] = hostile
+    html = render_explorer(doc)
+    assert hostile not in html and "<!-- x" not in html
+    assert extract_json(html)["documentation"]["types"]["sample"][0]["comment"] == hostile
+
+
+def test_the_explorer_page_covers_every_view():
+    template = TEMPLATE.read_text()
+    assert template.count("/*__EXPORT_JSON__*/") == 1
+    for view in ('kind === "type"', 'kind === "role"', 'kind === "fun"', 'kind === "module"', 'kind === "facts"',
+                 'kind === "data"', 'kind === "checks"'):
+        assert view in template
+    for control in ('id="q"', 'id="q-docs"', 'id="f-kind"', 'id="f-status"', 'id="f-module"', 'id="f-ann"',
+                    'id="f-scope"', 'id="f-abstract"', 'id="f-extended"'):
+        assert control in template
+    assert "innerHTML" not in template                         # all text goes in through textContent
+
+
+def test_export_to_writes_the_explorer_with_the_manifest(reference, tmp_path):
+    wm, _ = reference
+    doc, written, _ = ex.export_to(wm.driver, wm.database, tmp_path, prefix=TMP)
+    assert written == ["manifest.json", "schema-explorer.html", "schema.json", "schema.tql"]
+    html = (tmp_path / "schema-explorer.html").read_text()
+    assert extract_json(html) == json.loads((tmp_path / "schema.json").read_text()) == doc
+    m = json.loads((tmp_path / "manifest.json").read_text())
+    assert m["files"]["schema-explorer.html"]["sha256"] == hashlib.sha256(html.encode()).hexdigest()

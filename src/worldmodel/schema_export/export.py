@@ -27,6 +27,7 @@ from ..model import SCHEMA_DIR
 from .attribution import SETUP, attribute
 from .crosscheck import Lattice, cross_check, round_trip
 from .docs import documentation, module_data
+from .explorer import render_explorer
 from .introspect import snapshot
 from .parse import facts, parse_schema, render_type
 
@@ -304,5 +305,5 @@ def export_to(driver, database, out_dir, profiles=None, prefix="wm-export-tmp-",
     """Export `database` into `out_dir`. Returns (document, files written, timings). Nothing is written if the
     export is refused."""
     doc, text, _, timings = build_export(driver, database, profiles=profiles, prefix=prefix, now=now)
-    written = write_export(doc, text, out_dir)
+    written = write_export(doc, text, out_dir, {"schema-explorer.html": render_explorer(doc).encode()})
     return doc, written, timings
