@@ -24,6 +24,7 @@ class Snapshot:
     text: str                  # schema(), exactly
     modules: dict              # module-name -> module-version, from the schema-module records (data)
     answers: dict              # the query reader's answers (see read_answers)
+    data: frozenset = frozenset()   # module-data candidates: concept and functional-slot records (read_module_data)
 
 
 def _label(row, var):
@@ -67,6 +68,24 @@ def read_modules(tx, kinds):
     return out
 
 
+def read_module_data(tx, kinds):
+    """Every concept record (kind, id, name) and functional-slot record (id, predicate, key roles, value role), as
+    hashable tuples. Which of them a module wrote is decided by replay (attribution.py), never from ids or names."""
+    out = set()
+    if kinds.get("concept") == "entity":
+        for r in _rows(tx, "match $c isa concept, has wm-id $id, has name $n; $c isa! $t;"):
+            out.add(("concept", _label(r, "t"), q.opt(r, "id"), q.opt(r, "n")))
+    if kinds.get("functional-slot") == "entity":
+        slots = {}
+        for r in _rows(tx, """match $s isa functional-slot, has slot-id $id, has slot-predicate $p,
+                has value-role $v;"""):
+            slots[q.opt(r, "id")] = [q.opt(r, "p"), q.opt(r, "v"), set()]
+        for r in _rows(tx, "match $s isa functional-slot, has slot-id $id, has slot-role $k;"):
+            slots[q.opt(r, "id")][2].add(q.opt(r, "k"))
+        out |= {("slot", i, p, tuple(sorted(k)), v) for i, (p, v, k) in slots.items()}
+    return frozenset(out)
+
+
 def snapshot(driver, database):
     """Read the schema text, the query answers and the module records of one database, consistently: the text is
     read before and after the read transaction, and must not change."""
@@ -77,6 +96,7 @@ def snapshot(driver, database):
     with driver.transaction(database, READ) as tx:
         answers = read_answers(tx)
         modules = read_modules(tx, answers["kinds"])
+        data = read_module_data(tx, answers["kinds"])
     if db.schema() != before:
         raise SchemaExportError("the schema changed while it was being read; export again")
-    return Snapshot(database, str(driver.server_version()), before, modules, answers)
+    return Snapshot(database, str(driver.server_version()), before, modules, answers, data)
