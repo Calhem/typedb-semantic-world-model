@@ -1,11 +1,13 @@
 # Deferred correctness issues (register)
 
-**Opened 2026-11-11 under LABS-1.025; DI-5 added under LABS-1.026, DI-6 under LABS-1.027, DI-7 under LABS-1.028.** These are known correctness issues, tracked apart from the stage documents.
+**Opened 2026-11-11 under LABS-1.025; DI-5 added under LABS-1.026, DI-6 under LABS-1.027, DI-7 under LABS-1.028, DI-8 and DI-9 under LABS-1.030.** These are known correctness issues (DI-1 to DI-8) and one
+tracked performance concern (DI-9), kept apart from the stage documents.
 None of them has had its semantics changed yet.
 
-- **DI-1**, **DI-2** and **DI-6** must be **reviewed before Stage E** (final validation); DI-1 and DI-2 must be
-  resolved.
+- **DI-1**, **DI-2**, **DI-6** and **DI-8** must be **reviewed before Stage E** (final validation); DI-1, DI-2 and
+  DI-8 must be resolved.
 - **DI-7** is a general semantic requirement to be designed **in Stage E**.
+- **DI-9** is a performance concern tracked **into Stage E**.
 - **DI-3**, **DI-4** and **DI-5** are accepted limitations until a decision says otherwise.
 
 Each entry gives a concrete case, what it affects, and the options. A resolution needs its own approved decision and
@@ -20,6 +22,8 @@ tests.
 | DI-5 | a future-effective appointment (or holding) with an unreviewed counter-claim is labelled "not established" | D-2 (LABS-1.026) | no deadline | open (limitation) |
 | DI-6 | aggregate organisational reports can return ASSERTED despite mixed constituent statuses | D-2 (LABS-1.026) | review before Stage E | open |
 | DI-7 | formal derivation provenance: no record of a named rule and named premises, yet basis "inference" gives INFERRED | D-3 (LABS-1.027 G-1, LABS-1.028) | Stage E requirement | open |
+| DI-8 | `take_sample` (and `replace_part`) write an account and its claimed effects in separate transactions | D-3 (LABS-1.028; registered LABS-1.030) | before Stage E | open |
+| DI-9 | performance: high query counts in the D-3 reports, and questions slowing as other worlds' data grows | D-3 benchmark (LABS-1.029; registered LABS-1.030) | tracked into Stage E | open (performance) |
 
 ## DI-1: `facts_about` omits content disputed by polarity
 **What happens.** `facts_about(world, subject, t)` lists only content whose judgement at t is "holds". Two kinds of
@@ -163,4 +167,45 @@ holding content), which is a rule the model applies itself.
 
 Recommended: (a), with (b) as its write-time check. No inference engine is implied: derivations would be recorded,
 not computed.
+
+## DI-8: `take_sample` is not atomic
+**What happens.** `laboratory.take_sample` writes the `sampling` account, then each claimed effect (`initiates
+existence(sample)`, `initiates constitution(sample, specimen)`) in its own transaction, as `mechanical.replace_part`
+does. If a write fails part-way, the database keeps an account with fewer claimed effects than its source gave.
+
+**Concrete case.** If the TypeDB connection drops after the account is written, Ana's sampling account for s12-a
+exists with one claimed effect, or none. Nothing is judged wrongly (each claim is judged on its own, and a missing
+claim establishes nothing), but the record no longer says everything the source said, and nothing marks it as
+incomplete.
+
+**Affected.** `take_sample` and `replace_part`. Unaffected: `register_certificate`, `calibrate`, `interpret` and
+`measure()` (atomic since Stage C, D-C-8).
+
+**Options:**
+- (a) write the account and its effect claims in one transaction, with the `batch=` mechanism `measure()` uses;
+- (b) keep separate writes, but record the intended number of claims, so an incomplete account can be reported.
+
+Recommended: (a), applied to both functions. **Must be resolved before Stage E.** The behaviour was left unchanged
+when D-3 was merged (LABS-1.030).
+
+## DI-9: report query counts and cross-world scaling (performance)
+**What was measured** (`stage-d3.md` section 7, `bench-d3/README.md`; four interleaved rounds):
+- `provenance(s12-b)` costs **336 queries** (about 640 ms), and `measurement_calibration(sample-12)` **411** (about
+  610 ms). Each composes core readers per link, per account, per record and per instrument (N+1 reads, as in the
+  Stage C measurement readers);
+- **cross-world slowdown:** with the laboratory world in the same database as the gearbox and Acme worlds, some
+  gearbox questions take 1.6–2.8 times as long at identical query counts: `where` ×2.5–2.8; `effects_of`, `contents`
+  and `value_of` ×1.6–1.7. Installing the profile alone (no laboratory world) causes none of it, so the cost is the
+  other world's data. The likely cause (queries matching by type across every world before narrowing to one) is not
+  verified.
+
+**Not a correctness issue:** answers are identical (tests: three worlds in one database).
+
+**Options (Stage E):**
+- (a) batch the per-item reads in the reports;
+- (b) narrow queries to the world (and its bases) first;
+- (c) accept the cost and set a budget for each report.
+
+Recommended: first verify the cause of the cross-world slowdown with query plans, then (b) and (a), measured against
+`bench-d3`.
 

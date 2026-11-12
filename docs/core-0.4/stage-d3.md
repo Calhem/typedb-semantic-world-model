@@ -33,7 +33,7 @@ product, with nothing written. Nothing else changes.
 | Function | Returns |
 |---|---|
 | `take_sample(wm, world, sampler, specimen, sample, start, end=None, occurrence=None, attester=…)` | a `sampling` account, and the effects its source claims (`initiates existence(sample)` and `initiates constitution(sample, specimen)`). Claims only |
-| `provenance(wm, world, sample, t)` | as separate fields: **chain** (every constitution link back to the specimen, each with its own judgement and evidence); **sampling** (per sample in the chain: each account, its acceptance, its occurrences with their own status, and its claimed effects with each claim's judgement); **existence** (the attested judgement, beside the core `exists` answer); **locations** (history and location at t) |
+| `provenance(wm, world, sample, t)` | as separate fields: **chain** (every constitution link back to the specimen, each with its own judgement and evidence, and, since LABS-1.031, each route reaching it, whether that route is established, what blocks it, and its `ancestry`); **established** (only links on an established route); **materials** (each material reached, each route kept apart); **sampling** (per material reached: each account, its acceptance, its occurrences with their own status, and its claimed effects with each claim's judgement); **existence** (the attested judgement, beside the core `exists` answer); **locations** (history and location at t) |
 | `register_certificate(wm, name, reference=None, id=None)` | a certificate (an information object with its reference number), in one transaction |
 | `calibrate(wm, world, certificate, instrument, start, end=None, attester=…, polarity=True)` | a `calibration-of` attestation resting on the certificate. polarity False is an explicit denial |
 | `calibration_status(wm, world, instrument, t)` | holds / status / judgement, using the capable() cases; each certificate with its reference, its own judgement and evidence; `in_force` |
@@ -46,6 +46,40 @@ product, with nothing written. Nothing else changes.
 `capable()` equivalence answers pass unchanged. No reasoning is duplicated:
 - calibration is a content, judged like a capability;
 - occurrences, effects, existence, location and comparison are the core's own readers.
+
+### 2a. Recursive provenance: marked routes (LABS-1.031)
+A probe under LABS-1.030 found that `provenance` followed every constitution link, established or not, and reported
+each link with only its own judgement. A sibling's lineage, reached only through a rejected claim, looked like
+established ancestry. The correction (12b2e84) keeps every claim and changes only how routes are reported:
+- **Every link is still listed and followed**, including disputed, denied and unestablished links, with its own
+  judgement and evidence (the core's, unchanged).
+- **Each link lists every route** from the queried sample to it (as [sample, from] steps). A route is established
+  only when every step on it is established at t, in the same world, perspective and knowledge time. `blocked_by`
+  names each step that is not, with its judgement and evidence.
+- **Ancestry:** a link is established ancestry only when at least one of its routes is established. A link that is
+  itself established, but reached only through an unestablished step, is not.
+- **`established`** is the unambiguous view: only links with an established route, with those routes.
+- **Converging routes are kept apart** (a pooled sample made from two siblings reaches their common source twice).
+  `materials` lists each route to each material.
+- **Cycles terminate:** a route never repeats a material. The link that would close a cycle is listed and marked
+  `closes_cycle`, and not followed. A sample is never its own ancestor.
+- **Cost:** each material's claims are still read once, so query counts are unchanged. The number of routes can grow
+  with heavily converging lineages (listed in section 8).
+
+The tests are in `tests/test_n_d3_provenance.py` (15). They cover:
+- four levels of recursive sampling;
+- siblings;
+- unestablished and disputed ancestral links;
+- converging routes;
+- cycles;
+- three perspectives;
+- knowledge and valid time;
+- a hypothetical world;
+- both query paths.
+
+Each route is checked against the core's own judgement of each link in the same context. With route judgement
+reduced to the last link (the old behaviour), 9 of the 15 fail. No ontology change was needed, and no existing
+judgement changed: the 25 earlier D-3 tests pass, and the demo output only gains its established-ancestry line.
 
 ## 3. Calibration semantics
 `calibration_status` judges the calibration at a time. `measurement_calibration` judges it at each measurement
@@ -153,6 +187,7 @@ dependants are complete.
 | 3 | reference checks are exact text (match, inconsistent, none stated, no certificate, no instrument) | LABS-1.028 asks for missing or inconsistent references | reporting only; G-6 stands: nothing is reconciled |
 | 4 | **defect, fixed in f96aee9:** the first `interpretations` marked any accepted attestation with a supporting stance as supporting, even outside its valid time | found by a probe under LABS-1.029 | now `supports_answer`: true only when the content's judgement at t rests on that attestation. A test checks it against `holds()` support at two times. Core `_claims` entries gain a `support` field (additive; no answer changes) |
 | 5 | `build_lab` reuses an existing `measurement` category | so the laboratory world can share a database with the gearbox world | none standalone |
+| 6 | **defect, fixed in 12b2e84 (LABS-1.031):** `provenance` judged each link alone, so a link reached only through an unestablished step looked like established ancestry | found by the LABS-1.030 recursive-sampling probe | routes are marked (section 2a); every claim is still listed; the links' own judgements are unchanged |
 
 ## 7. Tests and performance
 **Test matrix.** The full suite ran eight times per increment, in a clean checkout, one run at a time: selective and
@@ -163,6 +198,7 @@ installed into every test database), each twice. Every run passed, and no test d
 |---|---:|---|---|---|---|
 | 0e6dbcf (three worlds in one database) | 365 | 2/2 passed | 2/2 passed | 2/2 passed | 2/2 passed |
 | f96aee9 (the `supports_answer` fix and its regression test) | 366 | 2/2 passed | 2/2 passed | 2/2 passed | 2/2 passed |
+| 12b2e84 (path-marked provenance and its 15 regression tests) | 381 | 2/2 passed | 2/2 passed | 2/2 passed | 2/2 passed |
 
 The D-3 file (`tests/test_n_d3_laboratory.py`) has 25 tests: installation (alone, six orders, with the fixtures),
 core answers unchanged, three worlds in one database, provenance and sample identity, accounts against occurrences,
@@ -185,6 +221,7 @@ load.
 - **Before Stage E:**
   - DI-1 and DI-2 must be resolved; DI-6 must be reviewed. DI-2 also covers rival sampling accounts naming different
     products (G-5).
+  - DI-8 must be resolved (below).
   - **DI-7**, formal derivation provenance (new), is a Stage E requirement.
 - **Calibration aggregates follow capable().** An instrument with one disputed certificate and another in force is
   DISPUTED overall, while each certificate keeps its own judgement in the report. This is the same aggregation as
@@ -193,10 +230,14 @@ load.
 - **Deferred:**
   - an evidence relation with "undermines" (G-3); counter-evidence is a denial resting on its record;
   - declared incompatibility between interpretations (G-2).
-- **Scaling with other worlds' data (Stage E, performance):** with the laboratory world in the same database, some
-  gearbox questions take 1.6–2.8 times as long at the same query counts (`bench-d3/README.md`). Answers are unchanged.
-  The likely cause, queries matching by type across all worlds before narrowing to one, is not yet verified.
-- **Not atomic:** `take_sample` writes the account and its two effect claims in separate transactions, as
-  `replace_part` does. A failure part-way leaves an account with fewer claims, which is visible and harmless.
-  `register_certificate` and `calibrate` are each atomic: the attestation and its `rests-on` link are written
-  together.
+- **DI-8, not atomic (resolve before Stage E):** `take_sample` writes the account and its two effect claims in
+  separate transactions, as `replace_part` does. A failure part-way leaves an account with fewer claims and nothing
+  marking it incomplete. `register_certificate` and `calibrate` are each atomic: the attestation and its `rests-on`
+  link are written together. Left unchanged at the merge (LABS-1.030).
+- **DI-9, performance (tracked into Stage E):**
+  - `provenance(s12-b)` costs 336 queries and `measurement_calibration(sample-12)` 411 (N+1 reads through the core
+    readers);
+  - with the laboratory world in the same database, some gearbox questions take 1.6–2.8 times as long at the same
+    query counts (`bench-d3/README.md`); answers are unchanged. The likely cause, queries matching by type across
+    all worlds before narrowing to one, is not yet verified;
+  - provenance routes (section 2a) grow with heavily converging lineages; they add no queries.

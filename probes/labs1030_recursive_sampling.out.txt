@@ -1,0 +1,16 @@
+s4 chain: [('s4', 's2', 'established'), ('s2', 's1', 'established'), ('s1', 'core-1', 'established'), ('s1', 's4', 'not established')]
+PASS depth-3 chain s4 <- s2 <- s1 <- core-1, every link established
+PASS the cycle (tom: s1 <- s4) is listed with its own judgement, not established, and the walk terminates
+PASS sampling accounts listed for every sample in the chain
+occurrences: {'ev-s4': [('o4', 'accepted')], 'ev-s2': [('o2', 'not established')], 'ev1': [('o1', 'accepted')]}
+PASS accounts distinct from occurrences: o4 and o1 attested (accepted); o2 not attested (not established)
+s3 chain: [] account: [('ev-s3', 'accepted')]
+PASS accepted account + accepted claimed effects, but no attested constitution: chain empty, account still listed
+PASS s3's existence not attested (the account's claimed effect is not evidence of the state)
+PASS s1 (a portion) has ended at 13:00; s2 and s2b still exist
+s2b chain: [('s2b', 's1', 'established'), ('s1', 'core-1', 'established'), ('s1', 's4', 'not established'), ('s4', 's2', 'established'), ('s2', 's1', 'established')] sampling keys: ['core-1', 's1', 's2', 's2b', 's4']
+PASS sibling s2b shares s1 and core-1 as sources but not s2's descendants
+PASS five distinct sample particulars; the specimen is not a sample
+PASS samples play the 'sampled' role (sampling from an existing sample)
+
+10/10 checks passed
