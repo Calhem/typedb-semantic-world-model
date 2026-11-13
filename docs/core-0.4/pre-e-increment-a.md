@@ -1,6 +1,6 @@
 # Pre-Stage E correction, increment A: atomic logical operations (DI-8)
 
-**Status: implemented on `feature/pre-e-a-atomic-operations`, at the review gate, not merged** (LABS-1.036). Decisions:
+**Status: approved and merged into `main` at `7654587` (LABS-1.037)**, from `feature/pre-e-a-atomic-operations`. Decisions:
 R-7 with choices I and J, and the LABS-1.036 qualification that composite writes are atomic, including nested
 operations, claimed effects, related objects and events, with no partial data and no logical-time advance on failure
 ([pre-stage-e-correctness-review.md](pre-stage-e-correctness-review.md), section 6).
@@ -112,6 +112,9 @@ for four days, sharing the Docker machine's 7.7 GB with fifteen other containers
 connect. After a restart, both affected configurations were rerun and passed 470 of 470, with TypeDB's memory sampled
 every 30 seconds. It levelled off at about 210 MB across both runs, so the operation mechanism is not accumulating
 memory.
+
+**On merged `main` (`7654587`, LABS-1.037):** all four configurations pass 470 of 470, with no test databases left
+behind.
 
 ## Intentional changes to existing behaviour
 1. A composite writer writes **one recorded time** instead of several. No existing test or answer depended on the
