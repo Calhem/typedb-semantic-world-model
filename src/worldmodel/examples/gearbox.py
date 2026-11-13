@@ -391,7 +391,7 @@ def extend_qualities_agency(wm, ids):
     g = wm.define_unit("gram", "mass", 0.001, id="g")
     from .. import typeql as q
     from ..model import READ
-    with wm.driver.transaction(wm.database, READ) as tx:              # extend_causality already adds the apprentice
+    with wm._reading() as tx:              # extend_causality already adds the apprentice
         present = {i for i in ("scale-9", "apprentice") if q.rows(tx, "match $x has wm-id == $id;", {"id": i})}
     for i, n in (("scale-9", "Scale 9"), ("apprentice", "Apprentice J")):
         if i not in present:
@@ -448,7 +448,7 @@ def extend_mechanical(wm, ids):
     w = ids["world"]
     from .. import typeql as q
     from ..model import READ
-    with wm.driver.transaction(wm.database, READ) as tx:
+    with wm._reading() as tx:
         present = {i for i in ("rig-controller", "plc-2", "manual-gbx", "cmms")
                    if q.rows(tx, "match $x has wm-id == $id;", {"id": i})}
     for i, kind, n in (("rig-controller", "physical-object", "Test rig controller"),

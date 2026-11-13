@@ -16,6 +16,7 @@ full-load answers are the same.
 
 from datetime import timedelta
 
+from .operations import atomic
 from .semantics import Status, acceptance_state, certainly_before, superseded, usable
 
 SYSTEM = "system"
@@ -54,6 +55,7 @@ class _Memo:
 
 class DynamicsMixin:
     # ---- writing ---------------------------------------------------------------------------------------------------
+    @atomic
     def account(self, world, roles, start, end=None, kind=None, occurrence=None, attester=SYSTEM, id=None,
                 type="event", **attest):
         """A source's account of a happening: an event description with its participants, attested by `attester`
@@ -74,6 +76,7 @@ class DynamicsMixin:
         attest.setdefault("until_superseded", True)
         return self.attest(world, "describes", {"description": description, "occurrence": occurrence}, **attest)
 
+    @atomic
     def claim_effect(self, world, event, kind, type, roles, params=None, polarity=True, **attest):
         """Claim that the event description initiated or terminated (`kind`) the proposition (type, roles, params).
         This is an asserted effect: it says nothing about whether the state actually changed, which is judged from
@@ -91,7 +94,7 @@ class DynamicsMixin:
         """{type, roles, params, key} of a stored proposition, by its A0.1 id."""
         from . import typeql as q
         from .model import READ
-        with self.driver.transaction(self.database, READ) as tx:
+        with self._reading() as tx:
             rows = q.rows(tx, "match $p isa proposition, has wm-id == $id, has proposition-key $k;", {"id": pid})
         if not rows:
             return None
@@ -426,7 +429,7 @@ class DynamicsMixin:
 
     def _kind_of_id(self, i):
         from .model import READ
-        with self.driver.transaction(self.database, READ) as tx:
+        with self._reading() as tx:
             return self._kinds_of(tx, [i])[i]
 
     def occurrence_status(self, world, occurrence, t, as_of=None, perspective=SYSTEM, details=True, _memo=None):

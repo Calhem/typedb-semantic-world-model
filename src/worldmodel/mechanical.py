@@ -9,6 +9,7 @@ Uses only core concepts: assemblies are core `part-of`; dependencies are core `d
 No failure propagation or dependency inference.
 """
 
+from .operations import atomic
 from .model import SCHEMA_DIR, SYSTEM
 from .profiles import PROFILES, Profile
 
@@ -50,12 +51,15 @@ def connections(wm, world, part, t, as_of=None, perspective=SYSTEM):
     return sorted(out, key=lambda c: (c["other"], c["joint_kind"] or ""))
 
 
+@atomic
 def replace_part(wm, world, assembly, removed, fitted, start, end=None, actor=None, instrument=None, location=None,
                  occurrence=None, attester=SYSTEM, id=None):
     """A source's account of replacing `removed` by `fitted` in `assembly`: a `replacement` description (attested
     over [start, end], optionally describing `occurrence`) and the effects the source claims for it: it terminates
     part-of(removed, assembly) and initiates part-of(fitted, assembly). Claims only: nothing here establishes that
-    the replacement happened or that the parts changed. Returns the ids."""
+    the replacement happened or that the parts changed. Returns the ids.
+    One operation (DI-8): the account and its effect claims are written together or not at all; inside a caller's
+    `wm.operation()` it joins that operation (e.g. with the creation of the sample or part)."""
     _require(wm)
     roles = {"removed": removed, "fitted": fitted}
     for role, who in (("actor", actor), ("instrument", instrument), ("location", location)):

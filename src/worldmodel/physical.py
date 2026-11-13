@@ -152,7 +152,7 @@ class PhysicalMixin:
         from . import typeql as q
         from .model import READ
         out = {}
-        with self.driver.transaction(self.database, READ) as tx:
+        with self._reading() as tx:
             for i in sorted(set(as_ids(ids))):
                 rows = q.rows(tx, "match $x has wm-id == $id, has name $n;", {"id": i})
                 if rows:
@@ -422,7 +422,7 @@ class PhysicalMixin:
         frames_linked (records only: time, acceptance and perspective ignored; inspection, like parts_in)."""
         from . import typeql as q
         from .model import READ
-        with self.driver.transaction(self.database, READ) as tx:
+        with self._reading() as tx:
             return sorted({q.opt(r, "id") for r in q.rows(tx, """match $f isa spatial-frame, has wm-id == $frame;
                 $w isa world, has wm-id == $world; let $g in frames_linked($f, $w); $g has wm-id $id;""",
                 {"frame": frame, "world": world})} - {frame})

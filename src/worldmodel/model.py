@@ -7,6 +7,7 @@ Division of labour (v0.2 §8.1):
   time, identity closure, answer statuses.
 """
 
+import functools
 import os
 import re
 import uuid
@@ -25,6 +26,7 @@ from .agency import AgencyMixin
 from .profiles import ProfileMixin
 from .physical import PhysicalMixin
 from .spatial import params_compatible
+from .operations import Operation, OperationError, atomic, atomic_schema  # noqa: F401
 from .semantics import (Answer, AttestationRecord, Identity, Replacement, Status, Window, acceptance_state,
                         answer_status, certainly_before, superseded, usable, verdict)
 
@@ -109,13 +111,6 @@ class PropositionIdCollision(ValueError):
         self.pid, self.key, self.existing = pid, key, existing
 
 
-class _Batch:
-    """The writes of one API operation sharing one write transaction and one transaction time (LABS-1.020). Used by
-    measure() only; not a general transaction API. Writers given a batch neither open nor commit a transaction."""
-    __slots__ = ("tx", "recorded_at")
-
-    def __init__(self, tx, recorded_at):
-        self.tx, self.recorded_at = tx, recorded_at
 
 
 class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, ProfileMixin):
@@ -124,10 +119,70 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
         self.selective = selective
         self.stats = {"queries": 0, "attestations": 0}
         self._last_recorded = None
+        self._op = None
         self._types = None
         self._prop_ids = None
         self._lattice = None
         self._slots = None
+
+    def _reset_caches(self):
+        """Forget everything read from the schema or the module records (after a schema change or a rollback)."""
+        self._types = None
+        self._prop_ids = None
+        self._lattice = None
+        self._slots = None
+
+    # ---- operations (DI-8) ---------------------------------------------------------------------------------------------
+    @contextmanager
+    def operation(self, schema=False):
+        """One logical operation: everything written inside the block is committed together at its end, or not at all.
+
+            with wm.operation():
+                wm.add_entity("sample", "s-14", id="s-14")
+                laboratory.take_sample(wm, w, "ana", "core-1", "s-14", start=t)
+
+        Writers called inside the block join it (their own operations nest into it), share one transaction and one
+        recorded time, and their reads see the block's earlier writes. If anything inside raises, at any depth, or the
+        commit fails, nothing is written and the model's recorded-time watermark is restored. schema True: a schema
+        operation (schema changes and data writes together); a schema writer cannot join a data operation."""
+        op = self._op
+        if op is not None:
+            if schema and not op.schema:
+                op.failed = True
+                raise OperationError("a schema change cannot join a data operation: start the outermost operation "
+                                     "with operation(schema=True)")
+            try:
+                yield op
+            except BaseException:
+                op.failed = True
+                raise
+            return
+        kind = SCHEMA if schema else WRITE
+        mark = self._last_recorded
+        tx = self.driver.transaction(self.database, kind)
+        op = self._op = Operation(tx, kind)
+        try:
+            yield op
+            if op.failed:
+                raise OperationError("a step of this operation failed and its error was caught: nothing was written")
+            tx.commit()
+        except BaseException:
+            self._last_recorded = mark
+            self._reset_caches()
+            raise
+        finally:
+            self._op = None
+            if tx.is_open():
+                tx.close()
+
+    @contextmanager
+    def _reading(self):
+        """A read transaction, or, inside an operation, the operation's own transaction (so reads see its writes)."""
+        if self._op is not None:
+            yield self._op.tx
+            return
+        with self.driver.transaction(self.database, READ) as tx:
+            yield tx
 
     # ---- setup -----------------------------------------------------------------------------------------------------
     @classmethod
@@ -140,31 +195,34 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
             driver.databases.get(database).delete()
         driver.databases.create(database)
         wm = cls(driver, database, clock)
-        for name in modules:
-            wm.install_module(name)
-        wm.add_entity("social-object", "system reasoner", id=SYSTEM)
-        if wm.has_proposition_ids():
-            wm._declare_core_slots()
+        try:
+            with wm.operation(schema=True):          # one unit: a failure leaves no half-built database (DI-8)
+                for name in modules:
+                    wm.install_module(name)
+                wm.add_entity("social-object", "system reasoner", id=SYSTEM)
+                if wm.has_proposition_ids():
+                    wm._declare_core_slots()
+        except BaseException:
+            if driver.databases.contains(database):
+                driver.databases.get(database).delete()
+            raise
         return wm
 
     @classmethod
     def open(cls, database, driver=None, clock=utcnow):
         return cls(driver or connect(), database, clock)
 
+    @atomic_schema
     def install_module(self, name, files=None, version=None):
+        """Install a core module: its schema, its module record, and the slots and concepts it seeds, in one schema
+        operation (DI-8)."""
         version, files = (version, files) if files else MODULES[name]
-        with self.driver.transaction(self.database, SCHEMA) as tx:
-            for f in files:
-                tx.query((Path(f) if Path(f).is_absolute() else SCHEMA_DIR / f).read_text()).resolve()
-            tx.commit()
-        with self.driver.transaction(self.database, WRITE) as tx:
-            q.run(tx, "insert $m isa schema-module, has module-name == $n, has module-version == $v;",
-                  {"n": name, "v": version})
-            tx.commit()
-        self._types = None
-        self._prop_ids = None
-        self._lattice = None
-        self._slots = None
+        tx = self._op.tx
+        for f in files:
+            tx.query((Path(f) if Path(f).is_absolute() else SCHEMA_DIR / f).read_text()).resolve()
+        q.run(tx, "insert $m isa schema-module, has module-name == $n, has module-version == $v;",
+              {"n": name, "v": version})
+        self._reset_caches()
         if self.has_proposition_ids():
             for predicate, (key_roles, value_role) in MODULE_SLOTS.get(name, {}).items():
                 self.declare_slot(predicate, key_roles, value_role)
@@ -177,29 +235,27 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
             self._prop_ids = "core-0.4-a0" in self.modules()
         return self._prop_ids
 
+    @atomic_schema
     def upgrade_to_a0(self):
         """Upgrade an existing Core 0.3 database in place: give every proposition its deterministic id, then make the
-        id a key. Three steps, because TypeDB rejects adding @key while instances lack the attribute (CNT5)."""
+        id a key. Three steps (TypeDB rejects adding @key while instances lack the attribute, CNT5), in one schema
+        operation (DI-8): a failure at any step leaves the Core 0.3 database as it was."""
         if self.has_proposition_ids():
             return 0
-        with self.driver.transaction(self.database, SCHEMA) as tx:
-            tx.query("define proposition owns wm-id;").resolve()
-            tx.commit()
-        with self.driver.transaction(self.database, READ) as tx:
-            pending = [q.opt(r, "k") for r in q.rows(tx, """match $p isa proposition, has proposition-key $k;
-                not { $p has wm-id $i; };""")]
-        with self.driver.transaction(self.database, WRITE) as tx:
-            for key in pending:
-                q.run(tx, "match $p isa proposition, has proposition-key == $k; insert $p has wm-id == $id;",
-                      {"k": key, "id": keys.proposition_id(key)})
-            tx.commit()
+        tx = self._op.tx
+        tx.query("define proposition owns wm-id;").resolve()
+        pending = [q.opt(r, "k") for r in q.rows(tx, """match $p isa proposition, has proposition-key $k;
+            not { $p has wm-id $i; };""")]
+        for key in pending:
+            q.run(tx, "match $p isa proposition, has proposition-key == $k; insert $p has wm-id == $id;",
+                  {"k": key, "id": keys.proposition_id(key)})
         version, files = MODULES["core-0.4-a0"]
         self.install_module("core-0.4-a0", files=files, version=version)
         self._declare_core_slots()
         return len(pending)
 
     def modules(self):
-        with self.driver.transaction(self.database, READ) as tx:
+        with self._reading() as tx:
             return {q.opt(r, "n"): q.opt(r, "v") for r in
                     q.rows(tx, "match $m isa schema-module, has module-name $n, has module-version $v;")}
 
@@ -209,7 +265,7 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
         (`sub!`) once per installed schema. Profiles add subtypes and specialised roles; nothing is hard-coded."""
         if self._lattice is None:
             parents, role_parents = {}, {}
-            with self.driver.transaction(self.database, READ) as tx:
+            with self._reading() as tx:
                 for kind in ("entity", "relation"):
                     for r in q.rows(tx, f"match {kind} $t; $t sub! $s;"):
                         parents[r.get("t").get_label()] = r.get("s").get_label()
@@ -256,6 +312,7 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
         for predicate, (key_roles, value_role) in CORE_SLOTS.items():
             self.declare_slot(predicate, key_roles, value_role)
 
+    @atomic
     def declare_slot(self, predicate, key_roles, value_role):
         """Declare a functional constraint: content of `predicate` and of every subtype has at most one `value_role`
         value at a time for each combination of `key_roles` players. Stored as data in TypeDB; role names are core
@@ -267,7 +324,7 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
         key_roles = tuple(sorted(set(key_roles)))
         if predicate not in self.proposition_types():
             raise ValueError(f"{predicate!r} is not a proposition type")
-        with self.driver.transaction(self.database, READ) as tx:
+        with self._reading() as tx:
             roles = {self.core_role(r.get("r").get_label())
                      for r in q.rows(tx, f"match $t label {q.label(predicate)}; $t relates $r;")}
         if value_role == PARAMS_VALUE and not self._param_names(predicate):
@@ -279,12 +336,11 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
         if any((k, v) == (key_roles, value_role) for _, k, v in self._constraints(predicate)):
             return
         attrs = "".join(f", has slot-role == $k{i}" for i in range(len(key_roles)))
-        with self.driver.transaction(self.database, WRITE) as tx:
+        with self._writing() as tx:
             q.run(tx, f"""insert $s isa functional-slot, has slot-id == $id, has slot-predicate == $p,
                 has value-role == $v{attrs};""",
                   {"id": f"{predicate}|{','.join(key_roles)}|{value_role}", "p": predicate, "v": value_role,
                    **{f"k{i}": r for i, r in enumerate(key_roles)}})
-            tx.commit()
         self._slots = None
 
     def slots(self):
@@ -295,7 +351,7 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
                 self._slots = {p: [c] for p, c in CORE_SLOTS.items()}
             else:
                 found = {}
-                with self.driver.transaction(self.database, READ) as tx:
+                with self._reading() as tx:
                     for r in q.rows(tx, """match $s isa functional-slot, has slot-id $id, has slot-predicate $p,
                         has value-role $v, has slot-role $k;"""):
                         _, _, keys_ = found.setdefault(q.opt(r, "id"), (q.opt(r, "p"), q.opt(r, "v"), set()))
@@ -319,35 +375,36 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
     def proposition_types(self):
         """Concrete proposition types in the installed schema (core and profiles), by introspection."""
         if self._types is None:
-            with self.driver.transaction(self.database, READ) as tx:
+            with self._reading() as tx:
                 self._types = {r.get("t").get_label() for r in q.rows(tx, "match relation $t; $t sub proposition;")}
             self._types.discard("proposition")
         return self._types
 
     # ---- writing: things and worlds ---------------------------------------------------------------------------
     def _now(self):
+        """The recorded (transaction) time of a write. Inside an operation, one time for all its writes."""
+        if self._op is not None and self._op.recorded_at is not None:
+            return self._op.recorded_at
         now = self.clock()
         if self._last_recorded is not None and now < self._last_recorded:
             raise ValueError("the clock went backwards: transaction time must not decrease")
         self._last_recorded = now
+        if self._op is not None:
+            self._op.recorded_at = now
         return now
 
     @contextmanager
     def _batch(self):
-        """One write transaction with one transaction time, committed only if every write in it succeeds."""
-        with self.driver.transaction(self.database, WRITE) as tx:
-            yield _Batch(tx, self._now())
-            tx.commit()
+        """Kept for the writers' `batch=` argument (LABS-1.020): an operation (see `operation`)."""
+        with self.operation() as op:
+            yield op
 
     @contextmanager
-    def _writing(self, batch):
-        """The batch's transaction, or a write transaction of the caller's own, committed on success."""
-        if batch is not None:
-            yield batch.tx
-            return
-        with self.driver.transaction(self.database, WRITE) as tx:
-            yield tx
-            tx.commit()
+    def _writing(self, batch=None):
+        """The transaction to write in: the current operation's (joined), or a new operation's of its own. `batch` is
+        accepted for compatibility; writers join the current operation whether or not it is passed."""
+        with self.operation() as op:
+            yield op.tx
 
     @staticmethod
     def _mint(prefix):
@@ -362,16 +419,16 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
         if description:
             attrs += ", has description == $d"
             params["d"] = description
-        with self.driver.transaction(self.database, WRITE) as tx:
+        with self._writing() as tx:
             q.run(tx, f"insert $x isa {q.label(kind)}, has wm-id == $id{attrs};", params)
-            tx.commit()
         return rid
 
+    @atomic
     def create_world(self, name, kind="actual", base=None, branch_at=None, knowledge_at=None, id=None):
         """A world (actual, hypothetical or simulated). A variant names its base, the valid time it branches at, and
         the base knowledge it inherits (`knowledge_at`, a transaction time; default now; never in the future)."""
         wid = check_new_id(id or self._mint("world"))
-        with self.driver.transaction(self.database, WRITE) as tx:
+        with self._writing() as tx:
             q.run(tx, "insert $w isa world, has wm-id == $id, has name == $n, has world-kind == $k;",
                   {"id": wid, "n": name, "k": kind})
             if base is not None:
@@ -384,12 +441,11 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
                     insert branching (base: $b, variant: $v), has branch-at == $at, has knowledge-at == $kat,
                     has recorded-at == $rec;""", {"b_id": base, "v_id": wid, "at": branch_at,
                                                   "kat": knowledge_at or rec, "rec": rec})
-            tx.commit()
         return wid
 
     def find(self, name):
         """Ids of particulars and concepts whose name or alt-name equals `name`. Every match, never resolved."""
-        with self.driver.transaction(self.database, READ) as tx:
+        with self._reading() as tx:
             return sorted({q.opt(r, "id") for r in q.rows(tx, """match $x has wm-id $id;
                 { $x isa particular; } or { $x isa concept; };
                 { $x has name == $n; } or { $x has alt-name == $n; };""", {"n": name})})
@@ -455,15 +511,14 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
 
     def proposition_id(self, key):
         """The stored proposition's immutable id (A0.1), read from the database; None if absent."""
-        with self.driver.transaction(self.database, READ) as tx:
+        with self._reading() as tx:
             rows = q.rows(tx, "match $p isa proposition, has proposition-key == $k, has wm-id $id;", {"k": key})
         return q.opt(rows[0], "id") if rows else None
 
     def proposition(self, type, roles, params=None):
         """Store the content (once) and return its canonical key. Content alone asserts nothing."""
-        with self.driver.transaction(self.database, WRITE) as tx:
+        with self._writing() as tx:
             key = self._ensure_proposition(tx, type, roles, params)
-            tx.commit()
         return key
 
     def describe_event(self, roles, description=None, id=None, type="event", batch=None):
@@ -485,7 +540,7 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
     # ---- reading: content ----------------------------------------------------------------------------------------
     def content(self, key_or_id):
         """{type, roles, params} of a stored proposition (by key) or event description (by id)."""
-        with self.driver.transaction(self.database, READ) as tx:
+        with self._reading() as tx:
             rows = q.rows(tx, """match { $c isa proposition, has proposition-key == $k; } or
                 { $c isa event, has wm-id == $k; }; $c isa! $t;""", {"k": key_or_id})
             if not rows:
@@ -507,17 +562,18 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
         return out
 
     def count(self, type):
-        with self.driver.transaction(self.database, READ) as tx:
+        with self._reading() as tx:
             return len(q.rows(tx, f"match $x isa {q.label(type)};"))
 
     # ---- writing: stance and judgement -----------------------------------------------------------------------------
     def world_kind(self, world):
-        with self.driver.transaction(self.database, READ) as tx:
+        with self._reading() as tx:
             rows = q.rows(tx, "match $w isa world, has wm-id == $id, has world-kind $k;", {"id": world})
         if not rows:
             raise ValueError(f"no world {world!r}")
         return q.opt(rows[0], "k")
 
+    @atomic
     def attest(self, world, type=None, roles=None, *, event=None, params=None, start=None, end=None,
                until_superseded=False, polarity=True, stance=None, basis=None, attester=SYSTEM, credence=None,
                clock=None, supersedes=None, id=None, evidence=None, batch=None):
@@ -548,7 +604,7 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
         end_basis = "stated" if end is not None else ("until-superseded" if until_superseded else "unknown")
         aid = check_new_id(id or self._mint("att"))
         values = {"world": world, "attester": attester, "id": aid, "st": stance, "pol": polarity, "bs": basis,
-                  "eb": end_basis, "rec": batch.recorded_at if batch is not None else self._now()}
+                  "eb": end_basis, "rec": self._now()}
         attrs = ""
         for name, w in (("valid-from", start), ("valid-to", end)):
             if w is not None:
@@ -597,23 +653,23 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
         """An explicit denial: the same content, polarity false."""
         return self.attest(world, type, roles, polarity=False, **kw)
 
+    @atomic
     def accept(self, attestation, verdict="accepted", holder=SYSTEM, reason=None):
         """A perspective's decision about an attestation (accepted, rejected, retracted). World-independent."""
         values = {"a_id": attestation, "h_id": holder, "id": self._mint("acceptance"), "v": verdict, "rec": self._now()}
         extra = ""
         if reason:
             extra, values["why"] = ", has reason == $why", reason
-        with self.driver.transaction(self.database, WRITE) as tx:
+        with self._writing() as tx:
             rows = list(q.run(tx, f"""match $a isa attestation, has wm-id == $a_id; $h has wm-id == $h_id;
                 {{ $h isa physical-object; }} or {{ $h isa social-object; }};
                 insert acceptance (holder: $h, accepted: $a), has wm-id == $id, has verdict == $v,
                 has recorded-at == $rec{extra};""", values).as_concept_rows())
             if not rows:
                 raise ValueError(f"attestation {attestation!r} or holder {holder!r} not found")
-            tx.commit()
 
     def _attestation(self, aid):
-        with self.driver.transaction(self.database, READ) as tx:
+        with self._reading() as tx:
             rows = q.rows(tx, """match $a isa attestation (content: $c, attester: $who), has wm-id == $id,
                 has stance $st, has polarity $pol, has basis $bs; $who has wm-id $wid; $c isa! $t;
                 { $c has proposition-key $ck; } or { $c isa event, has wm-id $ck; };
@@ -626,6 +682,7 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
                 "stance": q.opt(r, "st"), "polarity": q.opt(r, "pol"), "basis": q.opt(r, "bs"),
                 "start": Window(q.opt(r, "se"), q.opt(r, "sl")) if q.opt(r, "se") else None, "credence": q.opt(r, "cr")}
 
+    @atomic
     def end(self, world, attestation, at, reason=None):
         """The attester's claim now has an end: a new attestation of the same content by the same attester, with a
         stated end at `at`, in `world`, superseding the old one (E3). In a variant world this never affects the base,
@@ -650,7 +707,7 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
             values["why"] = reason
         content = ("$c isa event, has wm-id == $content;" if old["is_event"]
                    else "$c isa proposition, has proposition-key == $content;")
-        with self.driver.transaction(self.database, WRITE) as tx:
+        with self._writing() as tx:
             q.run(tx, f"""match $w isa world, has wm-id == $world; {content} $who has wm-id == $attester;
                 {{ $who isa physical-object; }} or {{ $who isa social-object; }};
                 $old isa attestation, has wm-id == $old_id;
@@ -658,7 +715,6 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
                 has stance == $st, has polarity == $pol, has basis == $bs, has end-basis "stated",
                 has recorded-at == $rec{attrs};
                 supersession (old: $old, new: $n), has recorded-at == $rec;""", values)
-            tx.commit()
         return values["id"]
 
     # ---- reading: visibility -----------------------------------------------------------------------------------
@@ -776,7 +832,7 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
         """Attestations visible in `world` as known at `as_of`, with the perspective's acceptances and visible
         supersessions. Filters (types, subjects, at) run in TypeDB; with none, everything visible is loaded."""
         visible, supers = {}, []
-        with self.driver.transaction(self.database, READ) as tx:
+        with self._reading() as tx:
             chain = self._world_chain(tx, world, as_of)
             levels = {w: (depth, vlim, klim) for depth, (w, vlim, klim) in enumerate(chain)}
             for depth, (w, vlim, klim) in enumerate(chain):
@@ -836,7 +892,7 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
         """The ids among `ids` that take part in any stored same-as content, in any world (one targeted query per 50
         ids). A cheap pre-filter: an id without same-as content cannot be co-referring for anyone."""
         out, ids = set(), sorted(ids)
-        with self.driver.transaction(self.database, READ) as tx:
+        with self._reading() as tx:
             for i in range(0, len(ids), 50):
                 chunk = ids[i:i + 50]
                 alts = " or ".join(f"{{ $x has wm-id == $i{j}; }}" for j in range(len(chunk)))
@@ -1082,6 +1138,7 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
         return sorted(rows, key=lambda r: (r["start"].earliest if r["start"] else far, r["recorded_at"], r["attestation"]))
 
     # ---- events, occurrences and moves -----------------------------------------------------------------------------
+    @atomic
     def record_event(self, world, roles, start, end=None, kind=None, ends=(), effects=(), attester=SYSTEM, id=None,
                      type="event"):
         """An event description, its occurrence attested by `attester` over [start, end], and how it changed the world.
@@ -1174,12 +1231,14 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
         return self.attest(world, "existence", {"existent": thing}, start=start, end=end,
                            until_superseded=end is None, attester=attester, **kw)
 
+    @atomic
     def create_thing(self, world, kind, name, at, alt_names=(), attester=SYSTEM, id=None):
         """Register a new particular and attest that it came into existence in `world` at `at`."""
         rid = self.add_entity(kind, name, alt_names=alt_names, id=id)
         self.declare_existence(world, rid, start=at, attester=attester)
         return rid
 
+    @atomic
     def destroy(self, world, thing, at, reason=None):
         """The thing stops existing in `world` at `at`. The system's own attestations about it that hold just before
         are ended (superseded); others' accepted ones are denied by the system from `at` (so they are disputed, not
@@ -1286,7 +1345,7 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
     def find(self, name, world=None, as_of=None, perspective=SYSTEM):
         """Ids whose name or alt-name equals `name` (every match). With `world`, only things that world's visible
         attestations mention, so hypothetical things never appear in other worlds' answers."""
-        with self.driver.transaction(self.database, READ) as tx:
+        with self._reading() as tx:
             ids = {q.opt(r, "id") for r in q.rows(tx, """match $x has wm-id $id;
                 { $x isa particular; } or { $x isa concept; };
                 { $x has name == $n; } or { $x has alt-name == $n; };""", {"n": name})}
@@ -1351,7 +1410,7 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
 
     def parts_in_database(self, world, whole):
         """Transitive parts computed by the TypeDB function `parts_in` (world-scoped; time and acceptance ignored)."""
-        with self.driver.transaction(self.database, READ) as tx:
+        with self._reading() as tx:
             return sorted({q.opt(r, "pid") for r in q.rows(tx, """match $x isa particular, has wm-id == $whole;
                 $w isa world, has wm-id == $world; let $p in parts_in($x, $w); $p has wm-id $pid;""",
                 {"whole": whole, "world": world})})
