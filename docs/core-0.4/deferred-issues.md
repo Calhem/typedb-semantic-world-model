@@ -25,7 +25,7 @@ tests.
 | DI-5 | a future-effective appointment (or holding) with an unreviewed counter-claim is labelled "not established" | D-2 (LABS-1.026) | no deadline | open (limitation) |
 | DI-6 | aggregate organisational reports can return ASSERTED despite mixed constituent statuses | D-2 (LABS-1.026) | review before Stage E | open |
 | DI-7 | formal derivation provenance: no record of a named rule and named premises, yet basis "inference" gives INFERRED | D-3 (LABS-1.027 G-1, LABS-1.028) | Stage E requirement | open |
-| DI-8 | `take_sample` (and `replace_part`) write an account and its claimed effects in separate transactions | D-3 (LABS-1.028; registered LABS-1.030) | before Stage E | open |
+| DI-8 | `take_sample` (and `replace_part`) write an account and its claimed effects in separate transactions | D-3 (LABS-1.028; registered LABS-1.030) | before Stage E | corrected in increment A, awaiting review (not merged) |
 | DI-9 | performance: high query counts in the D-3 reports, and questions slowing as other worlds' data grows | D-3 benchmark (LABS-1.029; registered LABS-1.030) | tracked into Stage E | open (performance) |
 | DI-10 | the schema explorer has no automated browser regression tests (search, filters, navigation were checked by hand) | LABS-1.024 gate (registered LABS-1.034) | no deadline (maintenance) | open (non-blocking) |
 | DI-11 | reports built on `_claims` (capable, the profile reports) ignore functional-slot conflicts; the mirror image of DI-1 | pre-Stage E review (LABS-1.034) | proposed: before Stage E | open (latent) |
@@ -204,6 +204,12 @@ when D-3 was merged (LABS-1.030).
   transaction (`WorldModel.proposition`). Inside a batch, a new outcome is not visible to the batch's transaction, so
   the claim fails (reproduced), and the outcome content is left behind. Option (a) needs `claim_effect` to write its
   outcome inside the batch.
+
+**Correction, increment A (LABS-1.036), awaiting review.** On `feature/pre-e-a-atomic-operations`: a public
+`WorldModel.operation()`; every composite writer, including module installation, upgrades and database creation, is
+one operation; `claim_effect` writes its outcome inside it. A failure injected at any write leaves nothing and moves
+no recorded time. See [pre-e-increment-a.md](pre-e-increment-a.md). The issue stays open until the increment is
+approved and merged.
 
 ## DI-9: report query counts and cross-world scaling (performance)
 **What was measured** (`stage-d3.md` section 7, `bench-d3/README.md`; four interleaved rounds):

@@ -13,9 +13,9 @@
 === DI-2 current
   replacement_role_names: ["fitted", "patient"]
   sampling_role_names: ["actor", "destination", "origin"]
-  replacement_removed_as_patient: {"b1": [["event:269af4fe2ec343d5", "maint"]], "b2": [["event:7d38d711b5174284", "insp"]]}
-  replacement_fitted: {"b3": [["event:269af4fe2ec343d5", "maint"], ["event:7d38d711b5174284", "insp"]]}
-  sampling_product_as_destination: {"s-a": [["event:1aee808166cd40e9", "ana"]], "s-b": [["event:d2a5b9b6f5a64ee1", "bo"]]}
+  replacement_removed_as_patient: {"b1": [["event:57aeaaa6c48346d8", "maint"]], "b2": [["event:f26769dcbaae43ef", "insp"]]}
+  replacement_fitted: {"b3": [["event:57aeaaa6c48346d8", "maint"], ["event:f26769dcbaae43ef", "insp"]]}
+  sampling_product_as_destination: {"s-a": [["event:62829542bbf14426", "ana"]], "s-b": [["event:1b808c5e436c4db9", "bo"]]}
   per_account_removed: [["b1"], ["b2"]]
 
 === DI-3 current
@@ -39,14 +39,14 @@
   capable_dan: ["ASSERTED", [[null, "ASSERTED"], ["depot", "STIPULATED"]]]
   capable_cal: ["STIPULATED", [[null, "STIPULATED"], ["depot", "ASSERTED"]]]
 
-=== DI-8 current
-  attestations_written: 2
-  effect_claims_recorded: [["initiates", "existence"]]
-  note: "the account survives with 1 of its 2 claimed effects, and nothing marks it incomplete"
+=== DI-8 after increment A
+  attestations_written: 0
+  effect_claims_recorded: []
+  note: "before increment A (LABS-1.034): the account survived with 1 of its 2 claimed effects; now nothing"
 
-=== DI-8 batch feasibility
+=== DI-8 batch (operation) after increment A
   a_outcomes_already_stored: {"attestations_written": 3, "description_written": true, "outcome_content_stored": true}
-  b_new_outcome: {"error": "no particular, concept, reference system, event description or proposition with id ['p:cda219659b6e15504eb28b23']", "attestations_written": 0, "description_written": false, "outcome_content_stored": true}
+  b_new_outcome: {"attestations_written": 3, "description_written": true, "outcome_content_stored": true}
   c_failure_mid_batch: {"simulated_failure": true, "attestations_written": 0, "description_written": false, "outcome_content_stored": true}
 
 === DI-3 feasibility and DI-11 (found by this review)

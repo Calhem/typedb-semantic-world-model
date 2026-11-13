@@ -187,10 +187,10 @@ try:
     wm.claim_effect = real
     written = ids_of(wm, w) - before
     partial_effects = wm.effects_of(w, "sampling-partial", T(7))
-    show("DI-8 current", attestations_written=len(written),
+    show("DI-8 after increment A", attestations_written=len(written),
          effect_claims_recorded=[(e["kind"], e["outcome"]["type"]) for e in partial_effects],
-         note="the account survives with 1 of its 2 claimed effects, and nothing marks it incomplete")
-    assert len(partial_effects) == 1
+         note="before increment A (LABS-1.034): the account survived with 1 of its 2 claimed effects; now nothing")
+    assert len(partial_effects) == 0 and len(written) == 0
 
     # DI-8 option (a) with today's API: account() and claim_effect() accept batch=, but claim_effect first stores its
     # outcome content with WorldModel.proposition, in its own committed transaction, outside the batch.
@@ -216,14 +216,15 @@ try:
                 $p isa existence (existent: $x);""", {"id": product}))
         return result
 
-    show("DI-8 batch feasibility",
+    show("DI-8 batch (operation) after increment A",
          a_outcomes_already_stored=batched("ana", "s-b", T(6), "sampling-batched"),
          b_new_outcome=batched("bo", "s-c", T(7), "sampling-batched-new"),
          c_failure_mid_batch=batched("bo", "s-a", T(7), "sampling-batched-fail", fail=True))
-    f = OUT["DI-8 batch feasibility"]
+    f = OUT["DI-8 batch (operation) after increment A"]
+    # before increment A: case b failed (the outcome content was committed outside the batch and left behind)
     assert f["a_outcomes_already_stored"]["attestations_written"] == 3
-    assert "error" in f["b_new_outcome"] and f["b_new_outcome"]["attestations_written"] == 0
-    assert f["b_new_outcome"]["outcome_content_stored"] is True        # committed outside the failed batch
+    assert "error" not in f["b_new_outcome"] and f["b_new_outcome"]["attestations_written"] == 3
+    assert f["b_new_outcome"]["outcome_content_stored"] is True        # written inside the operation
     assert f["c_failure_mid_batch"]["attestations_written"] == 0 and not f["c_failure_mid_batch"]["description_written"]
     # ---- DI-3 feasibility: a functional slot keyed by the two-player `endpoint` role (register: "not verified") ----
     feas = {}
