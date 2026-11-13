@@ -145,13 +145,12 @@ class ProfileMixin:
         "conflict" (some of its types are in the schema but it has no record). install_profile is atomic, so it never
         leaves the last state; it arises only from schema changed outside install_profile (a manual define), or from
         another profile owning the same labels. See docs/core-0.4/stage-d0.md, "Incomplete installation"."""
-        from .model import READ
         if isinstance(profile, str):
             profile = PROFILES[profile]
         if profile.module in self.modules():
             return "installed"
         declared = _declared_labels("\n".join(Path(f).read_text() for f in profile.schema))
-        with self.driver.transaction(self.database, READ) as tx:
+        with self._reading() as tx:
             present = declared & schema_snapshot(tx)["types"]
         return "conflict" if present else "absent"
 
@@ -163,7 +162,7 @@ class ProfileMixin:
         written in **one schema transaction** (TypeDB 3.14.1 schema transactions also write data) and committed only
         after every check passed, so a profile is either completely installed and recorded, or not at all. Refusals
         raise ProfileError; any failure, including at commit, leaves the database unchanged."""
-        from .model import CORE_LABELS, CORE_MODULES, READ, SCHEMA
+        from .model import CORE_LABELS, CORE_MODULES
         from .keys import check_new_id
         if isinstance(profile, str):
             profile = PROFILES[profile]
@@ -183,27 +182,27 @@ class ProfileMixin:
             check_new_id(i)
         text = "\n".join(Path(f).read_text() for f in profile.schema)
         declared = _declared_labels(text)
-        with self.driver.transaction(self.database, READ) as tx:
-            before = schema_snapshot(tx)
-        with self.driver.transaction(self.database, SCHEMA) as tx:
-            try:
-                for f in profile.schema:
-                    tx.query(Path(f).read_text()).resolve()
-                after = schema_snapshot(tx)          # TypeDB re-checks stored functions here as well
-            except TypeDBDriverException as e:
-                raise ProfileError(f"profile {profile.name!r} refused: TypeDB rejected its schema: "
-                                   + " ".join(str(e).split())[:400]) from None
-            new, problems = _violations(profile, declared, before, after)
-            if not new and not problems:
-                problems = ["adds no types: its schema is empty"]
-            problems += _slot_problems(profile, new, after, CORE_LABELS)
-            concepts = {t for t, r in after["plays"] if r == "classified-as:class"}   # concept types, incl. new ones
-            bad_kinds = sorted({k for k, _, _ in profile.vocabulary if k not in concepts})
-            if bad_kinds:
-                problems.append(f"vocabulary kinds must be concept types: {bad_kinds}")
-            if problems:
-                raise ProfileError(f"profile {profile.name!r} refused: " + "; ".join(problems))
-            try:
+        try:
+            with self.operation(schema=True) as op:       # one schema operation (LABS-1.023; DI-8 operations)
+                tx = op.tx
+                before = schema_snapshot(tx)
+                try:
+                    for f in profile.schema:
+                        tx.query(Path(f).read_text()).resolve()
+                    after = schema_snapshot(tx)          # TypeDB re-checks stored functions here as well
+                except TypeDBDriverException as e:
+                    raise ProfileError(f"profile {profile.name!r} refused: TypeDB rejected its schema: "
+                                       + " ".join(str(e).split())[:400]) from None
+                new, problems = _violations(profile, declared, before, after)
+                if not new and not problems:
+                    problems = ["adds no types: its schema is empty"]
+                problems += _slot_problems(profile, new, after, CORE_LABELS)
+                concepts = {t for t, r in after["plays"] if r == "classified-as:class"}   # concept types, incl. new ones
+                bad_kinds = sorted({k for k, _, _ in profile.vocabulary if k not in concepts})
+                if bad_kinds:
+                    problems.append(f"vocabulary kinds must be concept types: {bad_kinds}")
+                if problems:
+                    raise ProfileError(f"profile {profile.name!r} refused: " + "; ".join(problems))
                 for kind, cid, name in profile.vocabulary:
                     q.run(tx, f"insert $c isa {q.label(kind)}, has wm-id == $id, has name == $n;", {"id": cid, "n": name})
                 for predicate, key_roles, value_role in profile.slots:
@@ -215,9 +214,8 @@ class ProfileMixin:
                            **{f"k{i}": r for i, r in enumerate(key_roles)}})
                 q.run(tx, "insert $m isa schema-module, has module-name == $n, has module-version == $v;",
                       {"n": profile.module, "v": profile.version})
-                tx.commit()
-            except TypeDBDriverException as e:
-                raise ProfileError(f"profile {profile.name!r} not installed (nothing committed): "
-                                   + " ".join(str(e).split())[:400]) from None
-        self._types = self._prop_ids = self._lattice = self._slots = None
+        except TypeDBDriverException as e:
+            raise ProfileError(f"profile {profile.name!r} not installed (nothing committed): "
+                               + " ".join(str(e).split())[:400]) from None
+        self._reset_caches()
         return sorted(new)

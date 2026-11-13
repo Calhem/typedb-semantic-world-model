@@ -37,7 +37,7 @@ def build_organisation(wm):
               *(("person", i.capitalize(), i) for i in ("bea", "cal", "dan", "eve", "fay")),
               ("social-role", "site manager", "site-manager"), ("social-role", "safety officer", "safety-officer"),
               ("capability", "can sign off", "can-sign-off"), ("category", "agent", "agent")]
-    with wm.driver.transaction(wm.database, READ) as tx:
+    with wm._reading() as tx:
         present = {i for _, _, i in wanted if q.rows(tx, "match $x has wm-id == $id;", {"id": i})}
     for kind, n, i in wanted:
         if i not in present:

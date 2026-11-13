@@ -1,6 +1,6 @@
 # LABS-1.024: schema export implementation, review gate (LABS-1.033)
 
-**Status: implemented on `feature/labs-1.024-schema-export`, at the review gate, not merged.** The approved design
+**Status: merged into `main` (LABS-1.034, merge commit `a8c4b44`).** The approved design
 is [design.md](design.md) (section 10 holds the approved decisions; the review baseline of sections 1 to 9 is
 `ca3aede`). The reference export and its explorer are in [docs/schema](../schema/README.md).
 
@@ -59,10 +59,15 @@ from this repository's code into temporary databases: the core one module at a t
 and everything together. **Verification** needs every recorded module known at its recorded version, every step to
 succeed, and the complete replay to equal the database's facts and module records exactly.
 
+**Reproducibility, not history.** A verified attribution establishes that the schema is *reproducible* from the
+recorded modules, and which module adds each declaration *in that reproduction*. It is not the database's
+installation history: TypeDB keeps none (no install order, no record of an in-place upgrade or of a change later
+undone), and the export never claims one. "Introduced by" and "extended by" are to be read in that sense.
+
 | Status | Meaning | Reference |
 |---|---|---|
-| `attributed` | verified; exactly one module adds it | **487** |
-| `shared` | verified; more than one profile adds it | 0 |
+| `attributed` | verified; exactly one module adds it in the reproduction | **487** |
+| `shared` | verified; more than one profile adds it in the reproduction | 0 |
 | `consistent_unverified` | replay steps add it, but verification failed | 0 |
 | `unresolved` | no replay step adds it | 0 |
 
@@ -70,7 +75,7 @@ succeed, and the complete replay to equal the database's facts and module record
 core-0.4-c 54, core-0.4-d 3, laboratory 19, mechanical 15, organisation 37. Module data (18 concept and
 functional-slot records) verified.
 
-**Per declaration, never one owner per type.** For example `particular` is introduced by `core` and extended by
+**Per declaration, never one owner per type.** For example, in the reproduction `particular` is introduced by `core` and extended by
 `core-0.4-a`, `profile:laboratory` and `profile:organisation`; the laboratory profile contributes exactly
 `particular plays sampling:sampler`. Inherited capabilities keep the attribution of the declaration on the ancestor.
 
@@ -166,7 +171,8 @@ database per profile, each rebuilding the core). Files: `schema.json` 424 KB, `s
 8. **Module data is read in full** (every concept and functional-slot record). Not measured on a large database.
 9. **The explorer needs JavaScript.** Its neighbourhood diagram shows declared neighbours, two supertype levels and one
    level otherwise; inherited ones are in the tables. Search lists at most 300 results.
-10. **The browser check is by hand** (recorded above), not an automated test.
+10. **The browser check is by hand** (recorded above), not an automated test. Automated browser regression coverage
+    is registered as maintenance item DI-10 (`docs/core-0.4/deferred-issues.md`), not blocking.
 
 ## 7. Deviations from the approved design
 1. **Code layout.** A package `worldmodel.schema_export` with one module per concern, instead of one

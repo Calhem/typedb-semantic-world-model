@@ -18,6 +18,10 @@ records equal the target's exactly. Each fact then gets one status (section 10 o
 
 A partial replay never produces `attributed` or `shared`.
 
+**Reproducibility, not history.** A verified attribution says the schema is reproducible from the recorded modules,
+and which module adds each declaration in that reproduction. It is not the database's installation history (install
+order, in-place upgrades, changes later undone), which TypeDB does not keep and the export never claims.
+
 **What replay cannot see.** TypeDB accepts a declaration that repeats one already in the schema, without change. A
 fact a later module repeats is attributed to the module that first adds it; the repeat, found in the later module's
 source text, is reported separately as a `repository` note (`also_declared_in_source`), never as ownership.

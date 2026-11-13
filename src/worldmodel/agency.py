@@ -116,7 +116,7 @@ class AgencyMixin:
             if not self.is_a(f["type"], "classified-as") or holder not in f["roles"].get("classified", []):
                 continue
             for c in f["roles"].get("class", []):
-                with self.driver.transaction(self.database, READ) as tx:
+                with self._reading() as tx:
                     if q.rows(tx, "match $c isa social-role, has wm-id == $id;", {"id": c}):
                         out.append({"role": c, "context": f["roles"].get("context", [None])[0],
                                     "status": f["status"], "support": f["support"]})

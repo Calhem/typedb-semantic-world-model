@@ -16,6 +16,7 @@ clarification B).
 import math
 from datetime import datetime, timezone
 
+from .operations import atomic
 from . import keys
 from .keys import check_new_id
 from .semantics import Status, acceptance_state, superseded, usable, verdict
@@ -40,10 +41,10 @@ class QualitiesMixin:
             parts.append(f"has {name} == $v{i}")
             params[f"v{i}"] = value
         if parts:
-            with self.driver.transaction(self.database, WRITE) as tx:
+            with self._writing() as tx:
                 q.run(tx, f"match $x isa {kind}, has wm-id == $id; insert $x {', '.join(parts)};", params)
-                tx.commit()
 
+    @atomic
     def define_unit(self, name, dimension, si_factor=1.0, si_offset=0.0, id=None):
         """A unit of a dimension; si = raw * si_factor + si_offset. The SI unit of a dimension has factor 1, offset 0."""
         if not (math.isfinite(si_factor) and si_factor > 0 and math.isfinite(si_offset)):
@@ -53,6 +54,7 @@ class QualitiesMixin:
                                            ("si-offset", float(si_offset))])
         return uid
 
+    @atomic
     def define_quality_kind(self, name, dimension=None, id=None):
         """A quality kind; numeric kinds have a dimension (mass), categorical ones need none (colour, condition)."""
         qid = self.add_entity("quality-kind", name, id=id)
@@ -63,7 +65,7 @@ class QualitiesMixin:
     def _unit(self, unit):
         from . import typeql as q
         from .model import READ
-        with self.driver.transaction(self.database, READ) as tx:
+        with self._reading() as tx:
             rows = q.rows(tx, """match $u isa unit, has wm-id == $id, has dimension $d, has si-factor $f,
                 has si-offset $o;""", {"id": unit})
         if not rows:
@@ -73,7 +75,7 @@ class QualitiesMixin:
     def _dimension_of(self, quality):
         from . import typeql as q
         from .model import READ
-        with self.driver.transaction(self.database, READ) as tx:
+        with self._reading() as tx:
             rows = q.rows(tx, "match $k isa quality-kind, has wm-id == $id, has dimension $d;", {"id": quality})
         return q.opt(rows[0], "d") if rows else None
 
@@ -81,7 +83,7 @@ class QualitiesMixin:
         """The dimension's SI unit (si-factor 1, si-offset 0); one must be defined."""
         from . import typeql as q
         from .model import READ
-        with self.driver.transaction(self.database, READ) as tx:
+        with self._reading() as tx:
             rows = q.rows(tx, """match $u isa unit, has wm-id $id, has dimension == $d, has si-factor $f,
                 has si-offset $o;""", {"d": dimension})
         found = sorted(q.opt(r, "id") for r in rows if q.opt(r, "f") == 1.0 and q.opt(r, "o") == 0.0)
@@ -101,6 +103,7 @@ class QualitiesMixin:
         return (si - o2) / f2
 
     # ---- writing a measurement -------------------------------------------------------------------------------------
+    @atomic
     def measure(self, world, bearer, quality, value, unit, uncertainty, k=2.0, start=None, end=None, instrument=None,
                 operator=None, conditions=(), calibration=None, attester=SYSTEM, occurrence=None, persists=False,
                 supersedes=None, id=None):
@@ -162,7 +165,7 @@ class QualitiesMixin:
         """The result records an attestation rests on (rests-on links; D-C-2). Structural: not judged."""
         from . import typeql as q
         from .model import READ
-        with self.driver.transaction(self.database, READ) as tx:
+        with self._reading() as tx:
             return sorted({q.opt(r, "rid") for r in q.rows(tx, """match $a isa attestation, has wm-id == $id;
                 rests-on (attestation: $a, record: $r); $r has wm-id $rid;""", {"id": attestation})})
 
@@ -172,7 +175,7 @@ class QualitiesMixin:
     def _record(self, record):
         from . import typeql as q
         from .model import READ
-        with self.driver.transaction(self.database, READ) as tx:
+        with self._reading() as tx:
             rows = q.rows(tx, """match $r isa information-object, has wm-id == $id, has raw-value $v,
                 has standard-uncertainty $u, has coverage-factor $k; expressed-in (record: $r, unit: $un);
                 $un has wm-id $unit; try { $r has calibration-ref $cal; };""", {"id": record})

@@ -22,6 +22,7 @@ steps are core `part-of` (read with `process_steps`). Judgement uses the shared 
 Functions take the WorldModel, as in `worldmodel.mechanical` and `worldmodel.organisation`.
 """
 
+from .operations import atomic
 from . import typeql as q
 from .keys import check_new_id
 from .model import READ, SCHEMA_DIR, SYSTEM
@@ -55,12 +56,15 @@ def _public(rows):
 
 
 # ---- samples and sampling ----------------------------------------------------------------------------------------------
+@atomic
 def take_sample(wm, world, sampler, specimen, sample, start, end=None, occurrence=None, attester=SYSTEM, id=None,
                 kind=None):
     """A source's account of `sampler` taking `sample` (a `sample` particular) from `specimen`: a `sampling`
     description attested over [start, end], optionally describing `occurrence`, and the effects the source claims for
     it: it initiates existence(sample) and constitution(sample, specimen). Claims only: nothing here establishes that
-    the sampling happened, that the sample exists or what it is made of. Returns the ids."""
+    the sampling happened, that the sample exists or what it is made of. Returns the ids.
+    One operation (DI-8): the account and its effect claims are written together or not at all; inside a caller's
+    `wm.operation()` it joins that operation (e.g. with the creation of the sample or part)."""
     _require(wm)
     event = wm.account(world, {"sampler": sampler, "sampled": specimen, "product": sample}, start, end or start,
                        type="sampling", kind=kind, occurrence=occurrence, attester=attester, id=id)
@@ -71,7 +75,7 @@ def take_sample(wm, world, sampler, specimen, sample, start, end=None, occurrenc
 
 
 def _sampling_accounts(wm, world, sample, t, as_of, perspective):
-    with wm.driver.transaction(wm.database, READ) as tx:
+    with wm._reading() as tx:
         events = sorted({q.opt(r, "eid") for r in q.rows(tx, """match $p has wm-id == $id;
             $e isa sampling (product: $p), has wm-id $eid;""", {"id": sample})})
     out = []
@@ -196,7 +200,7 @@ def _references(wm, certificates):
     if not certificates:
         return {}
     out = {}
-    with wm.driver.transaction(wm.database, READ) as tx:
+    with wm._reading() as tx:
         for c in certificates:
             rows = q.rows(tx, "match $x isa information-object, has wm-id == $id, has calibration-ref $r;", {"id": c})
             out[c] = q.opt(rows[0], "r") if rows else None
@@ -291,7 +295,7 @@ def interpretations(wm, world, record, t, as_of=None, perspective=SYSTEM):
     content is judged on its own: rival interpretations are not judged against each other (D-D3-6). `derivation` is
     always the NO_DERIVATION note: no attestation here carries a named rule and premises."""
     _require(wm)
-    with wm.driver.transaction(wm.database, READ) as tx:
+    with wm._reading() as tx:
         aids = sorted({q.opt(r, "aid") for r in q.rows(tx, """match $r isa information-object, has wm-id == $id;
             rests-on (attestation: $a, record: $r); $a has wm-id $aid;""", {"id": record})})
     out = []

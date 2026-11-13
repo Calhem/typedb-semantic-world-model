@@ -22,9 +22,11 @@ stale unnoticed.
 Every section of the export says where it comes from, and the explorer shows it as a badge:
 
 - **database**: read from TypeDB, or worked out from what was read (for example "inherited from `particular`");
-- **reconstructed**: which module (core layer or profile) contributed each declaration. TypeDB does not record this, so
-  the exporter replays the recorded modules from this repository's code into temporary databases and requires an exact
-  match with the database before calling anything `attributed`;
+- **reconstructed**: which module (core layer or profile) adds each declaration when the recorded modules are replayed.
+  TypeDB does not record this, so the exporter replays the recorded modules from this repository's code into temporary
+  databases and requires an exact match with the database before calling anything `attributed`. A verified result
+  means the schema is *reproducible* from those modules; it is not the history of how the database was built, which
+  TypeDB does not keep;
 - **repository**: comments written in the `.tql` files. Shown separately, never checked against the database.
 
 ## What the checks say for this export
@@ -33,4 +35,5 @@ Every section of the export says where it comes from, and the explorer shows it 
   specialisations and value types);
 - the schema rebuilds identically in an empty database (the only check available for annotations and functions,
   which TypeDB 3.14.1 cannot answer by query);
-- the replay matches the database exactly, so all 487 facts are `attributed` and module data is verified.
+- the replay matches the database exactly, so all 487 facts are `attributed` and module data is verified: the schema
+  is reproducible from the recorded modules (this says nothing about the order or way they were actually installed).

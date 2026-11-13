@@ -1,0 +1,58 @@
+
+=== DI-1 current
+  holds_role: "DISPUTED"
+  holds_part: "DISPUTED"
+  facts_about_bea: []
+  roles_of_bea: []
+  capable_bea_analyst: "disputed"
+  facts_about_wheel: []
+  composition_wheel: {"id": "wheel", "parts": []}
+  process_steps_proc: []
+  direct_dependencies_wheel: [["axle", "DISPUTED"]]
+
+=== DI-2 current
+  replacement_role_names: ["fitted", "patient"]
+  sampling_role_names: ["actor", "destination", "origin"]
+  replacement_removed_as_patient: {"b1": [["event:57aeaaa6c48346d8", "maint"]], "b2": [["event:f26769dcbaae43ef", "insp"]]}
+  replacement_fitted: {"b3": [["event:57aeaaa6c48346d8", "maint"], ["event:f26769dcbaae43ef", "insp"]]}
+  sampling_product_as_destination: {"s-a": [["event:62829542bbf14426", "ana"]], "s-b": [["event:1b808c5e436c4db9", "bo"]]}
+  per_account_removed: [["b1"], ["b2"]]
+
+=== DI-3 current
+  connections_cover: [["housing", "joint-bolted", "ASSERTED"], ["housing", "joint-bonded", "ASSERTED"]]
+
+=== DI-4 current
+  direct_dependencies_housing: [["cover", "steel", "ASSERTED"]]
+  dependencies_of_kind_steel: ["cover"]
+
+=== DI-5 current
+  cal: ["not established", "UNKNOWN"]
+  dan: ["not yet effective", "UNKNOWN"]
+  cal_at_day_9: "established"
+
+=== DI-5 wider
+  eve_started_day_1_end_unknown: ["not yet effective", "UNKNOWN"]
+  holds: ["UNKNOWN", null]
+
+=== DI-6 current
+  office_holders: {"holders": ["bea", "cal"], "status": "ASSERTED", "per_holder": [["bea", "ASSERTED"], ["cal", "STIPULATED"]]}
+  capable_dan: ["ASSERTED", [[null, "ASSERTED"], ["depot", "STIPULATED"]]]
+  capable_cal: ["STIPULATED", [[null, "STIPULATED"], ["depot", "ASSERTED"]]]
+
+=== DI-8 after increment A
+  attestations_written: 0
+  effect_claims_recorded: []
+  note: "before increment A (LABS-1.034): the account survived with 1 of its 2 claimed effects; now nothing"
+
+=== DI-8 batch (operation) after increment A
+  a_outcomes_already_stored: {"attestations_written": 3, "description_written": true, "outcome_content_stored": true}
+  b_new_outcome: {"attestations_written": 3, "description_written": true, "outcome_content_stored": true}
+  c_failure_mid_batch: {"simulated_failure": true, "attestations_written": 0, "description_written": false, "outcome_content_stored": true}
+
+=== DI-3 feasibility and DI-11 (found by this review)
+  declared: true
+  holds_bolted: ["DISPUTED", null]
+  connections_after: [["housing", "joint-bolted", "ASSERTED"], ["housing", "joint-bonded", "ASSERTED"]]
+  facts_about_cover: [["connected-to", "DISPUTED", true], ["connected-to", "DISPUTED", true]]
+
+all reproductions behaved as recorded
