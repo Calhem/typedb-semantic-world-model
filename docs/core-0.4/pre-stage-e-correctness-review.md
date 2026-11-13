@@ -319,3 +319,30 @@ declarations are data, as functional slots are.
 | R-6 | DI-2: core mechanism (single-valued event roles as data); declarations by profiles; one naming rule for roles in the merged view | approve |
 | R-7 | DI-8: all-or-nothing composite writers, including the core ones, with `claim_effect` writing inside the batch | approve |
 | R-8 | DI-3 and DI-4 stay accepted limitations until steps 2 and 4 are done | approve |
+
+## 6. Approved (LABS-1.035, LABS-1.036)
+R-1 to R-8 are approved with the recommended choices A to J (as given under LABS-1.035):
+- **A:** office exclusivity on the shared mechanism, with `office_holders` answers unchanged;
+- **B:** closures keep their established answer, with disputed or blocked links listed separately;
+- **C:** "not established" for a holding that has begun but whose end is unknown;
+- **D:** pending counter-claims in a `pending` list;
+- **E:** `office_holders.status` is `None` when holders are established without conflict;
+- **F:** the merged occurrence view uses each description's own role name, with the core role alongside;
+- **G:** single-valued role declarations decided per profile, against the domain's actual semantics;
+- **H:** declarations stored as data; players compared through `same-as`;
+- **I:** acceptance stays a separate operation;
+- **J:** module installation and upgrades are in scope of DI-8.
+
+**Qualifications (LABS-1.036):**
+- one canonical core mechanism for contextual content judgement. Every core and domain report uses it for evidence,
+  temporal validity, polarity conflicts and the exclusivity constraints that apply;
+- attested exclusivity constraints are themselves judged in context. A constraint that is not established, or is
+  disputed, never makes otherwise compatible holdings disputed;
+- individual claim judgements stay separate from aggregate and collection-level reporting;
+- event-role cardinality is scoped to the intended event kind and role, never universal;
+- composite writes are atomic, including nested operations, claimed effects, related objects and events. A failed
+  operation leaves no persistent partial data and no advance of logical time.
+
+**Increments.** Four, each stopping at its own review gate: **A** DI-8; **B** DI-1, DI-11, DI-5; **C** DI-6;
+**D** DI-2. After D: reassess DI-3 and DI-4. DI-7 and DI-9 stay Stage E requirements; DI-10 stays maintenance. No
+deferred issue is closed silently. Stage E waits until all four have passed their gates.
