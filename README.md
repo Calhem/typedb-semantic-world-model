@@ -23,6 +23,7 @@ from a robot to a video understanding pipeline to an agent's long-term memory.
 | **Core 0.4 Stage B** | **Merged into `main` (2026-11-10, LABS-1.011):** events, occurrences and state transitions, processes and actions, asserted causation with competing accounts, occurrence status judged apart from descriptions; 211 tests ([docs/core-0.4/stage-b.md](docs/core-0.4/stage-b.md)) |
 | **Core 0.4 Stage C** | **Merged into `main` (2026-11-11, LABS-1.020):** qualities, units and measurements with explicit provenance (`rests-on`) and atomic measurement writes, comparability without reconciliation, contextual capabilities, roles and agency, in the gearbox and laboratory worlds; 282 tests ([docs/core-0.4/stage-c.md](docs/core-0.4/stage-c.md)) |
 | **Core 0.4 Stage D** | **Decisions approved (LABS-1.022); groundwork D0 merged into `main` (LABS-1.023):** subtype-aware generic APIs, atomic profile packaging (`install_profile`), fixtures and core-protection run; D-1 mechanical profile merged (LABS-1.025, [D-1](docs/core-0.4/stage-d1.md)); D-2 organisational profile merged (LABS-1.027, [D-2](docs/core-0.4/stage-d2.md)); D-3 scientific profile implemented, at the review gate on `feature/core-0.4-d3-science` (LABS-1.028, [D-3](docs/core-0.4/stage-d3.md), [design](docs/core-0.4/stage-d3-design.md)); next cross-cutting deliverable after D-3: LABS-1.024 (explorable schema export); [deferred issues](docs/core-0.4/deferred-issues.md) ([review](docs/core-0.4/stage-d-review.md), [D0](docs/core-0.4/stage-d0.md)) |
+| **Schema export (LABS-1.024)** | **Implemented, at the review gate (branch `feature/labs-1.024-schema-export`, not merged):** the live database's schema as exact TypeQL, versioned JSON and a standalone HTML explorer, with core and profile attribution by verified replay ([docs/schema-export](docs/schema-export/design.md); reference export and explorer in [docs/schema](docs/schema/README.md)) |
 | Next | World-representation layer (composition, causality, space and frames, quantities, agency, domain extensions); not started |
 
 Start with **[Phase 1C's outstanding decisions](docs/phase-1c/07-outstanding-decisions.md)**, then the
@@ -51,6 +52,9 @@ unknown until observed); real TypeDB operations only; every claim of advantage t
 ## Repository
 - `docs/architecture/`: the ontology architecture proposal; `docs/typedb-modelling-best-practices.md`: verified
   TypeDB modelling constraints.
+- `docs/schema/`: the reference schema export (core and the three profiles): `schema.tql`, `schema.json`,
+  `manifest.json` and `schema-explorer.html` (open it in a browser). Regenerate with
+  `uv run python scripts/export_schema.py --reference`; export any database with `scripts/export_schema.py <database>`.
 - `schema/`, `src/worldmodel/`, `tests/`: the world model (TypeQL schema modules, Python interface, tests);
   `scripts/bench_query_paths.py`: selective vs full query benchmark.
 - `docs/phase-1/`: framework comparison, core ontology proposal, modules and profiles, TypeDB capability

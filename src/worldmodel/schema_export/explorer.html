@@ -1,0 +1,695 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+<title>Schema Explorer</title>
+<style>
+:root {
+  --bg: #f7f7f5; --panel: #ffffff; --ink: #1d1f23; --muted: #5d6470; --line: #dfe1e5; --soft: #eef0f2;
+  --accent: #2459c9; --accent-ink: #ffffff; --focus: #2459c9;
+  --db: #1f6f43; --db-bg: #e3f3e9; --rc: #7a4f00; --rc-bg: #fbefd5; --rp: #5b3a99; --rp-bg: #eee7fa;
+  --ok: #1f6f43; --ok-bg: #e3f3e9; --sh: #20608a; --sh-bg: #e1eff8; --cu: #8a5300; --cu-bg: #fdecd0;
+  --un: #a1262b; --un-bg: #fbe3e3; --code: #f2f3f5;
+  --m0: #3d5a80; --m1: #b5523b; --m2: #2f7d6d; --m3: #8a5fbf; --m4: #a0782a; --m5: #c04a7b; --m6: #4f7d2f;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #15171a; --panel: #1d2024; --ink: #e7e9ec; --muted: #a2a9b4; --line: #343941; --soft: #262a30;
+  --accent: #7aa2ff; --accent-ink: #0d1117; --focus: #7aa2ff;
+  --db: #7fd6a1; --db-bg: #1c3527; --rc: #f2c46d; --rc-bg: #3b2f14; --rp: #c6a8ff; --rp-bg: #2d2342;
+  --ok: #7fd6a1; --ok-bg: #1c3527; --sh: #8cc8f0; --sh-bg: #17303f; --cu: #f2b45a; --cu-bg: #3d2b10;
+  --un: #ff9a9a; --un-bg: #431c1e; --code: #23272d;
+  --m0: #8fb0d9; --m1: #f0957f; --m2: #7cc9b6; --m3: #c3a3ef; --m4: #dcb769; --m5: #f08fb8; --m6: #a3d17d;
+} }
+:root[data-theme="dark"] {
+  --bg: #15171a; --panel: #1d2024; --ink: #e7e9ec; --muted: #a2a9b4; --line: #343941; --soft: #262a30;
+  --accent: #7aa2ff; --accent-ink: #0d1117; --focus: #7aa2ff;
+  --db: #7fd6a1; --db-bg: #1c3527; --rc: #f2c46d; --rc-bg: #3b2f14; --rp: #c6a8ff; --rp-bg: #2d2342;
+  --ok: #7fd6a1; --ok-bg: #1c3527; --sh: #8cc8f0; --sh-bg: #17303f; --cu: #f2b45a; --cu-bg: #3d2b10;
+  --un: #ff9a9a; --un-bg: #431c1e; --code: #23272d;
+  --m0: #8fb0d9; --m1: #f0957f; --m2: #7cc9b6; --m3: #c3a3ef; --m4: #dcb769; --m5: #f08fb8; --m6: #a3d17d;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); }
+body { font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 3px; }
+code, pre, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12.5px; }
+pre { background: var(--code); padding: 10px 12px; border-radius: 6px; overflow-x: auto; margin: 6px 0; white-space: pre; }
+header.top { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; padding: 10px 16px;
+  background: var(--panel); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 5; }
+header.top h1 { font-size: 16px; margin: 0; white-space: nowrap; }
+header.top .meta { color: var(--muted); font-size: 12.5px; display: flex; flex-wrap: wrap; gap: 4px 14px; }
+header.top .spacer { flex: 1; }
+button { font: inherit; color: var(--ink); background: var(--soft); border: 1px solid var(--line); border-radius: 6px;
+  padding: 4px 10px; cursor: pointer; }
+button:hover { border-color: var(--muted); }
+.layout { display: grid; grid-template-columns: 300px minmax(0, 1fr); min-height: calc(100vh - var(--head, 52px)); }
+aside { border-right: 1px solid var(--line); background: var(--panel); padding: 12px; position: sticky; top: var(--head, 52px);
+  height: calc(100vh - var(--head, 52px)); overflow-y: auto; }
+main { padding: 16px 22px 60px; min-width: 0; }
+#menu-toggle { display: none; }
+@media (max-width: 820px) {
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  aside { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); display: none; }
+  aside.open { display: block; }
+  #menu-toggle { display: inline-block; }
+  main { padding: 14px 16px 50px; }
+  header.top { position: static; }
+  svg.nb { min-width: 600px; }
+}
+input[type=search], select { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line);
+  border-radius: 6px; padding: 6px 8px; width: 100%; }
+label.chk { display: flex; gap: 6px; align-items: center; font-size: 13px; margin: 2px 0; }
+fieldset { border: 0; padding: 0; margin: 10px 0; }
+legend { font-size: 11.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: 4px; }
+.filters { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.filters .wide { grid-column: 1 / -1; }
+.count { color: var(--muted); font-size: 12px; }
+#results { list-style: none; margin: 6px 0 0; padding: 0; }
+#results li a { display: flex; gap: 6px; align-items: baseline; padding: 3px 6px; border-radius: 5px; color: var(--ink); }
+#results li a:hover, #results li a.active { background: var(--soft); text-decoration: none; }
+#results li a[aria-current="page"] { background: var(--soft); font-weight: 600; }
+.tree { list-style: none; margin: 0; padding-left: 0; }
+.tree .tree { padding-left: 14px; border-left: 1px solid var(--line); margin-left: 7px; }
+.tree li { margin: 0; }
+.kind-head { font-size: 11.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 12px 0 2px; }
+.dim { opacity: .45; }
+.badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; line-height: 1.6; padding: 0 7px;
+  border-radius: 999px; border: 1px solid transparent; white-space: nowrap; font-weight: 500; vertical-align: 1px; }
+.src-database { color: var(--db); background: var(--db-bg); border-color: var(--db); }
+.src-reconstructed { color: var(--rc); background: var(--rc-bg); border-color: var(--rc); }
+.src-repository { color: var(--rp); background: var(--rp-bg); border-color: var(--rp); border-style: dashed; }
+.st-attributed { color: var(--ok); background: var(--ok-bg); }
+.st-shared { color: var(--sh); background: var(--sh-bg); }
+.st-consistent_unverified { color: var(--cu); background: var(--cu-bg); }
+.st-unresolved { color: var(--un); background: var(--un-bg); font-weight: 600; }
+.mod { color: var(--panel); background: var(--mc); }
+.kindtag { font-size: 11px; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; }
+.ann { font-family: ui-monospace, Menlo, monospace; font-size: 11.5px; color: var(--muted); }
+section.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; margin: 14px 0; }
+section.card > h2 { font-size: 15px; margin: 0 0 8px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+section.card.repo { border-style: dashed; border-color: var(--rp); }
+section.card.recon { border-color: var(--rc); }
+h1.page { font-size: 22px; margin: 4px 0 4px; word-break: break-word; }
+.sub { color: var(--muted); margin: 0 0 8px; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { text-align: left; padding: 5px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 11.5px; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); font-weight: 600; }
+.tablewrap { overflow-x: auto; }
+.chips { display: flex; flex-wrap: wrap; gap: 4px 6px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; font-size: 12.5px; color: var(--muted); }
+.kv { display: grid; grid-template-columns: max-content 1fr; gap: 3px 14px; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; min-width: 0; word-break: break-word; }
+.notice { padding: 8px 12px; border-radius: 8px; margin: 10px 0; }
+.notice.bad { background: var(--un-bg); color: var(--un); }
+.notice.warn { background: var(--cu-bg); color: var(--cu); }
+.notice.good { background: var(--ok-bg); color: var(--ok); }
+svg.nb { width: 100%; height: auto; display: block; }
+.nbwrap { overflow-x: auto; }
+svg.nb text { font: 12px -apple-system, Segoe UI, sans-serif; fill: var(--ink); }
+svg.nb .node rect { fill: var(--soft); stroke: var(--line); }
+svg.nb .node.center rect { fill: var(--accent); stroke: var(--accent); }
+svg.nb .node.center text { fill: var(--accent-ink); font-weight: 600; }
+svg.nb .node a:hover rect, svg.nb .node a:focus rect { stroke: var(--accent); stroke-width: 2; }
+svg.nb .edge { stroke: var(--muted); fill: none; stroke-width: 1.2; }
+svg.nb .elabel { fill: var(--muted); font-size: 11px; }
+.facts td:first-child { font-family: ui-monospace, Menlo, monospace; font-size: 12px; }
+.small { font-size: 12.5px; }
+.nowrap { white-space: nowrap; }
+details > summary { cursor: pointer; color: var(--muted); }
+kbd { font-family: ui-monospace, monospace; font-size: 11px; border: 1px solid var(--line); border-bottom-width: 2px;
+  border-radius: 4px; padding: 0 4px; background: var(--soft); }
+.sr { position: absolute; left: -9999px; }
+</style>
+</head>
+<body>
+<header class="top">
+  <button id="menu-toggle" aria-controls="side" aria-expanded="false">Menu</button>
+  <h1><a href="#/" id="home">Schema Explorer</a></h1>
+  <div class="meta" id="meta"></div>
+  <div class="spacer"></div>
+  <div class="legend" id="legend" aria-label="Legend"></div>
+  <button id="theme" aria-label="Switch colour theme">Theme</button>
+</header>
+<div class="layout">
+  <aside id="side" aria-label="Search and filters">
+    <label for="q" class="sr">Search</label>
+    <input id="q" type="search" placeholder="Search types, roles, functions  ( / )" autocomplete="off">
+    <label class="chk"><input type="checkbox" id="q-docs"> also search repository comments</label>
+    <fieldset>
+      <legend>Filters</legend>
+      <div class="filters">
+        <select id="f-kind" aria-label="Kind"><option value="">Any kind</option><option>entity</option><option>relation</option><option>attribute</option></select>
+        <select id="f-status" aria-label="Attribution status"><option value="">Any status</option></select>
+        <select id="f-module" class="wide" aria-label="Module"></select>
+        <select id="f-ann" aria-label="Annotation"><option value="">Any annotation</option></select>
+        <select id="f-scope" aria-label="Scope"><option value="">Core and profiles</option><option value="core">Core only</option><option value="profile">Profiles only</option></select>
+        <label class="chk wide"><input type="checkbox" id="f-abstract"> abstract only</label>
+        <label class="chk wide"><input type="checkbox" id="f-extended"> extended by a profile</label>
+      </div>
+    </fieldset>
+    <div class="count" id="count" aria-live="polite"></div>
+    <ul id="results" aria-label="Matching types"></ul>
+    <nav id="navlinks" class="small" style="margin-top:14px"></nav>
+  </aside>
+  <main id="main" tabindex="-1"></main>
+</div>
+<script type="application/json" id="export-data">/*__EXPORT_JSON__*/</script>
+<script>
+"use strict";
+const D = JSON.parse(document.getElementById("export-data").textContent);
+const S = D.schema, A = D.attribution, DOC = D.documentation, MD = D.module_data;
+const TYPES = S.types, ROLES = S.roles, FUNS = S.functions;
+const KIND_ORDER = ["entity", "relation", "attribute"];
+const STATUS_TEXT = {attributed: "attributed", shared: "shared", consistent_unverified: "consistent, unverified", unresolved: "unresolved"};
+const SRC_TEXT = {database: "database", reconstructed: "reconstructed", repository: "repository"};
+const MODULES = A.modules.map(m => m.name);
+const PROFILES = A.modules.filter(m => m.kind === "profile").map(m => m.name);
+const MOD_COLOUR = {};
+MODULES.forEach((m, i) => { MOD_COLOUR[m] = A.modules[i].kind === "core" ? "var(--m0)" : A.modules[i].kind === "setup" ? "var(--m4)"
+  : ["var(--m1)", "var(--m2)", "var(--m3)", "var(--m5)", "var(--m6)"][PROFILES.indexOf(m) % 5]; });
+
+// ---- small, safe DOM helpers (all text goes through textContent) ----
+function h(tag, attrs, ...kids) {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v === null || v === undefined || v === false) continue;
+    if (k === "class") el.className = v; else if (k === "style") el.setAttribute("style", v);
+    else if (k.startsWith("on")) el.addEventListener(k.slice(2), v); else el.setAttribute(k, v === true ? "" : v);
+  }
+  for (const kid of kids.flat(Infinity)) {
+    if (kid === null || kid === undefined || kid === false) continue;
+    el.append(kid instanceof Node ? kid : document.createTextNode(String(kid)));
+  }
+  return el;
+}
+const svgNS = "http://www.w3.org/2000/svg";
+function s(tag, attrs, ...kids) {
+  const el = document.createElementNS(svgNS, tag);
+  for (const [k, v] of Object.entries(attrs || {})) if (v !== null && v !== undefined) el.setAttribute(k, v);
+  for (const kid of kids.flat()) if (kid !== null && kid !== undefined) el.append(kid instanceof Node ? kid : document.createTextNode(String(kid)));
+  return el;
+}
+const enc = x => encodeURIComponent(x);
+const typeLink = l => TYPES[l] ? h("a", {href: "#type/" + enc(l)}, l) : h("span", {}, l);
+const roleLink = r => ROLES[r] ? h("a", {href: "#role/" + enc(r)}, r) : h("span", {}, r);
+const funLink = f => h("a", {href: "#fun/" + enc(f)}, f + "()");
+const modLink = m => h("a", {href: "#module/" + enc(m), class: "badge mod", style: "--mc:" + (MOD_COLOUR[m] || "var(--muted)")}, m);
+const srcBadge = p => h("span", {class: "badge src-" + p, title: D.provenance[p]}, "source: " + SRC_TEXT[p]);
+const stBadge = st => h("span", {class: "badge st-" + st, title: A.statuses[st]}, STATUS_TEXT[st]);
+const anns = list => list && list.length ? h("span", {class: "ann"}, " " + list.join(" ")) : null;
+function attrib(fid) {
+  const a = A.facts[fid];
+  if (!a) return h("span", {class: "count"}, "—");
+  return h("span", {class: "chips"}, stBadge(a.status), a.modules.map(modLink));
+}
+function card(title, provenance, ...kids) {
+  const cls = provenance === "repository" ? "card repo" : provenance === "reconstructed" ? "card recon" : "card";
+  return h("section", {class: cls}, h("h2", {}, title, provenance ? srcBadge(provenance) : null), ...kids);
+}
+function table(head, rows) {
+  if (!rows.length) return h("p", {class: "count"}, "None.");
+  return h("div", {class: "tablewrap"}, h("table", {}, h("thead", {}, h("tr", {}, head.map(x => h("th", {}, x)))),
+    h("tbody", {}, rows.map(r => h("tr", {}, r.map(c => h("td", {}, c)))))));
+}
+
+// ---- header and legend ----
+function header() {
+  const src = D.source, ex = D.export;
+  const ver = A.verification === "verified";
+  document.getElementById("meta").append(
+    h("span", {}, "database ", h("b", {}, src.database || "—")),
+    h("span", {}, src.server_version),
+    h("span", {title: src.schema_sha256}, "schema ", h("span", {class: "mono"}, src.schema_sha256.slice(0, 12))),
+    h("span", {}, "exported ", ex.exported_at || "—"),
+    h("a", {href: "#checks", class: "badge " + (ver ? "st-attributed" : "st-unresolved")},
+      ver ? "attribution verified" : "attribution NOT verified"));
+  document.getElementById("legend").append(
+    srcBadge("database"), srcBadge("reconstructed"), srcBadge("repository"),
+    h("a", {href: "#checks"}, "what these mean"));
+  document.title = "Schema Explorer: " + (src.database || "export");
+}
+
+// ---- search and filters ----
+const docText = {};
+for (const [l, es] of Object.entries(DOC.types)) docText["type:" + l] = es.map(e => e.comment).join(" ").toLowerCase();
+for (const [f, es] of Object.entries(DOC.functions)) docText["fun:" + f] = es.map(e => e.comment).join(" ").toLowerCase();
+const ITEMS = [
+  ...Object.values(TYPES).map(t => ({k: "type", id: t.label, kind: t.kind, href: "#type/" + enc(t.label)})),
+  ...Object.values(ROLES).map(r => ({k: "role", id: r.role, kind: "role", href: "#role/" + enc(r.role)})),
+  ...Object.keys(FUNS).map(f => ({k: "fun", id: f, kind: "function", href: "#fun/" + enc(f)})),
+];
+function typeStatuses(l) { return new Set(TYPES[l].facts.map(f => A.facts[f] && A.facts[f].status)); }
+function typeModules(l) { const t = A.types[l]; return new Set([...t.introduced_by.modules, ...t.extended_by]); }
+function passes(item, f) {
+  if (item.k !== "type") return !(f.kind || f.abstract || f.extended || f.ann) && moduleOk(item, f) && statusOk(item, f);
+  const t = TYPES[item.id], at = A.types[item.id];
+  if (f.kind && t.kind !== f.kind) return false;
+  if (f.abstract && !t.abstract) return false;
+  if (f.extended && !at.extended_by.some(m => PROFILES.includes(m))) return false;
+  if (f.ann) {
+    const all = [...t.annotations, ...(t.value_type ? t.value_type.annotations : []),
+      ...t.owns.concat(t.plays, t.relates).filter(c => c.declared).flatMap(c => c.annotations)];
+    if (!all.some(a => a.startsWith(f.ann))) return false;
+  }
+  return moduleOk(item, f) && statusOk(item, f);
+}
+function itemModules(item) {
+  if (item.k === "type") return typeModules(item.id);
+  if (item.k === "fun") return new Set(A.functions[item.id].modules);
+  const r = ROLES[item.id]; const a = A.facts[r.relation + " relates " + r.name];
+  return new Set(a ? a.modules : []);
+}
+function moduleOk(item, f) {
+  const ms = itemModules(item);
+  if (f.module && !ms.has(f.module)) return false;
+  if (f.scope === "core" && ![...ms].every(m => !PROFILES.includes(m))) return false;
+  if (f.scope === "profile" && ![...ms].some(m => PROFILES.includes(m))) return false;
+  return true;
+}
+function statusOk(item, f) {
+  if (!f.status) return true;
+  if (item.k === "type") return typeStatuses(item.id).has(f.status);
+  if (item.k === "fun") return A.functions[item.id].status === f.status;
+  const r = ROLES[item.id]; const a = A.facts[r.relation + " relates " + r.name];
+  return a && a.status === f.status;
+}
+function score(item, q, docs) {
+  if (!q) return 1;
+  const id = item.id.toLowerCase();
+  const name = item.k === "role" ? id.split(":")[1] : id;
+  if (id === q || name === q) return 100;
+  if (id.startsWith(q) || name.startsWith(q)) return 80;
+  if (id.split(/[-:_]/).some(w => w.startsWith(q))) return 60;
+  if (id.includes(q)) return 40;
+  if (docs && (docText[item.k + ":" + item.id] || "").includes(q)) return 10;
+  return 0;
+}
+function readFilters() {
+  const v = id => document.getElementById(id);
+  return {q: v("q").value.trim().toLowerCase(), docs: v("q-docs").checked, kind: v("f-kind").value,
+    status: v("f-status").value, module: v("f-module").value, ann: v("f-ann").value, scope: v("f-scope").value,
+    abstract: v("f-abstract").checked, extended: v("f-extended").checked};
+}
+function setupFilters() {
+  const st = document.getElementById("f-status");
+  for (const k of Object.keys(STATUS_TEXT)) st.append(h("option", {value: k}, STATUS_TEXT[k] + " (" + A.counts[k] + ")"));
+  const mod = document.getElementById("f-module");
+  mod.append(h("option", {value: ""}, "Any module"));
+  for (const m of A.modules) mod.append(h("option", {value: m.name}, m.name + (m.kind === "setup" ? " (setup step)" : "")));
+  const ann = document.getElementById("f-ann");
+  const names = new Set();
+  for (const t of Object.values(TYPES)) {
+    [...t.annotations, ...(t.value_type ? t.value_type.annotations : []), ...t.owns.concat(t.plays, t.relates).flatMap(c => c.annotations)]
+      .forEach(a => names.add(a.match(/^@[a-z]+/)[0]));
+  }
+  [...names].sort().forEach(a => ann.append(h("option", {value: a}, a)));
+  for (const id of ["q", "q-docs", "f-kind", "f-status", "f-module", "f-ann", "f-scope", "f-abstract", "f-extended"]) {
+    document.getElementById(id).addEventListener("input", renderResults);
+  }
+}
+function treeOf(kind, keep) {
+  const roots = Object.values(TYPES).filter(t => t.kind === kind && !t.supertype).map(t => t.label).sort();
+  const shown = l => keep.has(l) || TYPES[l].subtypes.some(shown);
+  const node = l => {
+    const kids = TYPES[l].subtypes.filter(shown);
+    return h("li", {}, h("a", {href: "#type/" + enc(l), class: keep.has(l) ? null : "dim", "data-label": l}, l,
+        TYPES[l].abstract ? h("span", {class: "ann"}, " @abstract") : null),
+      kids.length ? h("ul", {class: "tree"}, kids.map(node)) : null);
+  };
+  return roots.filter(shown).map(node);
+}
+function renderResults() {
+  const f = readFilters();
+  const list = document.getElementById("results");
+  list.replaceChildren();
+  const matches = ITEMS.map(it => [it, score(it, f.q, f.docs)]).filter(([it, sc]) => sc > 0 && passes(it, f));
+  const filtered = f.q || f.kind || f.status || f.module || f.ann || f.scope || f.abstract || f.extended;
+  if (!filtered) {
+    for (const k of KIND_ORDER) {
+      list.append(h("li", {class: "kind-head"}, k + " types (" + S.counts[k] + ")"));
+      list.append(h("li", {}, h("ul", {class: "tree"}, treeOf(k, new Set(Object.keys(TYPES))))));
+    }
+    list.append(h("li", {class: "kind-head"}, "functions (" + S.counts.functions + ")"));
+    Object.keys(FUNS).forEach(fn => list.append(h("li", {}, h("a", {href: "#fun/" + enc(fn)}, fn + "()"))));
+    document.getElementById("count").textContent = S.counts.types + " types, " + S.counts.roles + " roles, " + S.counts.functions + " functions";
+  } else if (!f.q && !matches.some(([it]) => it.k !== "type")) {
+    const keep = new Set(matches.map(([it]) => it.id));
+    for (const k of KIND_ORDER) {
+      const tree = treeOf(k, keep);
+      if (tree.length) { list.append(h("li", {class: "kind-head"}, k)); list.append(h("li", {}, h("ul", {class: "tree"}, tree))); }
+    }
+    document.getElementById("count").textContent = keep.size + " matching types (shown in their hierarchy; others dimmed)";
+  } else {
+    matches.sort((a, b) => b[1] - a[1] || a[0].id.localeCompare(b[0].id));
+    for (const [it] of matches.slice(0, 300)) {
+      list.append(h("li", {}, h("a", {href: it.href, "data-label": it.id}, h("span", {class: "kindtag"}, it.kind), it.id)));
+    }
+    document.getElementById("count").textContent = matches.length + " matches" + (matches.length > 300 ? " (first 300 shown)" : "");
+  }
+  markCurrent();
+}
+function markCurrent() {
+  const cur = location.hash;
+  for (const a of document.querySelectorAll("#results a")) {
+    if (a.getAttribute("href") === cur) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+  }
+}
+
+// ---- neighbourhood diagram: supertypes above, subtypes below, attributes left, relations or players right ----
+function neighbourhood(label) {
+  const t = TYPES[label];
+  const up = t.supertypes.slice(0, 2).reverse();
+  const down = t.subtypes.slice(0, 6);
+  const left = t.kind === "attribute"
+    ? Object.keys(TYPES).filter(o => TYPES[o].owns.some(x => x.attribute === label && x.declared)).slice(0, 8).map(o => [o, "owned by"])
+    : t.owns.filter(o => o.declared).slice(0, 8).map(o => [o.attribute, "owns"]);
+  let right;
+  if (t.kind === "relation") {
+    right = t.relates.filter(r => r.declared).flatMap(r => ROLES[r.role].played_by_declared.slice(0, 3).map(p => [p, r.name])).slice(0, 9);
+  } else {
+    right = t.plays.filter(p => p.declared).map(p => [p.role.split(":")[0], p.role.split(":")[1]]).slice(0, 9);
+  }
+  const W = 760, bw = 150, bh = 26, gap = 10;
+  const rows = Math.max(left.length, right.length, 1);
+  const midH = rows * (bh + gap);
+  const H = 20 + up.length * (bh + 22) + Math.max(midH, bh) + (down.length ? bh + 40 : 0) + 20;
+  const svg = s("svg", {class: "nb", viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Neighbourhood of " + label});
+  const box = (x, y, l, center) => {
+    const g = s("g", {class: "node" + (center ? " center" : "")});
+    const inner = [s("rect", {x, y, width: bw, height: bh, rx: 6}),
+      s("text", {x: x + bw / 2, y: y + 17, "text-anchor": "middle"}, l.length > 21 ? l.slice(0, 20) + "…" : l)];
+    if (!center && TYPES[l]) {
+      const a = s("a", {href: "#type/" + enc(l)}, ...inner);
+      a.append(s("title", {}, l)); g.append(a);
+    } else g.append(...inner);
+    return g;
+  };
+  let y = 20;
+  const cx = W / 2 - bw / 2;
+  for (const u of up) { svg.append(box(cx, y, u)); svg.append(s("path", {class: "edge", d: `M${W / 2} ${y + bh} V${y + bh + 22}`})); y += bh + 22; }
+  const midTop = y, cy = midTop + Math.max(midH, bh) / 2 - bh / 2;
+  if (up.length) svg.lastChild.setAttribute("d", `M${W / 2} ${midTop - 22} V${cy}`);
+  svg.append(box(cx, cy, label, true));
+  const side = (items, x, anchorX) => items.forEach(([l, lab], i) => {
+    const yy = midTop + i * (bh + gap) + (Math.max(midH, bh) - items.length * (bh + gap) + gap) / 2;
+    svg.append(s("path", {class: "edge", d: `M${anchorX} ${cy + bh / 2} C ${(anchorX + x + (x > anchorX ? 0 : bw)) / 2} ${cy + bh / 2}, ${(anchorX + x + (x > anchorX ? 0 : bw)) / 2} ${yy + bh / 2}, ${x > anchorX ? x : x + bw} ${yy + bh / 2}`}));
+    svg.append(box(x, yy, l));
+    svg.append(s("text", {class: "elabel", x: x > anchorX ? x - 6 : x + bw + 6, y: yy - 2, "text-anchor": x > anchorX ? "end" : "start"}, lab));
+  });
+  side(left, 20, cx);
+  side(right, W - 20 - bw, cx + bw);
+  if (down.length) {
+    const dy = midTop + Math.max(midH, bh) + 40;
+    const span = down.length * (bw + 8) - 8, x0 = Math.max(4, W / 2 - span / 2);
+    down.forEach((d, i) => {
+      const x = x0 + i * (bw + 8);
+      svg.append(s("path", {class: "edge", d: `M${W / 2} ${cy + bh} C ${W / 2} ${dy - 10}, ${x + bw / 2} ${cy + bh + 10}, ${x + bw / 2} ${dy}`}));
+      svg.append(box(x, dy, d));
+    });
+  }
+  const more = [];
+  if (t.supertypes.length > 2) more.push((t.supertypes.length - 2) + " more supertypes");
+  if (t.subtypes.length > 6) more.push((t.subtypes.length - 6) + " more subtypes");
+  return h("div", {}, h("div", {class: "nbwrap"}, svg), h("p", {class: "count"}, "Declared neighbours only (inherited ones are in the tables). ",
+    more.length ? more.join(", ") + " not drawn." : ""));
+}
+
+// ---- pages ----
+function docBox(entries, what) {
+  const body = entries && entries.length
+    ? entries.map(e => h("div", {style: "margin:6px 0"}, h("p", {style: "margin:0"}, e.comment),
+        h("div", {class: "count"}, e.file + ":" + e.line + " · ", modLink(e.module),
+          e.declares.length ? " · on the statement declaring " + e.declares.join(", ") : "")))
+    : h("p", {class: "count"}, "No comment for this " + what + " in the module files.");
+  return card("Documentation from the repository (not from the database)", "repository",
+    h("p", {class: "count", style: "margin-top:0"}, DOC.description), body);
+}
+function capRows(list, key, linker) {
+  return list.map(c => [
+    h("span", {}, linker(c[key]), anns(c.annotations), c.specialises ? h("span", {class: "ann"}, " as ", roleLink(c.specialises)) : null),
+    c.declared ? h("span", {}, "declared here") : h("span", {}, "inherited from ", typeLink(c.from)),
+    attrib(capFact(c, key)),
+  ]);
+}
+function capFact(c, key) {
+  if (key === "attribute") return c.from + " owns " + c.attribute;
+  if (key === "role" && c.name !== undefined) return c.from + " relates " + c.name;
+  return c.from + " plays " + c.role;
+}
+function typePage(label) {
+  const t = TYPES[label];
+  if (!t) return notFound("type", label);
+  const at = A.types[label];
+  const out = [
+    h("p", {class: "sub"}, h("span", {class: "kindtag"}, t.kind), " ", t.abstract ? h("span", {class: "ann"}, "@abstract ") : null,
+      t.annotations.filter(a => a !== "@abstract").join(" ")),
+    h("h1", {class: "page"}, label),
+    h("div", {class: "chips"}, "introduced by ", stBadge(at.introduced_by.status), at.introduced_by.modules.map(modLink),
+      at.extended_by.length ? h("span", {}, " · extended by ") : null, at.extended_by.map(modLink)),
+  ];
+  const schema = [
+    h("dl", {class: "kv"},
+      h("dt", {}, "supertypes"), h("dd", {}, t.supertypes.length ? t.supertypes.flatMap((x, i) => [i ? " → " : "", typeLink(x)]) : "none"),
+      h("dt", {}, "subtypes"), h("dd", {class: "chips"}, t.subtypes.length ? t.subtypes.map(typeLink) : "none"),
+      t.value_type ? [h("dt", {}, "value type"), h("dd", {}, h("code", {}, t.value_type.type), anns(t.value_type.annotations),
+        t.value_type.declared ? "" : h("span", {class: "count"}, " (inherited from ", typeLink(t.value_type.from), ")"))] : null,
+      t.functions.length ? [h("dt", {}, "named in functions"), h("dd", {class: "chips"}, t.functions.map(funLink))] : null),
+    neighbourhood(label),
+  ];
+  out.push(card("Schema", "database", ...schema));
+  if (t.kind === "relation") out.push(card("Roles related (" + t.relates.length + ")", "database",
+    table(["role", "where", "attribution of the declaring fact"], capRows(t.relates, "role", roleLink))));
+  if (t.kind === "attribute") {
+    const owners = S.attributes_owned_by[label] || [];
+    out.push(card("Owned by (" + owners.length + ", including inherited ownership)", "database", h("div", {class: "chips"}, owners.map(typeLink))));
+  }
+  out.push(card("Owns (" + t.owns.length + ")", "database", table(["attribute", "where", "attribution of the declaring fact"], capRows(t.owns, "attribute", typeLink))));
+  out.push(card("Plays (" + t.plays.length + ")", "database", table(["role", "where", "attribution of the declaring fact"], capRows(t.plays, "role", roleLink))));
+  out.push(card("TypeQL statement", "database", h("pre", {}, t.statement),
+    h("p", {class: "count"}, "Exactly as in the database's schema(): declared capabilities only.")));
+  const contrib = Object.entries(at.contributions).map(([m, fs]) => [modLink(m),
+    h("div", {}, fs.map(f => h("div", {class: "mono small"}, f, " ", stBadge(A.facts[f].status))))]);
+  out.push(card("Attribution of this type's declarations", "reconstructed",
+    h("p", {class: "count", style: "margin-top:0"}, "Per declaration and per annotation. A type has no single owner: it is introduced by one module and may be extended by others."),
+    table(["module", "declarations it contributes"], contrib),
+    at.unresolved.length ? h("div", {class: "notice bad"}, "Unresolved: " + at.unresolved.join(", ")) : null,
+    alsoDeclared(t.facts)));
+  out.push(docBox(DOC.types[label], "type"));
+  return out;
+}
+function alsoDeclared(fids) {
+  const notes = fids.filter(f => A.repository_notes.also_declared_in_source[f]);
+  if (!notes.length) return null;
+  return h("div", {class: "notice warn"}, srcBadge("repository"), " Also declared in source (a repeat with no effect on the schema; replay cannot see it): ",
+    notes.map(f => h("div", {class: "mono small"}, f + " — repeated in ", A.repository_notes.also_declared_in_source[f].map(modLink))));
+}
+function rolePage(role) {
+  const r = ROLES[role];
+  if (!r) return notFound("role", role);
+  const inherited = r.played_by.filter(x => !r.played_by_declared.includes(x));
+  return [
+    h("p", {class: "sub"}, h("span", {class: "kindtag"}, "role"), " of ", typeLink(r.relation)),
+    h("h1", {class: "page"}, role),
+    h("div", {class: "chips"}, "declared by ", attrib(r.relation + " relates " + r.name)),
+    card("Role", "database", h("dl", {class: "kv"},
+      h("dt", {}, "relation"), h("dd", {}, typeLink(r.relation)),
+      h("dt", {}, "annotations"), h("dd", {}, r.annotations.length ? h("span", {class: "ann"}, r.annotations.join(" ")) : "none"),
+      h("dt", {}, "specialises"), h("dd", {}, r.specialises ? roleLink(r.specialises) : "none"),
+      h("dt", {}, "specialised by"), h("dd", {class: "chips"}, r.specialised_by.length ? r.specialised_by.map(roleLink) : "none"),
+      h("dt", {}, "related by"), h("dd", {class: "chips"}, r.related_by.map(typeLink)),
+      h("dt", {}, "played by (declared)"), h("dd", {class: "chips"}, r.played_by_declared.length ? r.played_by_declared.map(typeLink) : "none"),
+      h("dt", {}, "played by (inherited)"), h("dd", {class: "chips"}, inherited.length ? inherited.map(typeLink) : "none")),
+      r.specialises ? h("p", {class: "count"}, "TypeDB also reports the parent role ", roleLink(r.specialises), " as related by ", typeLink(r.relation), ", through this specialisation.") : null),
+  ];
+}
+function funPage(name) {
+  const f = FUNS[name];
+  if (!f) return notFound("function", name);
+  return [
+    h("p", {class: "sub"}, h("span", {class: "kindtag"}, "function")),
+    h("h1", {class: "page"}, name + "()"),
+    h("div", {class: "chips"}, "defined by ", stBadge(A.functions[name].status), A.functions[name].modules.map(modLink)),
+    card("Function", "database",
+      h("dl", {class: "kv"},
+        h("dt", {}, "parameters"), h("dd", {}, f.params.length ? f.params.flatMap((p, i) => [i ? ", " : "", h("code", {}, p.variable), ": ", typeLink(p.type.replace(/\?$/, ""))]) : "none"),
+        h("dt", {}, "returns"), h("dd", {}, h("code", {}, f.returns), f.stream ? " (a stream of answers)" : ""),
+        h("dt", {}, "types named"), h("dd", {class: "chips"}, f.types_named.map(typeLink))),
+      h("pre", {}, f.text),
+      h("p", {class: "count"}, D.schema.single_source.functions)),
+    docBox(DOC.functions[name], "function"),
+  ];
+}
+function modulePage(name) {
+  const m = A.modules.find(x => x.name === name);
+  if (!m) return notFound("module", name);
+  const byType = {};
+  for (const [fid, a] of Object.entries(A.facts)) if (a.modules.includes(name)) {
+    const subj = S.facts[fid].subject; (byType[subj] = byType[subj] || []).push(fid);
+  }
+  const doc = DOC.modules[name];
+  const scan = A.repository_notes.scan[name];
+  const data = MD.records.filter(r => r.attribution.modules.includes(name));
+  return [
+    h("p", {class: "sub"}, h("span", {class: "kindtag"}, m.kind === "setup" ? "setup step" : m.kind + " module")),
+    h("h1", {class: "page"}, name),
+    card("Module", "reconstructed", h("dl", {class: "kv"},
+      h("dt", {}, "recorded version"), h("dd", {}, m.recorded_version || "—", " ", srcBadge("database")),
+      h("dt", {}, "version in this code"), h("dd", {}, m.code_version || "—"),
+      h("dt", {}, "replay"), h("dd", {}, m.replay),
+      h("dt", {}, "declarations"), h("dd", {class: "chips"}, Object.entries(m.facts).map(([st, n]) => h("span", {}, stBadge(st), " " + n)))),
+      m.kind === "setup" ? h("p", {class: "count"}, A.limitations[2]) : null),
+    card("Declarations it contributes, by type", "reconstructed",
+      table(["type or function", "declarations"], Object.entries(byType).sort().map(([subj, fs]) => [
+        TYPES[subj] ? typeLink(subj) : funLink(subj), h("div", {}, fs.sort().map(f => h("div", {class: "mono small"}, f)))]))),
+    data.length ? card("Module data it writes", "reconstructed", dataTable(data)) : null,
+    doc ? card("From the module files", "repository",
+      h("p", {}, doc.header || "No header comment."),
+      h("div", {class: "count"}, doc.files.join(", ")),
+      scan ? h("div", {class: "count"}, scan.statements + " statements read; unread: " + (scan.unread.length ? scan.unread.join(", ") : "none")) : null) : null,
+  ];
+}
+function dataTable(records) {
+  return table(["record", "details", "source", "attribution"], records.map(r => [
+    h("span", {class: "mono small"}, r.id),
+    r.kind === "concept" ? h("span", {}, typeLink(r.type), " “" + r.name + "”")
+      : h("span", {class: "small"}, "functional slot on ", typeLink(r.predicate), ": key roles ", r.key_roles.join(", "), "; value role ", r.value_role),
+    srcBadge(r.source),
+    h("span", {class: "chips"}, stBadge(r.attribution.status), r.attribution.modules.map(modLink))]));
+}
+function dataPage() {
+  return [h("h1", {class: "page"}, "Module data"),
+    h("p", {class: "sub"}, MD.description),
+    MD.verification === "verified" ? h("div", {class: "notice good"}, "Module data verified against the replay.")
+      : h("div", {class: "notice bad"}, "Module data NOT verified.", MD.problems.map(p => h("div", {class: "small"}, p))),
+    card("Records (" + MD.records.length + ")", null, dataTable(MD.records))];
+}
+function factsPage(params) {
+  const st = params.get("status") || "", mod = params.get("module") || "";
+  const rows = Object.entries(A.facts).filter(([f, a]) => (!st || a.status === st) && (!mod || a.modules.includes(mod)));
+  const sel = h("select", {"aria-label": "Status", onchange: e => { location.hash = "#facts?status=" + enc(e.target.value) + (mod ? "&module=" + enc(mod) : ""); }},
+    h("option", {value: ""}, "all statuses"), Object.keys(STATUS_TEXT).map(k => h("option", {value: k, selected: k === st}, STATUS_TEXT[k])));
+  return [h("h1", {class: "page"}, "All declarations"),
+    h("p", {class: "sub"}, "Every fact of the schema (one per declaration, annotation, specialisation and function) and its attribution."),
+    h("div", {style: "max-width:260px"}, sel),
+    card(rows.length + " facts", "reconstructed", h("div", {class: "tablewrap facts"}, table(["fact", "subject", "attribution"],
+      rows.slice(0, 2000).map(([f, a]) => [f, S.facts[f].kind === "function" ? funLink(S.facts[f].subject) : typeLink(S.facts[f].subject), attrib(f)]))))];
+}
+function checksPage() {
+  const v = D.verification;
+  const ok = A.verification === "verified";
+  return [h("h1", {class: "page"}, "Checks and sources"),
+    card("Schema fidelity", "database",
+      h("div", {class: "notice good"}, "The export is produced only when all three checks pass."),
+      table(["check", "result"], [
+        ["Exact parse: every character of schema() accounted for", "passed · " + v.parse.facts + " facts"],
+        ["Query cross-check: types, supertypes, owns, plays, relates, specialisations and value types equal TypeDB's answers",
+          "passed · " + Object.entries(v.query_cross_check.compared).map(([k, n]) => k + " " + n).join(", ")],
+        ["Round trip: the exported TypeQL, defined into an empty database, gives back an identical schema()", "passed · " + v.round_trip.characters + " characters"]]),
+      h("p", {}, h("b", {}, "Single source. "), v.single_source.annotations),
+      h("p", {}, v.single_source.functions)),
+    card("Attribution", "reconstructed",
+      ok ? h("div", {class: "notice good"}, "Verified: the complete replay matches the database exactly.")
+        : h("div", {class: "notice bad"}, "NOT verified: nothing is attributed or shared. Problems:", A.problems.map(p => h("div", {class: "small mono"}, p))),
+      h("p", {}, A.method),
+      table(["status", "meaning", "facts"], Object.keys(STATUS_TEXT).map(k => [stBadge(k), A.statuses[k], h("a", {href: "#facts?status=" + k}, String(A.counts[k]))])),
+      table(["module", "kind", "recorded", "this code", "replay", "facts"], A.modules.map(m => [modLink(m.name), m.kind, m.recorded_version || "—",
+        m.code_version || "—", m.replay, h("a", {href: "#facts?module=" + enc(m.name)}, String(Object.values(m.facts).reduce((a, b) => a + b, 0)))])),
+      h("details", {}, h("summary", {}, "Limitations"), A.limitations.map(l => h("p", {class: "small"}, l)))),
+    card("The three sources", null, table(["badge", "meaning"], Object.keys(D.provenance).map(p => [srcBadge(p), D.provenance[p]])))];
+}
+function overview() {
+  const c = S.counts;
+  return [h("h1", {class: "page"}, "Schema of " + (D.source.database || "a TypeDB database")),
+    h("p", {class: "sub"}, "Exported from the live database: the database is the authority. ",
+      "Attribution to core and profile modules is reconstructed by replay; comments come from the repository."),
+    A.verification === "verified" ? h("div", {class: "notice good"}, "All checks passed; attribution verified by a complete matching replay.")
+      : h("div", {class: "notice bad"}, "Attribution NOT verified. See ", h("a", {href: "#checks"}, "Checks"), "."),
+    card("Contents", "database", h("dl", {class: "kv"},
+      h("dt", {}, "types"), h("dd", {}, c.types + " (" + c.entity + " entity, " + c.relation + " relation, " + c.attribute + " attribute)"),
+      h("dt", {}, "roles"), h("dd", {}, String(c.roles)),
+      h("dt", {}, "functions"), h("dd", {class: "chips"}, Object.keys(FUNS).map(funLink)),
+      h("dt", {}, "declarations"), h("dd", {}, h("a", {href: "#facts"}, c.facts + " facts")),
+      h("dt", {}, "server"), h("dd", {}, D.source.server_version),
+      h("dt", {}, "schema SHA-256"), h("dd", {class: "mono small"}, D.source.schema_sha256))),
+    card("Modules", "reconstructed", table(["module", "kind", "version", "replay", "declarations by status"], A.modules.map(m => [modLink(m.name), m.kind,
+      m.recorded_version || "—", m.replay, h("span", {class: "chips"}, Object.entries(m.facts).map(([st, n]) => h("span", {}, stBadge(st), " " + n)))]))),
+    card("Start here", null, h("div", {class: "chips"}, ["particular", "event", "proposition", "attestation"].filter(l => TYPES[l]).map(typeLink),
+      h("a", {href: "#data"}, "module data"), h("a", {href: "#checks"}, "checks and sources")),
+      h("p", {class: "count"}, "Press ", h("kbd", {}, "/"), " to search. Every type, role and module is a link; the browser's back button works.")),
+    h("p", {class: "count"}, "Export: " + D.export.exporter + (D.export.code_commit ? " · code " + D.export.code_commit.slice(0, 10) + (D.export.code_dirty ? " (uncommitted changes)" : "") : ""))];
+}
+function notFound(what, id) { return [h("h1", {class: "page"}, "Not in this schema"), h("p", {}, "There is no " + what + " “" + id + "” in this export.")]; }
+
+function route() {
+  const raw = location.hash.slice(1) || "/";
+  const [path, query] = raw.split("?");
+  const params = new URLSearchParams(query || "");
+  const [kind, ...rest] = path.split("/");
+  const id = decodeURIComponent(rest.join("/"));
+  let content;
+  if (kind === "type") content = typePage(id);
+  else if (kind === "role") content = rolePage(id);
+  else if (kind === "fun") content = funPage(id);
+  else if (kind === "module") content = modulePage(id);
+  else if (kind === "facts") content = factsPage(params);
+  else if (kind === "data") content = dataPage();
+  else if (kind === "checks") content = checksPage();
+  else content = overview();
+  const main = document.getElementById("main");
+  main.replaceChildren(...[content].flat().filter(Boolean));
+  window.scrollTo(0, 0);
+  markCurrent();
+  if (window.innerWidth <= 820) { document.getElementById("side").classList.remove("open"); document.getElementById("menu-toggle").setAttribute("aria-expanded", "false"); }
+}
+
+// ---- keyboard: "/" focuses search; arrows move through results; Enter opens ----
+document.addEventListener("keydown", e => {
+  const q = document.getElementById("q");
+  if (e.key === "/" && document.activeElement !== q && !/input|select|textarea/i.test(document.activeElement.tagName)) {
+    e.preventDefault(); document.getElementById("side").classList.add("open"); q.focus(); q.select();
+  }
+});
+document.getElementById("q").addEventListener("keydown", e => {
+  if (e.key === "ArrowDown" || e.key === "Enter") {
+    const first = document.querySelector("#results a");
+    if (first) { e.preventDefault(); if (e.key === "Enter") location.hash = first.getAttribute("href"); else first.focus(); }
+  }
+});
+document.getElementById("results").addEventListener("keydown", e => {
+  if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
+  const links = [...document.querySelectorAll("#results a")];
+  const i = links.indexOf(document.activeElement);
+  if (i < 0) return;
+  e.preventDefault();
+  (links[i + (e.key === "ArrowDown" ? 1 : -1)] || (e.key === "ArrowUp" ? document.getElementById("q") : links[i])).focus();
+});
+document.getElementById("menu-toggle").addEventListener("click", e => {
+  const side = document.getElementById("side"); side.classList.toggle("open");
+  e.target.setAttribute("aria-expanded", side.classList.contains("open") ? "true" : "false");
+});
+document.getElementById("theme").addEventListener("click", () => {
+  const dark = document.documentElement.dataset.theme ? document.documentElement.dataset.theme === "dark"
+    : matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.dataset.theme = dark ? "light" : "dark";
+  try { localStorage.setItem("schema-explorer-theme", document.documentElement.dataset.theme); } catch (err) { /* storage unavailable */ }
+});
+try { const t = localStorage.getItem("schema-explorer-theme"); if (t) document.documentElement.dataset.theme = t; } catch (err) { /* storage unavailable */ }
+const nav = document.getElementById("navlinks");
+nav.append(h("div", {}, h("a", {href: "#/"}, "Overview"), " · ", h("a", {href: "#checks"}, "Checks"), " · ", h("a", {href: "#facts"}, "All declarations"), " · ", h("a", {href: "#data"}, "Module data")));
+nav.append(h("div", {class: "chips", style: "margin-top:8px"}, A.modules.map(m => modLink(m.name))));
+const fitHeader = () => document.documentElement.style.setProperty("--head", document.querySelector("header.top").offsetHeight + "px");
+window.addEventListener("resize", fitHeader);
+header();
+fitHeader();
+setupFilters();
+renderResults();
+window.addEventListener("hashchange", route);
+route();
+</script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+1. schema(): chars 10502 | type_schema(): chars 9623 | functions in schema(): 2 in type_schema(): 0
+   comments kept: False | deterministic: True
+   first lines:
+     define
+     
+     attribute wm-id,
+      value string;
+     attribute name,
+      value string;
+   lines mentioning sampling:
+       plays sampling:sampler;
+       plays sampling:sampled;
+       plays sampling:product;
+     relation sampling,
+   one function:
+     fun parts_in($whole: particular, $w: world) -> { particular }:
+       match
+         { $c isa part-of (whole: $whole, part: $p); attestation (content: $c, context: $w); } or
+         { $c isa part-of (whole: $whole, part: $m); attestation (content: $c, context: $w); let $p in parts_in($m, $w); };
+       return { $p };
+     fun frames_linked($f: spatial-frame, $w: world) -> { spatial-frame }:
+2. round trip: define schema() into an empty database -> identical schema(): True
+3. entity types: 21 rows; e.g. [('t', 'schema-module')]
+3. relation types: 35 rows; e.g. [('t', 'branching')]
+3. attribute types: 51 rows; e.g. [('t', 'wm-id')]
+3. role types (relates): 99 rows; e.g. [('r', 'branching'), ('role', 'branching:base')]
+3. direct supertypes (sub!): 54 rows; e.g. [('s', 'particular'), ('t', 'physical-object')]
+3. owns (incl. inherited?): 180 rows; e.g. [('a', 'module-name'), ('t', 'schema-module')]
+3. plays (incl. inherited?): 460 rows; e.g. [('r', 'existence:existent'), ('t', 'particular')]
+3. role specialisation ($role sub! $p): 5 rows; e.g. [('p', 'event:patient'), ('r', 'replacement:removed'), ('t', 'replacement')]
+3. relates ... as: 104 rows; e.g. [('p', 'branching:base'), ('r', 'branching:base'), ('t', 'branching')]
+3. owns @key filter: ERROR: [REP254] The language feature is not yet implemented: QueryingAnnotations. Caused: [QEX7] Error in provided query.
+3. owns @card filter: ERROR: [REP254] The language feature is not yet implemented: QueryingAnnotations. Caused: [QEX7] Error in provided query.
+3. abstract filter: ERROR: [TQL0] [TQL03] TypeQL Error: There is a syntax error parsing error: expected type_constraint_base, thing_constraint, relation, comparator, list_index, IS, PLUS, MINUS, TIMES, DIVIDE, POWER, or MODULO Near 1:9: --> match 
+3. entity abstract filter: ERROR: [TQL0] [TQL03] TypeQL Error: There is a syntax error parsing error: expected type_constraint_base Near 1:16: --> match entity $t @abstract; ^ Caused: Error in usage of TypeQL. Caused: [QEX1] Failed to parse TypeQL query.
+3. value type filter: 20 rows; e.g. [('a', 'wm-id')]
+3. value type binding: ERROR: [TQL0] [TQL03] TypeQL Error: There is a syntax error parsing error: expected value_type Near 1:29: --> match attribute $a; $a value $v; ^ Caused: Error in usage of TypeQL. Caused: [QEX1] Failed to parse TypeQL query. Cau
+3. label binding: 1 rows; e.g. [('t', 'sample')]
+3. fetch labels: 21 rows; e.g. []
+3. function listing: ERROR: [TQL0] [TQL03] TypeQL Error: There is a syntax error parsing error: expected type_constraint_base, comparator, PLUS, MINUS, TIMES, DIVIDE, POWER, MODULO, or NAMESPACE_SEP Near 1:10: --> match fun $f; ^ Caused: Error in u
+4. owns includes inherited: particular owns wm-id: True | sample owns wm-id: True
+   plays includes inherited: sample plays sampling:sampled: True
+   relates includes inherited roles: sampling relates event:actor: True | sampling:sampler: True
+   owns! (declared only): ERROR ERROR: [TQL0] [TQL03] TypeQL Error: There is a syntax error parsing error: expected type_ref Near 1:13: --> match $t owns! $a; ^ Caused: Error in usage of TypeQL. Caused: [QEX1] Failed to parse TypeQL query. Caused: [TSV11] Que
+5. counts: {'entity': 21, 'relation': 35, 'attribute': 51} | modules: {'profile:mechanical': '0.1', 'profile:organisation': '0.1', 'profile:laboratory': '0.1', 'core': '0.3.0', 'core-0.4-a0': '0.4.0-a0', 'core-0.4-a': '0.4.0-a1', 'core-0.4-a2': '0.4.0-a2', 'core-0.4-b': '0.4.0-b', 'core-0.4-c': '0.4.0-c', 'core-0.4-d': '0.4.0-d'}
+6. schema() time: 1 ms
