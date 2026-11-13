@@ -1,0 +1,877 @@
+{
+ "summary": {
+  "account (kind + occurrence)": {
+   "writes": 6,
+   "failure points": 6,
+   "failed": 6,
+   "partial at": [],
+   "watermark moved at": [],
+   "recorded times per call": 1,
+   "seconds": 0.088
+  },
+  "claim_effect (new outcome)": {
+   "writes": 3,
+   "failure points": 3,
+   "failed": 3,
+   "partial at": [],
+   "watermark moved at": [],
+   "recorded times per call": 1,
+   "seconds": 0.055
+  },
+  "take_sample": {
+   "writes": 8,
+   "failure points": 8,
+   "failed": 8,
+   "partial at": [],
+   "watermark moved at": [],
+   "recorded times per call": 1,
+   "seconds": 0.105
+  },
+  "replace_part": {
+   "writes": 8,
+   "failure points": 8,
+   "failed": 6,
+   "partial at": [],
+   "watermark moved at": [],
+   "recorded times per call": 1,
+   "seconds": 0.142
+  },
+  "record_event": {
+   "writes": 7,
+   "failure points": 7,
+   "failed": 6,
+   "partial at": [],
+   "watermark moved at": [],
+   "recorded times per call": 1,
+   "seconds": 0.131
+  },
+  "create_thing": {
+   "writes": 3,
+   "failure points": 3,
+   "failed": 3,
+   "partial at": [],
+   "watermark moved at": [],
+   "recorded times per call": 1,
+   "seconds": 0.056
+  },
+  "destroy": {
+   "writes": 3,
+   "failure points": 3,
+   "failed": 3,
+   "partial at": [],
+   "watermark moved at": [],
+   "recorded times per call": 1,
+   "seconds": 0.362
+  },
+  "measure": {
+   "writes": 12,
+   "failure points": 12,
+   "failed": 11,
+   "partial at": [],
+   "watermark moved at": [],
+   "recorded times per call": 1,
+   "seconds": 0.106
+  },
+  "define_unit": {
+   "writes": 2,
+   "failure points": 2,
+   "failed": 2,
+   "partial at": [],
+   "watermark moved at": [],
+   "recorded times per call": 0,
+   "seconds": 0.063
+  },
+  "end": {
+   "writes": 1,
+   "failure points": 1,
+   "failed": 1,
+   "partial at": [],
+   "watermark moved at": [],
+   "recorded times per call": 1,
+   "seconds": 0.095
+  },
+  "install_module (core-0.4-a: schema, record, slot)": {
+   "writes": 3,
+   "failure points": 3,
+   "failed": 3,
+   "partial at": [],
+   "watermark moved at": [],
+   "recorded times per call": null,
+   "seconds": 0.056
+  },
+  "upgrade_to_a0": {
+   "writes": 6,
+   "failure points": 6,
+   "failed": 6,
+   "partial at": [],
+   "watermark moved at": [],
+   "recorded times per call": null,
+   "seconds": 0.07
+  },
+  "install_profile (control: atomic since LABS-1.023)": {
+   "writes": 5,
+   "failure points": 5,
+   "failed": 5,
+   "partial at": [],
+   "watermark moved at": [],
+   "recorded times per call": null,
+   "seconds": 0.261
+  },
+  "WorldModel.create (all core modules)": {
+   "writes": 25,
+   "failure points": 25,
+   "failed": 25,
+   "partial at": [],
+   "watermark moved at": [],
+   "recorded times per call": null,
+   "seconds": null
+  }
+ },
+ "detail": {
+  "account (kind + occurrence)": {
+   "writes": 6,
+   "seconds": 0.088,
+   "recorded_times_written": 1,
+   "failures": [
+    {
+     "fail_at": 1,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 2,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 3,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 4,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 5,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 6,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    }
+   ]
+  },
+  "claim_effect (new outcome)": {
+   "writes": 3,
+   "seconds": 0.055,
+   "recorded_times_written": 1,
+   "failures": [
+    {
+     "fail_at": 1,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 2,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 3,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    }
+   ]
+  },
+  "take_sample": {
+   "writes": 8,
+   "seconds": 0.105,
+   "recorded_times_written": 1,
+   "failures": [
+    {
+     "fail_at": 1,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 2,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 3,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 4,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 5,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 6,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 7,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 8,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    }
+   ]
+  },
+  "replace_part": {
+   "writes": 8,
+   "seconds": 0.142,
+   "recorded_times_written": 1,
+   "failures": [
+    {
+     "fail_at": 1,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 2,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 3,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 4,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 5,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 6,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 7,
+     "raised": false,
+     "persisted": {
+      "attestation": [
+       14,
+       17
+      ],
+      "event": [
+       7,
+       8
+      ],
+      "ownerships": [
+       264,
+       291
+      ],
+      "proposition": [
+       12,
+       14
+      ],
+      "recorded-times": [
+       8,
+       9
+      ]
+     },
+     "watermark_moved": true
+    },
+    {
+     "fail_at": 8,
+     "raised": false,
+     "persisted": {
+      "attestation": [
+       17,
+       20
+      ],
+      "event": [
+       8,
+       9
+      ],
+      "ownerships": [
+       291,
+       318
+      ],
+      "proposition": [
+       14,
+       16
+      ],
+      "recorded-times": [
+       9,
+       10
+      ]
+     },
+     "watermark_moved": true
+    }
+   ]
+  },
+  "record_event": {
+   "writes": 7,
+   "seconds": 0.131,
+   "recorded_times_written": 1,
+   "failures": [
+    {
+     "fail_at": 1,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 2,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 3,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 4,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 5,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 6,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 7,
+     "raised": false,
+     "persisted": {
+      "attestation": [
+       32,
+       36
+      ],
+      "event": [
+       10,
+       11
+      ],
+      "ownerships": [
+       427,
+       468
+      ],
+      "proposition": [
+       19,
+       20
+      ],
+      "recorded-times": [
+       19,
+       20
+      ],
+      "supersession": [
+       1,
+       2
+      ]
+     },
+     "watermark_moved": true
+    }
+   ]
+  },
+  "create_thing": {
+   "writes": 3,
+   "seconds": 0.056,
+   "recorded_times_written": 1,
+   "failures": [
+    {
+     "fail_at": 1,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 2,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 3,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    }
+   ]
+  },
+  "destroy": {
+   "writes": 3,
+   "seconds": 0.362,
+   "recorded_times_written": 1,
+   "failures": [
+    {
+     "fail_at": 1,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 2,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 3,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    }
+   ]
+  },
+  "measure": {
+   "writes": 12,
+   "seconds": 0.106,
+   "recorded_times_written": 1,
+   "failures": [
+    {
+     "fail_at": 1,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 2,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 3,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 4,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 5,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 6,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 7,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 8,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 9,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 10,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 11,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 12,
+     "raised": false,
+     "persisted": {
+      "attestation": [
+       57,
+       62
+      ],
+      "event": [
+       12,
+       13
+      ],
+      "information-object": [
+       1,
+       2
+      ],
+      "ownerships": [
+       707,
+       757
+      ],
+      "particular": [
+       29,
+       30
+      ],
+      "proposition": [
+       37,
+       40
+      ],
+      "recorded-times": [
+       39,
+       40
+      ],
+      "rests-on": [
+       1,
+       2
+      ]
+     },
+     "watermark_moved": true
+    }
+   ]
+  },
+  "define_unit": {
+   "writes": 2,
+   "seconds": 0.063,
+   "recorded_times_written": 0,
+   "failures": [
+    {
+     "fail_at": 1,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 2,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    }
+   ]
+  },
+  "end": {
+   "writes": 1,
+   "seconds": 0.095,
+   "recorded_times_written": 1,
+   "failures": [
+    {
+     "fail_at": 1,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    }
+   ]
+  },
+  "install_module (core-0.4-a: schema, record, slot)": {
+   "writes": 3,
+   "seconds": 0.056,
+   "failures": [
+    {
+     "fail_at": 1,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 2,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 3,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    }
+   ]
+  },
+  "upgrade_to_a0": {
+   "writes": 6,
+   "seconds": 0.07,
+   "failures": [
+    {
+     "fail_at": 1,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 2,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 3,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 4,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 5,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 6,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    }
+   ]
+  },
+  "install_profile (control: atomic since LABS-1.023)": {
+   "writes": 5,
+   "seconds": 0.261,
+   "failures": [
+    {
+     "fail_at": 1,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 2,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 3,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 4,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    },
+    {
+     "fail_at": 5,
+     "raised": true,
+     "persisted": {},
+     "watermark_moved": false
+    }
+   ]
+  },
+  "WorldModel.create (all core modules)": {
+   "writes": 25,
+   "failures": [
+    {
+     "fail_at": 1,
+     "raised": true,
+     "database_left": false,
+     "modules_left": null
+    },
+    {
+     "fail_at": 2,
+     "raised": true,
+     "database_left": false,
+     "modules_left": null
+    },
+    {
+     "fail_at": 3,
+     "raised": true,
+     "database_left": false,
+     "modules_left": null
+    },
+    {
+     "fail_at": 4,
+     "raised": true,
+     "database_left": false,
+     "modules_left": null
+    },
+    {
+     "fail_at": 5,
+     "raised": true,
+     "database_left": false,
+     "modules_left": null
+    },
+    {
+     "fail_at": 6,
+     "raised": true,
+     "database_left": false,
+     "modules_left": null
+    },
+    {
+     "fail_at": 7,
+     "raised": true,
+     "database_left": false,
+     "modules_left": null
+    },
+    {
+     "fail_at": 8,
+     "raised": true,
+     "database_left": false,
+     "modules_left": null
+    },
+    {
+     "fail_at": 9,
+     "raised": true,
+     "database_left": false,
+     "modules_left": null
+    },
+    {
+     "fail_at": 10,
+     "raised": true,
+     "database_left": false,
+     "modules_left": null
+    },
+    {
+     "fail_at": 11,
+     "raised": true,
+     "database_left": false,
+     "modules_left": null
+    },
+    {
+     "fail_at": 12,
+     "raised": true,
+     "database_left": false,
+     "modules_left": null
+    },
+    {
+     "fail_at": 13,
+     "raised": true,
+     "database_left": false,
+     "modules_left": null
+    },
+    {
+     "fail_at": 14,
+     "raised": true,
+     "database_left": false,
+     "modules_left": null
+    },
+    {
+     "fail_at": 15,
+     "raised": true,
+     "database_left": false,
+     "modules_left": null
+    },
+    {
+     "fail_at": 16,
+     "raised": true,
+     "database_left": false,
+     "modules_left": null
+    },
+    {
+     "fail_at": 17,
+     "raised": true,
+     "database_left": false,
+     "modules_left": null
+    },
+    {
+     "fail_at": 18,
+     "raised": true,
+     "database_left": false,
+     "modules_left": null
+    },
+    {
+     "fail_at": 19,
+     "raised": true,
+     "database_left": false,
+     "modules_left": null
+    },
+    {
+     "fail_at": 20,
+     "raised": true,
+     "database_left": false,
+     "modules_left": null
+    },
+    {
+     "fail_at": 21,
+     "raised": true,
+     "database_left": false,
+     "modules_left": null
+    },
+    {
+     "fail_at": 22,
+     "raised": true,
+     "database_left": false,
+     "modules_left": null
+    },
+    {
+     "fail_at": 23,
+     "raised": true,
+     "database_left": false,
+     "modules_left": null
+    },
+    {
+     "fail_at": 24,
+     "raised": true,
+     "database_left": false,
+     "modules_left": null
+    },
+    {
+     "fail_at": 25,
+     "raised": true,
+     "database_left": false,
+     "modules_left": null
+    }
+   ]
+  }
+ }
+}
