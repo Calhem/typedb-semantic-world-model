@@ -38,13 +38,16 @@ PROVENANCE = {
                 "from those reads alone.",
     "reconstructed": "Needs this repository's code as well as the database: core and profile attribution by replaying "
                      "the recorded modules into temporary databases and comparing with the database. Checked against "
-                     "the database, not stored in it.",
+                     "the database, not stored in it. It shows how the schema is reproduced from the recorded modules, "
+                     "not how this database was actually built: TypeDB keeps no installation history.",
     "repository": "Taken from this repository's files only (comments in .tql module files). Never checked against "
                   "the database.",
 }
 STATUSES = {
-    "attributed": "Proven by a complete matching replay: exactly one module adds it.",
-    "shared": "Proven by a complete matching replay: more than one module adds it. All are listed; none is the owner.",
+    "attributed": "Verified reproduction: in a replay of the recorded modules that reproduces the database exactly, "
+                  "exactly one module adds it. Not a record of how this database was built.",
+    "shared": "Verified reproduction: in a replay of the recorded modules that reproduces the database exactly, more "
+              "than one module adds it. All are listed; none is the owner. Not a record of how this database was built.",
     "consistent_unverified": "Replay steps add it (the candidates are listed), but the complete replay did not match "
                              "the database, so nothing is proven.",
     "unresolved": "Attribution cannot be established: no replay step adds it.",
@@ -191,7 +194,10 @@ def _attribution_section(attr, parsed, fact_map):
         "provenance": "reconstructed",
         "method": "The modules recorded in the database are replayed from this repository's code into temporary "
                   "databases: the core one module at a time, each profile alone on the core, and all together. The "
-                  "complete replay must equal the database's schema facts and module records exactly.",
+                  "complete replay must equal the database's schema facts and module records exactly. A verified "
+                  "attribution says the schema is reproducible from the recorded modules, and which module adds each "
+                  "declaration in that reproduction; it is not the database's installation history, which TypeDB "
+                  "does not keep.",
         "verification": "verified" if attr.verified else "failed",
         "problems": attr.problems,
         "statuses": STATUSES,
@@ -203,6 +209,9 @@ def _attribution_section(attr, parsed, fact_map):
                              "modules": attr.facts[f"fun {name}"]["modules"]} for name in parsed.functions},
         "unresolved": sorted(fid for fid, v in attr.facts.items() if v["status"] == "unresolved"),
         "limitations": [
+            "Reproducibility, not history: introduced_by, extended_by and contributions name the module that adds "
+            "each declaration in the verified replay. How this database was actually built (install order, upgrades, "
+            "hand-made changes later undone) is not recorded and is not claimed.",
             "A declaration that repeats one already in the schema leaves no trace in a replay; it is attributed to "
             "the module that first adds it. Repeats found in module source text are listed under repository_notes.",
             "Core modules are replayed in their canonical order; profiles are replayed each alone on the core.",

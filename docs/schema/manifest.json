@@ -21,9 +21,9 @@
  },
  "export": {
   "exporter": "worldmodel.schema_export 1.0.0",
-  "exported_at": "2026-11-12T17:08:28+00:00",
-  "code_commit": "50d48f37868a198639ac5a16f37b694d7b8ef91e",
-  "code_dirty": false
+  "exported_at": "2026-11-13T01:46:21+00:00",
+  "code_commit": "be2abe1f1469192c49415673169c2895737ebd81",
+  "code_dirty": true
  },
  "schema_sha256": "bba547c25973ff97b3e12f979cfbb3dffc858ae3b6a53c932c4ef621805d73c5",
  "verification": {
@@ -42,12 +42,12 @@
  "unresolved": [],
  "files": {
   "schema-explorer.html": {
-   "sha256": "a66043cfe499df3705d050297d8028a81097a5c7c03e5db26c1b0ea404e509c7",
-   "bytes": 354887
+   "sha256": "5a40f4beb0b0b41963cb62bc7522e21d82b6361010196d9fc3559842e079017d",
+   "bytes": 356228
   },
   "schema.json": {
-   "sha256": "9ece5141b6635d437009af60c1c0608306ed99d7aaf677b4d70daebc7b79d5f7",
-   "bytes": 424220
+   "sha256": "93c9b4ffcdb0c7c9cafaacca637e313a6741cdc482a8a6d00657f07419ab8b61",
+   "bytes": 425069
   },
   "schema.tql": {
    "sha256": "bba547c25973ff97b3e12f979cfbb3dffc858ae3b6a53c932c4ef621805d73c5",

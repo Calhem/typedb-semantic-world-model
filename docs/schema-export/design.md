@@ -261,6 +261,12 @@ text plus a successful round trip, and the export states that limitation.
 | E-6 | The explorer: a single file with no external libraries or network access. It shows the three sources and the attribution statuses with text badges and a legend (never colour alone), with filters for both, and repository comments in a separate, labelled box |
 | E-7 | A versioned JSON format (`wm-schema-export/1`) with its own JSON Schema, checked without a new dependency. Version 1 requires a source on every section and a status on every attribution |
 
+**Clarification (LABS-1.034): reproducibility, not history.** `attributed` and `shared` mean verified
+*reproducibility*: the recorded modules, replayed from this code, reproduce the database's schema exactly, and the
+named module adds the declaration in that reproduction. They never describe the database's actual installation
+history (install order, in-place upgrades, changes later undone), which TypeDB does not keep. The wording of the
+export, the explorer and these documents keeps the two apart.
+
 **Known gap in replay, stated in the export.** TypeDB accepts a declaration that repeats one already in the schema, and
 a replay cannot see the repeat. Such a fact is attributed to the module that first introduced it; a repeat found in
 another module's source text is reported as a `repository` note, not as shared ownership. Sharing between two

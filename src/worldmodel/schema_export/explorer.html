@@ -449,7 +449,7 @@ function typePage(label) {
     h("p", {class: "sub"}, h("span", {class: "kindtag"}, t.kind), " ", t.abstract ? h("span", {class: "ann"}, "@abstract ") : null,
       t.annotations.filter(a => a !== "@abstract").join(" ")),
     h("h1", {class: "page"}, label),
-    h("div", {class: "chips"}, "introduced by ", stBadge(at.introduced_by.status), at.introduced_by.modules.map(modLink),
+    h("div", {class: "chips", title: "In the verified replay of the recorded modules; not installation history"}, "introduced (in the replay) by ", stBadge(at.introduced_by.status), at.introduced_by.modules.map(modLink),
       at.extended_by.length ? h("span", {}, " · extended by ") : null, at.extended_by.map(modLink)),
   ];
   const schema = [
@@ -475,7 +475,7 @@ function typePage(label) {
   const contrib = Object.entries(at.contributions).map(([m, fs]) => [modLink(m),
     h("div", {}, fs.map(f => h("div", {class: "mono small"}, f, " ", stBadge(A.facts[f].status))))]);
   out.push(card("Attribution of this type's declarations", "reconstructed",
-    h("p", {class: "count", style: "margin-top:0"}, "Per declaration and per annotation. A type has no single owner: it is introduced by one module and may be extended by others."),
+    h("p", {class: "count", style: "margin-top:0"}, "Per declaration and per annotation, as the recorded modules reproduce this schema in the replay. A type has no single owner: in that reproduction it is introduced by one module and may be extended by others. This is not a record of how this database was built."),
     table(["module", "declarations it contributes"], contrib),
     at.unresolved.length ? h("div", {class: "notice bad"}, "Unresolved: " + at.unresolved.join(", ")) : null,
     alsoDeclared(t.facts)));
@@ -542,7 +542,7 @@ function modulePage(name) {
       h("dt", {}, "version in this code"), h("dd", {}, m.code_version || "—"),
       h("dt", {}, "replay"), h("dd", {}, m.replay),
       h("dt", {}, "declarations"), h("dd", {class: "chips"}, Object.entries(m.facts).map(([st, n]) => h("span", {}, stBadge(st), " " + n)))),
-      m.kind === "setup" ? h("p", {class: "count"}, A.limitations[2]) : null),
+      m.kind === "setup" ? h("p", {class: "count"}, A.limitations.find(l => l.includes("setup step")) || "") : null),
     card("Declarations it contributes, by type", "reconstructed",
       table(["type or function", "declarations"], Object.entries(byType).sort().map(([subj, fs]) => [
         TYPES[subj] ? typeLink(subj) : funLink(subj), h("div", {}, fs.sort().map(f => h("div", {class: "mono small"}, f)))]))),
@@ -593,7 +593,7 @@ function checksPage() {
       h("p", {}, h("b", {}, "Single source. "), v.single_source.annotations),
       h("p", {}, v.single_source.functions)),
     card("Attribution", "reconstructed",
-      ok ? h("div", {class: "notice good"}, "Verified: the complete replay matches the database exactly.")
+      ok ? h("div", {class: "notice good"}, "Verified: the complete replay matches the database exactly, so the schema is reproducible from the recorded modules. This is not the database's installation history, which TypeDB does not keep.")
         : h("div", {class: "notice bad"}, "NOT verified: nothing is attributed or shared. Problems:", A.problems.map(p => h("div", {class: "small mono"}, p))),
       h("p", {}, A.method),
       table(["status", "meaning", "facts"], Object.keys(STATUS_TEXT).map(k => [stBadge(k), A.statuses[k], h("a", {href: "#facts?status=" + k}, String(A.counts[k]))])),
@@ -606,7 +606,7 @@ function overview() {
   const c = S.counts;
   return [h("h1", {class: "page"}, "Schema of " + (D.source.database || "a TypeDB database")),
     h("p", {class: "sub"}, "Exported from the live database: the database is the authority. ",
-      "Attribution to core and profile modules is reconstructed by replay; comments come from the repository."),
+      "Attribution to core and profile modules is reconstructed by replay: it shows how the recorded modules reproduce this schema, not how the database was built. Comments come from the repository."),
     A.verification === "verified" ? h("div", {class: "notice good"}, "All checks passed; attribution verified by a complete matching replay.")
       : h("div", {class: "notice bad"}, "Attribution NOT verified. See ", h("a", {href: "#checks"}, "Checks"), "."),
     card("Contents", "database", h("dl", {class: "kv"},
