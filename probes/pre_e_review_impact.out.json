@@ -1,0 +1,3309 @@
+{
+ "worlds": [
+  "actual",
+  "lab",
+  "lab-plan-recal",
+  "lab-plan-tom",
+  "org",
+  "org-plan-reorg",
+  "plan-apprentice",
+  "plan-move-bench",
+  "plan-relubricate-only",
+  "plan-rig-control",
+  "plan-steel-cover"
+ ],
+ "content_reads": 24120,
+ "DI-1 polarity-disputed contents omitted by facts_about": [
+  [
+   "actual",
+   "causes",
+   "{\"cause\": [\"o-relubrication\"], \"effect\": [\"o-test-run\"]}"
+  ],
+  [
+   "lab",
+   "calibration-of",
+   "{\"calibrated\": [\"balance-b7\"], \"certificate\": [\"cert-b7\"]}"
+  ],
+  [
+   "lab-plan-recal",
+   "calibration-of",
+   "{\"calibrated\": [\"balance-b7\"], \"certificate\": [\"cert-b7\"]}"
+  ],
+  [
+   "plan-apprentice",
+   "causes",
+   "{\"cause\": [\"o-relubrication\"], \"effect\": [\"o-test-run\"]}"
+  ],
+  [
+   "plan-rig-control",
+   "causes",
+   "{\"cause\": [\"o-relubrication\"], \"effect\": [\"o-test-run\"]}"
+  ]
+ ],
+ "DI-5 undecided accepted contents, by label": {
+  "other: not yet effective": [
+   [
+    "actual",
+    "anchored-to",
+    "{\"anchor\": [\"bench-1\"], \"frame\": [\"f-bench\"]}"
+   ],
+   [
+    "actual",
+    "anchored-to",
+    "{\"anchor\": [\"gbx-100\"], \"frame\": [\"f-gearbox\"]}"
+   ],
+   [
+    "actual",
+    "anchored-to",
+    "{\"anchor\": [\"workshop\"], \"frame\": [\"f-workshop\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"apprentice\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"inspector\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"technician\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"aluminium\"], \"classified\": [\"alu-blank-7\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"aluminium\"], \"classified\": [\"cover\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"bearing\"], \"classified\": [\"bearing-1\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"bearing\"], \"classified\": [\"bearing-2\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"bearing\"], \"classified\": [\"bearing-3\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"can-press-bearing\"], \"classified\": [\"bearing-press\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"can-replace-bearing\"], \"classified\": [\"technician\"], \"context\": [\"workshop\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"can-sign-off\"], \"classified\": [\"inspector\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"cast-iron\"], \"classified\": [\"housing\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"fastener\"], \"classified\": [\"bolt-1\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"fastener\"], \"classified\": [\"bolt-2\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"fastener\"], \"classified\": [\"bolt-3\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"fastener\"], \"classified\": [\"bolt-4\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"fitter\"], \"classified\": [\"apprentice\"], \"context\": [\"workshop\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"fitter\"], \"classified\": [\"technician\"], \"context\": [\"workshop\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"gear\"], \"classified\": [\"gear-in\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"gear\"], \"classified\": [\"gear-out\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"gearbox\"], \"classified\": [\"gbx-100\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"housing-part\"], \"classified\": [\"cover\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"housing-part\"], \"classified\": [\"housing\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"instrument\"], \"classified\": [\"scale-3\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"mechanical:assembly\"], \"classified\": [\"gbx-100\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"mechanical:assembly\"], \"classified\": [\"shaft-asm-in\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"rubber\"], \"classified\": [\"gasket\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"seal\"], \"classified\": [\"gasket\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"shaft\"], \"classified\": [\"input-shaft\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"shaft\"], \"classified\": [\"output-shaft\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bearing-1\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bearing-2\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bearing-3\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bench-1\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bolt-1\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bolt-2\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bolt-3\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bolt-4\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"gear-in\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"gear-out\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"input-shaft\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"output-shaft\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"stock\"], \"classified\": [\"alu-blank-7\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"sub-assembly\"], \"classified\": [\"shaft-asm-in\"]}"
+   ],
+   [
+    "actual",
+    "classified-as",
+    "{\"class\": [\"workbench\"], \"classified\": [\"bench-1\"]}"
+   ],
+   [
+    "actual",
+    "connected-to",
+    "{\"endpoint\": [\"bearing-1\", \"input-shaft\"], \"joint-kind\": [\"mechanical:pressed\"]}"
+   ],
+   [
+    "actual",
+    "connected-to",
+    "{\"endpoint\": [\"bearing-2\", \"output-shaft\"], \"joint-kind\": [\"mechanical:pressed\"]}"
+   ],
+   [
+    "actual",
+    "connected-to",
+    "{\"endpoint\": [\"bearing-3\", \"input-shaft\"], \"joint-kind\": [\"mechanical:pressed\"]}"
+   ],
+   [
+    "actual",
+    "connected-to",
+    "{\"endpoint\": [\"cover\", \"housing\"], \"joint-kind\": [\"mechanical:bolted\"]}"
+   ],
+   [
+    "actual",
+    "connected-to",
+    "{\"endpoint\": [\"gear-in\", \"input-shaft\"], \"joint-kind\": [\"mechanical:splined\"]}"
+   ],
+   [
+    "actual",
+    "connected-to",
+    "{\"endpoint\": [\"gear-out\", \"output-shaft\"], \"joint-kind\": [\"mechanical:splined\"]}"
+   ],
+   [
+    "actual",
+    "constitution",
+    "{\"constituent\": [\"alu-blank-7\"], \"constituted\": [\"cover\"]}"
+   ],
+   [
+    "actual",
+    "depends-on",
+    "{\"dependee\": [\"input-shaft\"], \"dependent\": [\"gear-in\"], \"kind\": [\"dependency:physical\"]}"
+   ],
+   [
+    "actual",
+    "depends-on",
+    "{\"dependee\": [\"input-shaft\"], \"dependent\": [\"output-shaft\"], \"kind\": [\"dependency:functional\"]}"
+   ],
+   [
+    "actual",
+    "depends-on",
+    "{\"dependee\": [\"input-shaft\"], \"dependent\": [\"output-shaft\"]}"
+   ],
+   [
+    "actual",
+    "depends-on",
+    "{\"dependee\": [\"manual-gbx\"], \"dependent\": [\"gbx-100\"], \"kind\": [\"dependency:informational\"]}"
+   ],
+   [
+    "actual",
+    "depends-on",
+    "{\"dependee\": [\"rig-controller\"], \"dependent\": [\"test-rig\"], \"kind\": [\"dependency:control\"]}"
+   ],
+   [
+    "actual",
+    "frame-transform",
+    "{\"child\": [\"f-bench\"], \"parent\": [\"f-workshop\"]}"
+   ],
+   [
+    "actual",
+    "frame-transform",
+    "{\"child\": [\"f-gearbox\"], \"parent\": [\"f-bench\"]}"
+   ],
+   [
+    "actual",
+    "has-quality",
+    "{\"bearer\": [\"housing\"], \"quality\": [\"mass\"], \"unit\": [\"kg\"]}"
+   ],
+   [
+    "actual",
+    "located-at",
+    "{\"located\": [\"bearing-1\"], \"place\": [\"store-shelf\"]}"
+   ],
+   [
+    "actual",
+    "located-at",
+    "{\"located\": [\"bench-1\"], \"place\": [\"bay-1\"]}"
+   ],
+   [
+    "actual",
+    "located-at",
+    "{\"located\": [\"gbx-100\"], \"place\": [\"bay-1\"]}"
+   ],
+   [
+    "actual",
+    "located-at",
+    "{\"located\": [\"scale-3\"], \"place\": [\"bay-1\"]}"
+   ],
+   [
+    "actual",
+    "part-of",
+    "{\"part\": [\"bearing-2\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "actual",
+    "part-of",
+    "{\"part\": [\"bearing-3\"], \"whole\": [\"shaft-asm-in\"]}"
+   ],
+   [
+    "actual",
+    "part-of",
+    "{\"part\": [\"bolt-1\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "actual",
+    "part-of",
+    "{\"part\": [\"bolt-2\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "actual",
+    "part-of",
+    "{\"part\": [\"bolt-3\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "actual",
+    "part-of",
+    "{\"part\": [\"bolt-4\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "actual",
+    "part-of",
+    "{\"part\": [\"cover\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "actual",
+    "part-of",
+    "{\"part\": [\"gasket\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "actual",
+    "part-of",
+    "{\"part\": [\"gear-in\"], \"whole\": [\"shaft-asm-in\"]}"
+   ],
+   [
+    "actual",
+    "part-of",
+    "{\"part\": [\"gear-out\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "actual",
+    "part-of",
+    "{\"part\": [\"housing\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "actual",
+    "part-of",
+    "{\"part\": [\"input-shaft\"], \"whole\": [\"shaft-asm-in\"]}"
+   ],
+   [
+    "actual",
+    "part-of",
+    "{\"part\": [\"output-shaft\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "actual",
+    "part-of",
+    "{\"part\": [\"shaft-asm-in\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "actual",
+    "positioned-in",
+    "{\"frame\": [\"f-bench\"], \"positioned\": [\"gbx-100\"]}"
+   ],
+   [
+    "actual",
+    "positioned-in",
+    "{\"frame\": [\"f-cam-2\"], \"positioned\": [\"gear-in\"]}"
+   ],
+   [
+    "actual",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bearing-2\"]}"
+   ],
+   [
+    "actual",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bearing-3\"]}"
+   ],
+   [
+    "actual",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bolt-1\"]}"
+   ],
+   [
+    "actual",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bolt-2\"]}"
+   ],
+   [
+    "actual",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bolt-3\"]}"
+   ],
+   [
+    "actual",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bolt-4\"]}"
+   ],
+   [
+    "actual",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"cover\"]}"
+   ],
+   [
+    "actual",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"gasket\"]}"
+   ],
+   [
+    "actual",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"gear-in\"]}"
+   ],
+   [
+    "actual",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"gear-out\"]}"
+   ],
+   [
+    "actual",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"housing\"]}"
+   ],
+   [
+    "actual",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"input-shaft\"]}"
+   ],
+   [
+    "actual",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"output-shaft\"]}"
+   ],
+   [
+    "actual",
+    "positioned-in",
+    "{\"frame\": [\"f-workshop\"], \"positioned\": [\"bench-1\"]}"
+   ],
+   [
+    "actual",
+    "positioned-in",
+    "{\"frame\": [\"f-workshop\"], \"positioned\": [\"gbx-100\"]}"
+   ],
+   [
+    "lab",
+    "calibration-of",
+    "{\"calibrated\": [\"balance-b3\"], \"certificate\": [\"cert-b3\"]}"
+   ],
+   [
+    "lab",
+    "calibration-of",
+    "{\"calibrated\": [\"balance-b7\"], \"certificate\": [\"cert-b7\"]}"
+   ],
+   [
+    "lab",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"ana\"]}"
+   ],
+   [
+    "lab",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"bo\"]}"
+   ],
+   [
+    "lab",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"tom\"]}"
+   ],
+   [
+    "lab",
+    "classified-as",
+    "{\"class\": [\"analyst\"], \"classified\": [\"ana\"], \"context\": [\"lab-1\"]}"
+   ],
+   [
+    "lab",
+    "classified-as",
+    "{\"class\": [\"analyst\"], \"classified\": [\"bo\"], \"context\": [\"lab-1\"]}"
+   ],
+   [
+    "lab",
+    "classified-as",
+    "{\"class\": [\"can-measure-mass\"], \"classified\": [\"balance-b3\"]}"
+   ],
+   [
+    "lab",
+    "classified-as",
+    "{\"class\": [\"can-measure-mass\"], \"classified\": [\"balance-b7\"]}"
+   ],
+   [
+    "lab",
+    "classified-as",
+    "{\"class\": [\"can-measure-mass\"], \"classified\": [\"balance-b9\"]}"
+   ],
+   [
+    "lab",
+    "classified-as",
+    "{\"class\": [\"can-weigh\"], \"classified\": [\"ana\"], \"context\": [\"lab-1\"]}"
+   ],
+   [
+    "lab",
+    "classified-as",
+    "{\"class\": [\"can-weigh\"], \"classified\": [\"bo\"], \"context\": [\"lab-1\"]}"
+   ],
+   [
+    "lab",
+    "classified-as",
+    "{\"class\": [\"hydrated\"], \"classified\": [\"sample-12\"]}"
+   ],
+   [
+    "lab",
+    "classified-as",
+    "{\"class\": [\"laboratory:specimen\"], \"classified\": [\"sample-12\"]}"
+   ],
+   [
+    "lab",
+    "constitution",
+    "{\"constituent\": [\"s12-a\"], \"constituted\": [\"s12-b\"]}"
+   ],
+   [
+    "lab",
+    "constitution",
+    "{\"constituent\": [\"sample-12\"], \"constituted\": [\"s12-a\"]}"
+   ],
+   [
+    "lab",
+    "has-quality",
+    "{\"bearer\": [\"sample-12\"], \"quality\": [\"q-mass\"], \"unit\": [\"kg\"]}"
+   ],
+   [
+    "lab",
+    "located-at",
+    "{\"located\": [\"s12-a\"], \"place\": [\"freezer-2\"]}"
+   ],
+   [
+    "lab",
+    "located-at",
+    "{\"located\": [\"s12-b\"], \"place\": [\"freezer-2\"]}"
+   ],
+   [
+    "lab",
+    "part-of",
+    "{\"part\": [\"o-sampling-1\"], \"whole\": [\"o-exp-1\"]}"
+   ],
+   [
+    "lab",
+    "part-of",
+    "{\"part\": [\"o-split-b\"], \"whole\": [\"o-exp-1\"]}"
+   ],
+   [
+    "lab",
+    "part-of",
+    "{\"part\": [\"o-weigh-late\"], \"whole\": [\"o-exp-1\"]}"
+   ],
+   [
+    "lab-plan-recal",
+    "calibration-of",
+    "{\"calibrated\": [\"balance-b3\"], \"certificate\": [\"cert-b3\"]}"
+   ],
+   [
+    "lab-plan-recal",
+    "calibration-of",
+    "{\"calibrated\": [\"balance-b3\"], \"certificate\": [\"cert-b3-r\"]}"
+   ],
+   [
+    "lab-plan-recal",
+    "calibration-of",
+    "{\"calibrated\": [\"balance-b7\"], \"certificate\": [\"cert-b7\"]}"
+   ],
+   [
+    "lab-plan-recal",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"ana\"]}"
+   ],
+   [
+    "lab-plan-recal",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"bo\"]}"
+   ],
+   [
+    "lab-plan-recal",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"tom\"]}"
+   ],
+   [
+    "lab-plan-recal",
+    "classified-as",
+    "{\"class\": [\"analyst\"], \"classified\": [\"ana\"], \"context\": [\"lab-1\"]}"
+   ],
+   [
+    "lab-plan-recal",
+    "classified-as",
+    "{\"class\": [\"analyst\"], \"classified\": [\"bo\"], \"context\": [\"lab-1\"]}"
+   ],
+   [
+    "lab-plan-recal",
+    "classified-as",
+    "{\"class\": [\"can-measure-mass\"], \"classified\": [\"balance-b3\"]}"
+   ],
+   [
+    "lab-plan-recal",
+    "classified-as",
+    "{\"class\": [\"can-measure-mass\"], \"classified\": [\"balance-b7\"]}"
+   ],
+   [
+    "lab-plan-recal",
+    "classified-as",
+    "{\"class\": [\"can-measure-mass\"], \"classified\": [\"balance-b9\"]}"
+   ],
+   [
+    "lab-plan-recal",
+    "classified-as",
+    "{\"class\": [\"can-weigh\"], \"classified\": [\"ana\"], \"context\": [\"lab-1\"]}"
+   ],
+   [
+    "lab-plan-recal",
+    "classified-as",
+    "{\"class\": [\"can-weigh\"], \"classified\": [\"bo\"], \"context\": [\"lab-1\"]}"
+   ],
+   [
+    "lab-plan-recal",
+    "classified-as",
+    "{\"class\": [\"hydrated\"], \"classified\": [\"sample-12\"]}"
+   ],
+   [
+    "lab-plan-recal",
+    "classified-as",
+    "{\"class\": [\"laboratory:specimen\"], \"classified\": [\"sample-12\"]}"
+   ],
+   [
+    "lab-plan-recal",
+    "constitution",
+    "{\"constituent\": [\"sample-12\"], \"constituted\": [\"s12-a\"]}"
+   ],
+   [
+    "lab-plan-recal",
+    "has-quality",
+    "{\"bearer\": [\"sample-12\"], \"quality\": [\"q-mass\"], \"unit\": [\"kg\"]}"
+   ],
+   [
+    "lab-plan-recal",
+    "located-at",
+    "{\"located\": [\"s12-a\"], \"place\": [\"freezer-2\"]}"
+   ],
+   [
+    "lab-plan-recal",
+    "part-of",
+    "{\"part\": [\"o-sampling-1\"], \"whole\": [\"o-exp-1\"]}"
+   ],
+   [
+    "lab-plan-recal",
+    "part-of",
+    "{\"part\": [\"o-split-b\"], \"whole\": [\"o-exp-1\"]}"
+   ],
+   [
+    "lab-plan-recal",
+    "part-of",
+    "{\"part\": [\"o-weigh-late\"], \"whole\": [\"o-exp-1\"]}"
+   ],
+   [
+    "lab-plan-tom",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"ana\"]}"
+   ],
+   [
+    "lab-plan-tom",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"bo\"]}"
+   ],
+   [
+    "lab-plan-tom",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"tom\"]}"
+   ],
+   [
+    "lab-plan-tom",
+    "classified-as",
+    "{\"class\": [\"analyst\"], \"classified\": [\"ana\"], \"context\": [\"lab-1\"]}"
+   ],
+   [
+    "lab-plan-tom",
+    "classified-as",
+    "{\"class\": [\"analyst\"], \"classified\": [\"bo\"], \"context\": [\"lab-1\"]}"
+   ],
+   [
+    "lab-plan-tom",
+    "classified-as",
+    "{\"class\": [\"can-measure-mass\"], \"classified\": [\"balance-b3\"]}"
+   ],
+   [
+    "lab-plan-tom",
+    "classified-as",
+    "{\"class\": [\"can-measure-mass\"], \"classified\": [\"balance-b7\"]}"
+   ],
+   [
+    "lab-plan-tom",
+    "classified-as",
+    "{\"class\": [\"can-measure-mass\"], \"classified\": [\"balance-b9\"]}"
+   ],
+   [
+    "lab-plan-tom",
+    "classified-as",
+    "{\"class\": [\"can-weigh\"], \"classified\": [\"ana\"], \"context\": [\"lab-1\"]}"
+   ],
+   [
+    "lab-plan-tom",
+    "classified-as",
+    "{\"class\": [\"can-weigh\"], \"classified\": [\"bo\"], \"context\": [\"lab-1\"]}"
+   ],
+   [
+    "lab-plan-tom",
+    "classified-as",
+    "{\"class\": [\"can-weigh\"], \"classified\": [\"tom\"], \"context\": [\"lab-1\"]}"
+   ],
+   [
+    "lab-plan-tom",
+    "has-quality",
+    "{\"bearer\": [\"sample-12\"], \"quality\": [\"q-mass\"], \"unit\": [\"kg\"]}"
+   ],
+   [
+    "org",
+    "authorisation",
+    "{\"grantor\": [\"acme\"], \"holder\": [\"bea\"], \"power\": [\"can-sign-off\"], \"scope\": [\"depot-7\"]}"
+   ],
+   [
+    "org",
+    "authorisation",
+    "{\"grantor\": [\"acme\"], \"holder\": [\"dan\"], \"power\": [\"can-sign-off\"], \"scope\": [\"depot-7\"]}"
+   ],
+   [
+    "org",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"acme\"]}"
+   ],
+   [
+    "org",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"auditor\"]}"
+   ],
+   [
+    "org",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"bea\"]}"
+   ],
+   [
+    "org",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"cal\"]}"
+   ],
+   [
+    "org",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"dan\"]}"
+   ],
+   [
+    "org",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"eve\"]}"
+   ],
+   [
+    "org",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"fay\"]}"
+   ],
+   [
+    "org",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"hr\"]}"
+   ],
+   [
+    "org",
+    "classified-as",
+    "{\"class\": [\"can-sign-off\"], \"classified\": [\"eve\"], \"context\": [\"depot-7\"]}"
+   ],
+   [
+    "org",
+    "employment",
+    "{\"employee\": [\"bea\"], \"employer\": [\"acme\"]}"
+   ],
+   [
+    "org",
+    "employment",
+    "{\"employee\": [\"cal\"], \"employer\": [\"acme\"]}"
+   ],
+   [
+    "org",
+    "employment",
+    "{\"employee\": [\"dan\"], \"employer\": [\"acme\"]}"
+   ],
+   [
+    "org",
+    "employment",
+    "{\"employee\": [\"eve\"], \"employer\": [\"acme\"]}"
+   ],
+   [
+    "org",
+    "exclusive-office",
+    "{\"context\": [\"depot-7\"], \"office\": [\"site-manager\"]}"
+   ],
+   [
+    "org",
+    "member-of",
+    "{\"group\": [\"depot-7\"], \"member\": [\"bea\"]}"
+   ],
+   [
+    "org",
+    "member-of",
+    "{\"group\": [\"depot-7\"], \"member\": [\"cal\"]}"
+   ],
+   [
+    "org",
+    "office-holding",
+    "{\"class\": [\"safety-officer\"], \"classified\": [\"dan\"], \"context\": [\"depot-7\"]}"
+   ],
+   [
+    "org",
+    "office-holding",
+    "{\"class\": [\"safety-officer\"], \"classified\": [\"eve\"], \"context\": [\"depot-7\"]}"
+   ],
+   [
+    "org",
+    "office-holding",
+    "{\"class\": [\"site-manager\"], \"classified\": [\"bea\"], \"context\": [\"depot-7\"]}"
+   ],
+   [
+    "org",
+    "part-of",
+    "{\"part\": [\"depot-7\"], \"whole\": [\"acme\"]}"
+   ],
+   [
+    "org",
+    "part-of",
+    "{\"part\": [\"hr\"], \"whole\": [\"acme\"]}"
+   ],
+   [
+    "org-plan-reorg",
+    "authorisation",
+    "{\"grantor\": [\"acme\"], \"holder\": [\"bea\"], \"power\": [\"can-sign-off\"], \"scope\": [\"depot-7\"]}"
+   ],
+   [
+    "org-plan-reorg",
+    "authorisation",
+    "{\"grantor\": [\"acme\"], \"holder\": [\"dan\"], \"power\": [\"can-sign-off\"], \"scope\": [\"depot-7\"]}"
+   ],
+   [
+    "org-plan-reorg",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"acme\"]}"
+   ],
+   [
+    "org-plan-reorg",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"auditor\"]}"
+   ],
+   [
+    "org-plan-reorg",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"bea\"]}"
+   ],
+   [
+    "org-plan-reorg",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"cal\"]}"
+   ],
+   [
+    "org-plan-reorg",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"dan\"]}"
+   ],
+   [
+    "org-plan-reorg",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"eve\"]}"
+   ],
+   [
+    "org-plan-reorg",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"fay\"]}"
+   ],
+   [
+    "org-plan-reorg",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"hr\"]}"
+   ],
+   [
+    "org-plan-reorg",
+    "classified-as",
+    "{\"class\": [\"can-sign-off\"], \"classified\": [\"eve\"], \"context\": [\"depot-7\"]}"
+   ],
+   [
+    "org-plan-reorg",
+    "employment",
+    "{\"employee\": [\"bea\"], \"employer\": [\"acme\"]}"
+   ],
+   [
+    "org-plan-reorg",
+    "employment",
+    "{\"employee\": [\"cal\"], \"employer\": [\"acme\"]}"
+   ],
+   [
+    "org-plan-reorg",
+    "employment",
+    "{\"employee\": [\"dan\"], \"employer\": [\"acme\"]}"
+   ],
+   [
+    "org-plan-reorg",
+    "employment",
+    "{\"employee\": [\"eve\"], \"employer\": [\"acme\"]}"
+   ],
+   [
+    "org-plan-reorg",
+    "exclusive-office",
+    "{\"context\": [\"depot-7\"], \"office\": [\"site-manager\"]}"
+   ],
+   [
+    "org-plan-reorg",
+    "member-of",
+    "{\"group\": [\"depot-7\"], \"member\": [\"bea\"]}"
+   ],
+   [
+    "org-plan-reorg",
+    "member-of",
+    "{\"group\": [\"depot-7\"], \"member\": [\"cal\"]}"
+   ],
+   [
+    "org-plan-reorg",
+    "office-holding",
+    "{\"class\": [\"safety-officer\"], \"classified\": [\"dan\"], \"context\": [\"depot-7\"]}"
+   ],
+   [
+    "org-plan-reorg",
+    "office-holding",
+    "{\"class\": [\"safety-officer\"], \"classified\": [\"eve\"], \"context\": [\"depot-7\"]}"
+   ],
+   [
+    "org-plan-reorg",
+    "office-holding",
+    "{\"class\": [\"site-manager\"], \"classified\": [\"bea\"], \"context\": [\"depot-7\"]}"
+   ],
+   [
+    "org-plan-reorg",
+    "office-holding",
+    "{\"class\": [\"site-manager\"], \"classified\": [\"dan\"], \"context\": [\"depot-7\"]}"
+   ],
+   [
+    "org-plan-reorg",
+    "part-of",
+    "{\"part\": [\"depot-7\"], \"whole\": [\"acme\"]}"
+   ],
+   [
+    "org-plan-reorg",
+    "part-of",
+    "{\"part\": [\"hr\"], \"whole\": [\"acme\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "anchored-to",
+    "{\"anchor\": [\"bench-1\"], \"frame\": [\"f-bench\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "anchored-to",
+    "{\"anchor\": [\"gbx-100\"], \"frame\": [\"f-gearbox\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "anchored-to",
+    "{\"anchor\": [\"workshop\"], \"frame\": [\"f-workshop\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"apprentice\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"inspector\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"technician\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"aluminium\"], \"classified\": [\"alu-blank-7\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"aluminium\"], \"classified\": [\"cover\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"bearing\"], \"classified\": [\"bearing-1\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"bearing\"], \"classified\": [\"bearing-2\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"bearing\"], \"classified\": [\"bearing-3\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"can-press-bearing\"], \"classified\": [\"bearing-press\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"can-replace-bearing\"], \"classified\": [\"apprentice\"], \"context\": [\"workshop\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"can-replace-bearing\"], \"classified\": [\"technician\"], \"context\": [\"workshop\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"can-sign-off\"], \"classified\": [\"inspector\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"cast-iron\"], \"classified\": [\"housing\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"fastener\"], \"classified\": [\"bolt-1\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"fastener\"], \"classified\": [\"bolt-2\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"fastener\"], \"classified\": [\"bolt-3\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"fastener\"], \"classified\": [\"bolt-4\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"fitter\"], \"classified\": [\"apprentice\"], \"context\": [\"workshop\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"fitter\"], \"classified\": [\"technician\"], \"context\": [\"workshop\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"gear\"], \"classified\": [\"gear-in\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"gear\"], \"classified\": [\"gear-out\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"gearbox\"], \"classified\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"housing-part\"], \"classified\": [\"cover\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"housing-part\"], \"classified\": [\"housing\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"instrument\"], \"classified\": [\"scale-3\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"rubber\"], \"classified\": [\"gasket\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"seal\"], \"classified\": [\"gasket\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"shaft\"], \"classified\": [\"input-shaft\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"shaft\"], \"classified\": [\"output-shaft\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bearing-1\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bearing-2\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bearing-3\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bench-1\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bolt-1\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bolt-2\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bolt-3\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bolt-4\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"gear-in\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"gear-out\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"input-shaft\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"output-shaft\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"stock\"], \"classified\": [\"alu-blank-7\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"sub-assembly\"], \"classified\": [\"shaft-asm-in\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "classified-as",
+    "{\"class\": [\"workbench\"], \"classified\": [\"bench-1\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "constitution",
+    "{\"constituent\": [\"alu-blank-7\"], \"constituted\": [\"cover\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "frame-transform",
+    "{\"child\": [\"f-gearbox\"], \"parent\": [\"f-bench\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "has-quality",
+    "{\"bearer\": [\"housing\"], \"quality\": [\"mass\"], \"unit\": [\"kg\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "located-at",
+    "{\"located\": [\"bearing-1\"], \"place\": [\"store-shelf\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "located-at",
+    "{\"located\": [\"bench-1\"], \"place\": [\"bay-1\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "located-at",
+    "{\"located\": [\"gbx-100\"], \"place\": [\"bay-1\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "located-at",
+    "{\"located\": [\"scale-3\"], \"place\": [\"bay-1\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "part-of",
+    "{\"part\": [\"bearing-2\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "part-of",
+    "{\"part\": [\"bearing-3\"], \"whole\": [\"shaft-asm-in\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "part-of",
+    "{\"part\": [\"bolt-1\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "part-of",
+    "{\"part\": [\"bolt-2\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "part-of",
+    "{\"part\": [\"bolt-3\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "part-of",
+    "{\"part\": [\"bolt-4\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "part-of",
+    "{\"part\": [\"cover\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "part-of",
+    "{\"part\": [\"gasket\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "part-of",
+    "{\"part\": [\"gear-in\"], \"whole\": [\"shaft-asm-in\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "part-of",
+    "{\"part\": [\"gear-out\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "part-of",
+    "{\"part\": [\"housing\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "part-of",
+    "{\"part\": [\"input-shaft\"], \"whole\": [\"shaft-asm-in\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "part-of",
+    "{\"part\": [\"output-shaft\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "part-of",
+    "{\"part\": [\"shaft-asm-in\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "positioned-in",
+    "{\"frame\": [\"f-bench\"], \"positioned\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "positioned-in",
+    "{\"frame\": [\"f-cam-2\"], \"positioned\": [\"gear-in\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bearing-2\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bearing-3\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bolt-1\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bolt-2\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bolt-3\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bolt-4\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"cover\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"gasket\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"gear-in\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"gear-out\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"housing\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"input-shaft\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"output-shaft\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "positioned-in",
+    "{\"frame\": [\"f-workshop\"], \"positioned\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "anchored-to",
+    "{\"anchor\": [\"bench-1\"], \"frame\": [\"f-bench\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "anchored-to",
+    "{\"anchor\": [\"gbx-100\"], \"frame\": [\"f-gearbox\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "anchored-to",
+    "{\"anchor\": [\"workshop\"], \"frame\": [\"f-workshop\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"aluminium\"], \"classified\": [\"alu-blank-7\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"aluminium\"], \"classified\": [\"cover\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"bearing\"], \"classified\": [\"bearing-1\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"bearing\"], \"classified\": [\"bearing-2\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"bearing\"], \"classified\": [\"bearing-3\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"cast-iron\"], \"classified\": [\"housing\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"fastener\"], \"classified\": [\"bolt-1\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"fastener\"], \"classified\": [\"bolt-2\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"fastener\"], \"classified\": [\"bolt-3\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"fastener\"], \"classified\": [\"bolt-4\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"gear\"], \"classified\": [\"gear-in\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"gear\"], \"classified\": [\"gear-out\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"gearbox\"], \"classified\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"housing-part\"], \"classified\": [\"cover\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"housing-part\"], \"classified\": [\"housing\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"instrument\"], \"classified\": [\"scale-3\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"rubber\"], \"classified\": [\"gasket\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"seal\"], \"classified\": [\"gasket\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"shaft\"], \"classified\": [\"input-shaft\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"shaft\"], \"classified\": [\"output-shaft\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bearing-1\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bearing-2\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bearing-3\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bench-1\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bolt-1\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bolt-2\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bolt-3\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bolt-4\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"gear-in\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"gear-out\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"input-shaft\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"output-shaft\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"stock\"], \"classified\": [\"alu-blank-7\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"sub-assembly\"], \"classified\": [\"shaft-asm-in\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "classified-as",
+    "{\"class\": [\"workbench\"], \"classified\": [\"bench-1\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "constitution",
+    "{\"constituent\": [\"alu-blank-7\"], \"constituted\": [\"cover\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "frame-transform",
+    "{\"child\": [\"f-bench\"], \"parent\": [\"f-workshop\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "frame-transform",
+    "{\"child\": [\"f-gearbox\"], \"parent\": [\"f-bench\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "has-quality",
+    "{\"bearer\": [\"housing\"], \"quality\": [\"mass\"], \"unit\": [\"kg\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "located-at",
+    "{\"located\": [\"bearing-1\"], \"place\": [\"store-shelf\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "located-at",
+    "{\"located\": [\"bench-1\"], \"place\": [\"bay-1\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "located-at",
+    "{\"located\": [\"gbx-100\"], \"place\": [\"bay-1\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "located-at",
+    "{\"located\": [\"scale-3\"], \"place\": [\"bay-1\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "part-of",
+    "{\"part\": [\"bearing-2\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "part-of",
+    "{\"part\": [\"bearing-3\"], \"whole\": [\"shaft-asm-in\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "part-of",
+    "{\"part\": [\"bolt-1\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "part-of",
+    "{\"part\": [\"bolt-2\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "part-of",
+    "{\"part\": [\"bolt-3\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "part-of",
+    "{\"part\": [\"bolt-4\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "part-of",
+    "{\"part\": [\"cover\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "part-of",
+    "{\"part\": [\"gasket\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "part-of",
+    "{\"part\": [\"gear-in\"], \"whole\": [\"shaft-asm-in\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "part-of",
+    "{\"part\": [\"gear-out\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "part-of",
+    "{\"part\": [\"housing\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "part-of",
+    "{\"part\": [\"input-shaft\"], \"whole\": [\"shaft-asm-in\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "part-of",
+    "{\"part\": [\"output-shaft\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "part-of",
+    "{\"part\": [\"shaft-asm-in\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "positioned-in",
+    "{\"frame\": [\"f-bench\"], \"positioned\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "positioned-in",
+    "{\"frame\": [\"f-cam-2\"], \"positioned\": [\"gear-in\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bearing-2\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bearing-3\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bolt-1\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bolt-2\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bolt-3\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bolt-4\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"cover\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"gasket\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"gear-in\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"gear-out\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"housing\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"input-shaft\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"output-shaft\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "positioned-in",
+    "{\"frame\": [\"f-workshop\"], \"positioned\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "anchored-to",
+    "{\"anchor\": [\"bench-1\"], \"frame\": [\"f-bench\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "anchored-to",
+    "{\"anchor\": [\"gbx-100\"], \"frame\": [\"f-gearbox\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "anchored-to",
+    "{\"anchor\": [\"workshop\"], \"frame\": [\"f-workshop\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"aluminium\"], \"classified\": [\"alu-blank-7\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"aluminium\"], \"classified\": [\"cover\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"bearing\"], \"classified\": [\"bearing-1\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"bearing\"], \"classified\": [\"bearing-2\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"bearing\"], \"classified\": [\"bearing-3\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"cast-iron\"], \"classified\": [\"housing\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"fastener\"], \"classified\": [\"bolt-1\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"fastener\"], \"classified\": [\"bolt-2\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"fastener\"], \"classified\": [\"bolt-3\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"fastener\"], \"classified\": [\"bolt-4\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"gear\"], \"classified\": [\"gear-in\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"gear\"], \"classified\": [\"gear-out\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"gearbox\"], \"classified\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"housing-part\"], \"classified\": [\"cover\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"housing-part\"], \"classified\": [\"housing\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"instrument\"], \"classified\": [\"scale-3\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"rubber\"], \"classified\": [\"gasket\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"seal\"], \"classified\": [\"gasket\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"shaft\"], \"classified\": [\"input-shaft\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"shaft\"], \"classified\": [\"output-shaft\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bearing-1\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bearing-2\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bearing-3\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bench-1\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bolt-1\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bolt-2\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bolt-3\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bolt-4\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"gear-in\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"gear-out\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"input-shaft\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"output-shaft\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"stock\"], \"classified\": [\"alu-blank-7\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"sub-assembly\"], \"classified\": [\"shaft-asm-in\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "classified-as",
+    "{\"class\": [\"workbench\"], \"classified\": [\"bench-1\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "constitution",
+    "{\"constituent\": [\"alu-blank-7\"], \"constituted\": [\"cover\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "frame-transform",
+    "{\"child\": [\"f-gearbox\"], \"parent\": [\"f-bench\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "has-quality",
+    "{\"bearer\": [\"housing\"], \"quality\": [\"mass\"], \"unit\": [\"kg\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "located-at",
+    "{\"located\": [\"bench-1\"], \"place\": [\"bay-1\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "located-at",
+    "{\"located\": [\"gbx-100\"], \"place\": [\"bay-1\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "located-at",
+    "{\"located\": [\"scale-3\"], \"place\": [\"bay-1\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "part-of",
+    "{\"part\": [\"bearing-2\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "part-of",
+    "{\"part\": [\"bolt-1\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "part-of",
+    "{\"part\": [\"bolt-2\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "part-of",
+    "{\"part\": [\"bolt-3\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "part-of",
+    "{\"part\": [\"bolt-4\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "part-of",
+    "{\"part\": [\"cover\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "part-of",
+    "{\"part\": [\"gasket\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "part-of",
+    "{\"part\": [\"gear-in\"], \"whole\": [\"shaft-asm-in\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "part-of",
+    "{\"part\": [\"gear-out\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "part-of",
+    "{\"part\": [\"housing\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "part-of",
+    "{\"part\": [\"input-shaft\"], \"whole\": [\"shaft-asm-in\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "part-of",
+    "{\"part\": [\"output-shaft\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "part-of",
+    "{\"part\": [\"shaft-asm-in\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "positioned-in",
+    "{\"frame\": [\"f-bench\"], \"positioned\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bearing-2\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bolt-1\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bolt-2\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bolt-3\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bolt-4\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"cover\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"gasket\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"gear-in\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"gear-out\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"housing\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"input-shaft\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"output-shaft\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "anchored-to",
+    "{\"anchor\": [\"bench-1\"], \"frame\": [\"f-bench\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "anchored-to",
+    "{\"anchor\": [\"gbx-100\"], \"frame\": [\"f-gearbox\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "anchored-to",
+    "{\"anchor\": [\"workshop\"], \"frame\": [\"f-workshop\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"apprentice\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"inspector\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"agent\"], \"classified\": [\"technician\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"aluminium\"], \"classified\": [\"alu-blank-7\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"aluminium\"], \"classified\": [\"cover\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"bearing\"], \"classified\": [\"bearing-1\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"bearing\"], \"classified\": [\"bearing-2\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"bearing\"], \"classified\": [\"bearing-3\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"can-press-bearing\"], \"classified\": [\"bearing-press\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"can-replace-bearing\"], \"classified\": [\"technician\"], \"context\": [\"workshop\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"can-sign-off\"], \"classified\": [\"inspector\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"cast-iron\"], \"classified\": [\"housing\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"fastener\"], \"classified\": [\"bolt-1\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"fastener\"], \"classified\": [\"bolt-2\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"fastener\"], \"classified\": [\"bolt-3\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"fastener\"], \"classified\": [\"bolt-4\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"fitter\"], \"classified\": [\"apprentice\"], \"context\": [\"workshop\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"fitter\"], \"classified\": [\"technician\"], \"context\": [\"workshop\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"gear\"], \"classified\": [\"gear-in\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"gear\"], \"classified\": [\"gear-out\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"gearbox\"], \"classified\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"housing-part\"], \"classified\": [\"cover\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"housing-part\"], \"classified\": [\"housing\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"instrument\"], \"classified\": [\"scale-3\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"mechanical:assembly\"], \"classified\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"mechanical:assembly\"], \"classified\": [\"shaft-asm-in\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"rubber\"], \"classified\": [\"gasket\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"seal\"], \"classified\": [\"gasket\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"shaft\"], \"classified\": [\"input-shaft\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"shaft\"], \"classified\": [\"output-shaft\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bearing-1\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bearing-2\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bearing-3\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bench-1\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bolt-1\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bolt-2\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bolt-3\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bolt-4\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"gear-in\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"gear-out\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"input-shaft\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"output-shaft\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"stock\"], \"classified\": [\"alu-blank-7\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"sub-assembly\"], \"classified\": [\"shaft-asm-in\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "classified-as",
+    "{\"class\": [\"workbench\"], \"classified\": [\"bench-1\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "connected-to",
+    "{\"endpoint\": [\"bearing-1\", \"input-shaft\"], \"joint-kind\": [\"mechanical:pressed\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "connected-to",
+    "{\"endpoint\": [\"bearing-2\", \"output-shaft\"], \"joint-kind\": [\"mechanical:pressed\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "connected-to",
+    "{\"endpoint\": [\"bearing-3\", \"input-shaft\"], \"joint-kind\": [\"mechanical:pressed\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "connected-to",
+    "{\"endpoint\": [\"cover\", \"housing\"], \"joint-kind\": [\"mechanical:bolted\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "connected-to",
+    "{\"endpoint\": [\"gear-in\", \"input-shaft\"], \"joint-kind\": [\"mechanical:splined\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "connected-to",
+    "{\"endpoint\": [\"gear-out\", \"output-shaft\"], \"joint-kind\": [\"mechanical:splined\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "constitution",
+    "{\"constituent\": [\"alu-blank-7\"], \"constituted\": [\"cover\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "depends-on",
+    "{\"dependee\": [\"input-shaft\"], \"dependent\": [\"gear-in\"], \"kind\": [\"dependency:physical\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "depends-on",
+    "{\"dependee\": [\"input-shaft\"], \"dependent\": [\"output-shaft\"], \"kind\": [\"dependency:functional\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "depends-on",
+    "{\"dependee\": [\"input-shaft\"], \"dependent\": [\"output-shaft\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "depends-on",
+    "{\"dependee\": [\"manual-gbx\"], \"dependent\": [\"gbx-100\"], \"kind\": [\"dependency:informational\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "depends-on",
+    "{\"dependee\": [\"plc-2\"], \"dependent\": [\"test-rig\"], \"kind\": [\"dependency:control\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "depends-on",
+    "{\"dependee\": [\"rig-controller\"], \"dependent\": [\"test-rig\"], \"kind\": [\"dependency:control\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "frame-transform",
+    "{\"child\": [\"f-gearbox\"], \"parent\": [\"f-bench\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "has-quality",
+    "{\"bearer\": [\"housing\"], \"quality\": [\"mass\"], \"unit\": [\"kg\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "located-at",
+    "{\"located\": [\"bearing-1\"], \"place\": [\"store-shelf\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "located-at",
+    "{\"located\": [\"bench-1\"], \"place\": [\"bay-1\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "located-at",
+    "{\"located\": [\"gbx-100\"], \"place\": [\"bay-1\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "located-at",
+    "{\"located\": [\"scale-3\"], \"place\": [\"bay-1\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "part-of",
+    "{\"part\": [\"bearing-2\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "part-of",
+    "{\"part\": [\"bearing-3\"], \"whole\": [\"shaft-asm-in\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "part-of",
+    "{\"part\": [\"bolt-1\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "part-of",
+    "{\"part\": [\"bolt-2\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "part-of",
+    "{\"part\": [\"bolt-3\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "part-of",
+    "{\"part\": [\"bolt-4\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "part-of",
+    "{\"part\": [\"cover\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "part-of",
+    "{\"part\": [\"gasket\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "part-of",
+    "{\"part\": [\"gear-in\"], \"whole\": [\"shaft-asm-in\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "part-of",
+    "{\"part\": [\"gear-out\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "part-of",
+    "{\"part\": [\"housing\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "part-of",
+    "{\"part\": [\"input-shaft\"], \"whole\": [\"shaft-asm-in\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "part-of",
+    "{\"part\": [\"output-shaft\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "part-of",
+    "{\"part\": [\"shaft-asm-in\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "positioned-in",
+    "{\"frame\": [\"f-bench\"], \"positioned\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "positioned-in",
+    "{\"frame\": [\"f-cam-2\"], \"positioned\": [\"gear-in\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bearing-2\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bearing-3\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bolt-1\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bolt-2\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bolt-3\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bolt-4\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"cover\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"gasket\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"gear-in\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"gear-out\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"housing\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"input-shaft\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"output-shaft\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "positioned-in",
+    "{\"frame\": [\"f-workshop\"], \"positioned\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "anchored-to",
+    "{\"anchor\": [\"bench-1\"], \"frame\": [\"f-bench\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "anchored-to",
+    "{\"anchor\": [\"gbx-100\"], \"frame\": [\"f-gearbox\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "anchored-to",
+    "{\"anchor\": [\"workshop\"], \"frame\": [\"f-workshop\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"aluminium\"], \"classified\": [\"alu-blank-7\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"aluminium\"], \"classified\": [\"cover\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"bearing\"], \"classified\": [\"bearing-1\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"bearing\"], \"classified\": [\"bearing-2\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"bearing\"], \"classified\": [\"bearing-3\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"cast-iron\"], \"classified\": [\"housing\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"fastener\"], \"classified\": [\"bolt-1\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"fastener\"], \"classified\": [\"bolt-2\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"fastener\"], \"classified\": [\"bolt-3\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"fastener\"], \"classified\": [\"bolt-4\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"gear\"], \"classified\": [\"gear-in\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"gear\"], \"classified\": [\"gear-out\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"gearbox\"], \"classified\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"housing-part\"], \"classified\": [\"cover\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"housing-part\"], \"classified\": [\"housing\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"instrument\"], \"classified\": [\"scale-3\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"rubber\"], \"classified\": [\"gasket\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"seal\"], \"classified\": [\"gasket\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"shaft\"], \"classified\": [\"input-shaft\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"shaft\"], \"classified\": [\"output-shaft\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bearing-1\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bearing-2\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bearing-3\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bench-1\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bolt-1\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bolt-2\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bolt-3\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"bolt-4\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"cover\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"gear-in\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"gear-out\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"input-shaft\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"steel\"], \"classified\": [\"output-shaft\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"stock\"], \"classified\": [\"alu-blank-7\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"sub-assembly\"], \"classified\": [\"shaft-asm-in\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "classified-as",
+    "{\"class\": [\"workbench\"], \"classified\": [\"bench-1\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "constitution",
+    "{\"constituent\": [\"alu-blank-7\"], \"constituted\": [\"cover\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "frame-transform",
+    "{\"child\": [\"f-bench\"], \"parent\": [\"f-workshop\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "frame-transform",
+    "{\"child\": [\"f-gearbox\"], \"parent\": [\"f-bench\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "has-quality",
+    "{\"bearer\": [\"housing\"], \"quality\": [\"mass\"], \"unit\": [\"kg\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "located-at",
+    "{\"located\": [\"bearing-1\"], \"place\": [\"store-shelf\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "located-at",
+    "{\"located\": [\"bench-1\"], \"place\": [\"bay-1\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "located-at",
+    "{\"located\": [\"gbx-100\"], \"place\": [\"bay-1\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "located-at",
+    "{\"located\": [\"scale-3\"], \"place\": [\"bay-1\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "part-of",
+    "{\"part\": [\"bearing-2\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "part-of",
+    "{\"part\": [\"bearing-3\"], \"whole\": [\"shaft-asm-in\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "part-of",
+    "{\"part\": [\"bolt-1\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "part-of",
+    "{\"part\": [\"bolt-2\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "part-of",
+    "{\"part\": [\"bolt-3\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "part-of",
+    "{\"part\": [\"bolt-4\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "part-of",
+    "{\"part\": [\"cover\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "part-of",
+    "{\"part\": [\"gasket\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "part-of",
+    "{\"part\": [\"gear-in\"], \"whole\": [\"shaft-asm-in\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "part-of",
+    "{\"part\": [\"gear-out\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "part-of",
+    "{\"part\": [\"housing\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "part-of",
+    "{\"part\": [\"input-shaft\"], \"whole\": [\"shaft-asm-in\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "part-of",
+    "{\"part\": [\"output-shaft\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "part-of",
+    "{\"part\": [\"shaft-asm-in\"], \"whole\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "positioned-in",
+    "{\"frame\": [\"f-bench\"], \"positioned\": [\"gbx-100\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bearing-2\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bearing-3\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bolt-1\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bolt-2\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bolt-3\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bolt-4\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"cover\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"gasket\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"gear-in\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"gear-out\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"housing\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"input-shaft\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"output-shaft\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "positioned-in",
+    "{\"frame\": [\"f-workshop\"], \"positioned\": [\"bench-1\"]}"
+   ]
+  ],
+  "state ranked before not-yet-effective": [
+   [
+    "actual",
+    "depends-on",
+    "{\"dependee\": [\"bearing-2\"], \"dependent\": [\"gear-out\"], \"kind\": [\"dependency:functional\"]}"
+   ],
+   [
+    "actual",
+    "frame-transform",
+    "{\"child\": [\"f-bench\"], \"parent\": [\"f-workshop\"]}"
+   ],
+   [
+    "actual",
+    "has-quality",
+    "{\"bearer\": [\"gbx-100\"], \"quality\": [\"condition\"], \"value\": [\"faulty\"]}"
+   ],
+   [
+    "actual",
+    "has-quality",
+    "{\"bearer\": [\"gbx-100\"], \"quality\": [\"condition\"], \"value\": [\"operational\"]}"
+   ],
+   [
+    "actual",
+    "located-at",
+    "{\"located\": [\"bearing-3\"], \"place\": [\"store-shelf\"]}"
+   ],
+   [
+    "actual",
+    "part-of",
+    "{\"part\": [\"bearing-1\"], \"whole\": [\"shaft-asm-in\"]}"
+   ],
+   [
+    "actual",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bearing-1\"]}"
+   ],
+   [
+    "actual",
+    "positioned-in",
+    "{\"frame\": [\"f-workshop\"], \"positioned\": [\"bench-1\"]}"
+   ],
+   [
+    "org",
+    "office-holding",
+    "{\"class\": [\"site-manager\"], \"classified\": [\"cal\"], \"context\": [\"depot-7\"]}"
+   ],
+   [
+    "org-plan-reorg",
+    "office-holding",
+    "{\"class\": [\"site-manager\"], \"classified\": [\"cal\"], \"context\": [\"depot-7\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "frame-transform",
+    "{\"child\": [\"f-bench\"], \"parent\": [\"f-workshop\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "has-quality",
+    "{\"bearer\": [\"gbx-100\"], \"quality\": [\"condition\"], \"value\": [\"faulty\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "has-quality",
+    "{\"bearer\": [\"gbx-100\"], \"quality\": [\"condition\"], \"value\": [\"operational\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "located-at",
+    "{\"located\": [\"bearing-3\"], \"place\": [\"store-shelf\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "part-of",
+    "{\"part\": [\"bearing-1\"], \"whole\": [\"shaft-asm-in\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bearing-1\"]}"
+   ],
+   [
+    "plan-apprentice",
+    "positioned-in",
+    "{\"frame\": [\"f-workshop\"], \"positioned\": [\"bench-1\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "frame-transform",
+    "{\"child\": [\"f-bench\"], \"parent\": [\"f-workshop\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "located-at",
+    "{\"located\": [\"bearing-3\"], \"place\": [\"store-shelf\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "part-of",
+    "{\"part\": [\"bearing-1\"], \"whole\": [\"shaft-asm-in\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bearing-1\"]}"
+   ],
+   [
+    "plan-move-bench",
+    "positioned-in",
+    "{\"frame\": [\"f-workshop\"], \"positioned\": [\"bench-1\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "frame-transform",
+    "{\"child\": [\"f-bench\"], \"parent\": [\"f-workshop\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "has-quality",
+    "{\"bearer\": [\"gbx-100\"], \"quality\": [\"condition\"], \"value\": [\"faulty\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "has-quality",
+    "{\"bearer\": [\"gbx-100\"], \"quality\": [\"condition\"], \"value\": [\"operational\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "located-at",
+    "{\"located\": [\"bearing-3\"], \"place\": [\"store-shelf\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "part-of",
+    "{\"part\": [\"bearing-1\"], \"whole\": [\"shaft-asm-in\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bearing-1\"]}"
+   ],
+   [
+    "plan-relubricate-only",
+    "positioned-in",
+    "{\"frame\": [\"f-workshop\"], \"positioned\": [\"bench-1\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "depends-on",
+    "{\"dependee\": [\"bearing-2\"], \"dependent\": [\"gear-out\"], \"kind\": [\"dependency:functional\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "frame-transform",
+    "{\"child\": [\"f-bench\"], \"parent\": [\"f-workshop\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "has-quality",
+    "{\"bearer\": [\"gbx-100\"], \"quality\": [\"condition\"], \"value\": [\"faulty\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "has-quality",
+    "{\"bearer\": [\"gbx-100\"], \"quality\": [\"condition\"], \"value\": [\"operational\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "located-at",
+    "{\"located\": [\"bearing-3\"], \"place\": [\"store-shelf\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "part-of",
+    "{\"part\": [\"bearing-1\"], \"whole\": [\"shaft-asm-in\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bearing-1\"]}"
+   ],
+   [
+    "plan-rig-control",
+    "positioned-in",
+    "{\"frame\": [\"f-workshop\"], \"positioned\": [\"bench-1\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "located-at",
+    "{\"located\": [\"bearing-3\"], \"place\": [\"store-shelf\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "part-of",
+    "{\"part\": [\"bearing-1\"], \"whole\": [\"shaft-asm-in\"]}"
+   ],
+   [
+    "plan-steel-cover",
+    "positioned-in",
+    "{\"frame\": [\"f-gearbox\"], \"positioned\": [\"bearing-1\"]}"
+   ]
+  ],
+  "not yet effective although begun": [
+   [
+    "lab",
+    "classified-as",
+    "{\"class\": [\"hydrated\"], \"classified\": [\"sample-12\"]}"
+   ],
+   [
+    "lab-plan-recal",
+    "classified-as",
+    "{\"class\": [\"hydrated\"], \"classified\": [\"sample-12\"]}"
+   ]
+  ],
+  "other: superseded": [
+   [
+    "plan-move-bench",
+    "frame-transform",
+    "{\"child\": [\"f-bench\"], \"parent\": [\"f-workshop\"]}"
+   ]
+  ]
+ },
+ "DI-2 occurrences with differing players": {
+  "actual o-bearing-replacement": {
+   "patient": [
+    "bearing-1",
+    "bearing-3"
+   ]
+  },
+  "plan-apprentice o-bearing-replacement": {
+   "patient": [
+    "bearing-1",
+    "bearing-3"
+   ]
+  },
+  "plan-rig-control o-bearing-replacement": {
+   "patient": [
+    "bearing-1",
+    "bearing-3"
+   ]
+  }
+ },
+ "DI-6 capable() with mixed statuses": [],
+ "DI-6 office_holders() with mixed statuses": [],
+ "seconds": {
+  "build": 8.2,
+  "total": 2125.7
+ }
+}

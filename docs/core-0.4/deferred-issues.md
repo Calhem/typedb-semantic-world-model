@@ -1,14 +1,17 @@
 # Deferred correctness issues (register)
 
-**Opened 2026-11-11 under LABS-1.025; DI-5 added under LABS-1.026, DI-6 under LABS-1.027, DI-7 under LABS-1.028, DI-8 and DI-9 under LABS-1.030.** These are known correctness issues (DI-1 to DI-8) and one
-tracked performance concern (DI-9), kept apart from the stage documents.
-None of them has had its semantics changed yet.
+**Opened 2026-11-11 under LABS-1.025; DI-5 added under LABS-1.026, DI-6 under LABS-1.027, DI-7 under LABS-1.028, DI-8 and DI-9 under LABS-1.030, DI-10 and DI-11 under LABS-1.034.** These are known correctness issues (DI-1 to DI-8, DI-11), one
+tracked performance concern (DI-9) and one maintenance item (DI-10), kept apart from the stage documents.
+None of them has had its semantics changed yet. The pre-Stage E correctness review
+([pre-stage-e-correctness-review.md](pre-stage-e-correctness-review.md), LABS-1.034) reproduces DI-1 to DI-6 and DI-8,
+widens the scope of DI-5 and DI-8, and found DI-11.
 
 - **DI-1**, **DI-2**, **DI-6** and **DI-8** must be **reviewed before Stage E** (final validation); DI-1, DI-2 and
   DI-8 must be resolved.
 - **DI-7** is a general semantic requirement to be designed **in Stage E**.
 - **DI-9** is a performance concern tracked **into Stage E**.
 - **DI-3**, **DI-4** and **DI-5** are accepted limitations until a decision says otherwise.
+- **DI-10** is non-blocking maintenance. **DI-11** (found by the review) is proposed for review before Stage E.
 
 Each entry gives a concrete case, what it affects, and the options. A resolution needs its own approved decision and
 tests.
@@ -24,6 +27,8 @@ tests.
 | DI-7 | formal derivation provenance: no record of a named rule and named premises, yet basis "inference" gives INFERRED | D-3 (LABS-1.027 G-1, LABS-1.028) | Stage E requirement | open |
 | DI-8 | `take_sample` (and `replace_part`) write an account and its claimed effects in separate transactions | D-3 (LABS-1.028; registered LABS-1.030) | before Stage E | open |
 | DI-9 | performance: high query counts in the D-3 reports, and questions slowing as other worlds' data grows | D-3 benchmark (LABS-1.029; registered LABS-1.030) | tracked into Stage E | open (performance) |
+| DI-10 | the schema explorer has no automated browser regression tests (search, filters, navigation were checked by hand) | LABS-1.024 gate (registered LABS-1.034) | no deadline (maintenance) | open (non-blocking) |
+| DI-11 | reports built on `_claims` (capable, the profile reports) ignore functional-slot conflicts; the mirror image of DI-1 | pre-Stage E review (LABS-1.034) | proposed: before Stage E | open (latent) |
 
 ## DI-1: `facts_about` omits content disputed by polarity
 **What happens.** `facts_about(world, subject, t)` lists only content whose judgement at t is "holds". Two kinds of
@@ -117,6 +122,10 @@ equivalence test).
 **Option:** rank "not yet effective" before attestation states when an accepted attestation begins after t. This changes
 `capable()` answers in such cases, and needs a decision and an updated baseline.
 
+**Wider scope (LABS-1.034 review).** The same label falls back to "not yet effective" for *any* accepted content that is
+undecided at t, including one that has begun but whose end is unknown (no invented continuity): an accepted holding
+from day 1 with no stated end is reported "not yet effective" on day 5. See the review, DI-5.
+
 ## DI-6: aggregate reports can return ASSERTED despite mixed constituent statuses
 **What happens.** `organisation.office_holders` reports one overall status for the office. When the established
 holders have different support statuses, it returns ASSERTED, and only the per-holder statuses tell the truth. The
@@ -188,6 +197,14 @@ incomplete.
 Recommended: (a), applied to both functions. **Must be resolved before Stage E.** The behaviour was left unchanged
 when D-3 was merged (LABS-1.030).
 
+**Wider scope (LABS-1.034 review).**
+- Core composite writers are not atomic either: `account` without a batch (up to four transactions), `record_event`,
+  `create_thing` and `destroy`.
+- Option (a) is not possible with today's API alone. `claim_effect` stores its outcome content in its own committed
+  transaction (`WorldModel.proposition`). Inside a batch, a new outcome is not visible to the batch's transaction, so
+  the claim fails (reproduced), and the outcome content is left behind. Option (a) needs `claim_effect` to write its
+  outcome inside the batch.
+
 ## DI-9: report query counts and cross-world scaling (performance)
 **What was measured** (`stage-d3.md` section 7, `bench-d3/README.md`; four interleaved rounds):
 - `provenance(s12-b)` costs **336 queries** (about 640 ms), and `measurement_calibration(sample-12)` **411** (about
@@ -209,3 +226,26 @@ when D-3 was merged (LABS-1.030).
 Recommended: first verify the cause of the cross-world slowdown with query plans, then (b) and (a), measured against
 `bench-d3`.
 
+
+## DI-10: automated browser regression coverage for the schema explorer (maintenance)
+**What exists.** The explorer's search, filters, navigation, themes and narrow layout were checked by hand in a browser
+at the LABS-1.024 gate. Tests check its data, its lack of external references and its escaping, but run no browser.
+
+**Item.** Add an automated browser check (headless) of the reference explorer: no console errors, no network requests,
+search ranking, each filter, hash navigation and the back button, and a narrow layout without sideways scroll.
+Non-blocking: no deadline; it guards against regressions in the page template.
+
+## DI-11: `_claims`-based reports ignore functional conflicts
+**What happens.** The core has two reporting paths over the same per-content judgement:
+- `facts_about` / `value_at` / `holds` apply functional-slot conflicts (DISPUTED with rivals), but `facts_about` drops
+  polarity-disputed content (DI-1);
+- `_claims` and everything built on it (`capable`, `direct_dependencies`, `effects_of`, and every profile report) keep
+  polarity disputes, but never apply functional-slot conflicts.
+
+**Concrete case** (review probe): a mechanical joint-kind slot keyed by the two endpoints is declared (DI-3's
+option). `holds` and `facts_about` then report the bolted and bonded joints as DISPUTED with each other, while
+`mechanical.connections` still reports both ASSERTED.
+
+**Affected.** Latent today: no installed slot is on a type that a `_claims` report reads (the installed slots are
+`located-at`, `anchored-to`, `positioned-in` and `frame-transform`). It blocks DI-3's slot option and any future
+profile slot on a reported type. See the review for the common cause it shares with DI-1, DI-5 and DI-6.
