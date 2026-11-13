@@ -92,7 +92,11 @@ no separate read transactions. Before, `take_sample` opened 6 write and 6 read t
 - module installation, upgrade, profile installation and create, failed at every write;
 - a caller grouping the creation of a sample with its sampling account: own reads, isolation from other readers, one
   recorded time;
-- a user error, a caught inner failure, and a schema change inside a data operation;
+- a user error, and a schema change inside a data operation;
+- a caught nested failure (LABS-1.037): `take_sample`, called inside a caller's operation, fails at each of its own
+  writes after the first (so it has always made transaction-local changes, which are visible inside the operation),
+  and the caller catches the error. The operation is marked for rollback: ending it raises `OperationError`, nothing
+  persists and the watermark does not move. With the marking disabled, this test fails;
 - recorded time stays monotonic after a rollback;
 - the registered DI-8 case;
 - cached schema reads after a rollback.

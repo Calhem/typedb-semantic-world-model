@@ -348,9 +348,18 @@ def test_a_user_error_inside_an_operation_writes_nothing(base, driver):
     assert fingerprint(driver, wm.database) == before and wm._last_recorded == mark
 
 
+def local_size(wm):
+    """Ownerships visible to the current operation's transaction (its own uncommitted writes included)."""
+    with wm._reading() as tx:
+        return len(q.rows(tx, "match $x has $a;"))
+
+
 def test_a_caught_inner_failure_still_writes_nothing(base, driver):
+    """A nested writer fails after it has made transaction-local changes, and the caller catches the error: the
+    enclosing operation is marked for rollback, so nothing persists and the recorded-time watermark does not move."""
     wm, w = base
-    before = fingerprint(driver, wm.database)
+    # a validation error, raised before the nested writer writes anything
+    before, mark = fingerprint(driver, wm.database), wm._last_recorded
     with pytest.raises(OperationError, match="caught"):
         with wm.operation():
             wm.add_entity("physical-object", "ghost", id=f"ghost-{tag()}")
@@ -358,7 +367,41 @@ def test_a_caught_inner_failure_still_writes_nothing(base, driver):
                 wm.attest(w, "part-of", {"part": "no-such-thing", "whole": "housing"}, start=T(1))
             except ValueError:
                 pass                                                   # swallowed: the operation must not commit
-    assert fingerprint(driver, wm.database) == before
+    assert fingerprint(driver, wm.database) == before and wm._last_recorded == mark
+
+    # a connection failure at each of the nested writer's own writes after its first
+    faulty = FaultyDriver(driver)
+    real, wm.driver = wm.driver, faulty
+    try:
+        op_take_sample(wm, w, True)
+        faulty.writes = 0
+        op_take_sample(wm, w, False)                                   # a clean run: the nested writer's writes
+        nested = faulty.writes
+        assert nested >= 2
+        for k in range(2, nested + 1):
+            s = f"s-{tag()}"
+            before, mark = fingerprint(driver, wm.database), wm._last_recorded
+            caught = False
+            with pytest.raises(OperationError, match="caught"):
+                with wm.operation():
+                    wm.add_entity("sample", s, id=s)
+                    outer = local_size(wm)
+                    faulty.writes, faulty.fail_at = 0, k               # k - 1 nested writes made before the failure
+                    try:
+                        lb.take_sample(wm, w, "ana", "core-1", s, start=T(3), attester="ana")
+                    except Injected:
+                        caught = True
+                        assert faulty.writes == k
+                        assert local_size(wm) > outer                  # the nested writes are in the transaction
+                        at = wm._op.recorded_at                        # and the nested writer took the operation's time
+                        assert at is not None and at > mark
+                    finally:
+                        faulty.fail_at = None
+            assert caught
+            assert fingerprint(driver, wm.database) == before, f"partial data after a caught failure at nested write {k}"
+            assert wm._last_recorded == mark, f"the watermark moved after a caught failure at nested write {k}"
+    finally:
+        wm.driver = real
 
 
 def test_a_schema_change_cannot_join_a_data_operation(driver):
