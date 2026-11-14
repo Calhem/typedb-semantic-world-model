@@ -1,21 +1,21 @@
 
-=== DI-1 current
+=== DI-1 after increment B
   holds_role: "DISPUTED"
   holds_part: "DISPUTED"
-  facts_about_bea: []
-  roles_of_bea: []
+  facts_about_bea: ["classified-as"]
+  roles_of_bea: [{"role": "analyst", "context": null, "status": "DISPUTED", "support": ["att:c80acbb2d266484f", "att:cd7025cad2ef4346"]}]
   capable_bea_analyst: "disputed"
-  facts_about_wheel: []
-  composition_wheel: {"id": "wheel", "parts": []}
-  process_steps_proc: []
+  facts_about_wheel: [["depends-on", {"dependee": ["axle"], "dependent": ["wheel"]}], ["part-of", {"part": ["axle"], "whole": ["wheel"]}]]
+  composition_wheel: {"id": "wheel", "parts": [], "not_traversed": [{"id": "axle", "judgement": "disputed", "status": "DISPUTED", "support": ["att:a2dfd89fb31e4077", "att:c8635c9c8d6447a7"], "assertions": ["att:c8635c9c8d6447a7"], "denials": ["att:a2dfd89fb31e4077"], "conflicts": []}]}
+  process_steps_proc: [{"occurrence": "step-1", "descriptions": [], "start": null, "end": null, "kinds": [], "actors": [], "support": ["att:b7fc17fbc07c49c3", "att:cff77c005f6d49eb"], "judgement": "disputed", "status": "DISPUTED"}]
   direct_dependencies_wheel: [["axle", "DISPUTED"]]
 
 === DI-2 current
   replacement_role_names: ["fitted", "patient"]
   sampling_role_names: ["actor", "destination", "origin"]
-  replacement_removed_as_patient: {"b1": [["event:57aeaaa6c48346d8", "maint"]], "b2": [["event:f26769dcbaae43ef", "insp"]]}
-  replacement_fitted: {"b3": [["event:57aeaaa6c48346d8", "maint"], ["event:f26769dcbaae43ef", "insp"]]}
-  sampling_product_as_destination: {"s-a": [["event:62829542bbf14426", "ana"]], "s-b": [["event:1b808c5e436c4db9", "bo"]]}
+  replacement_removed_as_patient: {"b1": [["event:3f55cbcdd54a4753", "maint"]], "b2": [["event:abd2c37639394336", "insp"]]}
+  replacement_fitted: {"b3": [["event:3f55cbcdd54a4753", "maint"], ["event:abd2c37639394336", "insp"]]}
+  sampling_product_as_destination: {"s-a": [["event:a03656fcebf04859", "ana"]], "s-b": [["event:4cb1134dc7c946de", "bo"]]}
   per_account_removed: [["b1"], ["b2"]]
 
 === DI-3 current
@@ -25,13 +25,13 @@
   direct_dependencies_housing: [["cover", "steel", "ASSERTED"]]
   dependencies_of_kind_steel: ["cover"]
 
-=== DI-5 current
-  cal: ["not established", "UNKNOWN"]
+=== DI-5 after increment B
+  cal: ["not yet effective", "UNKNOWN"]
   dan: ["not yet effective", "UNKNOWN"]
   cal_at_day_9: "established"
 
-=== DI-5 wider
-  eve_started_day_1_end_unknown: ["not yet effective", "UNKNOWN"]
+=== DI-5 wider, after increment B
+  eve_started_day_1_end_unknown: ["not established", "UNKNOWN"]
   holds: ["UNKNOWN", null]
 
 === DI-6 current
@@ -49,10 +49,10 @@
   b_new_outcome: {"attestations_written": 3, "description_written": true, "outcome_content_stored": true}
   c_failure_mid_batch: {"simulated_failure": true, "attestations_written": 0, "description_written": false, "outcome_content_stored": true}
 
-=== DI-3 feasibility and DI-11 (found by this review)
+=== DI-3 feasibility and DI-11, after increment B
   declared: true
   holds_bolted: ["DISPUTED", null]
-  connections_after: [["housing", "joint-bolted", "ASSERTED"], ["housing", "joint-bonded", "ASSERTED"]]
+  connections_after: [["housing", "joint-bolted", "DISPUTED"], ["housing", "joint-bonded", "DISPUTED"]]
   facts_about_cover: [["connected-to", "DISPUTED", true], ["connected-to", "DISPUTED", true]]
 
 all reproductions behaved as recorded

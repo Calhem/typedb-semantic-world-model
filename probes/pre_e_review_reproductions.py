@@ -1,6 +1,7 @@
 """Pre-Stage E correctness review (LABS-1.034): executable reproductions of DI-1, DI-2, DI-3, DI-4, DI-5, DI-6, DI-8
 and DI-11 (found here), on main as merged (no semantic change). Each case prints the current behaviour and asserts it, so this probe
-fails loudly once a correction changes it. Usage: uv run python -I probes/pre_e_review_reproductions.py <repo>
+fails loudly once a correction changes it. Corrected cases assert the corrected behaviour: DI-8 after increment A
+(LABS-1.036), DI-1, DI-5 and DI-11 after increment B (LABS-1.038). Usage: uv run python -I probes/pre_e_review_reproductions.py <repo>
 
 Builds one throwaway database (wm-probe-pre-e, deleted afterwards) with the full core and the three profiles.
 """
@@ -80,7 +81,7 @@ try:
     h_part = wm.holds(w, "part-of", {"whole": "wheel", "part": "axle"}, t)
     fa_bea = [f["type"] for f in wm.facts_about(w, "bea", t)]
     fa_wheel = [(f["type"], f["roles"]) for f in wm.facts_about(w, "wheel", t)]
-    show("DI-1 current",
+    show("DI-1 after increment B",
          holds_role=h_role.status.name, holds_part=h_part.status.name,
          facts_about_bea=fa_bea, roles_of_bea=wm.roles_of(w, "bea", t),
          capable_bea_analyst=wm.capable(w, "bea", "analyst", t)["judgement"],
@@ -88,10 +89,14 @@ try:
          process_steps_proc=wm.process_steps(w, "proc", t),
          direct_dependencies_wheel=[(x["dependee"], x["status"].name) for x in wm.direct_dependencies(w, "wheel", t)])
     assert h_role.status.name == "DISPUTED" and h_part.status.name == "DISPUTED"
-    assert "classified-as" not in fa_bea and wm.roles_of(w, "bea", t) == []
-    assert wm.capable(w, "bea", "analyst", t)["judgement"] == "disputed"          # the _claims path keeps it
-    assert not any(ty == "part-of" for ty, _ in fa_wheel)
-    assert wm.process_steps(w, "proc", t) == []
+    # corrected (LABS-1.038): every listing reader lists the disputed content as DISPUTED, citing both sides
+    assert "classified-as" in fa_bea and [r["status"].name for r in wm.roles_of(w, "bea", t)] == ["DISPUTED"]
+    assert wm.capable(w, "bea", "analyst", t)["judgement"] == "disputed"
+    wheel = [f for f in wm.facts_about(w, "wheel", t) if f["type"] == "part-of"]
+    assert [(f["judgement"], f["assertions"], f["denials"]) for f in wheel] == [("disputed", [pa], [pd])]
+    assert wm.composition(w, "wheel", t)["parts"] == []                           # the established tree is unchanged
+    assert [x["id"] for x in wm.composition(w, "wheel", t)["not_traversed"]] == ["axle"]
+    assert [(x["occurrence"], x["status"].name) for x in wm.process_steps(w, "proc", t)] == [("step-1", "DISPUTED")]
     assert [x["status"].name for x in wm.direct_dependencies(w, "wheel", t)] == ["DISPUTED"]
 
     # ---- DI-2: conflicting single-valued event participants are unioned -------------------------------------------
@@ -136,16 +141,17 @@ try:
     wm.grant(w, "cal", "cap", polarity=False, start=T(8), attester="audit")      # unreviewed denial
     wm.grant(w, "dan", "cap", start=T(8))                                        # the same, without a counter-claim
     c_cal, c_dan = wm.capable(w, "cal", "cap", T(5)), wm.capable(w, "dan", "cap", T(5))
-    show("DI-5 current", cal=(c_cal["judgement"], c_cal["status"].name), dan=(c_dan["judgement"], c_dan["status"].name),
+    show("DI-5 after increment B", cal=(c_cal["judgement"], c_cal["status"].name), dan=(c_dan["judgement"], c_dan["status"].name),
          cal_at_day_9=wm.capable(w, "cal", "cap", T(9))["judgement"])
-    assert c_cal["judgement"] == "not established" and c_dan["judgement"] == "not yet effective"
+    # corrected (LABS-1.038): the accepted holding's reason comes first; the unreviewed denial is pending, listed
+    assert c_cal["judgement"] == "not yet effective" and c_dan["judgement"] == "not yet effective"
     # the same fallback mislabels an accepted holding that has begun but whose end is unknown (no invented continuity)
     wm.attest(w, "classified-as", {"classified": "eve", "class": "cap"}, start=T(1))     # the system's own; end unknown
     c_eve = wm.capable(w, "eve", "cap", T(5))
     h_eve = wm.holds(w, "classified-as", {"classified": "eve", "class": "cap"}, T(5))
-    show("DI-5 wider", eve_started_day_1_end_unknown=(c_eve["judgement"], c_eve["status"].name),
+    show("DI-5 wider, after increment B", eve_started_day_1_end_unknown=(c_eve["judgement"], c_eve["status"].name),
          holds=(h_eve.status.name, h_eve.holds))
-    assert c_eve["judgement"] == "not yet effective" and h_eve.holds is None
+    assert c_eve["judgement"] == "not established" and h_eve.holds is None       # begun, end unknown (choice C)
 
     # ---- DI-6: one status folded from constituents with different statuses -----------------------------------------
     o1 = org.appoint(wm, w, "bea", "office-x", "depot", start=T(1), attester="hr")
@@ -239,10 +245,10 @@ try:
                                      for f in wm.facts_about(w, "cover", t) if f["type"] == "connected-to"]
     except Exception as ex:
         feas["error"] = " ".join(str(ex).split())[:200]
-    show("DI-3 feasibility and DI-11 (found by this review)", **feas)
-    # the slot works in the core (holds, facts_about: DISPUTED), but the _claims-based profile report ignores it (DI-11)
+    show("DI-3 feasibility and DI-11, after increment B", **feas)
+    # corrected (LABS-1.038): the profile report applies the slot, as holds and facts_about do (DI-11)
     assert feas["holds_bolted"][0] == "DISPUTED" and all(st == "DISPUTED" for _, st, _ in feas["facts_about_cover"])
-    assert [st for _, _, st in feas["connections_after"]] == ["ASSERTED", "ASSERTED"]
+    assert [st for _, _, st in feas["connections_after"]] == ["DISPUTED", "DISPUTED"]
 finally:
     wm.driver.databases.get(DB).delete()
 print("\nall reproductions behaved as recorded")

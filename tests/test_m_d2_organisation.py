@@ -170,7 +170,9 @@ def test_a_polarity_dispute_is_listed_not_dropped(make):
     (entry,) = o.offices_of(wm, w, "bea", T(5))
     assert (entry["judgement"], entry["status"]) == ("disputed", Status.DISPUTED)
     assert o.office_holders(wm, w, "chair", "unit", T(5))["status"] == Status.DISPUTED
-    assert wm.roles_of(w, "bea", T(5)) == []                       # core roles_of unchanged (DI-1), as instructed
+    # DI-1 corrected (LABS-1.038): core roles_of lists the polarity-disputed role as DISPUTED, never drops it
+    (role,) = wm.roles_of(w, "bea", T(5))
+    assert (role["role"], role["context"], role["status"]) == ("chair", "unit", Status.DISPUTED)
 
 
 # ---- four independent concepts ------------------------------------------------------------------------------------------

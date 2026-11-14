@@ -48,6 +48,12 @@ def yaw(radians):
     return (math.cos(radians / 2), 0.0, 0.0, math.sin(radians / 2))
 
 
+def _disputed(f):
+    """What a report says about a facts_about entry it does not follow."""
+    return {"judgement": f["judgement"], "status": f["status"], "support": f["support"],
+            "assertions": f["assertions"], "denials": f["denials"], "conflicts": f["conflicts"]}
+
+
 class PhysicalMixin:
     # ---- writing ---------------------------------------------------------------------------------------------------
     def position(self, world, thing, frame, x, y, z, orientation=None, **attest):
@@ -77,8 +83,10 @@ class PhysicalMixin:
         return self.attest(world, "anchored-to", {"frame": frame, "anchor": anchor}, **attest)
 
     # ---- reading ---------------------------------------------------------------------------------------------------
-    def _facts(self, world, subject, t, type, as_of, perspective):
-        return [f for f in self.facts_about(world, subject, t, as_of, perspective) if self.is_a(f["type"], type)]
+    def _facts(self, world, subject, t, type, as_of, perspective, established=False):
+        """facts_about entries of `type` (established and disputed; established True: established only)."""
+        return [f for f in self.facts_about(world, subject, t, as_of, perspective) if self.is_a(f["type"], type)
+                and (not established or f["judgement"] == "established")]
 
     def poses(self, world, thing, t, as_of=None, perspective=SYSTEM):
         """The thing's positions that hold at t, one per frame statement: frame, per-axis (lower, upper), orientation,
@@ -119,33 +127,51 @@ class PhysicalMixin:
         return info
 
     def composition(self, world, whole, t, as_of=None, perspective=SYSTEM):
-        """The part-of tree under `whole` at t: {"id", "parts": [subtrees]} from the direct parts that hold."""
+        """The part-of tree under `whole` at t: {"id", "parts": [subtrees], "not_traversed"} from the direct parts
+        established at t. `not_traversed`: direct parts whose part-of content is disputed at t, each with its status,
+        support, assertions, denials and conflicts; they are not expanded (choice B, LABS-1.038)."""
         def tree(node, seen):
-            direct = sorted(x for f in self._facts(world, node, t, "part-of", as_of, perspective)
-                            if node in f["roles"].get("whole", []) for x in f["roles"]["part"])
-            return {"id": node, "parts": [tree(p, seen | {p}) for p in direct if p not in seen]}
+            facts = [f for f in self._facts(world, node, t, "part-of", as_of, perspective)
+                     if node in f["roles"].get("whole", [])]
+            direct = sorted(x for f in facts if f["judgement"] == "established" for x in f["roles"]["part"])
+            held = [{"id": x, **_disputed(f)} for f in facts if f["judgement"] != "established" for x in f["roles"]["part"]]
+            return {"id": node, "parts": [tree(p, seen | {p}) for p in direct if p not in seen],
+                    "not_traversed": sorted(held, key=lambda h: h["id"])}
         return tree(whole, {whole})
 
     def contents(self, world, place, t, as_of=None, perspective=SYSTEM):
         """What a place contains at t: things located at it, and places that are part of it (with their contents)."""
         located = self.value_at(world, "located-at", place, t, as_of, perspective, key_role="place",
                                 value_role="located")
-        subplaces = sorted(x for f in self._facts(world, place, t, "part-of", as_of, perspective)
-                           if place in f["roles"].get("whole", []) for x in f["roles"]["part"])
+        facts = [f for f in self._facts(world, place, t, "part-of", as_of, perspective)
+                 if place in f["roles"].get("whole", [])]
+        subplaces = sorted(x for f in facts if f["judgement"] == "established" for x in f["roles"]["part"])
+        held = [{"id": x, **_disputed(f)} for f in facts if f["judgement"] != "established" for x in f["roles"]["part"]]
         return {"place": place, "located": list(located.values), "status": located.status.value,
-                "places": [self.contents(world, p, t, as_of, perspective) for p in subplaces]}
+                "places": [self.contents(world, p, t, as_of, perspective) for p in subplaces],
+                "not_traversed": sorted(held, key=lambda h: h["id"])}
 
-    def materials(self, world, thing, t, as_of=None, perspective=SYSTEM, material="material"):
+    def materials(self, world, thing, t, as_of=None, perspective=SYSTEM, material="material", report=False):
         """The material categories the thing is classified under at t: classes that are themselves classified as
-        `material` (decision D-A1-1). Materials are categories, not types."""
-        classes = sorted({c for f in self._facts(world, thing, t, "classified-as", as_of, perspective)
-                          if thing in f["roles"].get("classified", []) for c in f["roles"]["class"]})
-        out = []
-        for c in classes:
-            marks = self._facts(world, c, t, "classified-as", as_of, perspective)
-            if any(c in f["roles"].get("classified", []) and material in f["roles"]["class"] for f in marks):
+        `material` (decision D-A1-1), both classifications established. Materials are categories, not types.
+        report True: {"materials": the same ids, "disputed": classes reached through a disputed classification,
+        each with the classification that is disputed}."""
+        facts = [f for f in self._facts(world, thing, t, "classified-as", as_of, perspective)
+                 if thing in f["roles"].get("classified", [])]
+        out, disputed = [], []
+        for c in sorted({c for f in facts for c in f["roles"]["class"]}):
+            own = [f for f in facts if c in f["roles"]["class"]]
+            marks = [f for f in self._facts(world, c, t, "classified-as", as_of, perspective)
+                     if c in f["roles"].get("classified", []) and material in f["roles"]["class"]]
+            if not marks:
+                continue
+            if any(f["judgement"] == "established" for f in own) and any(f["judgement"] == "established" for f in marks):
                 out.append(c)
-        return out
+            else:
+                bad = [f for f in own + marks if f["judgement"] != "established"]
+                disputed.append({"material": c, "disputed": [{"type": f["type"], "roles": f["roles"], **_disputed(f)}
+                                                             for f in bad]})
+        return {"materials": out, "disputed": disputed} if report else out
 
     def names(self, ids):
         """{id: name} for identified things (a convenience for readable output)."""
@@ -167,15 +193,18 @@ class PhysicalMixin:
             atts = self._load(world, as_of, types=["frame-transform"], at=t, perspective=perspective)
         else:
             atts = {k: a for k, a in self.visible(world, as_of, perspective).items() if self.is_a(a.ctype, "frame-transform")}
+        from .judgement import Judgement
         edges = []
-        for cls, (val, support, _) in self._judge(list(atts.values()), Identity([], perspective, as_of), t,
-                                                  perspective, as_of).items():
-            if val is False:
+        # The canonical judgement, with the frame-transform slot applied (Q5): two accepted different transforms
+        # for one frame pair are disputed edges. Judged without same-as identity: DI-12, deferred (LABS-1.038).
+        for cls, r in self._records(list(atts.values()), Identity([], perspective, as_of), t, perspective, as_of,
+                                    world=world).items():
+            if r.judgement not in (Judgement.ESTABLISHED, Judgement.DISPUTED):
                 continue
             roles, p = dict(cls[1]), dict(cls[2])
             edges.append({"parent": roles["parent"][0], "child": roles["child"][0],
                           "transform": Transform((p["qw"], p["qx"], p["qy"], p["qz"]), (p["tx"], p["ty"], p["tz"])),
-                          "support": sorted(a.id for a in support), "disputed": val == "disputed"})
+                          "support": r.support_ids, "disputed": r.judgement is Judgement.DISPUTED})
         return sorted(edges, key=lambda e: (e["parent"], e["child"], e["support"]))
 
     @staticmethod

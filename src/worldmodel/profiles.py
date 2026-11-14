@@ -41,6 +41,7 @@ class Profile:
     schema: tuple                    # TypeQL files owned by the profile
     slots: tuple = ()                # (predicate, key roles, value role): predicates must be the profile's own types
     vocabulary: tuple = ()           # (concept kind, id, name): ids must start with "<name>:"
+    attested_constraints: tuple = ()  # AttestedConstraint: single-value constraints that are themselves claims
 
     @property
     def module(self):

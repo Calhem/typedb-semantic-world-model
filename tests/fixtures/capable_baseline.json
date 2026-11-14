@@ -2833,7 +2833,7 @@ null,
 "applicable": [
 [
 "lab-1",
-"not yet effective",
+"not established",
 null,
 [
 [
@@ -2846,7 +2846,7 @@ false,
 ]
 ],
 "holds": null,
-"judgement": "not yet effective",
+"judgement": "not established",
 "only_in": [],
 "status": "UNKNOWN"
 }

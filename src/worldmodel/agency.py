@@ -12,6 +12,7 @@ occurrence's own status, the actor's agency and the capability separately, and c
 planning or prediction.
 """
 
+from .judgement import holding_label
 from .semantics import Status
 
 SYSTEM = "system"
@@ -32,21 +33,12 @@ class AgencyMixin:
             attest.setdefault("until_superseded", True)
         return self.attest(world, "classified-as", roles, polarity=polarity, **attest)
 
-    def _holding_label(self, entry):
-        """One content's judgement for the perspective: accepted, denied, expired (an accepted holding whose interval
-        ended, with no accepted denial), disputed, not yet effective, or an attestation state (unreviewed...)."""
-        label = self._verdict_label(entry)
-        if label == "denied" and all(x["polarity"] for x in entry["attestations"] if x["acceptance"] == "accepted"):
-            label = "expired"
-        return label
-
-    def _judgement(self, entry):
-        """One content's judgement (a _claims entry) in the capable() vocabulary, with its evidence: the shared
+    def _judgement(self, rec):
+        """One content's judgement (a canonical record) in the capable() vocabulary, with its evidence: the shared
         per-content report of the profiles (organisation, LABS-1.026; laboratory, LABS-1.028)."""
-        label = self._holding_label(entry)
-        holds, status, judgement = self._combine([{"judgement": label, "status": entry["status"]}], True)
-        return {"judgement": judgement, "holds": holds, "status": status, "evidence": entry["attestations"],
-                "_label": label}
+        label = holding_label(rec)
+        holds, status, judgement = self._combine([{"judgement": label, "status": rec.status}], True)
+        return {"judgement": judgement, "holds": holds, "status": status, "evidence": rec.claims(), "_label": label}
 
     @staticmethod
     def _combine(applicable, any_found):
@@ -73,11 +65,11 @@ class AgencyMixin:
         """Every classified-as content (or of `types`) of `holder` under `concept`, with its context and the
         perspective's judgement."""
         out = []
-        for e in self._claims(world, holder, types, t, as_of, perspective):
-            if holder in e["roles"].get("classified", []) and concept in e["roles"].get("class", []):
-                ctx = e["roles"].get("context", [None])[0]
-                out.append({"context": ctx, "judgement": self._holding_label(e), "status": e["status"],
-                            "attestations": e["attestations"]})
+        for e in self._contents(world, holder, types, t, as_of, perspective):
+            if holder in e.stated_roles.get("classified", []) and concept in e.stated_roles.get("class", []):
+                ctx = e.stated_roles.get("context", [None])[0]
+                out.append({"context": ctx, "judgement": holding_label(e), "status": e.status,
+                            "attestations": e.claims()})
         return sorted(out, key=lambda x: (x["context"] or "", x["judgement"]))
 
     def capable(self, world, holder, capability, t, context=None, as_of=None, perspective=SYSTEM):
