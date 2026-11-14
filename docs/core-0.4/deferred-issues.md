@@ -1,6 +1,6 @@
 # Deferred correctness issues (register)
 
-**Opened 2026-11-11 under LABS-1.025; DI-5 added under LABS-1.026, DI-6 under LABS-1.027, DI-7 under LABS-1.028, DI-8 and DI-9 under LABS-1.030, DI-10 and DI-11 under LABS-1.034.** These are known correctness issues (DI-1 to DI-8, DI-11), one
+**Opened 2026-11-11 under LABS-1.025; DI-5 added under LABS-1.026, DI-6 under LABS-1.027, DI-7 under LABS-1.028, DI-8 and DI-9 under LABS-1.030, DI-10 and DI-11 under LABS-1.034, DI-12 under LABS-1.038.** These are known correctness issues (DI-1 to DI-8, DI-11), one
 tracked performance concern (DI-9) and one maintenance item (DI-10), kept apart from the stage documents.
 None of them has had its semantics changed yet. The pre-Stage E correctness review
 ([pre-stage-e-correctness-review.md](pre-stage-e-correctness-review.md), LABS-1.034) reproduces DI-1 to DI-6 and DI-8,
@@ -12,6 +12,7 @@ widens the scope of DI-5 and DI-8, and found DI-11.
 - **DI-9** is a performance concern tracked **into Stage E**.
 - **DI-3**, **DI-4** and **DI-5** are accepted limitations until a decision says otherwise.
 - **DI-10** is non-blocking maintenance. **DI-11** (found by the review) is proposed for review before Stage E.
+- **DI-12** (found in the increment B design) is registered and deferred: no deadline, correction not scheduled.
 
 Each entry gives a concrete case, what it affects, and the options. A resolution needs its own approved decision and
 tests.
@@ -29,6 +30,7 @@ tests.
 | DI-9 | performance: high query counts in the D-3 reports, and questions slowing as other worlds' data grows | D-3 benchmark (LABS-1.029; registered LABS-1.030) | tracked into Stage E | open (performance) |
 | DI-10 | the schema explorer has no automated browser regression tests (search, filters, navigation were checked by hand) | LABS-1.024 gate (registered LABS-1.034) | no deadline (maintenance) | open (non-blocking) |
 | DI-11 | reports built on `_claims` (capable, the profile reports) ignore functional-slot conflicts; the mirror image of DI-1 | pre-Stage E review (LABS-1.034) | proposed: before Stage E | open (latent) |
+| DI-12 | the transitive traversals (`parts`, `dependencies`) judge their links without the perspective's same-as identity | increment B design (LABS-1.037, registered LABS-1.038) | no deadline (deferred) | open |
 
 ## DI-1: `facts_about` omits content disputed by polarity
 **What happens.** `facts_about(world, subject, t)` lists only content whose judgement at t is "holds". Two kinds of
@@ -255,3 +257,25 @@ option). `holds` and `facts_about` then report the bolted and bonded joints as D
 **Affected.** Latent today: no installed slot is on a type that a `_claims` report reads (the installed slots are
 `located-at`, `anchored-to`, `positioned-in` and `frame-transform`). It blocks DI-3's slot option and any future
 profile slot on a reported type. See the review for the common cause it shares with DI-1, DI-5 and DI-6.
+
+## DI-12: traversals judge without same-as identity
+**Registered LABS-1.038; correction deferred.** Found while designing increment B
+([pre-e-increment-b-design.md](pre-e-increment-b-design.md), Q6).
+
+**What happens** (`probes/pre_e_b_di12.py`, output `probes/pre_e_b_di12.out.txt`). `parts` and `dependencies` judge
+their links with an empty identity, while every other reader uses the perspective's accepted same-as links. With
+`b-alias` accepted as the same thing as `bracket`:
+- `parts(gearbox)` misses a bolt that is part of `b-alias`, although `holds(part-of(bolt, bracket))` is ASSERTED;
+- an assertion part-of(p, gearbox) and an accepted denial part-of(p-alias, gearbox) are DISPUTED for `holds`, but the
+  closure follows the link as established.
+
+Frame chains are not affected: same-as relates particulars only, so two frames can never be declared the same.
+A related, smaller difference: the reports that select contents by their subject (formerly through `_claims`, now
+`_contents`) match the subject's own id, not its other names (they group co-referring names correctly once found).
+
+**Impact on the reference worlds:** none. No reference world has an accepted same-as link (all 11 worlds checked), so
+no traversal content names an aliased thing.
+
+**Options.** (a) Judge closures under the perspective's identity, traversing equivalence classes, as `holds` does;
+(b) keep id-level traversal and report links that name an aliased thing. Either needs its own decision and tests; the
+selection difference would be decided with it.

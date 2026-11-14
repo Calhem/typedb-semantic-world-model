@@ -1,0 +1,19 @@
+DI-12 current (closures):
+  parts(gearbox) = ['bracket', 'p']
+  holds(part-of(bolt, bracket)) = ASSERTED True   (identity: b-alias = bracket)
+  holds(part-of(p, gearbox)) = DISPUTED   (p-alias = p, and its part-of is denied)
+  every case reproduces as recorded
+
+DI-12 impact on the reference worlds:
+  actual: 0 accepted same-as links; 0 traversal contents name an aliased thing
+  lab: 0 accepted same-as links; 0 traversal contents name an aliased thing
+  lab-plan-recal: 0 accepted same-as links; 0 traversal contents name an aliased thing
+  lab-plan-tom: 0 accepted same-as links; 0 traversal contents name an aliased thing
+  org: 0 accepted same-as links; 0 traversal contents name an aliased thing
+  org-plan-reorg: 0 accepted same-as links; 0 traversal contents name an aliased thing
+  plan-apprentice: 0 accepted same-as links; 0 traversal contents name an aliased thing
+  plan-move-bench: 0 accepted same-as links; 0 traversal contents name an aliased thing
+  plan-relubricate-only: 0 accepted same-as links; 0 traversal contents name an aliased thing
+  plan-rig-control: 0 accepted same-as links; 0 traversal contents name an aliased thing
+  plan-steel-cover: 0 accepted same-as links; 0 traversal contents name an aliased thing
+  total traversal contents affected: 0
