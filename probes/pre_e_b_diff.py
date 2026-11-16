@@ -2,6 +2,9 @@
 
     uv run python -I probes/pre_e_b_diff.py BEFORE.json AFTER.json [--show N] [--json OUT]
 
+Snapshots may be gzipped (.json.gz). The frozen ones are probes/pre_e_b_snapshot.before.json.gz (code at a1bb840)
+and probes/pre_e_b_snapshot.after.json.gz (increment B); their comparison is probes/pre_e_b_diff.out.txt / .json.
+
 Every answer is classified:
 - identical;
 - extended: every value the old answer had is unchanged and only new fields (dictionary keys) were added (approved
@@ -12,6 +15,7 @@ Prints a count per reader and category, then up to N changed answers per reader 
 """
 
 import argparse
+import gzip
 import json
 from collections import Counter, defaultdict
 
@@ -21,7 +25,13 @@ ap.add_argument("after")
 ap.add_argument("--show", type=int, default=3)
 ap.add_argument("--json")
 a = ap.parse_args()
-old, new = json.load(open(a.before))["answers"], json.load(open(a.after))["answers"]
+
+
+def load(f):
+    return json.load(gzip.open(f, "rt") if f.endswith(".gz") else open(f))
+
+
+old, new = load(a.before)["answers"], load(a.after)["answers"]
 
 
 def compare(x, y, path="", out=None):

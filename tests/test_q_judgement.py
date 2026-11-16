@@ -271,16 +271,25 @@ def test_an_unestablished_or_disputed_constraint_never_disputes_compatible_holdi
 
 def test_an_attested_constraint_is_judged_once_and_not_recursively(wm, offices, monkeypatch):
     w, c, apps = offices
-    seen = []
-    original = WorldModel.judgement
+    calls, depth = [], {"now": 0, "max": 0}
+    original = WorldModel._records
 
-    def spy(self, world, type, roles, t, *a, attested=True, **k):
-        seen.append((type, attested))
-        return original(self, world, type, roles, t, *a, attested=attested, **k)
-    monkeypatch.setattr(WorldModel, "judgement", spy)
+    def spy(self, atts, *a, attested=True, **k):
+        depth["now"] += 1
+        depth["max"] = max(depth["max"], depth["now"])
+        calls.append(({x.ctype for x in atts}, attested, depth["now"]))
+        try:
+            return original(self, atts, *a, attested=attested, **k)
+        finally:
+            depth["now"] -= 1
+    monkeypatch.setattr(WorldModel, "_records", spy)
     o.office_holders(wm, w, "site-manager", "depot-7", T(5))
-    assert seen and all(t == "exclusive-office" and not att for t, att in seen)
-    assert len(seen) == 1                                    # one key, judged once for the whole report
+    # the report evaluates the constraint once (one load, shared by its rivals check and the appointments'
+    # judgement), without attested constraints of its own; the separate `exclusive` field is the constraint's own
+    # holds(). Nothing nests deeper than one constraint level: no recursion
+    shared = [att for types, att, d in calls if types == {"exclusive-office"} and att is False]
+    assert shared == [False]
+    assert depth["max"] <= 2 and all(not att for types, att, d in calls if d == 2)
 
 
 # ---- worlds, frames, consistency ---------------------------------------------------------------------------------------------

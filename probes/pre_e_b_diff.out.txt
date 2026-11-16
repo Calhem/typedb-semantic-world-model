@@ -1,0 +1,495 @@
+reader                           identical extended  changed  other
+agency_report                           11        0        0      0
+authorised                              20        0        0      0
+calibration_status                    3575        0        0      0
+capable                               2396        0       14      0
+capable@acme                           135        0       10      0
+capable@ana                            335        0        0      0
+capable@apprentice                    1345        0        0      0
+capable@auditor                        145        0        0      0
+capable@bea                            145        0        0      0
+capable@bo                             329        0        6      0
+capable@cal                            145        0        0      0
+capable@cal-lab                        240        0        0      0
+capable@cam-2                         1265        0        0      0
+capable@cm-1                          1345        0        0      0
+capable@cmms                           710        0        0      0
+capable@design-office                 1760        0        0      0
+capable@hr                             145        0        0      0
+capable@inspector                     1760        0        0      0
+capable@lab-2                          335        0        0      0
+capable@qa                             329        0        6      0
+capable@scale-3                       1760        0        0      0
+capable@tag-reader                    1265        0        0      0
+capable@technician                    1345        0        0      0
+capable@tom                            335        0        0      0
+causes_of                              590        0        0      0
+changes                                707        0        8      0
+check_action                            74        0        0      0
+compare_measurements                    80        0        0      0
+composition                              0     3575        0      0
+connections                           3575        0        0      0
+contents                                 0      100        0      0
+dependencies                          3575        0        0      0
+direct_dependencies                   3575        0        0      0
+effects_of                             370        0        0      0
+employment                            3575        0        0      0
+exists                                3575        0        0      0
+facts_about                            710     2811       54      0
+facts_about@acme                       102       70        8      0
+facts_about@ana                        573      262        0      0
+facts_about@apprentice                2019       96        0      0
+facts_about@as_of                     3186      389        0      0
+facts_about@auditor                    177        3        0      0
+facts_about@bea                        177        3        0      0
+facts_about@bo                         610      225        0      0
+facts_about@cal                        157       23        0      0
+facts_about@cal-lab                    609       46        0      0
+facts_about@cam-2                     1913       22        0      0
+facts_about@cm-1                      2064       51        0      0
+facts_about@cmms                      1142       43        0      0
+facts_about@design-office             2356      204        0      0
+facts_about@hr                         125       55        0      0
+facts_about@inspector                 2104      456        0      0
+facts_about@lab-2                      736       99        0      0
+facts_about@qa                         771       64        0      0
+facts_about@scale-3                   2468       92        0      0
+facts_about@tag-reader                1925       10        0      0
+facts_about@technician                1377      738        0      0
+facts_about@tom                        781       54        0      0
+frame_info                             110        0        0      0
+holds                                 4971        0        4      0
+holds@as_of                           4975        0        0      0
+interpretations                        165        0        0      0
+materials                             3575        0        0      0
+measurement_calibration                 80        0        0      0
+measurements                            80        0        0      0
+occurrence_status                      220        0        0      0
+office_holders                          14        0        6      0
+offices_of                            3569        0        6      0
+official_act                             2        0        0      0
+parts                                 3575        0        0      0
+poses                                 3575        0        0      0
+process_steps                          197       23        0      0
+provenance                              20        0        0      0
+replacement                            370        0        0      0
+roles_of                              3571        0        4      0
+transform_between                      150        0        0      0
+value_of                               940        0        0      0
+added fields, composition: {'not_traversed': 4164}
+added fields, contents: {'not_traversed': 160}
+added fields, facts_about: {'assertions': 8035, 'denials': 8035, 'judgement': 8035}
+added fields, facts_about@acme: {'assertions': 131, 'denials': 131, 'judgement': 131}
+added fields, facts_about@ana: {'assertions': 465, 'denials': 465, 'judgement': 465}
+added fields, facts_about@apprentice: {'assertions': 116, 'denials': 116, 'judgement': 116}
+added fields, facts_about@as_of: {'assertions': 1101, 'denials': 1101, 'judgement': 1101}
+added fields, facts_about@auditor: {'assertions': 3, 'denials': 3, 'judgement': 3}
+added fields, facts_about@bea: {'assertions': 3, 'denials': 3, 'judgement': 3}
+added fields, facts_about@bo: {'assertions': 356, 'denials': 356, 'judgement': 356}
+added fields, facts_about@cal: {'assertions': 23, 'denials': 23, 'judgement': 23}
+added fields, facts_about@cal-lab: {'assertions': 46, 'denials': 46, 'judgement': 46}
+added fields, facts_about@cam-2: {'assertions': 22, 'denials': 22, 'judgement': 22}
+added fields, facts_about@cm-1: {'assertions': 56, 'denials': 56, 'judgement': 56}
+added fields, facts_about@cmms: {'assertions': 63, 'denials': 63, 'judgement': 63}
+added fields, facts_about@design-office: {'assertions': 276, 'denials': 276, 'judgement': 276}
+added fields, facts_about@hr: {'assertions': 127, 'denials': 127, 'judgement': 127}
+added fields, facts_about@inspector: {'assertions': 682, 'denials': 682, 'judgement': 682}
+added fields, facts_about@lab-2: {'assertions': 135, 'denials': 135, 'judgement': 135}
+added fields, facts_about@qa: {'assertions': 74, 'denials': 74, 'judgement': 74}
+added fields, facts_about@scale-3: {'assertions': 92, 'denials': 92, 'judgement': 92}
+added fields, facts_about@tag-reader: {'assertions': 10, 'denials': 10, 'judgement': 10}
+added fields, facts_about@technician: {'assertions': 1569, 'denials': 1569, 'judgement': 1569}
+added fields, facts_about@tom: {'assertions': 69, 'denials': 69, 'judgement': 69}
+added fields, process_steps: {'judgement': 109, 'status': 109}
+
+== capable: changed answers (first 14 of 14)
+   ['org', '2026-11-01T08:59:59+00:00', 'capable', 'cal', 'site-manager', 'depot-7']
+       .applicable[0].judgement: "unreviewed" -> "not yet effective"
+       .judgement: "not established" -> "not yet effective"
+   ['org', '2026-11-03T08:59:59+00:00', 'capable', 'cal', 'site-manager', 'depot-7']
+       .applicable[0].judgement: "unreviewed" -> "not yet effective"
+       .judgement: "not established" -> "not yet effective"
+   ['org', '2026-11-06T08:59:59+00:00', 'capable', 'cal', 'site-manager', 'depot-7']
+       .applicable[0].judgement: "unreviewed" -> "not yet effective"
+       .judgement: "not established" -> "not yet effective"
+   ['org', '2026-11-09T09:00:00+00:00', 'capable', 'bea', 'site-manager', 'None']
+       .only_in length 1 -> 0
+   ['org', '2026-11-09T09:00:00+00:00', 'capable', 'bea', 'site-manager', 'depot-7']
+       .applicable[0].judgement: "accepted" -> "disputed"
+       .applicable[0].status: "ASSERTED" -> "DISPUTED"
+       .holds: true -> null
+       .judgement: "established" -> "disputed"
+       .status: "ASSERTED" -> "DISPUTED"
+   ['org', '2026-11-09T09:00:00+00:00', 'capable', 'cal', 'site-manager', 'None']
+       .only_in length 1 -> 0
+   ['org', '2026-11-09T09:00:00+00:00', 'capable', 'cal', 'site-manager', 'depot-7']
+       .applicable[0].judgement: "accepted" -> "disputed"
+       .applicable[0].status: "ASSERTED" -> "DISPUTED"
+       .holds: true -> null
+       .judgement: "established" -> "disputed"
+       .status: "ASSERTED" -> "DISPUTED"
+   ['org-plan-reorg', '2026-11-01T08:59:59+00:00', 'capable', 'cal', 'site-manager', 'depot-7']
+       .applicable[0].judgement: "unreviewed" -> "not yet effective"
+       .judgement: "not established" -> "not yet effective"
+   ['org-plan-reorg', '2026-11-03T09:00:00+00:00', 'capable', 'cal', 'site-manager', 'depot-7']
+       .applicable[0].judgement: "unreviewed" -> "not yet effective"
+       .judgement: "not established" -> "not yet effective"
+   ['org-plan-reorg', '2026-11-08T08:59:59+00:00', 'capable', 'cal', 'site-manager', 'depot-7']
+       .applicable[0].judgement: "unreviewed" -> "not yet effective"
+       .judgement: "not established" -> "not yet effective"
+   ['org-plan-reorg', '2026-11-10T08:59:59+00:00', 'capable', 'bea', 'site-manager', 'None']
+       .only_in length 1 -> 0
+   ['org-plan-reorg', '2026-11-10T08:59:59+00:00', 'capable', 'bea', 'site-manager', 'depot-7']
+       .applicable[0].judgement: "accepted" -> "disputed"
+       .applicable[0].status: "ASSERTED" -> "DISPUTED"
+       .holds: true -> null
+       .judgement: "established" -> "disputed"
+       .status: "ASSERTED" -> "DISPUTED"
+   ['org-plan-reorg', '2026-11-10T08:59:59+00:00', 'capable', 'cal', 'site-manager', 'None']
+       .only_in length 1 -> 0
+   ['org-plan-reorg', '2026-11-10T08:59:59+00:00', 'capable', 'cal', 'site-manager', 'depot-7']
+       .applicable[0].judgement: "accepted" -> "disputed"
+       .applicable[0].status: "ASSERTED" -> "DISPUTED"
+       .holds: true -> null
+       .judgement: "established" -> "disputed"
+       .status: "ASSERTED" -> "DISPUTED"
+
+== capable@acme: changed answers (first 10 of 10)
+   ['org', '2026-11-01T08:59:59+00:00', 'capable@acme', 'cal', 'site-manager', 'depot-7']
+       .applicable[0].judgement: "unreviewed" -> "not yet effective"
+       .judgement: "not established" -> "not yet effective"
+   ['org', '2026-11-03T08:59:59+00:00', 'capable@acme', 'cal', 'site-manager', 'depot-7']
+       .applicable[0].judgement: "unreviewed" -> "not yet effective"
+       .judgement: "not established" -> "not yet effective"
+   ['org', '2026-11-06T08:59:59+00:00', 'capable@acme', 'cal', 'site-manager', 'depot-7']
+       .applicable[0].judgement: "unreviewed" -> "not yet effective"
+       .judgement: "not established" -> "not yet effective"
+   ['org', '2026-11-09T09:00:00+00:00', 'capable@acme', 'bea', 'site-manager', 'depot-7']
+       .applicable[0].judgement: "accepted" -> "disputed"
+       .applicable[0].status: "ASSERTED" -> "DISPUTED"
+       .holds: true -> null
+       .judgement: "established" -> "disputed"
+       .status: "ASSERTED" -> "DISPUTED"
+   ['org', '2026-11-09T09:00:00+00:00', 'capable@acme', 'cal', 'site-manager', 'depot-7']
+       .applicable[0].judgement: "accepted" -> "disputed"
+       .applicable[0].status: "ASSERTED" -> "DISPUTED"
+       .holds: true -> null
+       .judgement: "established" -> "disputed"
+       .status: "ASSERTED" -> "DISPUTED"
+   ['org-plan-reorg', '2026-11-01T08:59:59+00:00', 'capable@acme', 'cal', 'site-manager', 'depot-7']
+       .applicable[0].judgement: "unreviewed" -> "not yet effective"
+       .judgement: "not established" -> "not yet effective"
+   ['org-plan-reorg', '2026-11-03T09:00:00+00:00', 'capable@acme', 'cal', 'site-manager', 'depot-7']
+       .applicable[0].judgement: "unreviewed" -> "not yet effective"
+       .judgement: "not established" -> "not yet effective"
+   ['org-plan-reorg', '2026-11-08T08:59:59+00:00', 'capable@acme', 'cal', 'site-manager', 'depot-7']
+       .applicable[0].judgement: "unreviewed" -> "not yet effective"
+       .judgement: "not established" -> "not yet effective"
+   ['org-plan-reorg', '2026-11-10T08:59:59+00:00', 'capable@acme', 'bea', 'site-manager', 'depot-7']
+       .applicable[0].judgement: "accepted" -> "disputed"
+       .applicable[0].status: "ASSERTED" -> "DISPUTED"
+       .holds: true -> null
+       .judgement: "established" -> "disputed"
+       .status: "ASSERTED" -> "DISPUTED"
+   ['org-plan-reorg', '2026-11-10T08:59:59+00:00', 'capable@acme', 'cal', 'site-manager', 'depot-7']
+       .applicable[0].judgement: "accepted" -> "disputed"
+       .applicable[0].status: "ASSERTED" -> "DISPUTED"
+       .holds: true -> null
+       .judgement: "established" -> "disputed"
+       .status: "ASSERTED" -> "DISPUTED"
+
+== capable@bo: changed answers (first 6 of 6)
+   ['lab', '2026-10-31T23:59:59+00:00', 'capable@bo', 'sample-12', 'hydrated', 'None']
+       .applicable[0].judgement: "unreviewed" -> "not yet effective"
+       .judgement: "not established" -> "not yet effective"
+   ['lab', '2026-11-10T09:05:00+00:00', 'capable@bo', 'sample-12', 'hydrated', 'None']
+       .applicable[0].judgement: "unreviewed" -> "not yet effective"
+       .judgement: "not established" -> "not yet effective"
+   ['lab', '2026-11-10T12:04:59+00:00', 'capable@bo', 'sample-12', 'hydrated', 'None']
+       .applicable[0].judgement: "unreviewed" -> "not yet effective"
+       .judgement: "not established" -> "not yet effective"
+   ['lab-plan-recal', '2026-10-31T23:59:59+00:00', 'capable@bo', 'sample-12', 'hydrated', 'None']
+       .applicable[0].judgement: "unreviewed" -> "not yet effective"
+       .judgement: "not established" -> "not yet effective"
+   ['lab-plan-recal', '2026-11-10T09:05:00+00:00', 'capable@bo', 'sample-12', 'hydrated', 'None']
+       .applicable[0].judgement: "unreviewed" -> "not yet effective"
+       .judgement: "not established" -> "not yet effective"
+   ['lab-plan-recal', '2026-11-10T11:59:59+00:00', 'capable@bo', 'sample-12', 'hydrated', 'None']
+       .applicable[0].judgement: "unreviewed" -> "not yet effective"
+       .judgement: "not established" -> "not yet effective"
+
+== capable@qa: changed answers (first 6 of 6)
+   ['lab', '2026-10-31T23:59:59+00:00', 'capable@qa', 'sample-12', 'hydrated', 'None']
+       .applicable[0].judgement: "unreviewed" -> "not yet effective"
+       .judgement: "not established" -> "not yet effective"
+   ['lab', '2026-11-10T09:05:00+00:00', 'capable@qa', 'sample-12', 'hydrated', 'None']
+       .applicable[0].judgement: "unreviewed" -> "not yet effective"
+       .judgement: "not established" -> "not yet effective"
+   ['lab', '2026-11-10T12:04:59+00:00', 'capable@qa', 'sample-12', 'hydrated', 'None']
+       .applicable[0].judgement: "unreviewed" -> "not yet effective"
+       .judgement: "not established" -> "not yet effective"
+   ['lab-plan-recal', '2026-10-31T23:59:59+00:00', 'capable@qa', 'sample-12', 'hydrated', 'None']
+       .applicable[0].judgement: "unreviewed" -> "not yet effective"
+       .judgement: "not established" -> "not yet effective"
+   ['lab-plan-recal', '2026-11-10T09:05:00+00:00', 'capable@qa', 'sample-12', 'hydrated', 'None']
+       .applicable[0].judgement: "unreviewed" -> "not yet effective"
+       .judgement: "not established" -> "not yet effective"
+   ['lab-plan-recal', '2026-11-10T11:59:59+00:00', 'capable@qa', 'sample-12', 'hydrated', 'None']
+       .applicable[0].judgement: "unreviewed" -> "not yet effective"
+       .judgement: "not established" -> "not yet effective"
+
+== changes: changed answers (first 8 of 8)
+   ['org', 'changes', 'bea']
+       .ended[0].category: "world-state" -> "judgement"
+       .ended[0].status: "ASSERTED" -> "DISPUTED"
+       .transitions length 6 -> 7
+   ['org', 'changes', 'cal']
+       .began[3].status: "ASSERTED" -> "DISPUTED"
+       .transitions length 4 -> 5
+   ['org', 'changes', 'depot-7']
+       .began[5].status: "ASSERTED" -> "DISPUTED"
+       .ended[0].category: "world-state" -> "judgement"
+       .ended[0].status: "ASSERTED" -> "DISPUTED"
+       .transitions length 12 -> 14
+   ['org', 'changes', 'site-manager']
+       .began[1].status: "ASSERTED" -> "DISPUTED"
+       .ended[0].category: "world-state" -> "judgement"
+       .ended[0].status: "ASSERTED" -> "DISPUTED"
+       .transitions length 4 -> 6
+   ['org-plan-reorg', 'changes', 'bea']
+       .ended[0].category: "world-state" -> "judgement"
+       .ended[0].status: "ASSERTED" -> "DISPUTED"
+       .transitions length 6 -> 7
+   ['org-plan-reorg', 'changes', 'cal']
+       .began[0].status: "ASSERTED" -> "DISPUTED"
+       .transitions length 5 -> 6
+   ['org-plan-reorg', 'changes', 'depot-7']
+       .began[0].status: "ASSERTED" -> "DISPUTED"
+       .ended[1].category: "world-state" -> "judgement"
+       .ended[1].status: "ASSERTED" -> "DISPUTED"
+       .transitions length 14 -> 16
+   ['org-plan-reorg', 'changes', 'site-manager']
+       .began[0].status: "ASSERTED" -> "DISPUTED"
+       .ended[1].category: "world-state" -> "judgement"
+       .ended[1].status: "ASSERTED" -> "DISPUTED"
+       .transitions length 6 -> 8
+
+== facts_about: changed answers (first 54 of 54)
+   ['actual', '2026-11-02T07:59:59+00:00', 'facts_about', 'o-relubrication']
+        length 2 -> 3
+   ['actual', '2026-11-02T07:59:59+00:00', 'facts_about', 'o-test-run']
+        length 3 -> 4
+   ['actual', '2026-11-05T13:49:59+00:00', 'facts_about', 'o-relubrication']
+        length 2 -> 3
+   ['actual', '2026-11-05T13:49:59+00:00', 'facts_about', 'o-test-run']
+        length 3 -> 4
+   ['actual', '2026-11-05T15:14:59+00:00', 'facts_about', 'o-relubrication']
+        length 2 -> 3
+   ['actual', '2026-11-05T15:14:59+00:00', 'facts_about', 'o-test-run']
+        length 3 -> 4
+   ['actual', '2026-11-06T09:10:00+00:00', 'facts_about', 'o-relubrication']
+        length 2 -> 3
+   ['actual', '2026-11-06T09:10:00+00:00', 'facts_about', 'o-test-run']
+        length 3 -> 4
+   ['actual', '2026-11-08T10:00:00+00:00', 'facts_about', 'o-relubrication']
+        length 2 -> 3
+   ['actual', '2026-11-08T10:00:00+00:00', 'facts_about', 'o-test-run']
+        length 3 -> 4
+   ['lab', '2026-11-10T09:05:00+00:00', 'facts_about', 'balance-b7']
+        length 1 -> 2
+   ['lab', '2026-11-10T09:05:00+00:00', 'facts_about', 'cert-b7']
+        length 0 -> 1
+   ['lab', '2026-11-10T12:04:59+00:00', 'facts_about', 'balance-b7']
+        length 1 -> 2
+   ['lab', '2026-11-10T12:04:59+00:00', 'facts_about', 'cert-b7']
+        length 0 -> 1
+   ['lab', '2026-11-10T14:04:59+00:00', 'facts_about', 'balance-b7']
+        length 1 -> 2
+   ['lab', '2026-11-10T14:04:59+00:00', 'facts_about', 'cert-b7']
+        length 0 -> 1
+   ['lab', '2026-11-10T15:40:00+00:00', 'facts_about', 'balance-b7']
+        length 1 -> 2
+   ['lab', '2026-11-10T15:40:00+00:00', 'facts_about', 'cert-b7']
+        length 0 -> 1
+   ['lab-plan-recal', '2026-11-10T09:05:00+00:00', 'facts_about', 'balance-b7']
+        length 1 -> 2
+   ['lab-plan-recal', '2026-11-10T09:05:00+00:00', 'facts_about', 'cert-b7']
+        length 0 -> 1
+   ['lab-plan-recal', '2026-11-10T11:59:59+00:00', 'facts_about', 'balance-b7']
+        length 1 -> 2
+   ['lab-plan-recal', '2026-11-10T11:59:59+00:00', 'facts_about', 'cert-b7']
+        length 0 -> 1
+   ['lab-plan-recal', '2026-11-10T13:59:59+00:00', 'facts_about', 'balance-b7']
+        length 1 -> 2
+   ['lab-plan-recal', '2026-11-10T13:59:59+00:00', 'facts_about', 'cert-b7']
+        length 0 -> 1
+   ['lab-plan-recal', '2026-11-10T15:30:00+00:00', 'facts_about', 'balance-b7']
+        length 1 -> 2
+   ['lab-plan-recal', '2026-11-10T15:30:00+00:00', 'facts_about', 'cert-b7']
+        length 0 -> 1
+   ['org', '2026-11-09T09:00:00+00:00', 'facts_about', 'bea']
+       [4].conflicts length 0 -> 1
+       [4].status: "ASSERTED" -> "DISPUTED"
+   ['org', '2026-11-09T09:00:00+00:00', 'facts_about', 'cal']
+       [3].conflicts length 0 -> 1
+       [3].status: "ASSERTED" -> "DISPUTED"
+   ['org', '2026-11-09T09:00:00+00:00', 'facts_about', 'depot-7']
+       [8].conflicts length 0 -> 1
+       [8].status: "ASSERTED" -> "DISPUTED"
+       [9].conflicts length 0 -> 1
+       [9].status: "ASSERTED" -> "DISPUTED"
+   ['org', '2026-11-09T09:00:00+00:00', 'facts_about', 'site-manager']
+       [1].conflicts length 0 -> 1
+       [1].status: "ASSERTED" -> "DISPUTED"
+       [2].conflicts length 0 -> 1
+       [2].status: "ASSERTED" -> "DISPUTED"
+   ['org-plan-reorg', '2026-11-10T08:59:59+00:00', 'facts_about', 'bea']
+       [4].conflicts length 0 -> 1
+       [4].status: "ASSERTED" -> "DISPUTED"
+   ['org-plan-reorg', '2026-11-10T08:59:59+00:00', 'facts_about', 'cal']
+       [3].conflicts length 0 -> 1
+       [3].status: "ASSERTED" -> "DISPUTED"
+   ['org-plan-reorg', '2026-11-10T08:59:59+00:00', 'facts_about', 'depot-7']
+       [8].conflicts length 0 -> 1
+       [8].status: "ASSERTED" -> "DISPUTED"
+       [9].conflicts length 0 -> 1
+       [9].status: "ASSERTED" -> "DISPUTED"
+   ['org-plan-reorg', '2026-11-10T08:59:59+00:00', 'facts_about', 'site-manager']
+       [1].conflicts length 0 -> 1
+       [1].status: "ASSERTED" -> "DISPUTED"
+       [2].conflicts length 0 -> 1
+       [2].status: "ASSERTED" -> "DISPUTED"
+   ['plan-apprentice', '2026-11-02T07:59:59+00:00', 'facts_about', 'o-relubrication']
+        length 2 -> 3
+   ['plan-apprentice', '2026-11-02T07:59:59+00:00', 'facts_about', 'o-test-run']
+        length 3 -> 4
+   ['plan-apprentice', '2026-11-05T13:49:59+00:00', 'facts_about', 'o-relubrication']
+        length 2 -> 3
+   ['plan-apprentice', '2026-11-05T13:49:59+00:00', 'facts_about', 'o-test-run']
+        length 3 -> 4
+   ['plan-apprentice', '2026-11-05T15:14:59+00:00', 'facts_about', 'o-relubrication']
+        length 2 -> 3
+   ['plan-apprentice', '2026-11-05T15:14:59+00:00', 'facts_about', 'o-test-run']
+        length 3 -> 4
+   ['plan-apprentice', '2026-11-06T10:00:00+00:00', 'facts_about', 'o-relubrication']
+        length 2 -> 3
+   ['plan-apprentice', '2026-11-06T10:00:00+00:00', 'facts_about', 'o-test-run']
+        length 3 -> 4
+   ['plan-apprentice', '2026-11-08T10:00:00+00:00', 'facts_about', 'o-relubrication']
+        length 2 -> 3
+   ['plan-apprentice', '2026-11-08T10:00:00+00:00', 'facts_about', 'o-test-run']
+        length 3 -> 4
+   ['plan-rig-control', '2026-11-02T07:59:59+00:00', 'facts_about', 'o-relubrication']
+        length 2 -> 3
+   ['plan-rig-control', '2026-11-02T07:59:59+00:00', 'facts_about', 'o-test-run']
+        length 3 -> 4
+   ['plan-rig-control', '2026-11-05T13:49:59+00:00', 'facts_about', 'o-relubrication']
+        length 2 -> 3
+   ['plan-rig-control', '2026-11-05T13:49:59+00:00', 'facts_about', 'o-test-run']
+        length 3 -> 4
+   ['plan-rig-control', '2026-11-05T15:14:59+00:00', 'facts_about', 'o-relubrication']
+        length 2 -> 3
+   ['plan-rig-control', '2026-11-05T15:14:59+00:00', 'facts_about', 'o-test-run']
+        length 3 -> 4
+   ['plan-rig-control', '2026-11-06T10:00:00+00:00', 'facts_about', 'o-relubrication']
+        length 2 -> 3
+   ['plan-rig-control', '2026-11-06T10:00:00+00:00', 'facts_about', 'o-test-run']
+        length 3 -> 4
+   ['plan-rig-control', '2026-11-08T10:00:00+00:00', 'facts_about', 'o-relubrication']
+        length 2 -> 3
+   ['plan-rig-control', '2026-11-08T10:00:00+00:00', 'facts_about', 'o-test-run']
+        length 3 -> 4
+
+== facts_about@acme: changed answers (first 8 of 8)
+   ['org', '2026-11-09T09:00:00+00:00', 'facts_about@acme', 'bea']
+       [0].conflicts length 0 -> 1
+       [0].status: "ASSERTED" -> "DISPUTED"
+   ['org', '2026-11-09T09:00:00+00:00', 'facts_about@acme', 'cal']
+       [0].conflicts length 0 -> 1
+       [0].status: "ASSERTED" -> "DISPUTED"
+   ['org', '2026-11-09T09:00:00+00:00', 'facts_about@acme', 'depot-7']
+       [3].conflicts length 0 -> 1
+       [3].status: "ASSERTED" -> "DISPUTED"
+       [4].conflicts length 0 -> 1
+       [4].status: "ASSERTED" -> "DISPUTED"
+   ['org', '2026-11-09T09:00:00+00:00', 'facts_about@acme', 'site-manager']
+       [1].conflicts length 0 -> 1
+       [1].status: "ASSERTED" -> "DISPUTED"
+       [2].conflicts length 0 -> 1
+       [2].status: "ASSERTED" -> "DISPUTED"
+   ['org-plan-reorg', '2026-11-10T08:59:59+00:00', 'facts_about@acme', 'bea']
+       [0].conflicts length 0 -> 1
+       [0].status: "ASSERTED" -> "DISPUTED"
+   ['org-plan-reorg', '2026-11-10T08:59:59+00:00', 'facts_about@acme', 'cal']
+       [0].conflicts length 0 -> 1
+       [0].status: "ASSERTED" -> "DISPUTED"
+   ['org-plan-reorg', '2026-11-10T08:59:59+00:00', 'facts_about@acme', 'depot-7']
+       [3].conflicts length 0 -> 1
+       [3].status: "ASSERTED" -> "DISPUTED"
+       [4].conflicts length 0 -> 1
+       [4].status: "ASSERTED" -> "DISPUTED"
+   ['org-plan-reorg', '2026-11-10T08:59:59+00:00', 'facts_about@acme', 'site-manager']
+       [1].conflicts length 0 -> 1
+       [1].status: "ASSERTED" -> "DISPUTED"
+       [2].conflicts length 0 -> 1
+       [2].status: "ASSERTED" -> "DISPUTED"
+
+== holds: changed answers (first 4 of 4)
+   ['org', '2026-11-09T09:00:00+00:00', 'holds', '["office-holding", {"class": ["site-manager"], "classified": ["bea"], "context": ["depot-7"]}]']
+       .conflicts length 0 -> 1
+       .evidence length 1 -> 2
+       .holds: true -> null
+       .status: "ASSERTED" -> "DISPUTED"
+   ['org', '2026-11-09T09:00:00+00:00', 'holds', '["office-holding", {"class": ["site-manager"], "classified": ["cal"], "context": ["depot-7"]}]']
+       .conflicts length 0 -> 1
+       .evidence length 1 -> 2
+       .holds: true -> null
+       .status: "ASSERTED" -> "DISPUTED"
+   ['org-plan-reorg', '2026-11-10T08:59:59+00:00', 'holds', '["office-holding", {"class": ["site-manager"], "classified": ["bea"], "context": ["depot-7"]}]']
+       .conflicts length 0 -> 1
+       .evidence length 1 -> 2
+       .holds: true -> null
+       .status: "ASSERTED" -> "DISPUTED"
+   ['org-plan-reorg', '2026-11-10T08:59:59+00:00', 'holds', '["office-holding", {"class": ["site-manager"], "classified": ["cal"], "context": ["depot-7"]}]']
+       .conflicts length 0 -> 1
+       .evidence length 1 -> 2
+       .holds: true -> null
+       .status: "ASSERTED" -> "DISPUTED"
+
+== office_holders: changed answers (first 6 of 6)
+   ['org', '2026-11-01T08:59:59+00:00', 'office_holders', 'site-manager', 'depot-7']
+       .appointments[1].judgement: "not established" -> "not yet effective"
+   ['org', '2026-11-03T08:59:59+00:00', 'office_holders', 'site-manager', 'depot-7']
+       .appointments[1].judgement: "not established" -> "not yet effective"
+   ['org', '2026-11-06T08:59:59+00:00', 'office_holders', 'site-manager', 'depot-7']
+       .appointments[1].judgement: "not established" -> "not yet effective"
+   ['org-plan-reorg', '2026-11-01T08:59:59+00:00', 'office_holders', 'site-manager', 'depot-7']
+       .appointments[1].judgement: "not established" -> "not yet effective"
+   ['org-plan-reorg', '2026-11-03T09:00:00+00:00', 'office_holders', 'site-manager', 'depot-7']
+       .appointments[1].judgement: "not established" -> "not yet effective"
+   ['org-plan-reorg', '2026-11-08T08:59:59+00:00', 'office_holders', 'site-manager', 'depot-7']
+       .appointments[1].judgement: "not established" -> "not yet effective"
+
+== offices_of: changed answers (first 6 of 6)
+   ['org', '2026-11-01T08:59:59+00:00', 'offices_of', 'cal']
+       [0].judgement: "not established" -> "not yet effective"
+   ['org', '2026-11-03T08:59:59+00:00', 'offices_of', 'cal']
+       [0].judgement: "not established" -> "not yet effective"
+   ['org', '2026-11-06T08:59:59+00:00', 'offices_of', 'cal']
+       [0].judgement: "not established" -> "not yet effective"
+   ['org-plan-reorg', '2026-11-01T08:59:59+00:00', 'offices_of', 'cal']
+       [0].judgement: "not established" -> "not yet effective"
+   ['org-plan-reorg', '2026-11-03T09:00:00+00:00', 'offices_of', 'cal']
+       [0].judgement: "not established" -> "not yet effective"
+   ['org-plan-reorg', '2026-11-08T08:59:59+00:00', 'offices_of', 'cal']
+       [0].judgement: "not established" -> "not yet effective"
+
+== roles_of: changed answers (first 4 of 4)
+   ['org', '2026-11-09T09:00:00+00:00', 'roles_of', 'bea']
+       [0].status: "ASSERTED" -> "DISPUTED"
+   ['org', '2026-11-09T09:00:00+00:00', 'roles_of', 'cal']
+       [0].status: "ASSERTED" -> "DISPUTED"
+   ['org-plan-reorg', '2026-11-10T08:59:59+00:00', 'roles_of', 'bea']
+       [0].status: "ASSERTED" -> "DISPUTED"
+   ['org-plan-reorg', '2026-11-10T08:59:59+00:00', 'roles_of', 'cal']
+       [0].status: "ASSERTED" -> "DISPUTED"

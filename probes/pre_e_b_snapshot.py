@@ -29,6 +29,8 @@ ap.add_argument("--drop", action="store_true")
 ap.add_argument("--out")
 ap.add_argument("--times", type=int, default=5)
 ap.add_argument("--db", default="wm-probe-pre-e-b")
+ap.add_argument("--worlds", help="comma-separated world ids (default: every world); merge parts with --merge")
+ap.add_argument("--merge", nargs="*", help="merge snapshot parts into --out")
 a = ap.parse_args()
 sys.path.insert(0, str(Path(a.checkout).resolve() / "src"))
 from worldmodel import CORE_MODULES, WorldModel, connect  # noqa: E402
@@ -36,6 +38,15 @@ from worldmodel import laboratory as lab, mechanical as mech, organisation as or
 from worldmodel import typeql as q  # noqa: E402
 from worldmodel.model import READ  # noqa: E402
 
+if a.merge:
+    parts = [json.loads(Path(f).read_text()) for f in a.merge]
+    merged = {"database": parts[0]["database"], "worlds": sorted(w for p in parts for w in p["worlds"]),
+              "times": parts[0]["times"], "calls": sum(p["calls"] for p in parts),
+              "seconds": round(sum(p["seconds"] for p in parts), 1),
+              "answers": {k: v for p in parts for k, v in p["answers"].items()}}
+    Path(a.out).write_text(json.dumps(merged, indent=0, sort_keys=True))
+    print(f"merged {len(parts)} parts: {merged['calls']} answers -> {a.out}", file=sys.stderr)
+    sys.exit(0)
 driver = connect()
 if a.drop:
     if driver.databases.contains(a.db):
@@ -98,6 +109,8 @@ def call(key, fn, *args, **kw):
 
 with wm._reading() as tx:
     worlds = sorted({q.opt(r, "id") for r in q.rows(tx, "match $w isa world, has wm-id $id;")})
+if a.worlds:
+    worlds = [w for w in worlds if w in a.worlds.split(",")]
 profiles = wm.profiles()
 for w in worlds:
     atts = wm.visible(w)

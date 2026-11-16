@@ -211,7 +211,7 @@ class DynamicsMixin:
             holding = [c for c, (val, _, _) in judged.items() if val is True]
             conf = self._conflicts(holding)
             # the canonical constraint layer: an established attested constraint (e.g. an exclusive office) too
-            for c, cs in self._attested_conflicts(world, holding, s, as_of, perspective, memo_c).items():
+            for c, cs in self._attested_conflicts(world, holding, ident, s, as_of, perspective, memo_c).items():
                 for x in cs:
                     if x.rivals:
                         conf.setdefault(c, set()).update(x.rivals)

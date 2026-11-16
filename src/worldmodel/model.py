@@ -1146,9 +1146,10 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
             peers = [a for a in atts.values() if any(
                 self.is_a(a.ctype, decl) and all(want[k] <= {ident.canonical(x) for x in a.roles.get(k, [])} for k in ks)
                 for decl, ks, _ in keyed)]
+        memo = {} if memo is None else memo
         if attested and peers:
             peers = peers + self._scope_rivals(world, as_of, perspective, peers, ident,
-                                               pool=None if self.selective else atts)
+                                               pool=None if self.selective else atts, t=t, memo=memo)
         recs = self._records(peers, ident, t, perspective, as_of, world=world, attested=attested, memo=memo)
         first = None
         for rec in recs.values():
@@ -1350,17 +1351,21 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
                and any(me & set(ids) for ids in a.roles.values())]
         pool = None if self.selective else atts
         rivals = self._slot_rivals(world, as_of, perspective, rel, me, ident, at=t, pool=pool)
-        rivals += self._scope_rivals(world, as_of, perspective, rel + rivals, ident, pool=pool, at=t)
+        memo = {}
+        rivals += self._scope_rivals(world, as_of, perspective, rel + rivals, ident, pool=pool, at=t, t=t, memo=memo,
+                                     me=me)
         mine = {self._class(a, ident) for a in rel}
         out = []
-        for cls, r in self._records(rel + rivals, ident, t, perspective, as_of, world=world).items():
-            if cls in mine and r.judgement in (Judgement.ESTABLISHED, Judgement.DISPUTED):
+        for cls, r in self._records(rel + rivals, ident, t, perspective, as_of, world=world, wanted=mine,
+                                    undecided_too=False, memo=memo).items():
+            if r.judgement in (Judgement.ESTABLISHED, Judgement.DISPUTED):
                 out.append({"type": cls[0], "roles": r.roles, "params": r.params, "support": r.support_ids,
                             "status": r.status, "conflicts": r.conflict_ids, "support_status": r.support_status,
                             "judgement": r.judgement.value, "assertions": r.assertion_ids, "denials": r.denial_ids})
         return sorted(out, key=lambda f: (f["type"], str(f["roles"])))
 
-    def _contents(self, world, subject, types, t, as_of=None, perspective=SYSTEM, attested=True, memo=None):
+    def _contents(self, world, subject, types, t, as_of=None, perspective=SYSTEM, attested=True, memo=None,
+                  where=None):
         """The canonical records (ContentJudgement) of every content of `types` naming `subject` (by its own id, as
         the profile reports always have), sorted by type and stated roles. Each keeps every claim about the content
         separately (`claims()`): unaccepted and rejected claims are listed, marked. Rivals under declared and attested
@@ -1368,15 +1373,18 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
         per-appointment entries of office_holders, choice A)."""
         atts, ident = self._view(world, as_of, perspective, None, [subject])
         mine = [a for a in atts.values() if any(self.is_a(a.ctype, ty) for ty in types)
-                and any(subject in ids for ids in a.roles.values())]
+                and any(subject in ids for ids in a.roles.values()) and (where is None or where(a.roles))]
         pool = None if self.selective else atts
         me = set(ident.members(subject))
         rivals = self._slot_rivals(world, as_of, perspective, mine, me, ident, pool=pool)
+        memo = {} if memo is None else memo
         if attested:
-            rivals += self._scope_rivals(world, as_of, perspective, mine + rivals, ident, pool=pool)
+            rivals += self._scope_rivals(world, as_of, perspective, mine + rivals, ident, pool=pool, t=t, memo=memo,
+                                         me={subject} if where is None else None)   # mine: by the subject's own id
         wanted = {self._class(a, ident) for a in mine}
-        recs = self._records(mine + rivals, ident, t, perspective, as_of, world=world, attested=attested, memo=memo)
-        return sorted((r for c, r in recs.items() if c in wanted), key=lambda r: (r.type, str(r.stated_roles)))
+        recs = self._records(mine + rivals, ident, t, perspective, as_of, world=world, attested=attested, memo=memo,
+                             wanted=wanted)
+        return sorted(recs.values(), key=lambda r: (r.type, str(r.stated_roles)))
 
     def _slot_rivals(self, world, as_of, perspective, recs, me, ident, at=None, pool=None):
         """Records that compete in a functional slot with `recs` but do not mention the subject (Q-B2, LABS-1.015): for

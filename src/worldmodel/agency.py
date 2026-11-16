@@ -65,7 +65,8 @@ class AgencyMixin:
         """Every classified-as content (or of `types`) of `holder` under `concept`, with its context and the
         perspective's judgement."""
         out = []
-        for e in self._contents(world, holder, types, t, as_of, perspective):
+        for e in self._contents(world, holder, types, t, as_of, perspective,
+                                where=lambda roles: concept in roles.get("class", ())):
             if holder in e.stated_roles.get("classified", []) and concept in e.stated_roles.get("class", []):
                 ctx = e.stated_roles.get("context", [None])[0]
                 out.append({"context": ctx, "judgement": holding_label(e), "status": e.status,

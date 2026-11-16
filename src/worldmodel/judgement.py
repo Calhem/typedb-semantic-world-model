@@ -83,9 +83,17 @@ class ContentJudgement:
     support_status: Status | None = None   # the support's status before constraints (None when undecided)
     conflicts: tuple = ()           # attestation records of the contents in conflict under an applied constraint
     constraints: tuple = ()         # Constraint, every declared one and each attested one evaluated
-    pending: tuple = ()             # ids of unreviewed, not superseded attestations that would decide t
     attestations: tuple = ()        # every attestation of the content in the judged pool, each kept separately
     _claims: list | None = field(default=None, repr=False)
+    _pending: tuple | None = field(default=None, repr=False)
+
+    @property
+    def pending(self):
+        """Ids of the unreviewed, not superseded attestations that would decide t (choice D). Computed on demand."""
+        if self._pending is None:
+            _, t, as_of, perspective = self.context
+            self._pending = pending_of(self.attestations, t, perspective, as_of)
+        return self._pending
 
     @property
     def type(self):
@@ -139,6 +147,11 @@ class ContentJudgement:
         return self._claims
 
 
+def pending_of(its, t, perspective, as_of):
+    return tuple(sorted(a.id for a in its if acceptance_state(a, perspective, as_of) == "unreviewed"
+                        and not superseded(a, perspective, as_of) and verdict(a, t) is not None))
+
+
 def state_of(a, perspective, as_of):
     return "superseded" if superseded(a, perspective, as_of) else acceptance_state(a, perspective, as_of)
 
@@ -146,35 +159,30 @@ def state_of(a, perspective, as_of):
 def undecided(key, its, context, t, perspective, as_of):
     """The record of a content that nothing decides at t: why (DI-5). An accepted claim's reason comes first; pending
     counter-claims never outrank it and are listed in `pending`."""
-    pending = tuple(sorted(a.id for a in its if acceptance_state(a, perspective, as_of) == "unreviewed"
-                           and not superseded(a, perspective, as_of) and verdict(a, t) is not None))
     accepted = [a for a in its if usable(a, perspective, as_of)]
     begun = [a for a in accepted if a.start is None or a.start.latest <= t]
     if begun:            # an accepted claim has begun, and nothing says whether it continues to t
-        return ContentJudgement(key, context, Judgement.UNKNOWN, (END_UNKNOWN,), pending=pending,
+        return ContentJudgement(key, context, Judgement.UNKNOWN, (END_UNKNOWN,),
                                 attestations=tuple(its))
     if any(a.polarity for a in accepted):        # an accepted assertion begins after t
-        return ContentJudgement(key, context, Judgement.UNKNOWN, (NOT_YET_EFFECTIVE,), pending=pending,
+        return ContentJudgement(key, context, Judgement.UNKNOWN, (NOT_YET_EFFECTIVE,),
                                 attestations=tuple(its))
     # otherwise only an accepted denial that begins after t, which says nothing about t: as if none were accepted
     states = {state_of(a, perspective, as_of) for a in its}
     if "unreviewed" in states:
-        return ContentJudgement(key, context, Judgement.PENDING, pending=pending, attestations=tuple(its))
+        return ContentJudgement(key, context, Judgement.PENDING, attestations=tuple(its))
     if states & set(STATE_ORDER):
-        return ContentJudgement(key, context, Judgement.UNKNOWN, (UNACCEPTED,), pending=pending,
+        return ContentJudgement(key, context, Judgement.UNKNOWN, (UNACCEPTED,),
                                 attestations=tuple(its))
     if accepted:
         reason = SILENT                                 # only accepted denials that begin after t
     else:
         reason = NOT_SUPPORTING if its else NO_EVIDENCE  # accepted, but a doubt or hypothesis: it never decides
-    return ContentJudgement(key, context, Judgement.UNKNOWN, (reason,), pending=pending, attestations=tuple(its))
+    return ContentJudgement(key, context, Judgement.UNKNOWN, (reason,), attestations=tuple(its))
 
 
 def decided(key, its, context, val, support, rivals, constraints, perspective, as_of, t):
-    pending = tuple(sorted(a.id for a in its if acceptance_state(a, perspective, as_of) == "unreviewed"
-                           and not superseded(a, perspective, as_of) and verdict(a, t) is not None))
-    base = dict(value=val, support=tuple(support), constraints=tuple(constraints), pending=pending,
-                attestations=tuple(its))
+    base = dict(value=val, support=tuple(support), constraints=tuple(constraints), attestations=tuple(its))
     if val == "disputed":
         return ContentJudgement(key, context, Judgement.DISPUTED, (POLARITY,), status=Status.DISPUTED,
                                 support_status=Status.DISPUTED, **base)
@@ -242,10 +250,11 @@ class JudgementMixin:
             by[ctype] = [s for s in self._scopes["*"] if self.is_a(ctype, s.constrained)]
         return by[ctype]
 
-    def _attested_conflicts(self, world, holding, t, as_of, perspective, memo):
+    def _attested_conflicts(self, world, holding, ident, t, as_of, perspective, memo):
         """{class: [Constraint]} for holding classes under an attested constraint whose members give it two or more
-        values. The constraint is judged (once per key, through `memo`) only there, without attested constraints of
-        its own; it applies only when ESTABLISHED (LABS-1.036)."""
+        values. Only those keys are evaluated: every such constraint of one type is judged from one load, without
+        attested constraints of its own (never recursively), and kept in `memo` for the rest of the report. It
+        applies only where ESTABLISHED (LABS-1.036)."""
         groups = {}
         for cls in holding:
             scopes = self._attested_scopes(cls[0])
@@ -256,19 +265,15 @@ class JudgementMixin:
                 key = tuple(players.get(cr) for _, cr in s.key)
                 if all(key):
                     groups.setdefault((s, key), []).append(cls)
+        groups = {k: m for k, m in groups.items() if len({dict(c[1]).get(k[0].value) for c in m}) > 1}
+        if not groups:
+            return {}
+        ctx = (world, t, as_of, perspective)
+        self._judge_constraints(list(groups), ident, world, t, as_of, perspective, memo)
         out = {}
         for (s, key), members in groups.items():
-            values = {dict(c[1]).get(s.value) for c in members}
-            if len(values) < 2:
-                continue
-            mk = (s.constraint, key, world, t, as_of, perspective)
-            rec = memo.get(mk) if memo is not None else None
-            if rec is None:
-                rec = self.judgement(world, s.constraint, {kr: list(k) for (kr, _), k in zip(s.key, key)}, t, as_of,
-                                     perspective, attested=False)
-                if memo is not None:
-                    memo[mk] = rec
-            applies = rec.judgement is Judgement.ESTABLISHED
+            rec = memo[(s.constraint, key, ctx)]
+            applies = rec is not None and rec.judgement is Judgement.ESTABLISHED
             for c in members:
                 mine = dict(c[1]).get(s.value)
                 rivals = tuple(o for o in members if dict(o[1]).get(s.value) != mine) if applies else ()
@@ -276,10 +281,34 @@ class JudgementMixin:
                                                         s.value, key, applies, rec, rivals))
         return out
 
-    def _records(self, atts, ident, t, perspective, as_of, world=None, attested=True, memo=None):
-        """{class: ContentJudgement} for every content in `atts` (the pool must include the rivals a constraint
-        needs). Judged classes first, in `_judge` order, then undecided ones. attested False: only declared
-        constraints (an attested constraint's own judgement; office_holders' per-appointment entries)."""
+    def _judge_constraints(self, scoped_keys, ident, world, t, as_of, perspective, memo):
+        """Judge the attested constraints for (scope, key) pairs not yet in `memo`: one load per constraint type,
+        without attested constraints of their own. memo[(constraint, key, context)] = the record, or None."""
+        ctx = (world, t, as_of, perspective)
+        todo = {}
+        for s, key in scoped_keys:
+            if (s.constraint, key, ctx) not in memo:
+                todo.setdefault(s, set()).add(key)
+        for s, keys in todo.items():
+            members = sorted({m for key in keys for x in key[0] for m in ident.members(x)})
+            found = (self._load(world, as_of, types=[s.constraint], subjects=members, perspective=perspective)
+                     if self.selective else
+                     {k: a for k, a in self.visible(world, as_of, perspective).items() if self.is_a(a.ctype, s.constraint)})
+            recs = self._records(list(found.values()), ident, t, perspective, as_of, world=world, attested=False)
+            by_key = {}
+            for cls, r in recs.items():
+                roles = dict(cls[1])
+                by_key.setdefault(tuple(roles.get(kr) for kr, _ in s.key), r)
+            for key in keys:
+                memo[(s.constraint, key, ctx)] = by_key.get(key)
+
+    def _records(self, atts, ident, t, perspective, as_of, world=None, attested=True, memo=None, wanted=None,
+                 undecided_too=True):
+        """{class: ContentJudgement} for the contents in `atts` (the pool must include the rivals a constraint
+        needs): every class, or only those in `wanted`; undecided_too False: only classes decided at t (a listing
+        never shows the others). Judged classes first, in `_judge` order, then undecided ones. attested False: only
+        declared constraints (an attested constraint's own judgement). memo: attested constraints already judged
+        in this report."""
         from .model import PARAMS_VALUE
         atts = list(atts)
         ctx = (world, t, as_of, perspective)
@@ -287,7 +316,8 @@ class JudgementMixin:
         judged = self._judge(atts, ident, t, perspective, as_of, dropped=dropped)
         holding = [c for c, (v, _, _) in judged.items() if v is True]
         declared = self._conflicts(holding)
-        attested_c = (self._attested_conflicts(world, holding, t, as_of, perspective, {} if memo is None else memo)
+        attested_c = (self._attested_conflicts(world, holding, ident, t, as_of, perspective,
+                                               {} if memo is None else memo)
                       if attested and world is not None else {})
         by_class = {}
         for a in atts:
@@ -303,7 +333,10 @@ class JudgementMixin:
                 elif val is True:
                     slot_values.setdefault(slot, []).append((cls, sup))
         out = {}
-        for cls in list(judged) + [c for c in by_class if c not in judged]:
+        order = list(judged) + ([c for c in by_class if c not in judged] if undecided_too else [])
+        for cls in order:
+            if wanted is not None and cls not in wanted:
+                continue
             its = by_class.get(cls, [])
             players = dict(cls[1])
             constraints = [Constraint("declared", decl, ks, v, tuple(players.get(r) for r in ks),
@@ -337,11 +370,15 @@ class JudgementMixin:
                 out[cls].constraints = tuple(constraints)
         return out
 
-    def _scope_rivals(self, world, as_of, perspective, recs, ident, pool=None, at=None):
+    def _scope_rivals(self, world, as_of, perspective, recs, ident, pool=None, at=None, t=None, memo=None, me=None):
         """Attestations of content under the same attested-constraint key as `recs` that `recs` lack (the other
-        holders of an exclusive office, seen from one holder). Selective: one load per constrained type, only for
-        types an installed profile constrains; full load: taken from `pool`."""
+        holders of an exclusive office, seen from one holder). With a valid time `t`, the constraint is judged first
+        and rivals are loaded only for keys where it is established at t (memo: shared with the report). Selective:
+        one load per constrained type; full load: taken from `pool`. me: the subject's names, when `recs` holds
+        every content of the constrained type that mentions the subject: a key naming the subject needs no load (its
+        rivals mention the subject too, so they are already in `recs`)."""
         have = {a.id for a in recs}
+        mine = {ident.canonical(x) for x in me} if me else set()
 
         def key_of(a, s):
             return tuple(tuple(sorted({ident.canonical(x) for x in a.roles.get(cr, [])})) for _, cr in s.key)
@@ -350,10 +387,21 @@ class JudgementMixin:
         for a in recs:
             for s in self._attested_scopes(a.ctype):
                 key = key_of(a, s)
-                if all(key):
+                if all(key) and not any(mine & set(k) for k in key):
                     wanted.setdefault(s, set()).add(key)
+        if t is not None and wanted:
+            memo = {} if memo is None else memo
+            pairs = [(s, k) for s, ks in wanted.items() for k in ks]
+            self._judge_constraints(pairs, ident, world, t, as_of, perspective, memo)
+            ctx = (world, t, as_of, perspective)
+            for s, k in pairs:
+                rec = memo[(s.constraint, k, ctx)]
+                if rec is None or rec.judgement is not Judgement.ESTABLISHED:
+                    wanted[s].discard(k)
         extra = {}
         for s, keys in wanted.items():
+            if not keys:
+                continue
             members = sorted({m for key in keys for x in key[0] for m in ident.members(x)})
             found = (pool if pool is not None else
                      self._load(world, as_of, types=[s.constrained], subjects=members, at=at, perspective=perspective))
@@ -361,7 +409,6 @@ class JudgementMixin:
                 if k not in have and k not in extra and self.is_a(a.ctype, s.constrained) and key_of(a, s) in keys:
                     extra[k] = a
         return list(extra.values())
-
 
 def without_attested(r):
     """The record as it stands before attested constraints: a content disputed only under an attested constraint is
