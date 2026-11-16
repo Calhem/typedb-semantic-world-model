@@ -1,8 +1,10 @@
 # Pre-Stage E correction, increment B: one canonical per-content judgement (DI-1, DI-11, DI-5)
 
-**Status: implemented on `feature/pre-e-b-canonical-judgement`, at the review gate, not merged** (LABS-1.038).
-Approved design: [pre-e-increment-b-design.md](pre-e-increment-b-design.md) at `a1bb840`, with Q1 to Q6. Increments C
-(DI-6) and D (DI-2) and Stage E have not begun. The foundational ontology and the schema are unchanged.
+**Status: approved and merged into `main` at `d9d873a` (LABS-1.039), from the reviewed head `e44f1af`.** Implemented
+under LABS-1.038.
+Approved design: [pre-e-increment-b-design.md](pre-e-increment-b-design.md) at `a1bb840`, with Q1 to Q6. Increment C
+(DI-6) is at its design gate ([pre-e-increment-c-design.md](pre-e-increment-c-design.md)); increment D (DI-2) and
+Stage E have not begun. The foundational ontology and the schema are unchanged.
 
 ## What changed
 **One mechanism** (`src/worldmodel/judgement.py`, new). For each content (proposition) in one context (world, valid
@@ -168,3 +170,39 @@ hypothetical worlds. Output: `probes/pre_e_b_read_bench.out.json`.
 ## Not changed
 DI-2, DI-3, DI-4, DI-6, DI-7, DI-9 and DI-10. The aggregation rules (increment C) and event-role constraints
 (increment D) are untouched. The foundational ontology and the schema are unchanged. Stage E has not begun.
+
+## After the merge (LABS-1.039)
+- **Merge.** The approved head `e44f1af` was unchanged and its tracked files clean; merged with `--no-ff` into `main`
+  at `d9d873a`, whose files are identical to `e44f1af`. Verified on GitHub (`git ls-remote`).
+- **Regression on merged `main`.** 487 passed in each of the four configurations (both query paths, `WM_SELECTIVE=1`
+  and `0`, each without and with `WM_PROFILES=1`, which installs all three profiles); no test databases left behind.
+- **The 106,752-answer comparison is reproducible.** The reference database was rebuilt from merged `main` and every
+  reader re-read (`pre_e_b_snapshot.py --build`, then all 11 worlds). The new snapshot equals the frozen
+  after-snapshot in all 106,752 answers once the three things a rebuild always changes are masked: random
+  attestation ids, system-clock times, and the order of the two sides of a measurement comparison reason, which
+  follows the ids (`probes/pre_e_b_repro_check.py`, output `pre_e_b_repro_check.out.txt`). The frozen comparison
+  with the code before increment B (`pre_e_b_diff.out.txt`: 126 changed answers) therefore stands as recorded.
+- **Performance: the mechanism and exclusivity measured apart.** `pre_e_b_read_bench.py` gained `--no-attested`,
+  which reads with every profile's attested constraints removed, so office exclusivity is not applied. On the two
+  organisation worlds (`org` and its plan `org-plan-reorg`), four alternating rounds of: the code before increment B
+  (`a1bb840`), the merged code, and the merged code with `--no-attested` (n = 5; query counts were identical in every
+  round; `pre_e_b_perf_split.out.txt`, raw figures `.out.json`). Selected rows, median milliseconds:
+
+  | Reader, world, subject | Queries before / after / after without exclusivity | ms before | ms after | ms without exclusivity |
+  |---|---|---|---|---|
+  | `facts_about`, plan, cal | 27 / 47 / 27 | 41.2 | 82.7 | 39.0 |
+  | `facts_about`, org, bea | 14 / 24 / 14 | 25.4 | 43.5 | 23.7 |
+  | `office_holders`, plan, safety-officer | 57 / 75 / 57 | 114.3 | 108.7 | 82.0 |
+  | `offices_of`, plan, cal | 84 / 122 / 84 | 140.8 | 187.7 | 125.0 |
+  | `offices_of`, org, cal | 15 / 25 / 15 | 22.9 | 37.0 | 22.4 |
+  | `capable`, plan, bea | 27 / 27 / 27 | 37.8 | 34.8 | 34.9 |
+
+  - **The canonical judgement mechanism costs nothing measurable.** Without exclusivity the merged code makes exactly
+    the queries the old code made, on every subject and reader, and is as fast or slightly faster.
+  - **All of the added cost is contextual exclusivity**, and only on the 12 measured reader and subject pairs where it applies (an
+    appointment under an exclusive office): 5 to 38 more queries per call, one constraint load and, where the
+    constraint is established, one load of the rival holders. The 41 ms to 78 ms regression first reported for
+    `facts_about(cal)` in the plan is confirmed (41.2 to 82.7 ms here, 27 to 47 queries).
+  - Retained as a Stage E performance investigation under DI-9 (see the register). Not a correctness issue: the
+    answers are the approved ones.
+- **Limitations kept.** DI-12 stays deferred with its reproduction; same-as traversal behaviour is unchanged.

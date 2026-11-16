@@ -243,6 +243,16 @@ approved and merged.
 Recommended: first verify the cause of the cross-world slowdown with query plans, then (b) and (a), measured against
 `bench-d3`.
 
+**Added to the Stage E investigation (LABS-1.039): the cost of contextual office exclusivity** (increment B). Measured
+apart from the canonical judgement mechanism (`probes/pre_e_b_perf_split.out.txt`, four alternating rounds, see
+[pre-e-increment-b.md](pre-e-increment-b.md), "After the merge"):
+- the mechanism alone adds no queries and no measurable time on any subject;
+- applying exclusivity adds 5 to 38 queries per call on the subjects it concerns (appointments under an exclusive
+  office), with time to match; the largest relative cost is `facts_about(cal)` in the plan world: 27 to 47 queries,
+  about 41 to 83 ms. Readers and subjects without such appointments are unaffected.
+Options to examine with the rest of DI-9: load the attested constraints once per reading rather than per report, and
+load rival holders in one batched query.
+
 
 ## DI-10: automated browser regression coverage for the schema explorer (maintenance)
 **What exists.** The explorer's search, filters, navigation, themes and narrow layout were checked by hand in a browser
