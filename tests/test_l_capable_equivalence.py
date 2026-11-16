@@ -3,6 +3,11 @@
 The baseline was written by the code before the refactor (acba95f) over a fixed grid of 1,242 capable() / is_agent()
 answers (tests/capable_grid.py: 9 holders x 3 capabilities x 3 contexts x 5 times x 3 perspectives, plus agency, a
 knowledge-time view and a hypothetical world), covering all six judgement cases.
+
+Updated once, by approval (LABS-1.038, increment B, DI-5): one answer changes. For the system perspective, Cy's
+only applicable content is the system's own accepted denial of can-weigh in lab-1, which begins after the time
+asked. It was "not yet effective", the label reserved for an accepted holding that begins after t; it is now "not
+established" (the denial says nothing about that time). Every other answer is identical.
 """
 
 import json
@@ -16,7 +21,7 @@ from worldmodel import QUALITY_MODULES, WorldModel
 BASELINE = Path(__file__).resolve().parent / "fixtures" / "capable_baseline.json"
 
 
-def test_capable_answers_are_unchanged_by_the_refactor(driver):
+def test_capable_answers_match_the_approved_baseline(driver):
     name = f"wm-test-{uuid.uuid4().hex[:10]}"
     wm = WorldModel.create(name, driver=driver, modules=QUALITY_MODULES, clock=FakeClock())
     try:

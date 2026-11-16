@@ -10,6 +10,7 @@ No failure propagation or dependency inference.
 """
 
 from .operations import atomic
+from .judgement import Judgement
 from .model import SCHEMA_DIR, SYSTEM
 from .profiles import PROFILES, Profile
 
@@ -42,12 +43,12 @@ def connect(wm, world, a, b, joint_kind=None, **attest):
 def connections(wm, world, part, t, as_of=None, perspective=SYSTEM):
     """The connections of `part` that hold, or are disputed, at t: the other part, joint kind, status, support."""
     out = []
-    for e in wm._claims(world, part, ("connected-to",), t, as_of, perspective):
-        if part in e["roles"].get("endpoint", []) and e["judged"] in (True, "disputed"):
-            others = [x for x in e["roles"]["endpoint"] if x != part]
+    for e in wm._contents(world, part, ("connected-to",), t, as_of, perspective):
+        if part in e.stated_roles.get("endpoint", []) and e.judgement in (Judgement.ESTABLISHED, Judgement.DISPUTED):
+            others = [x for x in e.stated_roles["endpoint"] if x != part]
             out.append({"other": others[0] if others else part,
-                        "joint_kind": (e["roles"].get("joint-kind") or [None])[0], "status": e["status"],
-                        "support": [a["attestation"] for a in e["attestations"] if a["acceptance"] == "accepted"]})
+                        "joint_kind": (e.stated_roles.get("joint-kind") or [None])[0], "status": e.status,
+                        "support": [a["attestation"] for a in e.claims() if a["acceptance"] == "accepted"]})
     return sorted(out, key=lambda c: (c["other"], c["joint_kind"] or ""))
 
 

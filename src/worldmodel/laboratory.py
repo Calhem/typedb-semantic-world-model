@@ -126,8 +126,8 @@ def provenance(wm, world, sample, t, as_of=None, perspective=SYSTEM):
 
     def claims_of(x):
         if x not in claims:
-            claims[x] = [(src, wm._judgement(e)) for e in wm._claims(world, x, ("constitution",), t, as_of, perspective)
-                         if x in e["roles"].get("constituted", []) for src in e["roles"].get("constituent", [])]
+            claims[x] = [(src, wm._judgement(e)) for e in wm._contents(world, x, ("constitution",), t, as_of, perspective)
+                         if x in e.stated_roles.get("constituted", []) for src in e.stated_roles.get("constituent", [])]
         return claims[x]
 
     todo = [(sample, [], (sample,))]                     # breadth first: (material, route so far, materials on it)
@@ -153,8 +153,8 @@ def provenance(wm, world, sample, t, as_of=None, perspective=SYSTEM):
     established = [{"sample": c["sample"], "from": c["from"], "judgement": c["judgement"], "status": c["status"],
                     "evidence": c["evidence"], "paths": [p["path"] for p in c["paths"] if p["established"]]}
                    for c in chain if c["ancestry"] == "established"]
-    existence = [wm._judgement(e) for e in wm._claims(world, sample, ("existence",), t, as_of, perspective)
-                 if sample in e["roles"].get("existent", [])]
+    existence = [wm._judgement(e) for e in wm._contents(world, sample, ("existence",), t, as_of, perspective)
+                 if sample in e.stated_roles.get("existent", [])]
     core = wm.exists(world, sample, t, as_of, perspective)
     here = wm.value_of(world, "located-at", {"located": sample}, t, as_of, perspective)
     return {"sample": sample, "t": t, "chain": _public(chain), "established": established,
@@ -214,9 +214,9 @@ def calibration_status(wm, world, instrument, t, as_of=None, perspective=SYSTEM)
     "not established" with no certificates means that no calibration is recorded at all."""
     _require(wm)
     found = []
-    for e in wm._claims(world, instrument, ("calibration-of",), t, as_of, perspective):
-        if instrument in e["roles"].get("calibrated", []):
-            found.append({"certificate": e["roles"]["certificate"][0], **wm._judgement(e)})
+    for e in wm._contents(world, instrument, ("calibration-of",), t, as_of, perspective):
+        if instrument in e.stated_roles.get("calibrated", []):
+            found.append({"certificate": e.stated_roles["certificate"][0], **wm._judgement(e)})
     refs = _references(wm, [c["certificate"] for c in found])
     for c in found:
         c["reference"] = refs[c["certificate"]]
@@ -305,18 +305,18 @@ def interpretations(wm, world, record, t, as_of=None, perspective=SYSTEM):
             continue
         content = wm.content(a["content"])
         subject = next(ids[0] for ids in content["roles"].values() if ids)
-        entry = next((e for e in wm._claims(world, subject, (content["type"],), t, as_of, perspective)
-                      if any(x["attestation"] == aid for x in e["attestations"])), None)
+        entry = next((e for e in wm._contents(world, subject, (content["type"],), t, as_of, perspective)
+                      if any(x["attestation"] == aid for x in e.claims())), None)
         if entry is None:
             continue                                   # not visible in this world or at this knowledge time
-        mine = next(x for x in entry["attestations"] if x["attestation"] == aid)
+        mine = next(x for x in entry.claims() if x["attestation"] == aid)
         mode = ("hypothesis" if a["stance"] == "hypothesises" else "doubt" if a["stance"] == "doubts"
                 else MODES[a["basis"]])
         judged = wm._judgement(entry)
         out.append({"attestation": aid, "attester": a["attester"], "type": content["type"], "roles": content["roles"],
                     "params": content.get("params") or {}, "polarity": a["polarity"], "stance": a["stance"],
                     "basis": a["basis"], "mode": mode, "acceptance": mine["acceptance"],
-                    "supports_answer": aid in entry["support"],
+                    "supports_answer": aid in entry.support_ids,
                     "content_judgement": {k: judged[k] for k in ("judgement", "holds", "status")},
                     "derivation": NO_DERIVATION})
     return sorted(out, key=lambda x: (x["type"], str(x["roles"]), x["attestation"]))

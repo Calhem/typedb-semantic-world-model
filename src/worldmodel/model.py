@@ -25,6 +25,7 @@ from .qualities import QualitiesMixin
 from .agency import AgencyMixin
 from .profiles import ProfileMixin
 from .physical import PhysicalMixin
+from .judgement import JudgementMixin
 from .spatial import params_compatible
 from .operations import Operation, OperationError, atomic, atomic_schema  # noqa: F401
 from .semantics import (Answer, AttestationRecord, Identity, Replacement, Status, Window, acceptance_state,
@@ -113,7 +114,7 @@ class PropositionIdCollision(ValueError):
 
 
 
-class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, ProfileMixin):
+class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, ProfileMixin):
     def __init__(self, driver, database, clock=utcnow, selective=True):
         self.driver, self.database, self.clock = driver, database, clock
         self.selective = selective
@@ -124,6 +125,7 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
         self._prop_ids = None
         self._lattice = None
         self._slots = None
+        self._scopes = None
 
     def _reset_caches(self):
         """Forget everything read from the schema or the module records (after a schema change or a rollback)."""
@@ -131,6 +133,7 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
         self._prop_ids = None
         self._lattice = None
         self._slots = None
+        self._scopes = None
 
     # ---- operations (DI-8) ---------------------------------------------------------------------------------------------
     @contextmanager
@@ -948,7 +951,7 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
         return (a.ctype, tuple(sorted((r, tuple(sorted({ident.canonical(x) for x in ids}))) for r, ids in a.roles.items())),
                 tuple(sorted(a.params.items())))
 
-    def _judge(self, atts, ident, t, perspective, as_of):
+    def _judge(self, atts, ident, t, perspective, as_of, dropped=None):
         """Per content class at t: {class: (True/False/'disputed', supporting attestations)} after precedence.
 
         Within a class, the nearest world's deciding attestations win (a variant overrides what it inherited);
@@ -988,6 +991,8 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
         for cls, its in slots.items():
             if any(out[cls][2] > slot_depth[slot] for slot in its):
                 del out[cls]
+                if dropped is not None:              # overridden by a nearer world's value for the same slot
+                    dropped.add(cls)
         return out
 
     def _conflicts(self, classes):
@@ -1070,7 +1075,51 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
                       evidence=evidence)
 
     def holds(self, world, type, roles, t, as_of=None, perspective=SYSTEM):
-        """Does this content hold at t for the perspective? Evidence-backed status with polarity."""
+        """Does this content hold at t for the perspective? Evidence-backed status with polarity: the canonical
+        judgement (`judgement`) as an Answer."""
+        rec, about, fallback, _ = self._question(world, type, roles, t, as_of, perspective)
+        alternatives = self._alternatives(about, t, perspective, as_of)
+        if rec is not None:
+            return self._answer(rec, alternatives)
+        if fallback is not None:
+            return Answer(Status.INFERRED, False, support=fallback.support, alternatives=alternatives,
+                          evidence=fallback.evidence)
+        if not about:
+            return Answer(Status.NOT_YET_KNOWN, alternatives=alternatives)
+        return Answer(Status.UNKNOWN, alternatives=alternatives)
+
+    def judgement(self, world, type, roles, t, as_of=None, perspective=SYSTEM, attested=True, _memo=None):
+        """The canonical judgement (a ContentJudgement) of the content holds() asks about: `type` or a subtype, with
+        the given players among its own. Nothing recorded at all: UNKNOWN with reason no_evidence. attested False:
+        only declared constraints apply (how an attested constraint is itself judged: never recursively)."""
+        rec, _, _, first = self._question(world, type, roles, t, as_of, perspective, attested, _memo)
+        if rec is None:
+            rec = first
+            if rec is None:
+                from .judgement import NO_EVIDENCE, ContentJudgement, Judgement
+                key = (type, tuple(sorted((r, tuple(sorted(as_ids(v)))) for r, v in roles.items())), ())
+                rec = ContentJudgement(key, (world, t, as_of, perspective), Judgement.UNKNOWN, (NO_EVIDENCE,))
+        return rec
+
+    @staticmethod
+    def _answer(rec, alternatives):
+        """A decided record as holds()'s Answer."""
+        from .judgement import CONSTRAINT, Judgement
+        sup = list(rec.support)
+        ids_ = tuple(sorted(a.id for a in sup))
+        if rec.judgement is Judgement.DISPUTED and CONSTRAINT in rec.reasons:
+            rival = list(rec.conflicts)
+            return Answer(Status.DISPUTED, None, support=ids_, alternatives=alternatives,
+                          conflicts=tuple(a.id for a in rival),
+                          evidence=tuple(a.evidence() for a in sorted(sup + rival, key=lambda a: a.id)))
+        evidence = tuple(a.evidence() for a in sorted(sup, key=lambda a: a.id))
+        if rec.judgement is Judgement.DISPUTED:
+            return Answer(Status.DISPUTED, None, support=ids_, alternatives=alternatives, evidence=evidence)
+        return Answer(answer_status(sup), rec.value, support=ids_, alternatives=alternatives, evidence=evidence)
+
+    def _question(self, world, type, roles, t, as_of, perspective, attested=True, memo=None):
+        """(record of the first matching content decided at t or None, the matching attestations, the excluding
+        value_of answer or None, the first matching undecided record or None)."""
         ids = sorted({x for v in roles.values() for x in as_ids(v)})
         constraints = self._constraints(type)
         keyed = [c for c in constraints if set(c[1]) <= set(roles)]     # constraints whose whole key is given
@@ -1097,31 +1146,24 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
             peers = [a for a in atts.values() if any(
                 self.is_a(a.ctype, decl) and all(want[k] <= {ident.canonical(x) for x in a.roles.get(k, [])} for k in ks)
                 for decl, ks, _ in keyed)]
-        judged = self._judge(peers, ident, t, perspective, as_of)
-        mine = {cls: v for cls, v in judged.items() if any(matches(a) for a in v[1])}
-        alternatives = self._alternatives(about, t, perspective, as_of)
-        conflicts = self._conflicts([c for c, (val, _, _) in judged.items() if val is True])
-        for cls, (val, sup, _) in mine.items():
-            evidence = tuple(a.evidence() for a in sorted(sup, key=lambda a: a.id))
-            ids_ = tuple(sorted(a.id for a in sup))
-            if val == "disputed":
-                return Answer(Status.DISPUTED, None, support=ids_, alternatives=alternatives, evidence=evidence)
-            if val is True and cls in conflicts:      # a functional conflict: the perspective's judgement is DISPUTED
-                rival = sorted({a.id: a for c in conflicts[cls] for a in judged[c][1]}.values(), key=lambda a: a.id)
-                return Answer(Status.DISPUTED, None, support=ids_, alternatives=alternatives,
-                              conflicts=tuple(a.id for a in rival),
-                              evidence=tuple(a.evidence() for a in sorted(sup + rival, key=lambda a: a.id)))
-            return Answer(answer_status(sup), val, support=ids_, alternatives=alternatives, evidence=evidence)
+        memo = {} if memo is None else memo
+        if attested and peers:
+            peers = peers + self._scope_rivals(world, as_of, perspective, peers, ident,
+                                               pool=None if self.selective else atts, t=t, memo=memo)
+        recs = self._records(peers, ident, t, perspective, as_of, world=world, attested=attested, memo=memo)
+        first = None
+        for rec in recs.values():
+            if rec.value is not None and any(matches(a) for a in rec.support):
+                return rec, about, None, None
+            if first is None and rec.value is None and any(matches(a) for a in rec.attestations):
+                first = rec
         for decl, ks, v in keyed:          # root first: the most general constraint that settles it is cited
             if v in roles:
                 other = self._value(world, decl, {k: as_ids(roles[k])[0] for k in ks}, v, t, as_of, perspective)
                 if other.status in (Status.ASSERTED, Status.STIPULATED, Status.INFERRED) \
                         and not set(other.values) & want[v]:
-                    return Answer(Status.INFERRED, False, support=other.support, alternatives=alternatives,
-                                  evidence=other.evidence)
-        if not about:
-            return Answer(Status.NOT_YET_KNOWN, alternatives=alternatives)
-        return Answer(Status.UNKNOWN, alternatives=alternatives)
+                    return None, about, other, first
+        return None, about, None, first
 
     def history(self, world, subject, type=None, as_of=None, perspective=SYSTEM):
         """Every visible attestation involving the subject (identity-aware), oldest first, with its acceptance state
@@ -1295,29 +1337,54 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
 
     # ---- listings -----------------------------------------------------------------------------------------------
     def facts_about(self, world, subject, t, as_of=None, perspective=SYSTEM):
-        """Every content (other than events and identity links) involving the subject that holds at t. A content in a
-        functional conflict is listed with status DISPUTED and the conflicting attestations (Q-B2, LABS-1.015)."""
+        """Every content (other than events and identity links) involving the subject that holds or is disputed at t,
+        from the canonical judgement (DI-1, LABS-1.038). Each entry: type, roles, params, `judgement` (established or
+        disputed), `status` (DISPUTED for a dispute), `support` (the deciding attestations), `assertions` and
+        `denials` (the deciding accepted ones on each side: both, for a polarity dispute), `conflicts` (attestations
+        of the contents in conflict under a declared or attested single-value constraint, including rivals that do
+        not mention the subject: seen from a place, the thing's other places) and `support_status` (the support's
+        status before constraints; DISPUTED for a polarity dispute). Q-B2, LABS-1.015."""
+        from .judgement import Judgement
         atts, ident = self._view(world, as_of, perspective, None, [subject], at=t)
         me = set(ident.members(subject))
         rel = [a for a in atts.values() if a.kind not in ("event", "same-as")
                and any(me & set(ids) for ids in a.roles.values())]
-        out = []
-        rivals_pool = self._slot_rivals(world, as_of, perspective, rel, me, ident, at=t,
-                                        pool=None if self.selective else atts)
+        pool = None if self.selective else atts
+        rivals = self._slot_rivals(world, as_of, perspective, rel, me, ident, at=t, pool=pool)
+        memo = {}
+        rivals += self._scope_rivals(world, as_of, perspective, rel + rivals, ident, pool=pool, at=t, t=t, memo=memo,
+                                     me=me)
         mine = {self._class(a, ident) for a in rel}
-        judged = self._judge(rel + rivals_pool, ident, t, perspective, as_of)
-        # The same functional-conflict judgement as value_at / holds (Q-B2, LABS-1.015): a holding content that gives a
-        # functional slot a different value than another holding content is DISPUTED, with the rival attestations,
-        # including rivals that do not mention the subject (seen from a place, the thing's other places).
-        conflicts = self._conflicts([c for c, (val, _, _) in judged.items() if val is True])
-        for cls, (val, support, _) in judged.items():
-            if val is True and cls in mine:
-                rivals = sorted({a.id for c in conflicts.get(cls, ()) for a in judged[c][1]})
-                out.append({"type": cls[0], "roles": {r: list(ids) for r, ids in cls[1]}, "params": dict(cls[2]),
-                            "support": sorted(a.id for a in support),
-                            "status": Status.DISPUTED if rivals else answer_status(support), "conflicts": rivals,
-                            "support_status": answer_status(support)})    # before functional conflicts
+        out = []
+        for cls, r in self._records(rel + rivals, ident, t, perspective, as_of, world=world, wanted=mine,
+                                    undecided_too=False, memo=memo).items():
+            if r.judgement in (Judgement.ESTABLISHED, Judgement.DISPUTED):
+                out.append({"type": cls[0], "roles": r.roles, "params": r.params, "support": r.support_ids,
+                            "status": r.status, "conflicts": r.conflict_ids, "support_status": r.support_status,
+                            "judgement": r.judgement.value, "assertions": r.assertion_ids, "denials": r.denial_ids})
         return sorted(out, key=lambda f: (f["type"], str(f["roles"])))
+
+    def _contents(self, world, subject, types, t, as_of=None, perspective=SYSTEM, attested=True, memo=None,
+                  where=None):
+        """The canonical records (ContentJudgement) of every content of `types` naming `subject` (by its own id, as
+        the profile reports always have), sorted by type and stated roles. Each keeps every claim about the content
+        separately (`claims()`): unaccepted and rejected claims are listed, marked. Rivals under declared and attested
+        single-value constraints are loaded and applied (DI-11). attested False: only declared constraints (the
+        per-appointment entries of office_holders, choice A)."""
+        atts, ident = self._view(world, as_of, perspective, None, [subject])
+        mine = [a for a in atts.values() if any(self.is_a(a.ctype, ty) for ty in types)
+                and any(subject in ids for ids in a.roles.values()) and (where is None or where(a.roles))]
+        pool = None if self.selective else atts
+        me = set(ident.members(subject))
+        rivals = self._slot_rivals(world, as_of, perspective, mine, me, ident, pool=pool)
+        memo = {} if memo is None else memo
+        if attested:
+            rivals += self._scope_rivals(world, as_of, perspective, mine + rivals, ident, pool=pool, t=t, memo=memo,
+                                         me={subject} if where is None else None)   # mine: by the subject's own id
+        wanted = {self._class(a, ident) for a in mine}
+        recs = self._records(mine + rivals, ident, t, perspective, as_of, world=world, attested=attested, memo=memo,
+                             wanted=wanted)
+        return sorted(recs.values(), key=lambda r: (r.type, str(r.stated_roles)))
 
     def _slot_rivals(self, world, as_of, perspective, recs, me, ident, at=None, pool=None):
         """Records that compete in a functional slot with `recs` but do not mention the subject (Q-B2, LABS-1.015): for
@@ -1353,9 +1420,11 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
             ids &= {x for a in self.visible(world, as_of, perspective).values() for v in a.roles.values() for x in v}
         return sorted(ids)
 
-    def parts(self, world, whole, t, as_of=None, perspective=SYSTEM):
-        """Transitive parts at t (application closure over the part-of content that holds for the perspective)."""
-        return self._closure(world, "part-of", "whole", "part", whole, t, as_of, perspective)
+    def parts(self, world, whole, t, as_of=None, perspective=SYSTEM, report=False):
+        """Transitive parts at t (application closure over the part-of content established for the perspective).
+        report True: {"reached": the same ids, "not_traversed": the part-of links from reached things that were not
+        followed (disputed, pending or unknown at t), each with its judgement and evidence}."""
+        return self._closure(world, "part-of", "whole", "part", whole, t, as_of, perspective, report=report)
 
     def depend(self, world, dependent, dependee, kind=None, **attest):
         """Attest that `dependent` depends on `dependee`, of a dependency kind (a category, e.g. dependency:functional)
@@ -1367,46 +1436,60 @@ class WorldModel(PhysicalMixin, DynamicsMixin, QualitiesMixin, AgencyMixin, Prof
             attest.setdefault("until_superseded", True)
         return self.attest(world, "depends-on", roles, **attest)
 
-    def dependencies(self, world, dependent, t, as_of=None, perspective=SYSTEM, kind=None):
+    def dependencies(self, world, dependent, t, as_of=None, perspective=SYSTEM, kind=None, report=False):
         """Transitive dependees at t. kind None: every dependency, whatever its kind (unchanged Core 0.3 behaviour).
         kind given: only dependencies of exactly that kind, followed through dependencies of that kind; a dependency
-        with no kind is never counted as any kind (D-D-2) and is reported by direct_dependencies as unspecified."""
+        with no kind is never counted as any kind (D-D-2) and is reported by direct_dependencies as unspecified.
+        report True: as parts()."""
         return self._closure(world, "depends-on", "dependent", "dependee", dependent, t, as_of, perspective,
-                             kind=kind)
+                             kind=kind, report=report)
 
     def direct_dependencies(self, world, dependent, t, as_of=None, perspective=SYSTEM):
         """What `dependent` directly depends on at t, one entry per dependency content that holds (or is disputed):
         dependee, kind (a category id, or "unspecified" when the content names none), status and support. Asserted
         dependencies only: nothing is inferred (no transitivity, no failure propagation)."""
+        from .judgement import Judgement
         out = []
-        for e in self._claims(world, dependent, ("depends-on",), t, as_of, perspective):
-            # held, or disputed (an accepted denial against an accepted assertion): a disputed dependency is listed as
-            # DISPUTED, never dropped (facts_about lists only holding contents)
-            if dependent in e["roles"].get("dependent", []) and e["judged"] in (True, "disputed"):
-                for dee in e["roles"].get("dependee", []):
-                    out.append({"dependee": dee, "kind": (e["roles"].get("kind") or [UNSPECIFIED])[0],
-                                "status": e["status"],
-                                "support": [a["attestation"] for a in e["attestations"] if a["acceptance"] == "accepted"]})
+        for r in self._contents(world, dependent, ("depends-on",), t, as_of, perspective):
+            roles = r.stated_roles
+            # established, or disputed (by polarity or under a constraint): a disputed dependency is listed as
+            # DISPUTED, never dropped
+            if dependent in roles.get("dependent", []) and r.judgement in (Judgement.ESTABLISHED, Judgement.DISPUTED):
+                for dee in roles.get("dependee", []):
+                    out.append({"dependee": dee, "kind": (roles.get("kind") or [UNSPECIFIED])[0], "status": r.status,
+                                "support": [c["attestation"] for c in r.claims() if c["acceptance"] == "accepted"]})
         return sorted(out, key=lambda d: (d["dependee"], d["kind"]))
 
-    def _closure(self, world, type, from_role, to_role, start, t, as_of, perspective, kind=None):
+    def _closure(self, world, type, from_role, to_role, start, t, as_of, perspective, kind=None, report=False):
+        """Traverse established links only (LABS-1.031, choice B). Links are judged without the perspective's
+        same-as identity: DI-12, registered and deferred (LABS-1.038)."""
+        from .judgement import Judgement
         atts = self._load(world, as_of, types=[type], perspective=perspective)
         ident = Identity([], perspective, as_of)
-        edges = {}
-        for cls, (val, _, _) in self._judge(list(atts.values()), ident, t, perspective, as_of).items():
-            if val is True:
-                roles = dict(cls[1])
-                if kind is not None and tuple(roles.get("kind", ())) != (kind,):
-                    continue                      # another kind, or no kind (unspecified): not this kind (D-D-2)
+        edges, held_back = {}, {}
+        for cls, r in self._records(list(atts.values()), ident, t, perspective, as_of, world=world).items():
+            roles = dict(cls[1])
+            if kind is not None and tuple(roles.get("kind", ())) != (kind,):
+                continue                          # another kind, or no kind (unspecified): not this kind (D-D-2)
+            if r.judgement is Judgement.ESTABLISHED:
                 for a in roles.get(from_role, ()):
                     edges.setdefault(a, set()).update(roles.get(to_role, ()))
+            elif r.judgement is not Judgement.NOT_HOLDING:
+                for a in roles.get(from_role, ()):
+                    held_back.setdefault(a, []).append((roles, r))
         seen, todo = set(), [start]
         while todo:
             for n in edges.get(todo.pop(), ()):
                 if n not in seen:
                     seen.add(n)
                     todo.append(n)
-        return sorted(seen)
+        if not report:
+            return sorted(seen)
+        links = [{from_role: a, to_role: sorted(roles.get(to_role, ())), "judgement": r.judgement.value,
+                  "reasons": list(r.reasons), "status": r.status, "support": r.support_ids,
+                  "pending": list(r.pending), "conflicts": r.conflict_ids}
+                 for a in sorted({start} | seen) for roles, r in held_back.get(a, [])]
+        return {"reached": sorted(seen), "not_traversed": sorted(links, key=lambda x: (x[from_role], x[to_role]))}
 
     def parts_in_database(self, world, whole):
         """Transitive parts computed by the TypeDB function `parts_in` (world-scoped; time and acceptance ignored)."""

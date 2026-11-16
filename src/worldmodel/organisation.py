@@ -13,20 +13,32 @@ DISPUTED, citing the appointments and the constraint. Appointments are never rej
 judgement and evidence. Nothing is inferred about anyone no appointment mentions: absence of evidence stays absence
 ("not established"), distinct from an explicit, accepted denial ("denied").
 
-**Disputes are visible.** The reports read each content's judgement (as `capable()` does), so content disputed by
-polarity is listed as DISPUTED, never dropped. Core `roles_of` is unchanged (DI-1).
+**Disputes are visible.** The reports read each content's canonical judgement (as `capable()` does), so content
+disputed by polarity is listed as DISPUTED, never dropped; so does core `roles_of` (DI-1, LABS-1.038).
+
+**Exclusivity is the core's.** The profile declares the scope of `exclusive-office` (EXCLUSIVE_OFFICE); the core's
+canonical judgement applies it, only where the constraint is itself established in the same world, time, knowledge
+time and perspective, in every reader (`holds`, `facts_about`, `capable`). `office_holders` and `offices_of` keep their
+public answers (LABS-1.038, choice A): each appointment's own judgement is reported before the constraint, and the
+conflict, read from the canonical judgement, is reported beside it.
 
 Functions take the WorldModel, as in `worldmodel.mechanical`.
 """
 
+from .judgement import AttestedConstraint, attested_conflict, without_attested
 from .model import SCHEMA_DIR, SYSTEM
 from .profiles import PROFILES, Profile
 from .semantics import Status
 
 NAME = "organisation"
+# An exclusive office: where exclusive-office(office, context) is established at t, office-holding with that office
+# (class) and context has at most one holder (classified). Judged by the core's canonical mechanism (LABS-1.038).
+EXCLUSIVE_OFFICE = AttestedConstraint("exclusive-office", "office-holding",
+                                      (("office", "class"), ("context", "context")), "classified")
 PROFILE = Profile(NAME, "0.1", (str(SCHEMA_DIR / "profiles" / "organisation" / "organisation-0.1.tql"),),
                   vocabulary=(("category", "organisation:appointment", "appointment"),
-                              ("category", "organisation:dismissal", "dismissal")))
+                              ("category", "organisation:dismissal", "dismissal")),
+                  attested_constraints=(EXCLUSIVE_OFFICE,))
 PROFILES[NAME] = PROFILE
 NOT_ASSESSED = "not assessed"
 
@@ -64,9 +76,9 @@ def employment(wm, world, x, t, as_of=None, perspective=SYSTEM):
     """Every employment content naming x (as employer or employee) with its judgement at t, evidence included:
     established, denied, expired, not yet effective, disputed, or not established (only unreviewed/rejected claims)."""
     out = []
-    for e in wm._claims(world, x, ("employment",), t, as_of, perspective):
-        if x in e["roles"].get("employer", []) + e["roles"].get("employee", []):
-            out.append({"employer": e["roles"]["employer"][0], "employee": e["roles"]["employee"][0],
+    for e in wm._contents(world, x, ("employment",), t, as_of, perspective):
+        if x in e.stated_roles.get("employer", []) + e.stated_roles.get("employee", []):
+            out.append({"employer": e.stated_roles["employer"][0], "employee": e.stated_roles["employee"][0],
                         **_judged(wm, e)})
     return _public(sorted(out, key=lambda r: (r["employer"], r["employee"])))
 
@@ -92,11 +104,14 @@ def _constraint(wm, world, office, context, t, as_of, perspective):
 
 
 def _appointments(wm, world, office, context, t, as_of, perspective):
-    out = []
-    for e in wm._claims(world, context, ("office-holding",), t, as_of, perspective):
-        if office in e["roles"].get("class", []) and context in e["roles"].get("context", []):
-            out.append({"holder": e["roles"]["classified"][0], **_judged(wm, e)})
-    return sorted(out, key=lambda r: r["holder"])
+    """(each appointment for the office and context with its own judgement, before the exclusivity constraint;
+    whether the canonical judgement puts established appointments in conflict under that constraint)."""
+    out, conflicted = [], False
+    for e in wm._contents(world, context, ("office-holding",), t, as_of, perspective):
+        if office in e.stated_roles.get("class", []) and context in e.stated_roles.get("context", []):
+            conflicted = conflicted or attested_conflict(e, "exclusive-office", (office, context)) is not None
+            out.append({"holder": e.stated_roles["classified"][0], **_judged(wm, without_attested(e))})
+    return sorted(out, key=lambda r: r["holder"]), conflicted
 
 
 def _overall(entries, conflict):
@@ -119,11 +134,11 @@ def office_holders(wm, world, office, context, t, as_of=None, perspective=SYSTEM
       each conflicting appointment's accepted attestations; the status is then DISPUTED.
     Nothing is inferred about anyone not mentioned."""
     _require(wm)
-    entries = _appointments(wm, world, office, context, t, as_of, perspective)
+    entries, conflicted = _appointments(wm, world, office, context, t, as_of, perspective)
     holders = [h["holder"] for h in entries if h["judgement"] == "established"]
     exclusive = _constraint(wm, world, office, context, t, as_of, perspective)
     conflict = None
-    if exclusive["holds"] is True and len(holders) > 1:
+    if conflicted:                      # the canonical judgement: the constraint is established, holders differ
         conflict = {"constraint": {"office": office, "context": context, "support": exclusive["support"]},
                     "appointments": [{"holder": h["holder"],
                                       "attestations": [a["attestation"] for a in h["evidence"]
@@ -139,11 +154,11 @@ def offices_of(wm, world, person, t, as_of=None, perspective=SYSTEM):
     means no evidence either way (never a denial)."""
     _require(wm)
     out = []
-    for e in wm._claims(world, person, ("office-holding",), t, as_of, perspective):
-        if person not in e["roles"].get("classified", []):
+    for e in wm._contents(world, person, ("office-holding",), t, as_of, perspective):
+        if person not in e.stated_roles.get("classified", []):
             continue
-        office, context = e["roles"]["class"][0], e["roles"]["context"][0]
-        entry = {"office": office, "context": context, **_judged(wm, e), "conflict": None}
+        office, context = e.stated_roles["class"][0], e.stated_roles["context"][0]
+        entry = {"office": office, "context": context, **_judged(wm, without_attested(e)), "conflict": None}
         if entry["judgement"] == "established":
             view = office_holders(wm, world, office, context, t, as_of, perspective)
             if view["conflict"]:
@@ -168,10 +183,10 @@ def authorised(wm, world, holder, power, scope, t, as_of=None, perspective=SYSTE
     scopes where the power is established instead; grantor_entitlement: always "not assessed" (D-D-3)."""
     _require(wm)
     found = []
-    for e in wm._claims(world, holder, ("authorisation",), t, as_of, perspective):
-        if holder in e["roles"].get("holder", []) and power in e["roles"].get("power", []):
-            found.append({"grantor": e["roles"]["grantor"][0], "scope": e["roles"]["scope"][0],
-                          "reported_by": sorted({a["attester"] for a in e["attestations"]}), **_judged(wm, e)})
+    for e in wm._contents(world, holder, ("authorisation",), t, as_of, perspective):
+        if holder in e.stated_roles.get("holder", []) and power in e.stated_roles.get("power", []):
+            found.append({"grantor": e.stated_roles["grantor"][0], "scope": e.stated_roles["scope"][0],
+                          "reported_by": sorted({a["attester"] for a in e.claims()}), **_judged(wm, e)})
     grants = sorted((g for g in found if g["scope"] == scope), key=lambda g: g["grantor"])
     holds, status, judgement = wm._combine([{"judgement": g["_label"], "status": g["status"]} for g in grants],
                                            bool(found))

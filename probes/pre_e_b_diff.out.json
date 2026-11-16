@@ -1,0 +1,889 @@
+{
+ "counts": {
+  "calibration_status": {
+   "identical": 3575
+  },
+  "capable": {
+   "identical": 2396,
+   "changed": 14
+  },
+  "capable@apprentice": {
+   "identical": 1345
+  },
+  "capable@cam-2": {
+   "identical": 1265
+  },
+  "capable@cm-1": {
+   "identical": 1345
+  },
+  "capable@cmms": {
+   "identical": 710
+  },
+  "capable@design-office": {
+   "identical": 1760
+  },
+  "capable@inspector": {
+   "identical": 1760
+  },
+  "capable@scale-3": {
+   "identical": 1760
+  },
+  "capable@tag-reader": {
+   "identical": 1265
+  },
+  "capable@technician": {
+   "identical": 1345
+  },
+  "causes_of": {
+   "identical": 590
+  },
+  "compare_measurements": {
+   "identical": 80
+  },
+  "composition": {
+   "extended": 3575
+  },
+  "connections": {
+   "identical": 3575
+  },
+  "contents": {
+   "extended": 100
+  },
+  "dependencies": {
+   "identical": 3575
+  },
+  "direct_dependencies": {
+   "identical": 3575
+  },
+  "effects_of": {
+   "identical": 370
+  },
+  "employment": {
+   "identical": 3575
+  },
+  "exists": {
+   "identical": 3575
+  },
+  "facts_about": {
+   "extended": 2811,
+   "identical": 710,
+   "changed": 54
+  },
+  "facts_about@apprentice": {
+   "extended": 96,
+   "identical": 2019
+  },
+  "facts_about@as_of": {
+   "identical": 3186,
+   "extended": 389
+  },
+  "facts_about@cam-2": {
+   "identical": 1913,
+   "extended": 22
+  },
+  "facts_about@cm-1": {
+   "identical": 2064,
+   "extended": 51
+  },
+  "facts_about@cmms": {
+   "identical": 1142,
+   "extended": 43
+  },
+  "facts_about@design-office": {
+   "identical": 2356,
+   "extended": 204
+  },
+  "facts_about@inspector": {
+   "extended": 456,
+   "identical": 2104
+  },
+  "facts_about@scale-3": {
+   "identical": 2468,
+   "extended": 92
+  },
+  "facts_about@tag-reader": {
+   "identical": 1925,
+   "extended": 10
+  },
+  "facts_about@technician": {
+   "extended": 738,
+   "identical": 1377
+  },
+  "frame_info": {
+   "identical": 110
+  },
+  "holds": {
+   "identical": 4971,
+   "changed": 4
+  },
+  "holds@as_of": {
+   "identical": 4975
+  },
+  "interpretations": {
+   "identical": 165
+  },
+  "materials": {
+   "identical": 3575
+  },
+  "measurement_calibration": {
+   "identical": 80
+  },
+  "measurements": {
+   "identical": 80
+  },
+  "occurrence_status": {
+   "identical": 220
+  },
+  "offices_of": {
+   "identical": 3569,
+   "changed": 6
+  },
+  "parts": {
+   "identical": 3575
+  },
+  "poses": {
+   "identical": 3575
+  },
+  "process_steps": {
+   "identical": 197,
+   "extended": 23
+  },
+  "replacement": {
+   "identical": 370
+  },
+  "roles_of": {
+   "identical": 3571,
+   "changed": 4
+  },
+  "transform_between": {
+   "identical": 150
+  },
+  "value_of": {
+   "identical": 940
+  },
+  "agency_report": {
+   "identical": 11
+  },
+  "changes": {
+   "identical": 707,
+   "changed": 8
+  },
+  "check_action": {
+   "identical": 74
+  },
+  "capable@ana": {
+   "identical": 335
+  },
+  "capable@bo": {
+   "identical": 329,
+   "changed": 6
+  },
+  "capable@cal-lab": {
+   "identical": 240
+  },
+  "capable@lab-2": {
+   "identical": 335
+  },
+  "capable@qa": {
+   "identical": 329,
+   "changed": 6
+  },
+  "capable@tom": {
+   "identical": 335
+  },
+  "facts_about@ana": {
+   "identical": 573,
+   "extended": 262
+  },
+  "facts_about@bo": {
+   "identical": 610,
+   "extended": 225
+  },
+  "facts_about@cal-lab": {
+   "identical": 609,
+   "extended": 46
+  },
+  "facts_about@lab-2": {
+   "identical": 736,
+   "extended": 99
+  },
+  "facts_about@qa": {
+   "identical": 771,
+   "extended": 64
+  },
+  "facts_about@tom": {
+   "extended": 54,
+   "identical": 781
+  },
+  "provenance": {
+   "identical": 20
+  },
+  "authorised": {
+   "identical": 20
+  },
+  "capable@acme": {
+   "identical": 135,
+   "changed": 10
+  },
+  "capable@auditor": {
+   "identical": 145
+  },
+  "capable@bea": {
+   "identical": 145
+  },
+  "capable@cal": {
+   "identical": 145
+  },
+  "capable@hr": {
+   "identical": 145
+  },
+  "facts_about@acme": {
+   "identical": 102,
+   "extended": 70,
+   "changed": 8
+  },
+  "facts_about@auditor": {
+   "identical": 177,
+   "extended": 3
+  },
+  "facts_about@bea": {
+   "identical": 177,
+   "extended": 3
+  },
+  "facts_about@cal": {
+   "identical": 157,
+   "extended": 23
+  },
+  "facts_about@hr": {
+   "identical": 125,
+   "extended": 55
+  },
+  "office_holders": {
+   "identical": 14,
+   "changed": 6
+  },
+  "official_act": {
+   "identical": 2
+  }
+ },
+ "added_fields": {
+  "composition": {
+   "not_traversed": 4164
+  },
+  "contents": {
+   "not_traversed": 160
+  },
+  "facts_about": {
+   "assertions": 8035,
+   "denials": 8035,
+   "judgement": 8035
+  },
+  "facts_about@apprentice": {
+   "assertions": 116,
+   "denials": 116,
+   "judgement": 116
+  },
+  "facts_about@as_of": {
+   "assertions": 1101,
+   "denials": 1101,
+   "judgement": 1101
+  },
+  "facts_about@cm-1": {
+   "assertions": 56,
+   "denials": 56,
+   "judgement": 56
+  },
+  "facts_about@cmms": {
+   "assertions": 63,
+   "denials": 63,
+   "judgement": 63
+  },
+  "facts_about@inspector": {
+   "assertions": 682,
+   "denials": 682,
+   "judgement": 682
+  },
+  "facts_about@technician": {
+   "assertions": 1569,
+   "denials": 1569,
+   "judgement": 1569
+  },
+  "process_steps": {
+   "judgement": 109,
+   "status": 109
+  },
+  "facts_about@design-office": {
+   "assertions": 276,
+   "denials": 276,
+   "judgement": 276
+  },
+  "facts_about@scale-3": {
+   "assertions": 92,
+   "denials": 92,
+   "judgement": 92
+  },
+  "facts_about@cam-2": {
+   "assertions": 22,
+   "denials": 22,
+   "judgement": 22
+  },
+  "facts_about@ana": {
+   "assertions": 465,
+   "denials": 465,
+   "judgement": 465
+  },
+  "facts_about@bo": {
+   "assertions": 356,
+   "denials": 356,
+   "judgement": 356
+  },
+  "facts_about@cal-lab": {
+   "assertions": 46,
+   "denials": 46,
+   "judgement": 46
+  },
+  "facts_about@lab-2": {
+   "assertions": 135,
+   "denials": 135,
+   "judgement": 135
+  },
+  "facts_about@qa": {
+   "assertions": 74,
+   "denials": 74,
+   "judgement": 74
+  },
+  "facts_about@tom": {
+   "assertions": 69,
+   "denials": 69,
+   "judgement": 69
+  },
+  "facts_about@acme": {
+   "assertions": 131,
+   "denials": 131,
+   "judgement": 131
+  },
+  "facts_about@cal": {
+   "assertions": 23,
+   "denials": 23,
+   "judgement": 23
+  },
+  "facts_about@hr": {
+   "assertions": 127,
+   "denials": 127,
+   "judgement": 127
+  },
+  "facts_about@auditor": {
+   "assertions": 3,
+   "denials": 3,
+   "judgement": 3
+  },
+  "facts_about@bea": {
+   "assertions": 3,
+   "denials": 3,
+   "judgement": 3
+  },
+  "facts_about@tag-reader": {
+   "assertions": 10,
+   "denials": 10,
+   "judgement": 10
+  }
+ },
+ "changed": {
+  "[\"actual\", \"2026-11-02T07:59:59+00:00\", \"facts_about\", \"o-relubrication\"]": [
+   " length 2 -> 3"
+  ],
+  "[\"actual\", \"2026-11-02T07:59:59+00:00\", \"facts_about\", \"o-test-run\"]": [
+   " length 3 -> 4"
+  ],
+  "[\"actual\", \"2026-11-05T13:49:59+00:00\", \"facts_about\", \"o-relubrication\"]": [
+   " length 2 -> 3"
+  ],
+  "[\"actual\", \"2026-11-05T13:49:59+00:00\", \"facts_about\", \"o-test-run\"]": [
+   " length 3 -> 4"
+  ],
+  "[\"actual\", \"2026-11-05T15:14:59+00:00\", \"facts_about\", \"o-relubrication\"]": [
+   " length 2 -> 3"
+  ],
+  "[\"actual\", \"2026-11-05T15:14:59+00:00\", \"facts_about\", \"o-test-run\"]": [
+   " length 3 -> 4"
+  ],
+  "[\"actual\", \"2026-11-06T09:10:00+00:00\", \"facts_about\", \"o-relubrication\"]": [
+   " length 2 -> 3"
+  ],
+  "[\"actual\", \"2026-11-06T09:10:00+00:00\", \"facts_about\", \"o-test-run\"]": [
+   " length 3 -> 4"
+  ],
+  "[\"actual\", \"2026-11-08T10:00:00+00:00\", \"facts_about\", \"o-relubrication\"]": [
+   " length 2 -> 3"
+  ],
+  "[\"actual\", \"2026-11-08T10:00:00+00:00\", \"facts_about\", \"o-test-run\"]": [
+   " length 3 -> 4"
+  ],
+  "[\"lab\", \"2026-10-31T23:59:59+00:00\", \"capable@bo\", \"sample-12\", \"hydrated\", \"None\"]": [
+   ".applicable[0].judgement: \"unreviewed\" -> \"not yet effective\"",
+   ".judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"lab\", \"2026-10-31T23:59:59+00:00\", \"capable@qa\", \"sample-12\", \"hydrated\", \"None\"]": [
+   ".applicable[0].judgement: \"unreviewed\" -> \"not yet effective\"",
+   ".judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"lab\", \"2026-11-10T09:05:00+00:00\", \"capable@bo\", \"sample-12\", \"hydrated\", \"None\"]": [
+   ".applicable[0].judgement: \"unreviewed\" -> \"not yet effective\"",
+   ".judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"lab\", \"2026-11-10T09:05:00+00:00\", \"capable@qa\", \"sample-12\", \"hydrated\", \"None\"]": [
+   ".applicable[0].judgement: \"unreviewed\" -> \"not yet effective\"",
+   ".judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"lab\", \"2026-11-10T09:05:00+00:00\", \"facts_about\", \"balance-b7\"]": [
+   " length 1 -> 2"
+  ],
+  "[\"lab\", \"2026-11-10T09:05:00+00:00\", \"facts_about\", \"cert-b7\"]": [
+   " length 0 -> 1"
+  ],
+  "[\"lab\", \"2026-11-10T12:04:59+00:00\", \"capable@bo\", \"sample-12\", \"hydrated\", \"None\"]": [
+   ".applicable[0].judgement: \"unreviewed\" -> \"not yet effective\"",
+   ".judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"lab\", \"2026-11-10T12:04:59+00:00\", \"capable@qa\", \"sample-12\", \"hydrated\", \"None\"]": [
+   ".applicable[0].judgement: \"unreviewed\" -> \"not yet effective\"",
+   ".judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"lab\", \"2026-11-10T12:04:59+00:00\", \"facts_about\", \"balance-b7\"]": [
+   " length 1 -> 2"
+  ],
+  "[\"lab\", \"2026-11-10T12:04:59+00:00\", \"facts_about\", \"cert-b7\"]": [
+   " length 0 -> 1"
+  ],
+  "[\"lab\", \"2026-11-10T14:04:59+00:00\", \"facts_about\", \"balance-b7\"]": [
+   " length 1 -> 2"
+  ],
+  "[\"lab\", \"2026-11-10T14:04:59+00:00\", \"facts_about\", \"cert-b7\"]": [
+   " length 0 -> 1"
+  ],
+  "[\"lab\", \"2026-11-10T15:40:00+00:00\", \"facts_about\", \"balance-b7\"]": [
+   " length 1 -> 2"
+  ],
+  "[\"lab\", \"2026-11-10T15:40:00+00:00\", \"facts_about\", \"cert-b7\"]": [
+   " length 0 -> 1"
+  ],
+  "[\"lab-plan-recal\", \"2026-10-31T23:59:59+00:00\", \"capable@bo\", \"sample-12\", \"hydrated\", \"None\"]": [
+   ".applicable[0].judgement: \"unreviewed\" -> \"not yet effective\"",
+   ".judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"lab-plan-recal\", \"2026-10-31T23:59:59+00:00\", \"capable@qa\", \"sample-12\", \"hydrated\", \"None\"]": [
+   ".applicable[0].judgement: \"unreviewed\" -> \"not yet effective\"",
+   ".judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"lab-plan-recal\", \"2026-11-10T09:05:00+00:00\", \"capable@bo\", \"sample-12\", \"hydrated\", \"None\"]": [
+   ".applicable[0].judgement: \"unreviewed\" -> \"not yet effective\"",
+   ".judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"lab-plan-recal\", \"2026-11-10T09:05:00+00:00\", \"capable@qa\", \"sample-12\", \"hydrated\", \"None\"]": [
+   ".applicable[0].judgement: \"unreviewed\" -> \"not yet effective\"",
+   ".judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"lab-plan-recal\", \"2026-11-10T09:05:00+00:00\", \"facts_about\", \"balance-b7\"]": [
+   " length 1 -> 2"
+  ],
+  "[\"lab-plan-recal\", \"2026-11-10T09:05:00+00:00\", \"facts_about\", \"cert-b7\"]": [
+   " length 0 -> 1"
+  ],
+  "[\"lab-plan-recal\", \"2026-11-10T11:59:59+00:00\", \"capable@bo\", \"sample-12\", \"hydrated\", \"None\"]": [
+   ".applicable[0].judgement: \"unreviewed\" -> \"not yet effective\"",
+   ".judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"lab-plan-recal\", \"2026-11-10T11:59:59+00:00\", \"capable@qa\", \"sample-12\", \"hydrated\", \"None\"]": [
+   ".applicable[0].judgement: \"unreviewed\" -> \"not yet effective\"",
+   ".judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"lab-plan-recal\", \"2026-11-10T11:59:59+00:00\", \"facts_about\", \"balance-b7\"]": [
+   " length 1 -> 2"
+  ],
+  "[\"lab-plan-recal\", \"2026-11-10T11:59:59+00:00\", \"facts_about\", \"cert-b7\"]": [
+   " length 0 -> 1"
+  ],
+  "[\"lab-plan-recal\", \"2026-11-10T13:59:59+00:00\", \"facts_about\", \"balance-b7\"]": [
+   " length 1 -> 2"
+  ],
+  "[\"lab-plan-recal\", \"2026-11-10T13:59:59+00:00\", \"facts_about\", \"cert-b7\"]": [
+   " length 0 -> 1"
+  ],
+  "[\"lab-plan-recal\", \"2026-11-10T15:30:00+00:00\", \"facts_about\", \"balance-b7\"]": [
+   " length 1 -> 2"
+  ],
+  "[\"lab-plan-recal\", \"2026-11-10T15:30:00+00:00\", \"facts_about\", \"cert-b7\"]": [
+   " length 0 -> 1"
+  ],
+  "[\"org\", \"2026-11-01T08:59:59+00:00\", \"capable\", \"cal\", \"site-manager\", \"depot-7\"]": [
+   ".applicable[0].judgement: \"unreviewed\" -> \"not yet effective\"",
+   ".judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"org\", \"2026-11-01T08:59:59+00:00\", \"capable@acme\", \"cal\", \"site-manager\", \"depot-7\"]": [
+   ".applicable[0].judgement: \"unreviewed\" -> \"not yet effective\"",
+   ".judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"org\", \"2026-11-01T08:59:59+00:00\", \"office_holders\", \"site-manager\", \"depot-7\"]": [
+   ".appointments[1].judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"org\", \"2026-11-01T08:59:59+00:00\", \"offices_of\", \"cal\"]": [
+   "[0].judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"org\", \"2026-11-03T08:59:59+00:00\", \"capable\", \"cal\", \"site-manager\", \"depot-7\"]": [
+   ".applicable[0].judgement: \"unreviewed\" -> \"not yet effective\"",
+   ".judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"org\", \"2026-11-03T08:59:59+00:00\", \"capable@acme\", \"cal\", \"site-manager\", \"depot-7\"]": [
+   ".applicable[0].judgement: \"unreviewed\" -> \"not yet effective\"",
+   ".judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"org\", \"2026-11-03T08:59:59+00:00\", \"office_holders\", \"site-manager\", \"depot-7\"]": [
+   ".appointments[1].judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"org\", \"2026-11-03T08:59:59+00:00\", \"offices_of\", \"cal\"]": [
+   "[0].judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"org\", \"2026-11-06T08:59:59+00:00\", \"capable\", \"cal\", \"site-manager\", \"depot-7\"]": [
+   ".applicable[0].judgement: \"unreviewed\" -> \"not yet effective\"",
+   ".judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"org\", \"2026-11-06T08:59:59+00:00\", \"capable@acme\", \"cal\", \"site-manager\", \"depot-7\"]": [
+   ".applicable[0].judgement: \"unreviewed\" -> \"not yet effective\"",
+   ".judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"org\", \"2026-11-06T08:59:59+00:00\", \"office_holders\", \"site-manager\", \"depot-7\"]": [
+   ".appointments[1].judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"org\", \"2026-11-06T08:59:59+00:00\", \"offices_of\", \"cal\"]": [
+   "[0].judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"org\", \"2026-11-09T09:00:00+00:00\", \"capable\", \"bea\", \"site-manager\", \"None\"]": [
+   ".only_in length 1 -> 0"
+  ],
+  "[\"org\", \"2026-11-09T09:00:00+00:00\", \"capable\", \"bea\", \"site-manager\", \"depot-7\"]": [
+   ".applicable[0].judgement: \"accepted\" -> \"disputed\"",
+   ".applicable[0].status: \"ASSERTED\" -> \"DISPUTED\"",
+   ".holds: true -> null",
+   ".judgement: \"established\" -> \"disputed\"",
+   ".status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org\", \"2026-11-09T09:00:00+00:00\", \"capable\", \"cal\", \"site-manager\", \"None\"]": [
+   ".only_in length 1 -> 0"
+  ],
+  "[\"org\", \"2026-11-09T09:00:00+00:00\", \"capable\", \"cal\", \"site-manager\", \"depot-7\"]": [
+   ".applicable[0].judgement: \"accepted\" -> \"disputed\"",
+   ".applicable[0].status: \"ASSERTED\" -> \"DISPUTED\"",
+   ".holds: true -> null",
+   ".judgement: \"established\" -> \"disputed\"",
+   ".status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org\", \"2026-11-09T09:00:00+00:00\", \"capable@acme\", \"bea\", \"site-manager\", \"depot-7\"]": [
+   ".applicable[0].judgement: \"accepted\" -> \"disputed\"",
+   ".applicable[0].status: \"ASSERTED\" -> \"DISPUTED\"",
+   ".holds: true -> null",
+   ".judgement: \"established\" -> \"disputed\"",
+   ".status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org\", \"2026-11-09T09:00:00+00:00\", \"capable@acme\", \"cal\", \"site-manager\", \"depot-7\"]": [
+   ".applicable[0].judgement: \"accepted\" -> \"disputed\"",
+   ".applicable[0].status: \"ASSERTED\" -> \"DISPUTED\"",
+   ".holds: true -> null",
+   ".judgement: \"established\" -> \"disputed\"",
+   ".status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org\", \"2026-11-09T09:00:00+00:00\", \"facts_about\", \"bea\"]": [
+   "[4].conflicts length 0 -> 1",
+   "[4].status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org\", \"2026-11-09T09:00:00+00:00\", \"facts_about\", \"cal\"]": [
+   "[3].conflicts length 0 -> 1",
+   "[3].status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org\", \"2026-11-09T09:00:00+00:00\", \"facts_about\", \"depot-7\"]": [
+   "[8].conflicts length 0 -> 1",
+   "[8].status: \"ASSERTED\" -> \"DISPUTED\"",
+   "[9].conflicts length 0 -> 1",
+   "[9].status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org\", \"2026-11-09T09:00:00+00:00\", \"facts_about\", \"site-manager\"]": [
+   "[1].conflicts length 0 -> 1",
+   "[1].status: \"ASSERTED\" -> \"DISPUTED\"",
+   "[2].conflicts length 0 -> 1",
+   "[2].status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org\", \"2026-11-09T09:00:00+00:00\", \"facts_about@acme\", \"bea\"]": [
+   "[0].conflicts length 0 -> 1",
+   "[0].status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org\", \"2026-11-09T09:00:00+00:00\", \"facts_about@acme\", \"cal\"]": [
+   "[0].conflicts length 0 -> 1",
+   "[0].status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org\", \"2026-11-09T09:00:00+00:00\", \"facts_about@acme\", \"depot-7\"]": [
+   "[3].conflicts length 0 -> 1",
+   "[3].status: \"ASSERTED\" -> \"DISPUTED\"",
+   "[4].conflicts length 0 -> 1",
+   "[4].status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org\", \"2026-11-09T09:00:00+00:00\", \"facts_about@acme\", \"site-manager\"]": [
+   "[1].conflicts length 0 -> 1",
+   "[1].status: \"ASSERTED\" -> \"DISPUTED\"",
+   "[2].conflicts length 0 -> 1",
+   "[2].status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org\", \"2026-11-09T09:00:00+00:00\", \"holds\", \"[\\\"office-holding\\\", {\\\"class\\\": [\\\"site-manager\\\"], \\\"classified\\\": [\\\"bea\\\"], \\\"context\\\": [\\\"depot-7\\\"]}]\"]": [
+   ".conflicts length 0 -> 1",
+   ".evidence length 1 -> 2",
+   ".holds: true -> null",
+   ".status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org\", \"2026-11-09T09:00:00+00:00\", \"holds\", \"[\\\"office-holding\\\", {\\\"class\\\": [\\\"site-manager\\\"], \\\"classified\\\": [\\\"cal\\\"], \\\"context\\\": [\\\"depot-7\\\"]}]\"]": [
+   ".conflicts length 0 -> 1",
+   ".evidence length 1 -> 2",
+   ".holds: true -> null",
+   ".status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org\", \"2026-11-09T09:00:00+00:00\", \"roles_of\", \"bea\"]": [
+   "[0].status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org\", \"2026-11-09T09:00:00+00:00\", \"roles_of\", \"cal\"]": [
+   "[0].status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org\", \"changes\", \"bea\"]": [
+   ".ended[0].category: \"world-state\" -> \"judgement\"",
+   ".ended[0].status: \"ASSERTED\" -> \"DISPUTED\"",
+   ".transitions length 6 -> 7"
+  ],
+  "[\"org\", \"changes\", \"cal\"]": [
+   ".began[3].status: \"ASSERTED\" -> \"DISPUTED\"",
+   ".transitions length 4 -> 5"
+  ],
+  "[\"org\", \"changes\", \"depot-7\"]": [
+   ".began[5].status: \"ASSERTED\" -> \"DISPUTED\"",
+   ".ended[0].category: \"world-state\" -> \"judgement\"",
+   ".ended[0].status: \"ASSERTED\" -> \"DISPUTED\"",
+   ".transitions length 12 -> 14"
+  ],
+  "[\"org\", \"changes\", \"site-manager\"]": [
+   ".began[1].status: \"ASSERTED\" -> \"DISPUTED\"",
+   ".ended[0].category: \"world-state\" -> \"judgement\"",
+   ".ended[0].status: \"ASSERTED\" -> \"DISPUTED\"",
+   ".transitions length 4 -> 6"
+  ],
+  "[\"org-plan-reorg\", \"2026-11-01T08:59:59+00:00\", \"capable\", \"cal\", \"site-manager\", \"depot-7\"]": [
+   ".applicable[0].judgement: \"unreviewed\" -> \"not yet effective\"",
+   ".judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"org-plan-reorg\", \"2026-11-01T08:59:59+00:00\", \"capable@acme\", \"cal\", \"site-manager\", \"depot-7\"]": [
+   ".applicable[0].judgement: \"unreviewed\" -> \"not yet effective\"",
+   ".judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"org-plan-reorg\", \"2026-11-01T08:59:59+00:00\", \"office_holders\", \"site-manager\", \"depot-7\"]": [
+   ".appointments[1].judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"org-plan-reorg\", \"2026-11-01T08:59:59+00:00\", \"offices_of\", \"cal\"]": [
+   "[0].judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"org-plan-reorg\", \"2026-11-03T09:00:00+00:00\", \"capable\", \"cal\", \"site-manager\", \"depot-7\"]": [
+   ".applicable[0].judgement: \"unreviewed\" -> \"not yet effective\"",
+   ".judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"org-plan-reorg\", \"2026-11-03T09:00:00+00:00\", \"capable@acme\", \"cal\", \"site-manager\", \"depot-7\"]": [
+   ".applicable[0].judgement: \"unreviewed\" -> \"not yet effective\"",
+   ".judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"org-plan-reorg\", \"2026-11-03T09:00:00+00:00\", \"office_holders\", \"site-manager\", \"depot-7\"]": [
+   ".appointments[1].judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"org-plan-reorg\", \"2026-11-03T09:00:00+00:00\", \"offices_of\", \"cal\"]": [
+   "[0].judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"org-plan-reorg\", \"2026-11-08T08:59:59+00:00\", \"capable\", \"cal\", \"site-manager\", \"depot-7\"]": [
+   ".applicable[0].judgement: \"unreviewed\" -> \"not yet effective\"",
+   ".judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"org-plan-reorg\", \"2026-11-08T08:59:59+00:00\", \"capable@acme\", \"cal\", \"site-manager\", \"depot-7\"]": [
+   ".applicable[0].judgement: \"unreviewed\" -> \"not yet effective\"",
+   ".judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"org-plan-reorg\", \"2026-11-08T08:59:59+00:00\", \"office_holders\", \"site-manager\", \"depot-7\"]": [
+   ".appointments[1].judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"org-plan-reorg\", \"2026-11-08T08:59:59+00:00\", \"offices_of\", \"cal\"]": [
+   "[0].judgement: \"not established\" -> \"not yet effective\""
+  ],
+  "[\"org-plan-reorg\", \"2026-11-10T08:59:59+00:00\", \"capable\", \"bea\", \"site-manager\", \"None\"]": [
+   ".only_in length 1 -> 0"
+  ],
+  "[\"org-plan-reorg\", \"2026-11-10T08:59:59+00:00\", \"capable\", \"bea\", \"site-manager\", \"depot-7\"]": [
+   ".applicable[0].judgement: \"accepted\" -> \"disputed\"",
+   ".applicable[0].status: \"ASSERTED\" -> \"DISPUTED\"",
+   ".holds: true -> null",
+   ".judgement: \"established\" -> \"disputed\"",
+   ".status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org-plan-reorg\", \"2026-11-10T08:59:59+00:00\", \"capable\", \"cal\", \"site-manager\", \"None\"]": [
+   ".only_in length 1 -> 0"
+  ],
+  "[\"org-plan-reorg\", \"2026-11-10T08:59:59+00:00\", \"capable\", \"cal\", \"site-manager\", \"depot-7\"]": [
+   ".applicable[0].judgement: \"accepted\" -> \"disputed\"",
+   ".applicable[0].status: \"ASSERTED\" -> \"DISPUTED\"",
+   ".holds: true -> null",
+   ".judgement: \"established\" -> \"disputed\"",
+   ".status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org-plan-reorg\", \"2026-11-10T08:59:59+00:00\", \"capable@acme\", \"bea\", \"site-manager\", \"depot-7\"]": [
+   ".applicable[0].judgement: \"accepted\" -> \"disputed\"",
+   ".applicable[0].status: \"ASSERTED\" -> \"DISPUTED\"",
+   ".holds: true -> null",
+   ".judgement: \"established\" -> \"disputed\"",
+   ".status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org-plan-reorg\", \"2026-11-10T08:59:59+00:00\", \"capable@acme\", \"cal\", \"site-manager\", \"depot-7\"]": [
+   ".applicable[0].judgement: \"accepted\" -> \"disputed\"",
+   ".applicable[0].status: \"ASSERTED\" -> \"DISPUTED\"",
+   ".holds: true -> null",
+   ".judgement: \"established\" -> \"disputed\"",
+   ".status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org-plan-reorg\", \"2026-11-10T08:59:59+00:00\", \"facts_about\", \"bea\"]": [
+   "[4].conflicts length 0 -> 1",
+   "[4].status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org-plan-reorg\", \"2026-11-10T08:59:59+00:00\", \"facts_about\", \"cal\"]": [
+   "[3].conflicts length 0 -> 1",
+   "[3].status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org-plan-reorg\", \"2026-11-10T08:59:59+00:00\", \"facts_about\", \"depot-7\"]": [
+   "[8].conflicts length 0 -> 1",
+   "[8].status: \"ASSERTED\" -> \"DISPUTED\"",
+   "[9].conflicts length 0 -> 1",
+   "[9].status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org-plan-reorg\", \"2026-11-10T08:59:59+00:00\", \"facts_about\", \"site-manager\"]": [
+   "[1].conflicts length 0 -> 1",
+   "[1].status: \"ASSERTED\" -> \"DISPUTED\"",
+   "[2].conflicts length 0 -> 1",
+   "[2].status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org-plan-reorg\", \"2026-11-10T08:59:59+00:00\", \"facts_about@acme\", \"bea\"]": [
+   "[0].conflicts length 0 -> 1",
+   "[0].status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org-plan-reorg\", \"2026-11-10T08:59:59+00:00\", \"facts_about@acme\", \"cal\"]": [
+   "[0].conflicts length 0 -> 1",
+   "[0].status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org-plan-reorg\", \"2026-11-10T08:59:59+00:00\", \"facts_about@acme\", \"depot-7\"]": [
+   "[3].conflicts length 0 -> 1",
+   "[3].status: \"ASSERTED\" -> \"DISPUTED\"",
+   "[4].conflicts length 0 -> 1",
+   "[4].status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org-plan-reorg\", \"2026-11-10T08:59:59+00:00\", \"facts_about@acme\", \"site-manager\"]": [
+   "[1].conflicts length 0 -> 1",
+   "[1].status: \"ASSERTED\" -> \"DISPUTED\"",
+   "[2].conflicts length 0 -> 1",
+   "[2].status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org-plan-reorg\", \"2026-11-10T08:59:59+00:00\", \"holds\", \"[\\\"office-holding\\\", {\\\"class\\\": [\\\"site-manager\\\"], \\\"classified\\\": [\\\"bea\\\"], \\\"context\\\": [\\\"depot-7\\\"]}]\"]": [
+   ".conflicts length 0 -> 1",
+   ".evidence length 1 -> 2",
+   ".holds: true -> null",
+   ".status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org-plan-reorg\", \"2026-11-10T08:59:59+00:00\", \"holds\", \"[\\\"office-holding\\\", {\\\"class\\\": [\\\"site-manager\\\"], \\\"classified\\\": [\\\"cal\\\"], \\\"context\\\": [\\\"depot-7\\\"]}]\"]": [
+   ".conflicts length 0 -> 1",
+   ".evidence length 1 -> 2",
+   ".holds: true -> null",
+   ".status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org-plan-reorg\", \"2026-11-10T08:59:59+00:00\", \"roles_of\", \"bea\"]": [
+   "[0].status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org-plan-reorg\", \"2026-11-10T08:59:59+00:00\", \"roles_of\", \"cal\"]": [
+   "[0].status: \"ASSERTED\" -> \"DISPUTED\""
+  ],
+  "[\"org-plan-reorg\", \"changes\", \"bea\"]": [
+   ".ended[0].category: \"world-state\" -> \"judgement\"",
+   ".ended[0].status: \"ASSERTED\" -> \"DISPUTED\"",
+   ".transitions length 6 -> 7"
+  ],
+  "[\"org-plan-reorg\", \"changes\", \"cal\"]": [
+   ".began[0].status: \"ASSERTED\" -> \"DISPUTED\"",
+   ".transitions length 5 -> 6"
+  ],
+  "[\"org-plan-reorg\", \"changes\", \"depot-7\"]": [
+   ".began[0].status: \"ASSERTED\" -> \"DISPUTED\"",
+   ".ended[1].category: \"world-state\" -> \"judgement\"",
+   ".ended[1].status: \"ASSERTED\" -> \"DISPUTED\"",
+   ".transitions length 14 -> 16"
+  ],
+  "[\"org-plan-reorg\", \"changes\", \"site-manager\"]": [
+   ".began[0].status: \"ASSERTED\" -> \"DISPUTED\"",
+   ".ended[1].category: \"world-state\" -> \"judgement\"",
+   ".ended[1].status: \"ASSERTED\" -> \"DISPUTED\"",
+   ".transitions length 6 -> 8"
+  ],
+  "[\"plan-apprentice\", \"2026-11-02T07:59:59+00:00\", \"facts_about\", \"o-relubrication\"]": [
+   " length 2 -> 3"
+  ],
+  "[\"plan-apprentice\", \"2026-11-02T07:59:59+00:00\", \"facts_about\", \"o-test-run\"]": [
+   " length 3 -> 4"
+  ],
+  "[\"plan-apprentice\", \"2026-11-05T13:49:59+00:00\", \"facts_about\", \"o-relubrication\"]": [
+   " length 2 -> 3"
+  ],
+  "[\"plan-apprentice\", \"2026-11-05T13:49:59+00:00\", \"facts_about\", \"o-test-run\"]": [
+   " length 3 -> 4"
+  ],
+  "[\"plan-apprentice\", \"2026-11-05T15:14:59+00:00\", \"facts_about\", \"o-relubrication\"]": [
+   " length 2 -> 3"
+  ],
+  "[\"plan-apprentice\", \"2026-11-05T15:14:59+00:00\", \"facts_about\", \"o-test-run\"]": [
+   " length 3 -> 4"
+  ],
+  "[\"plan-apprentice\", \"2026-11-06T10:00:00+00:00\", \"facts_about\", \"o-relubrication\"]": [
+   " length 2 -> 3"
+  ],
+  "[\"plan-apprentice\", \"2026-11-06T10:00:00+00:00\", \"facts_about\", \"o-test-run\"]": [
+   " length 3 -> 4"
+  ],
+  "[\"plan-apprentice\", \"2026-11-08T10:00:00+00:00\", \"facts_about\", \"o-relubrication\"]": [
+   " length 2 -> 3"
+  ],
+  "[\"plan-apprentice\", \"2026-11-08T10:00:00+00:00\", \"facts_about\", \"o-test-run\"]": [
+   " length 3 -> 4"
+  ],
+  "[\"plan-rig-control\", \"2026-11-02T07:59:59+00:00\", \"facts_about\", \"o-relubrication\"]": [
+   " length 2 -> 3"
+  ],
+  "[\"plan-rig-control\", \"2026-11-02T07:59:59+00:00\", \"facts_about\", \"o-test-run\"]": [
+   " length 3 -> 4"
+  ],
+  "[\"plan-rig-control\", \"2026-11-05T13:49:59+00:00\", \"facts_about\", \"o-relubrication\"]": [
+   " length 2 -> 3"
+  ],
+  "[\"plan-rig-control\", \"2026-11-05T13:49:59+00:00\", \"facts_about\", \"o-test-run\"]": [
+   " length 3 -> 4"
+  ],
+  "[\"plan-rig-control\", \"2026-11-05T15:14:59+00:00\", \"facts_about\", \"o-relubrication\"]": [
+   " length 2 -> 3"
+  ],
+  "[\"plan-rig-control\", \"2026-11-05T15:14:59+00:00\", \"facts_about\", \"o-test-run\"]": [
+   " length 3 -> 4"
+  ],
+  "[\"plan-rig-control\", \"2026-11-06T10:00:00+00:00\", \"facts_about\", \"o-relubrication\"]": [
+   " length 2 -> 3"
+  ],
+  "[\"plan-rig-control\", \"2026-11-06T10:00:00+00:00\", \"facts_about\", \"o-test-run\"]": [
+   " length 3 -> 4"
+  ],
+  "[\"plan-rig-control\", \"2026-11-08T10:00:00+00:00\", \"facts_about\", \"o-relubrication\"]": [
+   " length 2 -> 3"
+  ],
+  "[\"plan-rig-control\", \"2026-11-08T10:00:00+00:00\", \"facts_about\", \"o-test-run\"]": [
+   " length 3 -> 4"
+  ]
+ }
+}

@@ -17,6 +17,7 @@ full-load answers are the same.
 from datetime import timedelta
 
 from .operations import atomic
+from .judgement import claim_label
 from .semantics import Status, acceptance_state, certainly_before, superseded, usable
 
 SYSTEM = "system"
@@ -121,52 +122,6 @@ class DynamicsMixin:
                 and (attester is None or h["attester"] == attester)]
         return sorted(out)
 
-    def _claims(self, world, subject, types, t, as_of, perspective):
-        """Every attestation of a content of `types` involving `subject`, grouped by content, with the perspective's
-        judgement of the content at t and each attestation's acceptance state (accepted, unreviewed, rejected,
-        retracted, superseded) and `support`: the attestations the judgement at t rests on. Nothing is dropped:
-        unaccepted and rejected claims are listed, marked."""
-        atts, ident = self._view(world, as_of, perspective, None, [subject])
-        mine = [a for a in atts.values() if any(self.is_a(a.ctype, ty) for ty in types)
-                and any(subject in ids for ids in a.roles.values())]
-        judged = self._judge(mine, ident, t, perspective, as_of)
-        out = {}
-        for a in mine:
-            cls = self._class(a, ident)
-            entry = out.setdefault(cls, {"type": a.ctype, "roles": {r: list(v) for r, v in a.roles.items()},
-                                         "judged": None, "status": None, "attestations": [], "support": []})
-            state = "superseded" if superseded(a, perspective, as_of) else acceptance_state(a, perspective, as_of)
-            entry["attestations"].append({"attestation": a.id, "attester": a.attester, "polarity": a.polarity,
-                                          "basis": a.basis, "stance": a.stance, "acceptance": state})
-        for cls, entry in out.items():
-            if cls in judged:
-                val, support, _ = judged[cls]
-                entry["judged"] = val
-                entry["status"] = Status.DISPUTED if val == "disputed" else self._status(support)
-                entry["support"] = sorted(x.id for x in support)    # the attestations the judgement at t rests on
-            entry["attestations"].sort(key=lambda x: x["attestation"])
-        return sorted(out.values(), key=lambda e: (e["type"], str(e["roles"])))
-
-    @staticmethod
-    def _status(support):
-        from .semantics import answer_status
-        return answer_status(support)
-
-    @staticmethod
-    def _verdict_label(entry):
-        """accepted / denied / disputed (the perspective's judgement) or the best attestation state when unjudged."""
-        if entry["judged"] is True:
-            return "accepted"
-        if entry["judged"] is False:
-            return "denied"
-        if entry["judged"] == "disputed":
-            return "disputed"
-        states = {x["acceptance"] for x in entry["attestations"]}
-        if not states:
-            return "unknown"
-        return next((s for s in ("unreviewed", "rejected", "retracted", "superseded") if s in states),
-                    "not yet effective")                 # accepted, but its interval has not begun at t
-
     # ---- reading: effects and changes (B1) --------------------------------------------------------------------------
     def effects_of(self, world, event, t, as_of=None, perspective=SYSTEM):
         """The effects claimed for an event description: for each initiates / terminates claim, who claims it and the
@@ -175,25 +130,25 @@ class DynamicsMixin:
         A claim can be accepted while the state change is not (and the reverse); neither implies the other."""
         span = self.interval(world, event, as_of, perspective)
         out = []
-        for entry in self._claims(world, event, ("initiates", "terminates"), t, as_of, perspective):
-            if event not in entry["roles"].get("event", []):
+        for entry in self._contents(world, event, ("initiates", "terminates"), t, as_of, perspective):
+            if event not in entry.stated_roles.get("event", []):
                 continue
-            pid = entry["roles"]["outcome"][0]
+            pid = entry.stated_roles["outcome"][0]
             outcome = self._proposition_by_id(pid)
             change = None
             if span is not None and span[0] is not None:
                 before = self.holds(world, outcome["type"], outcome["roles"], span[0].earliest - EPS, as_of, perspective)
                 after = self.holds(world, outcome["type"], outcome["roles"], (span[1] or span[0]).latest, as_of,
                                    perspective)
-                kind = self.core_type(entry["type"])
+                kind = self.core_type(entry.type)
                 changed = (before.holds is not True and after.holds is True) if kind == "initiates" else \
                     (before.holds is True and after.holds is not True)
                 change = {"before": before, "after": after, "accepted_change": changed}
-            out.append({"kind": self.core_type(entry["type"]), "outcome_id": pid,
+            out.append({"kind": self.core_type(entry.type), "outcome_id": pid,
                         "outcome": {k: outcome[k] for k in ("type", "roles", "params")},
-                        "claim": self._verdict_label(entry), "claim_status": entry["status"],
-                        "claimed_by": sorted({x["attester"] for x in entry["attestations"]}),
-                        "attestations": entry["attestations"], "state": change})
+                        "claim": claim_label(entry), "claim_status": entry.status,
+                        "claimed_by": sorted({x["attester"] for x in entry.claims()}),
+                        "attestations": entry.claims(), "state": change})
         return out
 
     def changes(self, world, subject, t1, t2, as_of=None, perspective=SYSTEM):
@@ -223,6 +178,8 @@ class DynamicsMixin:
                                                                                      a.roles.values())]
         slot_rivals = self._slot_rivals(world, as_of, perspective, recs, me, ident,
                                    pool=None if self.selective else atts)          # Q-B2: slot rivals
+        slot_rivals += self._scope_rivals(world, as_of, perspective, recs + slot_rivals, ident,
+                                          pool=None if self.selective else atts)   # attested constraints
         attester = {a.id: a.attester for a in recs}
         contents = {}
         for a in recs:
@@ -247,9 +204,17 @@ class DynamicsMixin:
                          for x in (w.earliest, w.latest) if x is not None})
         samples = ([bounds[0] - EPS] if bounds else []) + bounds
 
+        memo_c = {}
+
         def state_at(s):
             judged = self._judge(recs + slot_rivals, ident, s, perspective, as_of)
-            conf = self._conflicts([c for c, (val, _, _) in judged.items() if val is True])
+            holding = [c for c, (val, _, _) in judged.items() if val is True]
+            conf = self._conflicts(holding)
+            # the canonical constraint layer: an established attested constraint (e.g. an exclusive office) too
+            for c, cs in self._attested_conflicts(world, holding, ident, s, as_of, perspective, memo_c).items():
+                for x in cs:
+                    if x.rivals:
+                        conf.setdefault(c, set()).update(x.rivals)
             out = {}
             for key, info in tracks.items():
                 classes = [c for c in member if key in member[c] and c in judged]
@@ -387,13 +352,13 @@ class DynamicsMixin:
         the occurrences each description is accepted as describing."""
         memo = _memo or _Memo(self, world, as_of, perspective)
         out = []
-        for entry in self._claims(world, pid, (kind,), t, as_of, perspective):
-            if pid not in entry["roles"].get("outcome", []):
+        for entry in self._contents(world, pid, (kind,), t, as_of, perspective):
+            if pid not in entry.stated_roles.get("outcome", []):
                 continue
-            for ev in entry["roles"].get("event", []):
+            for ev in entry.stated_roles.get("event", []):
                 span = self.interval(world, ev, as_of, perspective, _memo=memo)
-                out.append({"event": ev, "claim": self._verdict_label(entry), "claim_status": entry["status"],
-                            "claimed_by": sorted({x["attester"] for x in entry["attestations"]}),
+                out.append({"event": ev, "claim": claim_label(entry), "claim_status": entry.status,
+                            "claimed_by": sorted({x["attester"] for x in entry.claims()}),
                             "start": span[0] if span else None, "end": span[1] if span else None,
                             "occurrences": self.occurrences_of(world, ev, as_of, perspective, _memo=memo)})
         return out
@@ -446,25 +411,25 @@ class DynamicsMixin:
                   "denied" if answer.holds is False else "not established")
         if not details:
             return {"occurrence": occurrence, "status": status, "answer": answer}
-        existence = [e for e in self._claims(world, occurrence, ("existence",), t, as_of, perspective)
-                     if occurrence in e["roles"].get("existent", [])]
+        existence = [e for e in self._contents(world, occurrence, ("existence",), t, as_of, perspective)
+                     if occurrence in e.stated_roles.get("existent", [])]
         memo = _memo or _Memo(self, world, as_of, perspective)
         descs = []
-        for link in self._claims(world, occurrence, ("describes",), t, as_of, perspective):
-            if occurrence not in link["roles"].get("occurrence", []):
+        for link in self._contents(world, occurrence, ("describes",), t, as_of, perspective):
+            if occurrence not in link.stated_roles.get("occurrence", []):
                 continue
-            for d in link["roles"].get("description", []):
+            for d in link.stated_roles.get("description", []):
                 recs = memo.events().get(d, [])
                 account = ("accepted" if any(a.polarity and usable(a, perspective, as_of) for a in recs) else
                            "unreviewed" if any(acceptance_state(a, perspective, as_of) == "unreviewed" for a in recs)
                            else "rejected" if recs else "none")
                 descs.append({"description": d, "account": account,
                               "account_by": sorted({a.attester for a in recs}),
-                              "describes": self._verdict_label(link),
-                              "describes_by": sorted({x["attester"] for x in link["attestations"]})})
+                              "describes": claim_label(link),
+                              "describes_by": sorted({x["attester"] for x in link.claims()})})
         return {"occurrence": occurrence, "status": status, "answer": answer,
-                "existence": [{"judgement": self._verdict_label(e), "status": e["status"],
-                               "attestations": e["attestations"]} for e in existence],
+                "existence": [{"judgement": claim_label(e), "status": e.status,
+                               "attestations": e.claims()} for e in existence],
                 "descriptions": sorted(descs, key=lambda x: x["description"])}
 
     def causes_of(self, world, effect, t, as_of=None, perspective=SYSTEM, _memo=None):
@@ -491,10 +456,10 @@ class DynamicsMixin:
                   else self.occurrences_of(world, effect, as_of, perspective, _memo=memo))
         out, seen = [], set()
         for target in [effect, *lifted]:
-            for entry in self._claims(world, target, ("causes",), t, as_of, perspective):
-                if target not in entry["roles"].get("effect", []):
+            for entry in self._contents(world, target, ("causes",), t, as_of, perspective):
+                if target not in entry.stated_roles.get("effect", []):
                     continue
-                cause = entry["roles"]["cause"][0]
+                cause = entry.stated_roles["cause"][0]
                 if (cause, target) in seen:
                     continue
                 seen.add((cause, target))
@@ -514,9 +479,9 @@ class DynamicsMixin:
                             ({"description": target, "occurrence": effect} if occurrence
                              else {"description": effect, "occurrence": target}),
                             "cause_occurrences": cause_occs,
-                            "judgement": self._verdict_label(entry), "status": entry["status"],
-                            "claimed_by": sorted({x["attester"] for x in entry["attestations"]}),
-                            "attestations": entry["attestations"]})
+                            "judgement": claim_label(entry), "status": entry.status,
+                            "claimed_by": sorted({x["attester"] for x in entry.claims()}),
+                            "attestations": entry.claims()})
         order = {"accepted": 0, "disputed": 1, "denied": 2, "unreviewed": 3, "rejected": 4, "retracted": 5}
         return sorted(out, key=lambda c: (order.get(c["judgement"], 9), c["cause"], c["effect"]))
 
@@ -544,7 +509,8 @@ class DynamicsMixin:
 
     def process_steps(self, world, process, t, as_of=None, perspective=SYSTEM):
         """The occurrences accepted as part of a process occurrence at t, ordered by their descriptions' intervals,
-        each with its descriptions, interval, kinds and actors (from the perspective's accepted descriptions)."""
+        each with its descriptions, interval, kinds and actors (from the perspective's accepted descriptions), and the
+        judgement and status of its part-of content: established, or disputed (DI-1: listed, never dropped)."""
         kinds = {e["event"]: e for e in self.events(world, as_of=as_of, perspective=perspective)}
         steps = []
         for f in self.facts_about(world, process, t, as_of, perspective):
@@ -558,7 +524,7 @@ class DynamicsMixin:
                               "end": span[1] if span else None,
                               "kinds": sorted({k for d in descs if d in kinds for k in kinds[d]["kinds"]}),
                               "actors": sorted({x for d in descs if d in kinds for x in kinds[d]["roles"].get("actor", [])}),
-                              "support": f["support"]})
+                              "support": f["support"], "judgement": f["judgement"], "status": f["status"]})
         far = max((s["start"].earliest for s in steps if s["start"]), default=None)
         return sorted(steps, key=lambda s: (s["start"].earliest if s["start"] else far, s["occurrence"]))
 

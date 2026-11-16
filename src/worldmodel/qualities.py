@@ -19,6 +19,7 @@ from datetime import datetime, timezone
 from .operations import atomic
 from . import keys
 from .keys import check_new_id
+from .judgement import claim_label
 from .semantics import Status, acceptance_state, superseded, usable, verdict
 
 SYSTEM = "system"
@@ -210,11 +211,11 @@ class QualitiesMixin:
             # Provenance is the attestation's own rests-on links (D-C-2): never matched by source, time or content.
             for rec in self.evidence_of(a.id):
                 detail = self._record(rec) or {"record": rec}
-                reports = [e for e in self._claims(world, rec, ("reports",), t or FAR, as_of, perspective)
-                           if pid in e["roles"].get("content", [])]
-                detail["report"] = self._verdict_label(reports[0]) if reports else "none"
-                acts = [x for e in self._claims(world, rec, ("produced",), t or FAR, as_of, perspective)
-                        for x in e["roles"].get("activity", [])]
+                reports = [e for e in self._contents(world, rec, ("reports",), t or FAR, as_of, perspective)
+                           if pid in e.stated_roles.get("content", [])]
+                detail["report"] = claim_label(reports[0]) if reports else "none"
+                acts = [x for e in self._contents(world, rec, ("produced",), t or FAR, as_of, perspective)
+                        for x in e.stated_roles.get("activity", [])]
                 detail["activities"] = []
                 for act in acts:
                     span = self.interval(world, act, as_of, perspective)
