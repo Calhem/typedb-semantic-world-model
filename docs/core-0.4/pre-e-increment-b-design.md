@@ -1,7 +1,8 @@
 # Pre-Stage E correction, increment B: one canonical per-content judgement (DI-1, DI-11, DI-5)
 
-**Status: interface design and migration inventory, at the architectural review gate (LABS-1.037). No semantic change
-has been made.** Branch `feature/pre-e-b-canonical-judgement`, from `main` at `7654587` (increment A merged).
+**Status: approved with Q1 to Q6 (LABS-1.038) and implemented: see [pre-e-increment-b.md](pre-e-increment-b.md),
+which records the points decided in implementation.** Written as the interface design and migration inventory for
+the architectural review gate (LABS-1.037). Branch `feature/pre-e-b-canonical-judgement`, from `main` at `7654587` (increment A merged).
 Decisions: R-2, R-3 and R-4 with choices B, C and D, and the LABS-1.036 qualifications
 ([pre-stage-e-correctness-review.md](pre-stage-e-correctness-review.md), sections 1, 2 and 6). Increments C (DI-6)
 and D (DI-2) and Stage E have not begun. The foundational ontology and the schema are unchanged by this design.
