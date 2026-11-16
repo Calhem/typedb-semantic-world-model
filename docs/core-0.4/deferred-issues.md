@@ -1,6 +1,6 @@
 # Deferred correctness issues (register)
 
-**Opened 2026-11-11 under LABS-1.025; DI-5 added under LABS-1.026, DI-6 under LABS-1.027, DI-7 under LABS-1.028, DI-8 and DI-9 under LABS-1.030, DI-10 and DI-11 under LABS-1.034, DI-12 under LABS-1.038.** These are known correctness issues (DI-1 to DI-8, DI-11), one
+**Opened 2026-11-11 under LABS-1.025; DI-5 added under LABS-1.026, DI-6 under LABS-1.027, DI-7 under LABS-1.028, DI-8 and DI-9 under LABS-1.030, DI-10 and DI-11 under LABS-1.034, DI-12 under LABS-1.038, DI-14 under LABS-1.042.** These are known correctness issues (DI-1 to DI-8, DI-11), one
 tracked performance concern (DI-9) and one maintenance item (DI-10), kept apart from the stage documents.
 None of them has had its semantics changed yet. The pre-Stage E correctness review
 ([pre-stage-e-correctness-review.md](pre-stage-e-correctness-review.md), LABS-1.034) reproduces DI-1 to DI-6 and DI-8,
@@ -31,6 +31,7 @@ tests.
 | DI-10 | the schema explorer has no automated browser regression tests (search, filters, navigation were checked by hand) | LABS-1.024 gate (registered LABS-1.034) | no deadline (maintenance) | open (non-blocking) |
 | DI-11 | reports built on `_claims` (capable, the profile reports) ignore functional-slot conflicts; the mirror image of DI-1 | pre-Stage E review (LABS-1.034) | proposed: before Stage E | corrected in increment B, approved and merged (LABS-1.039, `main` d9d873a) |
 | DI-12 | the transitive traversals (`parts`, `dependencies`) judge their links without the perspective's same-as identity | increment B design (LABS-1.037, registered LABS-1.038) | no deadline (deferred) | open |
+| DI-14 | in a variant world, descriptions whose account is not inherited are listed (their `describes` link is) without saying the world holds no account of them | increment D design (registered LABS-1.042) | no deadline (deferred) | open (reporting; no judgement affected) |
 
 ## DI-1: `facts_about` omits content disputed by polarity
 **What happens.** `facts_about(world, subject, t)` lists only content whose judgement at t is "holds". Two kinds of
@@ -325,3 +326,24 @@ no traversal content names an aliased thing.
 **Options.** (a) Judge closures under the perspective's identity, traversing equivalence classes, as `holds` does;
 (b) keep id-level traversal and report links that name an aliased thing. Either needs its own decision and tests; the
 selection difference would be decided with it.
+
+## DI-14: descriptions listed in a variant without an account there
+**What happens.** `account()` writes a description's own attestation over the event's interval, and its `describes`
+link with no start (until superseded). A variant world inherits a base attestation when it has no start or starts
+before the branch point, and keeps it whole. So in a plan branching before an event, the link is inherited and the
+account is not: `descriptions()` lists the description, `occurrence()` lists it under `descriptions` (with no
+participants from it), and `process_steps` lists it among a step's descriptions, without saying that the plan holds no
+account of it.
+
+**Reproduction:** `probes/pre_e_d_inherited_links.py` (output `.out.txt`): a minimal case, and the 18 reference views
+(`plan-relubricate-only`: 15; `lab-plan-recal`: 3, whose accounts start exactly at the branch instant).
+
+**Classification.** Expected visibility under the inheritance rule as specified, not incorrect inheritance. No
+judgement is affected: every reader that judges from an account (`interval`, `occurrence_status`, the occurrence
+checks of `causes_of`) finds none, and `occurrence_status` reports the account as "none".
+
+**Options (later).** (a) `account()` writes the link from the event's start, so a variant inherits link and account
+together (new data only; existing links unchanged); (b) the listing readers mark, or omit, descriptions with no account
+in the world; (c) keep, and document. Increment D does not correct it; its proposed `accounts` field reports the state
+("none in this world").
+

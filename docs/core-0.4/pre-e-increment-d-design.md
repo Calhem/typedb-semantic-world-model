@@ -1,7 +1,8 @@
 # Pre-Stage E correction, increment D: event-role exclusivity (DI-2), design
 
-**Status: design for architectural review (LABS-1.041), not implemented.** Branch `feature/pre-e-d-event-roles`, from
-`main` at `bf8bb34` (increment C merged). No library code has changed. Stage E has not begun. The foundational
+**Status: accepted in principle at `b6d4d11` (LABS-1.042); clarified under LABS-1.042 (section 13); implementation
+not approved, not begun.** Branch `feature/pre-e-d-event-roles`, from `main` at `bf8bb34` (increment C merged). No
+library code has changed. Stage E has not begun. The foundational
 ontology is unchanged; the one schema addition proposed (section 8) is an additive storage module, as functional slots
 were (A0.3).
 
@@ -62,10 +63,10 @@ at most one player, under identity, in core role `R`. It is:
 - **unconditional or kind-scoped.** An unconditional constraint applies to every occurrence with compared accounts of
   that type. A kind-scoped constraint names an event kind (a category); it applies to an occurrence only where
   `classified-as(occurrence, kind)` is **established** for the perspective and knowledge time, at the occurrence's
-  start (the earliest start among the accepted accounts with an established link, whatever their type). Not established, disputed, pending or unknown: the
-  constraint does not apply, and the role is a union (LABS-1.036: an unestablished constraint never makes compatible
-  accounts disputed). This is how a role whose cardinality depends on the operation is constrained: the operation is
-  said to be of that kind, by a claim that is itself judged;
+  start (the earliest start among the accepted accounts with an established link, whatever their type). Not
+  established, disputed, pending or unknown: the constraint does not apply, and the role is a union (LABS-1.036: an
+  unestablished constraint never makes compatible accounts disputed). This is how a role whose cardinality depends
+  on the operation is constrained: the operation is said to be of that kind, by a claim that is itself judged;
 - **stored as data** (choice H), with no change to the foundational ontology (section 8).
 
 ### 3.2 Evaluation by the canonical mechanism
@@ -134,6 +135,19 @@ Nothing is merged in storage and nothing is hidden:
   the kind-scoped classification, judged at the occurrence's start (X6d: a classification beginning later does not
   apply).
 
+### 3.7 Multiplicity is not conflict
+Several players of one role across the accounts of one occurrence are **never, by themselves, a conflict**. A role is
+exclusive only where an **applicable, established** cardinality constraint requires it:
+- an unconditional constraint declared by a profile for the event type (or a supertype) of the compared accounts; or
+- a kind-scoped constraint whose classification of the occurrence is ESTABLISHED by its canonical record for the
+  world, perspective and knowledge time, at the occurrence's start.
+
+In every other case (no constraint; a kind-scoped constraint whose classification is pending, disputed, not holding,
+not yet effective or unknown; accounts of a type the constraint does not cover; accounts not accepted, or with a link
+not established) the players are a **union**: each is listed with the accounts that name it and their own judgements,
+and the role has no judgement and no status (rule C). Examples X2, X2b, X2d, X6d and X7a, X7b, X7c, X7d2 and X7d4
+are multiplicity without conflict; X1, X2c, X3b, X7a2, X7d and X7d3 are conflicts under an established constraint.
+
 ## 4. Domain declarations (choice G)
 Each role was examined against what the operation is, not against what the reference data happen to contain.
 
@@ -197,6 +211,20 @@ From `probes/pre_e_d_examples.py` (a throwaway database; all accounts on day 5).
 | X2c | the same, the occurrence established as `mechanical:one-for-one` at its start | system | as X2b | `replacement:removed` **DISPUTED** (b1; b2); `fitted` established (b3) |
 | X2d | the same | inspector (has not accepted the classification) | its own account only | the constraint does not apply for this perspective |
 | X6d | classified one-for-one only from day 6 | system | as X2b | the constraint does not apply (not established at the start) |
+| X7a | the swaps of X2b; classified one-for-one by the CMMS, before the system accepted it | system, earlier `as_of` | union | classification **pending** (canonical record): does not apply |
+| X7a2 | the same, after the system accepted it | system | union | classification established: `replacement:removed` **DISPUTED** |
+| X7b | classification asserted and denied, both accepted | system | union | classification **disputed** (reason `polarity`): does not apply |
+| X7c | classification held from day 1 to day 4 (valid time) | system | union | classification **not holding** (reason `ended`) at day 5: does not apply |
+| X7d | plan branching on day 6 (after the swap): inherits the classification and both accounts | system | union | classification established (inherited): **DISPUTED** |
+| X7d2 | plan branching on day 6 that stipulates the denial of the inherited classification | system | union | classification **not holding** (reason `denied`; the plan's own claim decides): does not apply |
+| X7d3 | plan branching on day 6 that classifies an occurrence the actual world leaves unclassified | system | union | classification established in the plan: **DISPUTED** |
+| X7d4 | the same occurrence in the actual world | system | union | classification **unknown** (reason `no_evidence`): does not apply |
+
+In every X2 and X7 case the classification is read from `wm.judgement` (the canonical per-content record of increment
+B, the same one every reader uses), and its judgement and reasons are reported with the constraint.
+The prototype judges each link and account from its attestations' acceptance at the nearest world level (the polarity
+layer of `_judge`), a simplification: the implementation judges links through their canonical records and accounts
+as `occurrence_status` does, and the permanent tests and the baseline comparison check that it gives these answers.
 
 ## 7. Impact on the reference worlds
 `probes/pre_e_d_impact.py` on the reference database rebuilt from merged `main`: every occurrence named by a
@@ -219,24 +247,110 @@ separate finding (section 10). DI-2's own example (the inspector's removed beari
 worlds, as it should: nothing there says the job was one-for-one, and the inspector's account is not accepted by the
 system. The executed examples are what exercise the rule; they become permanent tests.
 
+**Frozen baseline (LABS-1.042, item 6).** `probes/pre_e_d_impact.py --out` froze all 398 views in
+`probes/pre_e_d_occurrence_baseline.json.gz`: for each view, the current answer (`descriptions`, `participants`), the
+proposed `accounts` and `roles`, the judgement of each constrained role (whether it applies, the classification's
+judgement, the role's judgement, the players by identity) and whether the view has a role-presentation change. A
+second database rebuilt from the same code reproduces it exactly (`--compare`, output
+`probes/pre_e_d_baseline_check.out.txt`: 0 differences in existing fields, judgements or presentation changes).
+The implementation must pass the same comparison, with the library's own `occurrence` in place of the prototype:
+
+| Kind of change | Views | Authorised |
+|---|---:|---|
+| role presentation: `roles` lists `event:patient` and `replacement:removed` apart where `participants` merges them under `patient` (`o-bearing-replacement`; `actual` and `plan-rig-control`; system, cmms, inspector, technician) | 8 | yes (choice F; `participants` itself unchanged) |
+| fields added (`accounts`, `roles`) | 398 | yes (ER-5) |
+| `descriptions` or `participants` changed | 0 | none may change |
+| a judgement (a constrained role DISPUTED, or a link, account or existence judgement) changed | 0 | none may change |
+
 ## 8. Storage and installation
-- **Storage (proposed: a dedicated additive module).** A new core module, `core-0.4-event-roles`, adds one entity,
-  `event-role-constraint` (event type, core role, optional kind), stored as data like `functional-slot`. Reusing
-  `functional-slot` with a reserved key role was considered: it needs no schema change but overloads a proposition
-  constraint with an event one, so slot readers and the schema export would have to filter it, and it has no place
-  for the kind. The new module changes no existing type and no foundational type.
-- **Profiles.** A profile gains `event_roles` (as it has `slots` and `vocabulary`), validated at installation (own
-  event types only; the role must be one the type relates; the kind must be the profile's own vocabulary) and
-  written in the same atomic installation transaction.
-- **Existing databases.** Profiles are never replaced in place, so the declarations come with new profile versions:
-  organisation 0.2 (three unconditional constraints) and mechanical 0.2 (two kind-scoped constraints and the
-  vocabulary item `mechanical:one-for-one`), with no schema change. An atomic, data-only `upgrade_profile` installs
-  the new version's additions where the installed version is the previous one and the schema files are identical;
-  anything else is refused. The new core module is added by an atomic `upgrade_to_event_roles` (as `upgrade_to_a0`).
-  New databases get both at creation.
+### 8.1 Representation
+A new additive core module, **`core-0.4-event-roles`** (version 1), file `schema/core/core-0.4-event-roles.tql`:
+
+```
+define
+attribute event-role-constraint-id, value string;  # "<event type>|<core role>|<kind id, or *>"
+attribute constrained-event-type, value string;    # a profile's own event type label, e.g. official-act
+attribute constrained-role, value string;          # a core role name, e.g. actor (official-act:official)
+attribute constraint-kind, value string;           # a category id; absent: unconditional
+attribute declaring-module, value string;          # the module record that declared it, e.g. profile:organisation
+entity event-role-constraint, owns event-role-constraint-id @key, owns constrained-event-type @card(1..1),
+  owns constrained-role @card(1..1), owns constraint-kind @card(0..1), owns declaring-module @card(1..1);
+```
+
+It adds one entity type and five attribute types and changes no existing type, role or foundational type. Reusing
+`functional-slot` (with a reserved key role) was rejected: it would overload a proposition constraint with an event
+one, slot readers and the schema export would have to filter it out, and it has no place for the kind.
+
+In code: `Profile.event_roles`, a tuple of `EventRole(event_type, role, kind=None)` (role: the core role name), as a
+profile already has `slots` and `vocabulary`; `wm.event_role_constraints()` reads every record once per installed
+schema (cached, reset by installation and upgrade, as `slots()`); a type's constraints are its ancestors' and its own.
+
+**Validation** (at installation and upgrade; a refusal writes nothing): the event type is one the profile's own
+schema declares and is a subtype of `event`; the role is the core role of a role that type relates; the kind, if any,
+is in the same profile's vocabulary; no record with the same id but different content exists.
+
+The proposed declarations:
+- organisation **0.2**: `EventRole("official-act", "actor")`, `EventRole("official-act", "office")`,
+  `EventRole("official-act", "office-context")`;
+- mechanical **0.2**: `EventRole("replacement", "patient", "mechanical:one-for-one")`,
+  `EventRole("replacement", "fitted", "mechanical:one-for-one")`, and the vocabulary item
+  `("category", "mechanical:one-for-one", "one-for-one replacement")`;
+- laboratory: unchanged (0.1); the core: none.
+The 0.2 schema files are identical in content to 0.1: only data is added.
+
+### 8.2 New databases
+`WorldModel.create` installs `core-0.4-event-roles` with the other core modules. `install_profile` writes a profile's
+`event_roles` in its existing single schema transaction, with its schema, vocabulary, slots and module record.
+
+### 8.3 Existing databases (migration)
+Two explicit operations; nothing is migrated implicitly when a database is opened.
+
+**`wm.upgrade_to_event_roles()`** adds the core module.
+- **Preconditions:** the full core is installed (the A0 module and every later core module recorded); otherwise
+  refused, nothing written.
+- **Idempotence:** if the module record `core-0.4-event-roles` exists, it returns False and writes nothing. If the
+  module's types exist without a record (only possible by a manual `define`), it is refused as a conflict (the rule
+  `profile_status` applies to profiles).
+- **Atomicity and rollback:** one schema transaction defines the module and inserts its module record, and commits
+  only after both succeed. Any failure (a TypeDB error, a refused check, an interruption) closes the transaction
+  uncommitted: no type, no record. TypeDB 3.14.1 schema transactions are exclusive, so no other write interleaves.
+
+**`wm.upgrade_profile(name)`** brings an installed profile from its previous version to the code's version.
+- **Preconditions:** the profile is installed; its installed version is the new version's `upgrades_from` (0.1 for
+  0.2); `core-0.4-event-roles` is installed (otherwise refused with the instruction to run
+  `upgrade_to_event_roles()` first); the profile's schema in the database (its types, relates, plays, owns and role
+  parents, from `schema_snapshot`) equals what its schema files define. Any difference is refused, since a profile's
+  schema is never changed in place.
+- **What it writes:** the vocabulary items, slots and event-role constraints of the new version that are absent. An
+  existing concept with the same id must have the same kind and name (then it is kept); an existing constraint with
+  the same id must be identical. Anything else is refused. The module record's version is replaced (0.1 → 0.2) in the
+  same transaction. No attestation, acceptance, content or world is written or changed.
+- **Idempotence:** if the installed version already equals the code's, it returns False and writes nothing; running
+  it again after success is therefore a no-op.
+- **Atomicity and rollback:** one schema transaction for every addition and the version record; any failure leaves
+  the previous version's declarations, vocabulary and record exactly as they were.
+- **No downgrade.** A committed upgrade is not reversed by the library, as an installation is not. Rollback is
+  defined for a failure before commit.
+
+### 8.4 Backward compatibility
+- **New code, database not upgraded** (no module, or profiles at 0.1): no constraint exists, so no role is exclusive.
+  `occurrence` still returns `accounts` and `roles` (each role with `constraint` None and no judgement), and no reader
+  fails. `wm.upgrades_available()` reports what each upgrade would add, and writes nothing.
+- **Old code (`bf8bb34`) on an upgraded database:** the added entity and attributes are never queried by the old
+  code; every existing type, role, slot, concept and content is unchanged, so its answers are unchanged. The old
+  code's `install_profile("organisation")` refuses a database that records 0.2, which is the existing rule ("another
+  version is refused").
+- **Existing answers:** `descriptions` and `participants` of `occurrence`, and every other reader, keep their answers
+  (section 7, baseline).
+- **Declarations are not claims.** Like functional slots, they carry no valid or knowledge time: once installed, a
+  reading at an earlier `as_of` applies them too. They can only add constrained-role judgements, which did not exist
+  before; no existing field changes.
+- **Schema export.** Format 1's module records are closed (fixed kinds, no other properties), so the exporter moves to
+  **format 2** (`wm-schema-export-2`), which adds the record kind `event-role-constraint` (`event_type`, `role`,
+  `event_kind`, `declared_by`). Format-1 files remain valid against the format-1 schema; the exporter writes format 2.
 
 ## 9. Tests (to be written with the implementation)
-- the examples X1 to X6d, as permanent tests on both query paths;
+- the examples X1 to X7d4, as permanent tests on both query paths;
 - a constraint on the core `event`, on another profile's type, on a role the type does not relate, or with a kind
   that is not the profile's, is refused; a subtype inherits its supertype's constraints;
 - an unestablished, disputed or pending kind classification never applies a constraint;
@@ -244,7 +358,12 @@ system. The executed examples are what exercise the rule; they become permanent 
   unchanged on every reference view;
 - `occurrence_status`, `exists` and every per-account report unchanged where a role is DISPUTED;
 - identifiers and query-result order cannot change a judgement (renamed accounts, reversed and shuffled loads);
-- the upgrade paths are atomic (a refused or failing upgrade leaves no declaration and no module record);
+- the upgrade paths: atomic (a refused or failing upgrade, including a failure injected after the first write, leaves
+  no declaration, no vocabulary item and no record change), idempotent (a second run writes nothing), refused on a
+  schema difference, a wrong installed version or a missing core module; old code reading an upgraded database
+  answers as before;
+- the frozen 398-view baseline: `--compare` with the library's `occurrence` gives 0 differences in existing fields
+  and judgements, and exactly the 8 authorised presentation changes;
 - the reference snapshot gains the `occurrence` reader, so before and after are compared answer by answer.
 
 ## 10. Findings registered with this design
@@ -253,10 +372,7 @@ system. The executed examples are what exercise the rule; they become permanent 
   replacement, a team sampling). Recording such an operation needs several accounts of one occurrence, which this
   design handles correctly; allowing several players in one account would change the core and profile schemas and is
   not proposed here.
-- **Inherited links without accounts.** In a plan branching before an occurrence, `descriptions()` lists the actual
-  world's descriptions (their links are inherited) although their accounts are not part of the plan. Nothing is judged
-  from them (`occurrence_status` reports the account as "none"); the new `accounts` field makes it visible. Proposed:
-  documented, no change in this increment.
+- **DI-14 (registered, deferred): inherited links without accounts.** Section 13, item 4.
 - **Correction to the review's DI-2 impact** (section 1): recorded in the register with the design.
 
 ## 11. Not changed
@@ -264,14 +380,89 @@ Per-content judgement (increment B), aggregation (increment C), `descriptions`, 
 `exists`, every per-account report and every proposition reader. DI-3 and DI-4 are reassessed after this increment.
 DI-7, DI-9, DI-10 and DI-12. The foundational ontology.
 
-## 12. Decisions for approval
-| # | Decision | Recommended |
-|---|---|---|
-| ER-1 | Event-role constraints: (event type, core role), per occurrence, declared by profiles on their own event types only, inherited by subtypes; none on core `event` | approve |
-| ER-2 | Kind-scoped constraints: apply only where `classified-as(occurrence, kind)` is established for the context at the occurrence's start | approve |
-| ER-3 | Comparison: only compared accounts (established link, accepted account, constrained type); nearest world decides, deeper ones `overridden`; players under the perspective's identity | approve |
-| ER-4 | Judgement of a constrained role by rule Q (DISPUTED, or established with status over the deciding accounts and `support`); unconstrained roles a union | approve |
-| ER-5 | `occurrence` adds `accounts` and `roles` (keyed by stored role label, core role alongside); `descriptions` and `participants` unchanged | approve |
-| ER-6 | Profile declarations: official-act `official`, `office`, `office-context` unconditional; replacement `removed` and `fitted` only as `mechanical:one-for-one`; none for sampling or core | approve |
-| ER-7 | Storage and installation: additive module `core-0.4-event-roles`; profile `event_roles`; organisation 0.2 and mechanical 0.2 with atomic data-only upgrades | approve |
-| ER-8 | Register DI-13 (one player per role per account) as a deferred limitation; document inherited links without accounts; record the correction to the review's DI-2 impact | approve |
+## 12. Decisions for approval (exact wording)
+**ER-1. Event-role constraints.** An event-role constraint is a pair (event type, core role). It says that, for one
+occurrence, the compared accounts (section 2) of that event type or of any of its subtypes name at most one player of
+that core role, players being compared under the perspective's identity. Constraints are declared only by profiles,
+only on event types the declaring profile's own schema defines; no constraint may be declared on the core `event`
+type or on another profile's type, and the core declares none. A subtype has every constraint of its supertypes, and
+its own add to them; none replaces or weakens an inherited one.
+
+**ER-2. Kind-scoped constraints.** A constraint may name an event kind (a category of the declaring profile's
+vocabulary). It then applies to an occurrence only where the canonical judgement (`wm.judgement`) of
+`classified-as(classified: occurrence, class: kind)`, for the world, perspective and knowledge time of the reading, at
+the occurrence's start (the earliest start among the accepted accounts with an established link), is ESTABLISHED.
+Otherwise (pending, disputed, not holding, not yet effective, unknown, or no accepted account) it does not apply, and
+the reason is reported with the role.
+
+**ER-3. Comparison.** For each applicable constraint, the compared accounts are those of the constrained type (or a
+subtype) whose `describes` link to the occurrence is established and whose account is accepted. Among them, the
+accounts of the nearest world in the variant chain decide; accounts from deeper worlds are listed as `overridden`.
+Players are grouped by the perspective's identity at the knowledge time. Accounts of other types, accounts not
+accepted, and accounts whose link is not established are listed with their own judgements and never compared.
+
+**ER-4. Judgement of a role.** A role under an applicable constraint is one question and is judged by rule Q: two or
+more distinct players make it DISPUTED (status DISPUTED, `support` empty, every player listed with its names, its
+accounts, their sources and their support status); exactly one makes it established (status: the core rule over the
+union of the deciding account attestations, listed in `support`); none leaves it unjudged. Every other role is a union
+with no judgement and no status; each player lists the accounts naming it. Multiplicity alone is never a conflict
+(section 3.7). The occurrence's existence (`exists`, `occurrence_status`) is never decided by a role judgement.
+
+**ER-5. The merged view.** `occurrence` adds two fields and changes none: `accounts` (every description linked to the
+occurrence by a visible `describes` claim, with its event type, sources, link judgement, account state in
+`occurrence_status`'s vocabulary, and world depth) and `roles` (keyed by stored role label, each entry with its own
+name, its core role, its players citing their accounts, and for a constrained role the constraint, whether it
+applies and why, the judgement, status, support and overridden accounts). `descriptions` and `participants` keep their
+current answers.
+
+**ER-6. Profile declarations.** organisation 0.2 declares `official-act` `actor`, `office` and `office-context`,
+unconditionally. mechanical 0.2 declares `replacement` `patient` (removed) and `fitted` only for kind
+`mechanical:one-for-one`, which it adds to its vocabulary. The laboratory profile and the core declare none.
+
+**ER-7. Storage and migration.** Constraints are stored as data in the additive core module `core-0.4-event-roles`
+(entity `event-role-constraint`, section 8.1). New databases receive the module at creation and a profile's
+constraints at its installation. Existing databases receive them only through two explicit operations,
+`upgrade_to_event_roles()` and `upgrade_profile(name)`, each one schema transaction that commits everything or nothing,
+each idempotent (a second run writes nothing), each refused, with nothing written, when its preconditions do not hold
+(section 8.3). Upgrades add data only and never change a type, a claim or an acceptance; old code reads an upgraded
+database with unchanged answers; a database not upgraded behaves as today with no exclusive role (section 8.4). The
+schema export moves to format 2 to carry the new records.
+
+**ER-8. Findings.** DI-13 (one player per role per account, TypeDB's default cardinality) is registered as a deferred
+limitation, not changed in this increment. DI-14 (descriptions listed in a variant without an account there) stays
+registered as deferred and is not corrected in this increment. The correction to the review's DI-2 impact stays
+recorded in the register.
+
+## 13. Clarifications (LABS-1.042)
+1. **Exact wording of ER-1 to ER-8, storage and migration:** section 12; representation section 8.1; migration 8.3.
+2. **Multiplicity versus conflicting accounts:** confirmed. A role is exclusive only where an applicable, established
+   cardinality constraint requires it (section 3.7, ER-1, ER-2, ER-4); otherwise several players are a union. The
+   examples and the 398-view baseline show both sides.
+3. **Conditional one-for-one constraints through the canonical judgement:** the classification is read from
+   `wm.judgement`, the per-content record every reader uses, and the constraint applies only where its judgement is
+   ESTABLISHED. Executed (section 6): perspective (X2c established for the system; X2d pending for the inspector),
+   knowledge time (X7a pending before acceptance, X7a2 established after), polarity (X7b disputed), valid time (X6d not
+   yet effective at the occurrence's start, X7c ended before it), and hypothetical worlds (X7d inherited, X7d2 denied by
+   the plan's own stipulation, which decides because it is nearer, X7d3 classified by the plan alone, X7d4 the actual
+   world unaffected).
+4. **The 18 inherited accounts.** Reproduction: `probes/pre_e_d_inherited_links.py` (output `.out.txt`): an account on
+   day 5 whose link `account()` wrote with no start; a plan branching on day 2 lists the description (the link is
+   inherited) but has no account (interval None, `occurrence_status` account "none", the occurrence not established
+   there); a plan branching on day 6 has both; a link given the event's start is not inherited either. All 18
+   reference views are this mechanism: link with no start, account starting at or after the branch point (the
+   three views in `lab-plan-recal`, two descriptions, start exactly at the branch instant, which the rule excludes:
+   inheritance needs a start strictly before the branch).
+   **Classification: expected historical visibility under the current inheritance rule, not incorrect inheritance.**
+   The rule is applied as specified: the link is an identity claim with no start and is kept whole; the account is a
+   claim about an event after the branch and is excluded. No judgement is taken from the missing account: every reader
+   that judges from an account (`interval`, `occurrence_status`, the occurrence checks of `causes_of`, and the proposed
+   role judgement) finds none. The gap is in reporting: `descriptions`, `occurrence` (`descriptions`, and
+   `participants` by omission) and `process_steps` list such a description without saying that the world holds no
+   account of it. Registered as **DI-14** (deferred), with two later remedies, neither chosen here: `account()` could
+   write the link from the event's start (new data only), or the readers could mark descriptions without an account in
+   the world. Not corrected in increment D; the proposed `accounts` field reports the account as "none in this world",
+   which is a report of the existing state, not a correction.
+5. **Existing databases (ER-7):** section 8.3 (atomicity, idempotence, refusal and rollback) and 8.4 (backward
+   compatibility).
+6. **The 398-view baseline:** frozen and reproduced (section 7). The 8 authorised changes are role presentation in the
+   new `roles` field; `descriptions`, `participants` and every judgement are unchanged in all 398 views.
