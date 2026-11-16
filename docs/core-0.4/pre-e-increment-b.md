@@ -121,7 +121,7 @@ These refine the approved design. Each keeps an existing answer or follows direc
 **Reproductions** (`probes/pre_e_review_reproductions.py`): DI-1, DI-5 and DI-11 now assert the corrected behaviour.
 Every other case behaves as recorded.
 
-**Full suite:** MATRIX_RESULTS
+**Full suite:** 487 tests (470 existing, 17 new). Every configuration was run twice at `034a4ec`: both query paths (selective and full load), each with and without core protection, which installs all three profiles. 487 passed in each of the 8 runs (10 to 15 minutes each), and no test database was left over.
 
 ## Cost
 `probes/pre_e_b_read_bench.py`, on the same reference database. The old code (`a1bb840`) and the new code were run
