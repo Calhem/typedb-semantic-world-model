@@ -7,7 +7,9 @@ cases of docs/core-0.4/pre-e-increment-d-design.md, section "Examples", and prin
 (`wm.occurrence`) and the view under the proposed rule. The proposed rule is computed here, in the probe
 (`proposed_view`, in probes/pre_e_d_rule.py), from public readers only; nothing in the library is changed.
 Each case asserts the current answer
-and the proposed one, so the output records both. Output: probes/pre_e_d_examples.out.txt.
+and the proposed one, so the output records both. Since increment D (LABS-1.043) the library implements the rule:
+every case also asserts that the library's own judgements (`occurrence()`, `roles`) equal the prototype's; the
+permanent tests are tests/test_s_occurrence_roles.py. Output: probes/pre_e_d_examples.out.txt.
 
 Proposed rule (design section 3), in short:
 - the merged view lists every description linked to the occurrence, each with its own role names (as stored), the
@@ -32,7 +34,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(sys.argv[1] if len(sys.argv) > 1 else ".").resolve() / "src"))
 from worldmodel import CORE_MODULES, WorldModel, connect, mechanical as mech, organisation as org  # noqa: E402
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from pre_e_d_rule import ONE_FOR_ONE, proposed_view  # noqa: E402
+from pre_e_d_rule import ONE_FOR_ONE, judgement_of, library_view, proposed_view  # noqa: E402
 
 OUT = {}
 
@@ -73,7 +75,7 @@ try:
         wm.add_entity("person", p, id=p)
     for i in ("housing", "b1", "b2", "b3", "b4"):
         wm.add_entity("physical-object", i, id=i)
-    for kind, i in (("organisation", "depot"), ("social-role", "site-manager"), ("category", ONE_FOR_ONE)):
+    for kind, i in (("organisation", "depot"), ("social-role", "site-manager")):   # one-for-one: mechanical 0.2
         wm.add_entity(kind, i, id=i)
     for o in ("o-act", "o-act-alias", "o-act-pending", "o-act-link", "o-job", "o-swap", "o-swap-1for1",
               "o-swap-late", "o-swap-plan", "o-k-pending", "o-k-disputed", "o-k-ended"):
@@ -158,6 +160,8 @@ try:
     def both(case, occ, world=w, perspective="system", as_of=None, **extra):
         cur = wm.occurrence(world, occ, as_of, perspective)
         prop = proposed_view(wm, world, occ, as_of, perspective)
+        # since increment D (LABS-1.043) the library implements the rule: its judgements must equal the design's
+        assert judgement_of(library_view(cur)) == judgement_of(prop), (case, judgement_of(library_view(cur)))
         show(case, current_descriptions=cur["descriptions"], current_participants=cur["participants"],
              proposed_descriptions=prop["descriptions"], proposed_roles=prop["roles"], proposed_judged=prop["judged"],
              **extra)

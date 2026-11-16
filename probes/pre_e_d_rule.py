@@ -99,3 +99,25 @@ def proposed_view(wm, world, occ, as_of=None, perspective="system"):
     return {"descriptions": [{k: v for k, v in x.items() if k not in ("roles", "start")} for x in descs],
             "roles": dict(sorted(roles.items())),
             "judged": judged}
+
+
+def library_view(view):
+    """The library's own `occurrence()` answer (increment D, LABS-1.043) in the prototype's shape: `descriptions` (the
+    accounts), `roles` (by stored label) and `judged` ({"<event type>.<core role>": constraint}), so that the frozen
+    baseline and the examples can compare the implementation with the design, judgement by judgement."""
+    judged = {}
+    for label, e in view["roles"].items():
+        for c in e["constraints"]:
+            judged.setdefault(f"{c['event_type']}.{c['role']}", c)
+    return {"descriptions": view["accounts"],
+            "roles": {label: {"name": e["name"], "core_role": e["core_role"], "players": e["players"]}
+                      for label, e in view["roles"].items()},
+            "judged": judged}
+
+
+def judgement_of(prop):
+    """The judgement part of a view (what may never change silently): per judged role, whether it applies, the
+    classification's judgement, the role's judgement and the players by identity."""
+    return {r: {"applies": j["applies"], "classification": (j.get("classification") or {}).get("judgement"),
+                "judgement": j.get("judgement"), "players": [p["names"] for p in j.get("players", [])]}
+            for r, j in prop["judged"].items()}

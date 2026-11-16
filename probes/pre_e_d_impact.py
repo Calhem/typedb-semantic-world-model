@@ -26,12 +26,14 @@ ap.add_argument("checkout")
 ap.add_argument("--db", default="wm-probe-pre-e-d")
 ap.add_argument("--out", help="write the frozen baseline (every view: current answer and proposed judgement), .json.gz")
 ap.add_argument("--compare", help="compare against a frozen baseline: existing fields and judgements, view by view")
+ap.add_argument("--library", action="store_true",
+                help="read the proposed part from the library's own occurrence() (increment D) instead of the prototype")
 a = ap.parse_args()
 sys.path.insert(0, str(Path(a.checkout).resolve() / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from worldmodel import WorldModel, connect  # noqa: E402
 from worldmodel import typeql as q  # noqa: E402
-from pre_e_d_rule import DECLARED, proposed_view  # noqa: E402
+from pre_e_d_rule import DECLARED, judgement_of, library_view, proposed_view  # noqa: E402
 
 wm = WorldModel(connect(), a.db)
 with wm._reading() as tx:
@@ -45,12 +47,6 @@ def norm(x):
     return json.loads(json.dumps(x, sort_keys=True, default=str))
 
 
-def judgement_of(prop):
-    """The judgement part of a proposed view (what may never change silently): per judged role, whether it applies,
-    the classification's judgement, the role's judgement and the players by identity."""
-    return {r: {"applies": j["applies"], "classification": (j.get("classification") or {}).get("judgement"),
-                "judgement": j.get("judgement"), "players": [p["names"] for p in j.get("players", [])]}
-            for r, j in prop["judged"].items()}
 for w in worlds:
     atts = wm.visible(w)
     occs = sorted({x for at in atts.values() if at.kind == "describes" for x in at.roles.get("occurrence", [])})
@@ -64,7 +60,7 @@ for w in worlds:
         for perspective, as_of in contexts:
             totals["views"] += 1
             cur = wm.occurrence(w, occ, as_of, perspective)
-            prop = proposed_view(wm, w, occ, as_of, perspective)
+            prop = library_view(cur) if a.library else proposed_view(wm, w, occ, as_of, perspective)
             key = json.dumps([w, occ, perspective, "earlier" if as_of else "latest"])
             merged = sorted(core for core in cur["participants"]
                             if len({r for r, e in prop["roles"].items() if e["core_role"] == core}) > 1)
