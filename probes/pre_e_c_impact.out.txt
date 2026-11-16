@@ -1,0 +1,33 @@
+1. Snapshot answers of the aggregate reports, and how many the proposed rules would change:
+  authorised               20 answers, 0 would change
+  calibration_status     3575 answers, 0 would change
+  capable               17605 answers, 0 would change
+  office_holders           20 answers, 14 would change
+    office_holders: org 2026-11-03T08:59:59+00:00 ['safety-officer', 'depot-7']: ASSERTED -> None
+    office_holders: org 2026-11-03T08:59:59+00:00 ['site-manager', 'depot-7']: ASSERTED -> None
+    office_holders: org 2026-11-06T08:59:59+00:00 ['safety-officer', 'depot-7']: ASSERTED -> None
+    office_holders: org 2026-11-06T08:59:59+00:00 ['site-manager', 'depot-7']: ASSERTED -> None
+    office_holders: org 2026-11-09T09:00:00+00:00 ['safety-officer', 'depot-7']: ASSERTED -> None
+    office_holders: org 2026-11-20T09:00:00+00:00 ['safety-officer', 'depot-7']: ASSERTED -> None
+    office_holders: org 2026-11-20T09:00:00+00:00 ['site-manager', 'depot-7']: ASSERTED -> None
+    office_holders: org-plan-reorg 2026-11-03T09:00:00+00:00 ['safety-officer', 'depot-7']: ASSERTED -> None
+    office_holders: org-plan-reorg 2026-11-03T09:00:00+00:00 ['site-manager', 'depot-7']: ASSERTED -> None
+    office_holders: org-plan-reorg 2026-11-08T08:59:59+00:00 ['safety-officer', 'depot-7']: ASSERTED -> None
+    office_holders: org-plan-reorg 2026-11-08T08:59:59+00:00 ['site-manager', 'depot-7']: ASSERTED -> None
+    office_holders: org-plan-reorg 2026-11-10T08:59:59+00:00 ['safety-officer', 'depot-7']: ASSERTED -> None
+    office_holders: org-plan-reorg 2026-11-20T09:00:00+00:00 ['safety-officer', 'depot-7']: ASSERTED -> None
+    office_holders: org-plan-reorg 2026-11-20T09:00:00+00:00 ['site-manager', 'depot-7']: STIPULATED -> None
+
+2. Accepted denials of a single-value slot value sharing a key with an attested value (system perspective):
+  actual: 0
+  lab: 0
+  lab-plan-recal: 0
+  lab-plan-tom: 0
+  org: 0
+  org-plan-reorg: 0
+  plan-apprentice: 0
+  plan-move-bench: 0
+  plan-relubricate-only: 0
+  plan-rig-control: 0
+  plan-steel-cover: 0
+  total: 0
