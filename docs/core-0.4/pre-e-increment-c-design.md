@@ -1,8 +1,10 @@
 # Pre-Stage E correction, increment C: one aggregation rule (DI-6), design
 
-**Status: design for architectural review (LABS-1.039), not implemented.** Branch `feature/pre-e-c-aggregate-status`,
-from `main` at `d9d873a` (increment B merged). No aggregation code has changed. Increment D (DI-2) and Stage E have
-not begun. The foundational ontology and the schema are unchanged, and nothing here changes them.
+**Status: approved at `b1c45c4` (LABS-1.040, C-1 to C-6); implemented on the same branch, awaiting review, not
+merged. See [pre-e-increment-c.md](pre-e-increment-c.md).** Branch `feature/pre-e-c-aggregate-status`, from `main` at
+`d9d873a` (increment B merged). Sections 5 to 7 describe the state before implementation ("Current" is the code as
+merged after increment B). Increment D (DI-2) and Stage E have not begun. The foundational ontology and the schema
+are unchanged, and nothing here changes them.
 
 Approved direction: R-5 and choice E ([pre-stage-e-correctness-review.md](pre-stage-e-correctness-review.md), sections
 5 and 6), and LABS-1.039:

@@ -24,7 +24,7 @@ tests.
 | DI-3 | conflicting mechanical joint kinds are not judged | D-1 | no deadline | open (limitation) |
 | DI-4 | dependency-kind vocabulary is not validated | D-1 | no deadline | open (limitation) |
 | DI-5 | a future-effective appointment (or holding) with an unreviewed counter-claim is labelled "not established" | D-2 (LABS-1.026) | no deadline | corrected in increment B, approved and merged (LABS-1.039, `main` d9d873a) |
-| DI-6 | aggregate organisational reports can return ASSERTED despite mixed constituent statuses | D-2 (LABS-1.026) | review before Stage E | open; increment C design at review (LABS-1.039) |
+| DI-6 | aggregate organisational reports can return ASSERTED despite mixed constituent statuses | D-2 (LABS-1.026) | review before Stage E | corrected in increment C (LABS-1.040), awaiting review, not merged |
 | DI-7 | formal derivation provenance: no record of a named rule and named premises, yet basis "inference" gives INFERRED | D-3 (LABS-1.027 G-1, LABS-1.028) | Stage E requirement | open |
 | DI-8 | `take_sample` (and `replace_part`) write an account and its claimed effects in separate transactions | D-3 (LABS-1.028; registered LABS-1.030) | before Stage E | corrected in increment A, approved and merged (LABS-1.037, `main` 7654587) |
 | DI-9 | performance: high query counts in the D-3 reports, and questions slowing as other worlds' data grows | D-3 benchmark (LABS-1.029; registered LABS-1.030) | tracked into Stage E | open (performance) |
@@ -156,6 +156,13 @@ is reported as ASSERTED overall.
 - **Recommendation:** (b) for support statuses. It removes a summary that can mislead, and keeps DISPUTED, UNKNOWN and
   NOT_YET_KNOWN, which are well defined for the set. To be reviewed before Stage E. Semantics unchanged until decided.
 
+**Correction, increment C (LABS-1.040), awaiting review, not merged.** Made on `feature/pre-e-c-aggregate-status`
+under the approved design ([pre-e-increment-c-design.md](pre-e-increment-c-design.md), C-1 to C-6): one question
+answered by several holdings (`capable`, `authorised`, `calibration_status`) takes the core rule over the union of the
+deciding claims (rule Q, listed in a new `support` field); `office_holders` reports no status of its own when holders
+are established without conflict (rule C, option (b) above); a `changes` slot state rests on the values held, as
+`value_of` ([pre-e-increment-c.md](pre-e-increment-c.md)).
+
 ## DI-7: formal derivation provenance is not recorded
 **What happens.** v0.2 (E6) reserves derived answers (INFERRED) for attestations derived under a **named rule** from
 **named premises**. The model records neither. Any attestation written with basis `inference` is reported INFERRED
@@ -252,6 +259,11 @@ apart from the canonical judgement mechanism (`probes/pre_e_b_perf_split.out.txt
   about 41 to 83 ms. Readers and subjects without such appointments are unaffected.
 Options to examine with the rest of DI-9: load the attested constraints once per reading rather than per report, and
 load rival holders in one batched query.
+
+**Added (LABS-1.040): exclusivity in `changes`, and increment C's cost.** `changes` applies the same constraint at each
+boundary of a subject's timeline, so it pays the exclusivity cost too (not measured before): on the subjects concerned
+10 to 66 extra queries per call, the largest `changes(depot-7)` in the plan world (209 to 275 queries). Increment C's
+aggregation adds no query on any reader or subject (`probes/pre_e_c_perf.out.txt`, three alternating rounds).
 
 
 ## DI-10: automated browser regression coverage for the schema explorer (maintenance)
