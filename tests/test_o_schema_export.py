@@ -29,7 +29,7 @@ from worldmodel.schema_export.attribution import SETUP, attribute, classify
 from worldmodel.schema_export import export as ex
 from worldmodel.schema_export.introspect import snapshot
 from worldmodel.schema_export.validate import errors, format_schema, validate
-from worldmodel.model import SCHEMA, WRITE
+from worldmodel.model import READ, SCHEMA, WRITE
 
 pytestmark = pytest.mark.own_profiles
 PROFILES3 = ("mechanical", "organisation", "laboratory")
@@ -406,7 +406,7 @@ def exported(reference):
 def test_export_validates_against_its_json_schema(exported):
     doc, _, _ = exported
     assert validate(doc) == []
-    assert doc["format"] == "wm-schema-export/1"
+    assert doc["format"] == "wm-schema-export/2"
 
 
 def test_every_section_states_its_source(exported):
@@ -427,7 +427,8 @@ def test_every_section_states_its_source(exported):
     (lambda d: d["attribution"]["facts"]["entity sample"].pop("status"), "$.attribution.facts.entity sample: missing 'status'"),
     (lambda d: d["schema"]["types"]["sample"].update(owner="profile:laboratory"), "$.schema.types.sample: unexpected 'owner'"),
     (lambda d: d["verification"]["round_trip"].update(passed=False), "$.verification.round_trip.passed: must be True"),
-    (lambda d: d.update(format="wm-schema-export/2"), "$.format: must be 'wm-schema-export/1'"),
+    (lambda d: d.update(format="wm-schema-export/3"), "$.format: must be 'wm-schema-export/2'"),
+    (lambda d: d["module_data"]["records"][0].update(kind="event-role"), "$.module_data.records[0].kind: 'event-role' is not one of"),
 ])
 def test_json_schema_rejects_an_unlabelled_or_unknown_export(exported, mutate, expected):
     doc = copy.deepcopy(exported[0])
@@ -439,7 +440,8 @@ def test_the_checker_refuses_keywords_it_does_not_support():
     assert errors(1, {"type": "integer", "multipleOf": 2}) == ["$: the checker does not support ['multipleOf']"]
     assert errors([1, "x"], {"type": "array", "items": {"type": "integer"}}) == ["$[1]: expected integer, found str"]
     assert errors(True, {"type": "integer"}) == ["$: expected integer, found bool"]
-    assert format_schema()["title"] == "wm-schema-export/1"
+    assert format_schema()["title"] == "wm-schema-export/2"
+    assert format_schema("wm-schema-export/1")["title"] == "wm-schema-export/1"
 
 
 def test_schema_section_equals_the_database(exported):
@@ -687,3 +689,61 @@ def test_the_reference_files_are_consistent():
     files = {name: (REF / name).read_bytes() for name in ("schema.tql", "schema.json", "schema-explorer.html")}
     assert json.loads((REF / "manifest.json").read_text()) == ex.manifest(committed, files)
     assert hashlib.sha256(files["schema.tql"]).hexdigest() == committed["source"]["schema_sha256"]
+
+
+# ---- format 2 (LABS-1.043, increment D) ----------------------------------------------------------------------------
+V1 = Path(conftest.__file__).resolve().parent / "fixtures" / "schema-export-1.json.gz"
+
+
+def test_format_1_exports_are_still_read():
+    """The reference export as committed before increment D (format 1) still validates, against format 1's schema,
+    and still renders in the explorer."""
+    import gzip
+    old = json.loads(gzip.open(V1, "rt").read())
+    assert old["format"] == "wm-schema-export/1" and validate(old) == []
+    assert not any(r["kind"] == "event-role-constraint" for r in old["module_data"]["records"])
+    assert extract_json(render_explorer(old)) == old
+    newer = copy.deepcopy(old)
+    newer["module_data"]["records"].append({"kind": "event-role-constraint", "id": "x|actor|*", "event_type": "x",
+                                            "role": "actor", "event_kind": None, "declared_by": "profile:p",
+                                            "source": "database", "attribution": old["module_data"]["records"][0]
+                                            ["attribution"]})
+    assert any(e.startswith("$.module_data.records") for e in validate(newer))   # format 1 cannot hold them
+
+
+def test_event_role_constraints_are_exported_attributed_and_recreatable(exported, driver):
+    from worldmodel.schema_export.introspect import read_module_data
+    doc, _, snap = exported
+    rows = [r for r in doc["module_data"]["records"] if r["kind"] == "event-role-constraint"]
+    assert sorted((r["event_type"], r["role"], r["event_kind"], r["declared_by"]) for r in rows) == [
+        ("official-act", "actor", None, "profile:organisation"), ("official-act", "office", None, "profile:organisation"),
+        ("official-act", "office-context", None, "profile:organisation"),
+        ("replacement", "fitted", "mechanical:one-for-one", "profile:mechanical"),
+        ("replacement", "patient", "mechanical:one-for-one", "profile:mechanical")]
+    assert {(r["source"], r["attribution"]["status"]) for r in rows} == {("database", "attributed")}
+    assert {r["declared_by"]: r["attribution"]["modules"] for r in rows} == {
+        "profile:organisation": ["profile:organisation"], "profile:mechanical": ["profile:mechanical"]}
+    assert "entity event-role-constraint" in doc["attribution"]["facts"]
+    # the rows carry every attribute the entity owns: re-created in an empty database, they read back identically
+    wm = make_db(driver, profiles=())
+    try:
+        from worldmodel import typeql as q
+        with wm.operation():
+            for r in rows:
+                kind = ", has constraint-kind == $k" if r["event_kind"] else ""
+                q.run(wm._op.tx, f"""insert $c isa event-role-constraint, has event-role-constraint-id == $id,
+                    has constrained-event-type == $t, has constrained-role == $r, has declaring-module == $m{kind};""",
+                      {"id": r["id"], "t": r["event_type"], "r": r["role"], "m": r["declared_by"],
+                       **({"k": r["event_kind"]} if r["event_kind"] else {})})
+        with wm.driver.transaction(wm.database, READ) as tx:
+            again = {d for d in read_module_data(tx, snap.answers["kinds"]) if d[0] == "event-role"}
+        assert again == {d for d in snap.data if d[0] == "event-role"}
+    finally:
+        drop(wm)
+
+
+def test_the_export_is_deterministic(exported, reference):
+    wm, _ = reference
+    again = ex.build_export(wm.driver, wm.database, prefix=TMP)[0]
+    assert ex.masked(again) == ex.masked(exported[0])
+

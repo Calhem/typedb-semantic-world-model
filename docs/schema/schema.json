@@ -1,5 +1,5 @@
 {
- "format": "wm-schema-export/1",
+ "format": "wm-schema-export/2",
  "provenance": {
   "database": "Read from the TypeDB database (schema() text, query answers, records), or computed by the exporter from those reads alone.",
   "reconstructed": "Needs this repository's code as well as the database: core and profile attribution by replaying the recorded modules into temporary databases and comparing with the database. Checked against the database, not stored in it. It shows how the schema is reproduced from the recorded modules, not how this database was actually built: TypeDB keeps no installation history.",
@@ -27,8 +27,8 @@
  },
  "export": {
   "exporter": "worldmodel.schema_export 1.0.0",
-  "exported_at": "2026-11-16T21:31:07+00:00",
-  "code_commit": "c208f394249585b9dc544e2db882a00c5d346e66",
+  "exported_at": "2026-11-16T21:45:53+00:00",
+  "code_commit": "e452fdb47c8830ddd4c81c4df1b617d5530f1e87",
   "code_dirty": true
  },
  "verification": {
@@ -19005,7 +19005,7 @@
  "module_data": {
   "provenance": "database",
   "attribution_provenance": "reconstructed",
-  "description": "Concept and functional-slot records written by module installation. A record with source 'database' is read from the database; which module wrote it is reconstructed by replay. A record with source 'reconstructed' is written by the replay but absent from the database.",
+  "description": "Concept, functional-slot and event-role-constraint records written by module installation. A record with source 'database' is read from the database; which module wrote it is reconstructed by replay. A record with source 'reconstructed' is written by the replay but absent from the database.",
   "verification": "verified",
   "problems": [],
   "records": [
@@ -19201,6 +19201,81 @@
      "status": "attributed",
      "modules": [
       "profile:organisation"
+     ]
+    }
+   },
+   {
+    "kind": "event-role-constraint",
+    "id": "official-act|actor|*",
+    "event_type": "official-act",
+    "role": "actor",
+    "event_kind": null,
+    "declared_by": "profile:organisation",
+    "source": "database",
+    "attribution": {
+     "status": "attributed",
+     "modules": [
+      "profile:organisation"
+     ]
+    }
+   },
+   {
+    "kind": "event-role-constraint",
+    "id": "official-act|office-context|*",
+    "event_type": "official-act",
+    "role": "office-context",
+    "event_kind": null,
+    "declared_by": "profile:organisation",
+    "source": "database",
+    "attribution": {
+     "status": "attributed",
+     "modules": [
+      "profile:organisation"
+     ]
+    }
+   },
+   {
+    "kind": "event-role-constraint",
+    "id": "official-act|office|*",
+    "event_type": "official-act",
+    "role": "office",
+    "event_kind": null,
+    "declared_by": "profile:organisation",
+    "source": "database",
+    "attribution": {
+     "status": "attributed",
+     "modules": [
+      "profile:organisation"
+     ]
+    }
+   },
+   {
+    "kind": "event-role-constraint",
+    "id": "replacement|fitted|mechanical:one-for-one",
+    "event_type": "replacement",
+    "role": "fitted",
+    "event_kind": "mechanical:one-for-one",
+    "declared_by": "profile:mechanical",
+    "source": "database",
+    "attribution": {
+     "status": "attributed",
+     "modules": [
+      "profile:mechanical"
+     ]
+    }
+   },
+   {
+    "kind": "event-role-constraint",
+    "id": "replacement|patient|mechanical:one-for-one",
+    "event_type": "replacement",
+    "role": "patient",
+    "event_kind": "mechanical:one-for-one",
+    "declared_by": "profile:mechanical",
+    "source": "database",
+    "attribution": {
+     "status": "attributed",
+     "modules": [
+      "profile:mechanical"
      ]
     }
    },

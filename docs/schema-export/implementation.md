@@ -184,3 +184,18 @@ database per profile, each rebuilding the core). Files: `schema.json` 424 KB, `s
 3. **The neighbourhood diagram** draws one step (two for supertypes); the design said "one or two steps".
 4. **The design's browser check** (section 6.5) was done by hand, not automated.
 5. **`code_dirty`** is recorded in the export and manifest as well as the code commit (an addition).
+
+## Format 2 (LABS-1.043, increment D)
+The exporter writes `wm-schema-export/2` (`FORMAT` in `export.py`; JSON Schema `wm-schema-export-2.schema.json`).
+Format 1's module records are closed (fixed kinds, no other properties), so it cannot hold the event-role constraints
+of the `core-0.4-event-roles` module. Format 2 is format 1 plus one module-record kind, `event-role-constraint`, with
+`event_type`, `role` (a core role name), `event_kind` (a category id, or null) and `declared_by` (the declaring module):
+every attribute the entity owns, so a record can be re-created from the export. The records are read by
+`read_module_data`, attributed by replay like every other module record (each to the profile that declares it), and
+shown on the explorer's module-data page. Nothing else changed: every other section, guarantee and check (exact parse,
+query cross-check, round trip, replay attribution) is as in format 1.
+
+Reading format 1: `validate(doc)` checks a document against the schema of the format it declares, so exports written
+before LABS-1.043 still validate, and the explorer renders them (`tests/fixtures/schema-export-1.json.gz` is the
+reference export committed at `bf8bb34`, kept as a test). Tests: `tests/test_o_schema_export.py`, section "format 2".
+

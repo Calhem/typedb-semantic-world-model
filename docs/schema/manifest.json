@@ -22,8 +22,8 @@
  },
  "export": {
   "exporter": "worldmodel.schema_export 1.0.0",
-  "exported_at": "2026-11-16T21:31:07+00:00",
-  "code_commit": "c208f394249585b9dc544e2db882a00c5d346e66",
+  "exported_at": "2026-11-16T21:45:53+00:00",
+  "code_commit": "e452fdb47c8830ddd4c81c4df1b617d5530f1e87",
   "code_dirty": true
  },
  "schema_sha256": "cd6a7e6ac8216d2dea38b1a50c7eaab87a3108ffeeba564e8ea1bd45b8030576",
@@ -43,12 +43,12 @@
  "unresolved": [],
  "files": {
   "schema-explorer.html": {
-   "sha256": "37d0c4cd8e163c72e8cca8c24f6735b205dae929e710a00826eceb2292ce30ee",
-   "bytes": 370207
+   "sha256": "e207f427db2a9fffae934289ab6291e44f15d5bd6ff4d7b9c26506206783c9a4",
+   "bytes": 371844
   },
   "schema.json": {
-   "sha256": "766e10b3f31d88e0cbe3cbeb67674b412df3691099542806b3121e9094138bb0",
-   "bytes": 442791
+   "sha256": "069370d125e6b2176172e3f5784aeed500780501e530e827b9cfe2a62d02fd9c",
+   "bytes": 444610
   },
   "schema.tql": {
    "sha256": "cd6a7e6ac8216d2dea38b1a50c7eaab87a3108ffeeba564e8ea1bd45b8030576",

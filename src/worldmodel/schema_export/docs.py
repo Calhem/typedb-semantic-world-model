@@ -4,7 +4,7 @@
 `repository`: read from this repository's files, never checked against the database, and never used for attribution
 or for any database field. Comments on statements whose type the database does not have are reported, not dropped.
 
-**Module data** is the concept and functional-slot records the module replay writes. The records the database holds
+**Module data** is the concept, functional-slot and event-role-constraint records the module replay writes. The records the database holds
 are `database`; which module wrote each is `reconstructed` (attribution.py). A record the replay writes but the
 database lacks is listed with source `reconstructed` only.
 """
@@ -77,10 +77,14 @@ def module_data(attr):
         if rec[0] == "concept":
             _, kind, rid, name = rec
             row = {"kind": "concept", "type": kind, "id": rid, "name": name}
-        else:
+        elif rec[0] == "slot":
             _, rid, predicate, key_roles, value_role = rec
             row = {"kind": "functional-slot", "id": rid, "predicate": predicate, "key_roles": list(key_roles),
                    "value_role": value_role}
+        else:                                       # format 2: every attribute the entity owns, so it can be re-created
+            _, rid, event_type, role, event_kind, declared_by = rec
+            row = {"kind": "event-role-constraint", "id": rid, "event_type": event_type, "role": role,
+                   "event_kind": event_kind, "declared_by": declared_by}
         row["source"] = "database" if d["in_database"] else "reconstructed"
         row["attribution"] = {"status": d["status"], "modules": d["modules"]}
         if d["status"] == "unresolved":
@@ -89,7 +93,7 @@ def module_data(attr):
     return {
         "provenance": "database",
         "attribution_provenance": "reconstructed",
-        "description": "Concept and functional-slot records written by module installation. A record with source "
+        "description": "Concept, functional-slot and event-role-constraint records written by module installation. A record with source "
                        "'database' is read from the database; which module wrote it is reconstructed by replay. A "
                        "record with source 'reconstructed' is written by the replay but absent from the database.",
         "verification": "verified" if attr.data_verified else "failed",

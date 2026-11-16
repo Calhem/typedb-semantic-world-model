@@ -1,4 +1,5 @@
-"""Build and write the schema export (LABS-1.024): `wm-schema-export/1`.
+"""Build and write the schema export (LABS-1.024): `wm-schema-export/2` since LABS-1.043 (format 1 is still read and
+validated; see validate.py).
 
 The export is a JSON document whose top-level sections each have one source (LABS-1.032 requirement 1):
 
@@ -31,7 +32,7 @@ from .explorer import render_explorer
 from .introspect import snapshot
 from .parse import facts, parse_schema, render_type
 
-FORMAT = "wm-schema-export/1"
+FORMAT = "wm-schema-export/2"      # 2 (LABS-1.043): module data may hold event-role-constraint records
 EXPORTER = "worldmodel.schema_export 1.0.0"
 PROVENANCE = {
     "database": "Read from the TypeDB database (schema() text, query answers, records), or computed by the exporter "
