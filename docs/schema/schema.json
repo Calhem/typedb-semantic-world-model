@@ -21,14 +21,14 @@
    "core-0.4-d": "0.4.0-d",
    "core-0.4-event-roles": "0.4.0-er",
    "profile:laboratory": "0.1",
-   "profile:mechanical": "0.1",
-   "profile:organisation": "0.1"
+   "profile:mechanical": "0.2",
+   "profile:organisation": "0.2"
   }
  },
  "export": {
   "exporter": "worldmodel.schema_export 1.0.0",
-  "exported_at": "2026-11-16T21:22:35+00:00",
-  "code_commit": "459650747e12b197665c4c43c9473fe541a41129",
+  "exported_at": "2026-11-16T21:31:07+00:00",
+  "code_commit": "c208f394249585b9dc544e2db882a00c5d346e66",
   "code_dirty": true
  },
  "verification": {
@@ -12845,8 +12845,8 @@
    {
     "name": "profile:mechanical",
     "kind": "profile",
-    "recorded_version": "0.1",
-    "code_version": "0.1",
+    "recorded_version": "0.2",
+    "code_version": "0.2",
     "replay": "replayable",
     "facts": {
      "attributed": 15
@@ -12855,8 +12855,8 @@
    {
     "name": "profile:organisation",
     "kind": "profile",
-    "recorded_version": "0.1",
-    "code_version": "0.1",
+    "recorded_version": "0.2",
+    "code_version": "0.2",
     "replay": "replayable",
     "facts": {
      "attributed": 37
@@ -18218,6 +18218,12 @@
   "provenance": "repository",
   "description": "Comments from the .tql files of the modules recorded in the database, read from this repository (export.code_commit). Not checked against the database; they never affect attribution or any database field.",
   "modules": {
+   "profile:laboratory": {
+    "files": [
+     "schema/profiles/laboratory/laboratory-0.1.tql"
+    ],
+    "header": "Profile laboratory-0.1 (Core 0.4 Stage D-3, LABS-1.028). Additive vocabulary only (D-D-1, D-D-9): installed after the full core with WorldModel.install_profile(\"laboratory\"). Measurement (activity, result record, proposition), rests-on, comparability, units, corrections, constitution, location, hypotheses (stance) and processes are core (Stage B and C). Specimens and experiments are classifications (laboratory:specimen, laboratory:experiment)."
+   },
    "profile:mechanical": {
     "files": [
      "schema/profiles/mechanical/mechanical-0.1.tql"
@@ -18229,12 +18235,6 @@
      "schema/profiles/organisation/organisation-0.1.tql"
     ],
     "header": "Profile organisation-0.1 (Core 0.4 Stage D-2, LABS-1.026). Additive vocabulary only (D-D-1, D-D-9): installed after the full core with WorldModel.install_profile(\"organisation\"). Membership (member-of), organisational structure (part-of), ordinary roles, abilities (capability classifications) and agency are core."
-   },
-   "profile:laboratory": {
-    "files": [
-     "schema/profiles/laboratory/laboratory-0.1.tql"
-    ],
-    "header": "Profile laboratory-0.1 (Core 0.4 Stage D-3, LABS-1.028). Additive vocabulary only (D-D-1, D-D-9): installed after the full core with WorldModel.install_profile(\"laboratory\"). Measurement (activity, result record, proposition), rests-on, comparability, units, corrections, constitution, location, hypotheses (stance) and processes are core (Stage B and C). Specimens and experiments are classifications (laboratory:specimen, laboratory:experiment)."
    },
    "core": {
     "files": [
@@ -19131,6 +19131,19 @@
     "type": "category",
     "id": "mechanical:component",
     "name": "component",
+    "source": "database",
+    "attribution": {
+     "status": "attributed",
+     "modules": [
+      "profile:mechanical"
+     ]
+    }
+   },
+   {
+    "kind": "concept",
+    "type": "category",
+    "id": "mechanical:one-for-one",
+    "name": "one-for-one replacement",
     "source": "database",
     "attribution": {
      "status": "attributed",

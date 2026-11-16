@@ -16,14 +16,14 @@
    "core-0.4-d": "0.4.0-d",
    "core-0.4-event-roles": "0.4.0-er",
    "profile:laboratory": "0.1",
-   "profile:mechanical": "0.1",
-   "profile:organisation": "0.1"
+   "profile:mechanical": "0.2",
+   "profile:organisation": "0.2"
   }
  },
  "export": {
   "exporter": "worldmodel.schema_export 1.0.0",
-  "exported_at": "2026-11-16T21:22:35+00:00",
-  "code_commit": "459650747e12b197665c4c43c9473fe541a41129",
+  "exported_at": "2026-11-16T21:31:07+00:00",
+  "code_commit": "c208f394249585b9dc544e2db882a00c5d346e66",
   "code_dirty": true
  },
  "schema_sha256": "cd6a7e6ac8216d2dea38b1a50c7eaab87a3108ffeeba564e8ea1bd45b8030576",
@@ -43,12 +43,12 @@
  "unresolved": [],
  "files": {
   "schema-explorer.html": {
-   "sha256": "6e1ca63c825f45c1b8df69657e729a5c6f50135a51f8bef5a1774cae4448f7fa",
-   "bytes": 370016
+   "sha256": "37d0c4cd8e163c72e8cca8c24f6735b205dae929e710a00826eceb2292ce30ee",
+   "bytes": 370207
   },
   "schema.json": {
-   "sha256": "2f8b984010b02a20d9f92efbe9f4b435505ae60bee32cb43fb6df3c9eea8e7dc",
-   "bytes": 442524
+   "sha256": "766e10b3f31d88e0cbe3cbeb67674b412df3691099542806b3121e9094138bb0",
+   "bytes": 442791
   },
   "schema.tql": {
    "sha256": "cd6a7e6ac8216d2dea38b1a50c7eaab87a3108ffeeba564e8ea1bd45b8030576",

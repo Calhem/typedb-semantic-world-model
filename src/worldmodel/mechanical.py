@@ -12,15 +12,26 @@ No failure propagation or dependency inference.
 from .operations import atomic
 from .judgement import Judgement
 from .model import SCHEMA_DIR, SYSTEM
-from .profiles import PROFILES, Profile
+from .profiles import PROFILES, EventRole, Profile
 
 NAME = "mechanical"
-PROFILE = Profile(NAME, "0.1", (str(SCHEMA_DIR / "profiles" / "mechanical" / "mechanical-0.1.tql"),),
+# A one-for-one replacement swaps one part for one part. Whether a replacement removed or fitted several parts depends
+# on the operation (a pair of bearings, a gasket set, two seals replaced by one), so the removed (patient) and fitted
+# parts are single-valued only for an occurrence established as `mechanical:one-for-one` at its start (LABS-1.043,
+# ER-6); without that, several accounts naming different parts are a union, never a dispute.
+ONE_FOR_ONE = "mechanical:one-for-one"
+# 0.2 (LABS-1.043) adds data only to 0.1: the one-for-one category and the two kind-scoped event-role constraints; the
+# schema file is unchanged. upgrade_profile("mechanical") brings an installed 0.1 to 0.2.
+PROFILE = Profile(NAME, "0.2", (str(SCHEMA_DIR / "profiles" / "mechanical" / "mechanical-0.1.tql"),),
                   vocabulary=(("category", "mechanical:assembly", "assembly"),
                               ("category", "mechanical:component", "component"),
                               ("category", "mechanical:bolted", "bolted joint"),
                               ("category", "mechanical:pressed", "press fit"),
-                              ("category", "mechanical:splined", "splined joint")))
+                              ("category", "mechanical:splined", "splined joint"),
+                              ("category", ONE_FOR_ONE, "one-for-one replacement")),
+                  event_roles=(EventRole("replacement", "patient", ONE_FOR_ONE),
+                               EventRole("replacement", "fitted", ONE_FOR_ONE)),
+                  upgrades_from="0.1")
 PROFILES[NAME] = PROFILE
 
 

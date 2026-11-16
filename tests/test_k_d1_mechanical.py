@@ -81,6 +81,9 @@ def test_installs_alone_and_with_the_fixtures_and_needs_the_full_core(make):
     with pytest.raises(ProfileError, match="core-0.4-d"):
         stage_c.install_profile("mechanical")
     stage_c.install_module("core-0.4-d")                               # the upgrade path: add the module, then the profile
+    with pytest.raises(ProfileError, match="core-0.4-event-roles"):    # 0.2 declares event-role constraints (LABS-1.043)
+        stage_c.install_profile("mechanical")
+    assert stage_c.upgrade_to_event_roles() is True
     assert stage_c.install_profile("mechanical") == ["connected-to", "replacement"]
 
 
