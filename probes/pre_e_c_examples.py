@@ -185,6 +185,18 @@ try:
     show("E7 calibration_status(balance): cert-1 STIPULATED, cert-2 INFERRED, cert-3 ASSERTED", **row)
     assert row["system"]["proposed"] == Status.STIPULATED
 
+    # E7b the same, but the stipulated certificate is named cert-4 (sorts last), in a second plan
+    plan2 = wm.create_world("plan-2", kind="hypothetical", base=w, branch_at=T(2), id="plan-2")
+    lb.calibrate(wm, plan2, "cert-4", "balance", start=T(3))
+    r = lb.calibration_status(wm, plan2, "balance", T(5))
+    recs = [wm.judgement(plan2, "calibration-of", {"certificate": c, "calibrated": "balance"}, T(5))
+            for c in ("cert-2", "cert-3", "cert-4")]
+    show("E7b calibration_status(balance), plan-2: cert-2 INFERRED, cert-3 ASSERTED, cert-4 STIPULATED",
+         system={"current": [r["status"], r["judgement"]],
+                 "certificates": [(c["certificate"], c["judgement"], c["status"]) for c in r["certificates"]],
+                 "proposed": proposed(recs)})
+    assert name(r["status"]) == "INFERRED" and proposed(recs) == Status.STIPULATED      # order decides today
+
     # E8 office_holders: two holders of a non-exclusive office, different statuses (DI-6 as registered)
     row = {}
     for world, p in ((plan, "system"), (plan, "audit"), (w, "system")):

@@ -30,6 +30,9 @@
   system: {"current": ["STIPULATED", "established"], "certificates": [["cert-1", "established", "STIPULATED"], ["cert-2", "established", "INFERRED"], ["cert-3", "established", "ASSERTED"]], "proposed": "STIPULATED"}
   audit: {"current": ["STIPULATED", "established"], "certificates": [["cert-1", "established", "STIPULATED"], ["cert-2", "not established", "UNKNOWN"], ["cert-3", "not established", "UNKNOWN"]], "proposed": "STIPULATED"}
 
+=== E7b calibration_status(balance), plan-2: cert-2 INFERRED, cert-3 ASSERTED, cert-4 STIPULATED
+  system: {"current": ["INFERRED", "established"], "certificates": [["cert-2", "established", "INFERRED"], ["cert-3", "established", "ASSERTED"], ["cert-4", "established", "STIPULATED"]], "proposed": "STIPULATED"}
+
 === E8 office_holders(office-x, depot): bea inherited ASSERTED + cal STIPULATED
   plan/system: {"current": "ASSERTED", "holders": ["bea", "cal"], "appointments": [["bea", "established", "ASSERTED"], ["cal", "established", "STIPULATED"]], "proposed": null}
   plan/audit: {"current": "STIPULATED", "holders": ["cal"], "appointments": [["bea", "not established", "UNKNOWN"], ["cal", "established", "STIPULATED"]], "proposed": null}
