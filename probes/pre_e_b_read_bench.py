@@ -1,7 +1,7 @@
 """Increment B (LABS-1.038): read cost of the readers the canonical judgement touches, with a checkout's own code.
 
     uv run python -I probes/pre_e_b_read_bench.py <checkout> [--n 5] [--db wm-probe-pre-e-b] [--worlds w1,w2]
-                                                  [--no-attested]
+                                                  [--no-attested] [--more]
 
 Reads the kept reference database built by pre_e_b_snapshot.py --build (the same data before and after). For each
 reader, on fixed subjects in an actual world and in a variant (plan) world that inherits from it, it reports the
@@ -12,6 +12,9 @@ call makes. Prints JSON. Run it for the code before and after increment B, alter
 removed (office exclusivity is then not applied), so that, on the same subjects, the cost of the canonical judgement
 mechanism itself can be told apart from the cost of applying contextual exclusivity. It has no effect on code before
 increment B, which has no attested constraints.
+
+--more (LABS-1.040) also reads changes (over the world's whole span) for the three most-mentioned particulars and
+authorised for two grants, the other readers increment C touches. Off by default, so earlier runs stay comparable.
 """
 
 import argparse
@@ -29,6 +32,7 @@ ap.add_argument("--n", type=int, default=5)
 ap.add_argument("--db", default="wm-probe-pre-e-b")
 ap.add_argument("--worlds")
 ap.add_argument("--no-attested", action="store_true")
+ap.add_argument("--more", action="store_true")
 a = ap.parse_args()
 sys.path.insert(0, str(Path(a.checkout).resolve() / "src"))
 from worldmodel import WorldModel, connect, laboratory as lab, organisation as org  # noqa: E402
@@ -95,6 +99,8 @@ for w in ids:
     for x in top("particular", 3):
         calls[("facts_about", w, x)] = (wm.facts_about, (w, x, t), {})
         calls[("parts", w, x)] = (wm.parts, (w, x, t), {})
+        if a.more:
+            calls[("changes", w, x)] = (wm.changes, (w, x, bounds[0], bounds[-1]), {})
     for x in top("occurrence"):
         calls[("occurrence_status", w, x)] = (wm.occurrence_status, (w, x, t), {})
         calls[("causes_of", w, x)] = (wm.causes_of, (w, x, t), {})
@@ -108,6 +114,10 @@ for w in ids:
             calls[("office_holders", w, office)] = (org.office_holders, (wm, w, office, ctx, t), {})
         for x in sorted({at.roles["classified"][0] for at in atts.values() if wm.is_a(at.ctype, "office-holding")})[:2]:
             calls[("offices_of", w, x)] = (org.offices_of, (wm, w, x, t), {})
+        if a.more:
+            for h, p, sc in sorted({(at.roles["holder"][0], at.roles["power"][0], at.roles["scope"][0])
+                                    for at in atts.values() if wm.is_a(at.ctype, "authorisation")})[:2]:
+                calls[("authorised", w, f"{h}/{p}")] = (org.authorised, (wm, w, h, p, sc, t), {})
     if "laboratory" in wm.profiles():
         for x in top("sample", 3):
             calls[("provenance", w, x)] = (lab.provenance, (wm, w, x, t), {})

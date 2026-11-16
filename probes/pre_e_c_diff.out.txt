@@ -1,0 +1,133 @@
+reader                           identical extended  changed  other
+agency_report                           11        0        0      0
+authorised                               0       20        0      0
+calibration_status                       0     3575        0      0
+capable                                  0     2410        0      0
+capable@acme                             0      145        0      0
+capable@ana                              0      335        0      0
+capable@apprentice                       0     1345        0      0
+capable@auditor                          0      145        0      0
+capable@bea                              0      145        0      0
+capable@bo                               0      335        0      0
+capable@cal                              0      145        0      0
+capable@cal-lab                          0      240        0      0
+capable@cam-2                            0     1265        0      0
+capable@cm-1                             0     1345        0      0
+capable@cmms                             0      710        0      0
+capable@design-office                    0     1760        0      0
+capable@hr                               0      145        0      0
+capable@inspector                        0     1760        0      0
+capable@lab-2                            0      335        0      0
+capable@qa                               0      335        0      0
+capable@scale-3                          0     1760        0      0
+capable@tag-reader                       0     1265        0      0
+capable@technician                       0     1345        0      0
+capable@tom                              0      335        0      0
+causes_of                              590        0        0      0
+changes                                715        0        0      0
+check_action                            19       55        0      0
+compare_measurements                    80        0        0      0
+composition                           3575        0        0      0
+connections                           3575        0        0      0
+contents                               100        0        0      0
+dependencies                          3575        0        0      0
+direct_dependencies                   3575        0        0      0
+effects_of                             370        0        0      0
+employment                            3575        0        0      0
+exists                                3575        0        0      0
+facts_about                           3575        0        0      0
+facts_about@acme                       180        0        0      0
+facts_about@ana                        835        0        0      0
+facts_about@apprentice                2115        0        0      0
+facts_about@as_of                     3575        0        0      0
+facts_about@auditor                    180        0        0      0
+facts_about@bea                        180        0        0      0
+facts_about@bo                         835        0        0      0
+facts_about@cal                        180        0        0      0
+facts_about@cal-lab                    655        0        0      0
+facts_about@cam-2                     1935        0        0      0
+facts_about@cm-1                      2115        0        0      0
+facts_about@cmms                      1185        0        0      0
+facts_about@design-office             2560        0        0      0
+facts_about@hr                         180        0        0      0
+facts_about@inspector                 2560        0        0      0
+facts_about@lab-2                      835        0        0      0
+facts_about@qa                         835        0        0      0
+facts_about@scale-3                   2560        0        0      0
+facts_about@tag-reader                1935        0        0      0
+facts_about@technician                2115        0        0      0
+facts_about@tom                        835        0        0      0
+frame_info                             110        0        0      0
+holds                                 4975        0        0      0
+holds@as_of                           4975        0        0      0
+interpretations                        165        0        0      0
+materials                             3575        0        0      0
+measurement_calibration                 62       18        0      0
+measurements                            80        0        0      0
+occurrence_status                      220        0        0      0
+office_holders                           6        0       14      0
+offices_of                            3575        0        0      0
+official_act                             2        0        0      0
+parts                                 3575        0        0      0
+poses                                 3575        0        0      0
+process_steps                          220        0        0      0
+provenance                              20        0        0      0
+replacement                            370        0        0      0
+roles_of                              3575        0        0      0
+transform_between                      150        0        0      0
+value_of                               940        0        0      0
+added fields, authorised: {'support': 20}
+added fields, calibration_status: {'support': 3575}
+added fields, capable: {'support': 2410}
+added fields, capable@acme: {'support': 145}
+added fields, capable@ana: {'support': 335}
+added fields, capable@apprentice: {'support': 1345}
+added fields, capable@auditor: {'support': 145}
+added fields, capable@bea: {'support': 145}
+added fields, capable@bo: {'support': 335}
+added fields, capable@cal: {'support': 145}
+added fields, capable@cal-lab: {'support': 240}
+added fields, capable@cam-2: {'support': 1265}
+added fields, capable@cm-1: {'support': 1345}
+added fields, capable@cmms: {'support': 710}
+added fields, capable@design-office: {'support': 1760}
+added fields, capable@hr: {'support': 145}
+added fields, capable@inspector: {'support': 1760}
+added fields, capable@lab-2: {'support': 335}
+added fields, capable@qa: {'support': 335}
+added fields, capable@scale-3: {'support': 1760}
+added fields, capable@tag-reader: {'support': 1265}
+added fields, capable@technician: {'support': 1345}
+added fields, capable@tom: {'support': 335}
+added fields, check_action: {'support': 55}
+added fields, measurement_calibration: {'support': 57}
+
+== office_holders: changed answers (first 14 of 14)
+   ['org', '2026-11-03T08:59:59+00:00', 'office_holders', 'safety-officer', 'depot-7']
+       .status: "ASSERTED" -> null
+   ['org', '2026-11-03T08:59:59+00:00', 'office_holders', 'site-manager', 'depot-7']
+       .status: "ASSERTED" -> null
+   ['org', '2026-11-06T08:59:59+00:00', 'office_holders', 'safety-officer', 'depot-7']
+       .status: "ASSERTED" -> null
+   ['org', '2026-11-06T08:59:59+00:00', 'office_holders', 'site-manager', 'depot-7']
+       .status: "ASSERTED" -> null
+   ['org', '2026-11-09T09:00:00+00:00', 'office_holders', 'safety-officer', 'depot-7']
+       .status: "ASSERTED" -> null
+   ['org', '2026-11-20T09:00:00+00:00', 'office_holders', 'safety-officer', 'depot-7']
+       .status: "ASSERTED" -> null
+   ['org', '2026-11-20T09:00:00+00:00', 'office_holders', 'site-manager', 'depot-7']
+       .status: "ASSERTED" -> null
+   ['org-plan-reorg', '2026-11-03T09:00:00+00:00', 'office_holders', 'safety-officer', 'depot-7']
+       .status: "ASSERTED" -> null
+   ['org-plan-reorg', '2026-11-03T09:00:00+00:00', 'office_holders', 'site-manager', 'depot-7']
+       .status: "ASSERTED" -> null
+   ['org-plan-reorg', '2026-11-08T08:59:59+00:00', 'office_holders', 'safety-officer', 'depot-7']
+       .status: "ASSERTED" -> null
+   ['org-plan-reorg', '2026-11-08T08:59:59+00:00', 'office_holders', 'site-manager', 'depot-7']
+       .status: "ASSERTED" -> null
+   ['org-plan-reorg', '2026-11-10T08:59:59+00:00', 'office_holders', 'safety-officer', 'depot-7']
+       .status: "ASSERTED" -> null
+   ['org-plan-reorg', '2026-11-20T09:00:00+00:00', 'office_holders', 'safety-officer', 'depot-7']
+       .status: "ASSERTED" -> null
+   ['org-plan-reorg', '2026-11-20T09:00:00+00:00', 'office_holders', 'site-manager', 'depot-7']
+       .status: "STIPULATED" -> null
