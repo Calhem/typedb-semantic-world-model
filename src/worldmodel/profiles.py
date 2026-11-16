@@ -163,7 +163,7 @@ class ProfileMixin:
         written in **one schema transaction** (TypeDB 3.14.1 schema transactions also write data) and committed only
         after every check passed, so a profile is either completely installed and recorded, or not at all. Refusals
         raise ProfileError; any failure, including at commit, leaves the database unchanged."""
-        from .model import CORE_LABELS, CORE_MODULES
+        from .model import CORE_LABELS, CORE_MODULES, PROFILE_BASE_MODULES
         from .keys import check_new_id
         if isinstance(profile, str):
             profile = PROFILES[profile]
@@ -173,7 +173,9 @@ class ProfileMixin:
                 return []
             raise ProfileError(f"profile {profile.name!r} {installed[profile.module]} is installed; "
                                f"{profile.version} would change it (profiles are never replaced in place)")
-        missing = [m for m in CORE_MODULES if m not in installed]
+        # a profile declaring event-role constraints needs their module; any other needs the core as before (LABS-1.043)
+        missing = [m for m in (CORE_MODULES if getattr(profile, "event_roles", ()) else PROFILE_BASE_MODULES)
+                   if m not in installed]
         if missing:
             raise ProfileError(f"profile {profile.name!r} needs the full core; missing modules {missing}")
         bad_ids = [i for _, i, _ in profile.vocabulary if not i.startswith(profile.name + ":")]

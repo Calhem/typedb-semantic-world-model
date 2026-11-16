@@ -102,6 +102,16 @@ attribute condition,
  value string;
 attribute calibration-ref,
  value string;
+attribute event-role-constraint-id,
+ value string;
+attribute constrained-event-type,
+ value string;
+attribute constrained-role,
+ value string;
+attribute constraint-kind,
+ value string;
+attribute declaring-module,
+ value string;
 entity schema-module,
   owns module-name @key,
   owns module-version;
@@ -228,6 +238,12 @@ entity functional-slot,
 entity capability,
   sub concept,
   plays authorisation:power;
+entity event-role-constraint,
+  owns constrained-event-type @card(1..1),
+  owns constrained-role @card(1..1),
+  owns constraint-kind @card(0..1),
+  owns declaring-module @card(1..1),
+  owns event-role-constraint-id @key;
 entity person,
   sub physical-object,
   plays employment:employee;

@@ -4,8 +4,8 @@
   "provenance": "database",
   "database": "wm-schema-reference",
   "server_version": "TypeDB CE 3.14.1",
-  "schema_sha256": "bba547c25973ff97b3e12f979cfbb3dffc858ae3b6a53c932c4ef621805d73c5",
-  "schema_characters": 10502,
+  "schema_sha256": "cd6a7e6ac8216d2dea38b1a50c7eaab87a3108ffeeba564e8ea1bd45b8030576",
+  "schema_characters": 10951,
   "modules": {
    "core": "0.3.0",
    "core-0.4-a": "0.4.0-a1",
@@ -14,6 +14,7 @@
    "core-0.4-b": "0.4.0-b",
    "core-0.4-c": "0.4.0-c",
    "core-0.4-d": "0.4.0-d",
+   "core-0.4-event-roles": "0.4.0-er",
    "profile:laboratory": "0.1",
    "profile:mechanical": "0.1",
    "profile:organisation": "0.1"
@@ -21,11 +22,11 @@
  },
  "export": {
   "exporter": "worldmodel.schema_export 1.0.0",
-  "exported_at": "2026-11-13T01:46:21+00:00",
-  "code_commit": "be2abe1f1469192c49415673169c2895737ebd81",
+  "exported_at": "2026-11-16T21:22:35+00:00",
+  "code_commit": "459650747e12b197665c4c43c9473fe541a41129",
   "code_dirty": true
  },
- "schema_sha256": "bba547c25973ff97b3e12f979cfbb3dffc858ae3b6a53c932c4ef621805d73c5",
+ "schema_sha256": "cd6a7e6ac8216d2dea38b1a50c7eaab87a3108ffeeba564e8ea1bd45b8030576",
  "verification": {
   "parse": true,
   "query_cross_check": true,
@@ -34,7 +35,7 @@
  "replay_verification": "verified",
  "replay_problems": [],
  "attribution_counts": {
-  "attributed": 487,
+  "attributed": 508,
   "shared": 0,
   "consistent_unverified": 0,
   "unresolved": 0
@@ -42,23 +43,23 @@
  "unresolved": [],
  "files": {
   "schema-explorer.html": {
-   "sha256": "5a40f4beb0b0b41963cb62bc7522e21d82b6361010196d9fc3559842e079017d",
-   "bytes": 356228
+   "sha256": "6e1ca63c825f45c1b8df69657e729a5c6f50135a51f8bef5a1774cae4448f7fa",
+   "bytes": 370016
   },
   "schema.json": {
-   "sha256": "93c9b4ffcdb0c7c9cafaacca637e313a6741cdc482a8a6d00657f07419ab8b61",
-   "bytes": 425069
+   "sha256": "2f8b984010b02a20d9f92efbe9f4b435505ae60bee32cb43fb6df3c9eea8e7dc",
+   "bytes": 442524
   },
   "schema.tql": {
-   "sha256": "bba547c25973ff97b3e12f979cfbb3dffc858ae3b6a53c932c4ef621805d73c5",
-   "bytes": 10502
+   "sha256": "cd6a7e6ac8216d2dea38b1a50c7eaab87a3108ffeeba564e8ea1bd45b8030576",
+   "bytes": 10951
   }
  },
  "module_data_verification": "verified",
  "module_data_unresolved": [],
  "documentation": {
   "provenance": "repository",
-  "types_documented": 36,
+  "types_documented": 41,
   "unknown_labels": []
  }
 }
