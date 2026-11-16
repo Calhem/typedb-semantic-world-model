@@ -4,6 +4,7 @@ See docs/core-0.4/pre-e-increment-d-design.md, section 3.
 """
 
 from worldmodel import typeql as q
+from worldmodel.judgement import Judgement
 from worldmodel.semantics import usable
 
 ONE_FOR_ONE = "mechanical:one-for-one"
@@ -67,11 +68,18 @@ def proposed_view(wm, world, occ, as_of=None, perspective="system"):
                  and any(c == core for c, _ in x["roles"].values())]
         if not group:
             continue
+        classification = None
         if kind is not None:
-            cls = wm.holds(world, "classified-as", {"classified": occ, "class": kind}, at, as_of, perspective) \
+            # the kind-scoped constraint applies only where the classification is ESTABLISHED: its canonical record
+            # (increment B), for this world, perspective and knowledge time, at the occurrence's start
+            rec = wm.judgement(world, "classified-as", {"classified": occ, "class": kind}, at, as_of, perspective) \
                 if at is not None else None
-            if cls is None or cls.holds is not True:
-                judged[f"{etype}.{core}"] = {"constraint": f"only as {kind}", "applies": False}
+            classification = {"at": at.isoformat() if at else None,
+                              "judgement": rec.judgement.value if rec else "not judged (no accepted account)",
+                              "reasons": list(rec.reasons) if rec else []}
+            if rec is None or rec.judgement is not Judgement.ESTABLISHED:
+                judged[f"{etype}.{core}"] = {"constraint": f"only as {kind}", "applies": False,
+                                             "classification": classification}
                 continue
         depth = min(x["depth"] for x in group)
         near = [x for x in group if x["depth"] == depth]
@@ -83,7 +91,7 @@ def proposed_view(wm, world, occ, as_of=None, perspective="system"):
                         players.setdefault(ident.canonical(p), {}).setdefault(p, []).append(
                             (x["description"], x["attesters"]))
         judged[f"{etype}.{core}"] = {
-            "constraint": kind or "declared", "applies": True,
+            "constraint": kind or "declared", "applies": True, "classification": classification,
             "judgement": "disputed" if len(players) > 1 else "established",
             "players": [{"names": sorted(names), "cited": sorted({c for v in names.values() for c, _ in v})}
                         for _, names in sorted(players.items())],

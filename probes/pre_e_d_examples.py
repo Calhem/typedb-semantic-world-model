@@ -75,7 +75,7 @@ try:
     for kind, i in (("organisation", "depot"), ("social-role", "site-manager"), ("category", ONE_FOR_ONE)):
         wm.add_entity(kind, i, id=i)
     for o in ("o-act", "o-act-alias", "o-act-pending", "o-act-link", "o-job", "o-swap", "o-swap-1for1",
-              "o-swap-late", "o-swap-plan"):
+              "o-swap-late", "o-swap-plan", "o-k-pending", "o-k-disputed", "o-k-ended"):
         wm.add_entity("occurrence", o, id=o)
 
     def act(occ, official, attester, world=w, accept=True, **kw):
@@ -127,11 +127,32 @@ try:
               until_superseded=True)
     wm.attest(w, "classified-as", {"classified": "o-swap-late", "class": ONE_FOR_ONE}, start=T(6),
               until_superseded=True)                                       # X6: only after the swap began
+    # X7: the one-for-one classification judged canonically (the same two conflicting swaps on each occurrence)
+    for occ in ("o-k-pending", "o-k-disputed", "o-k-ended", "o-swap-plan"):
+        swap(occ, "b1", "b3", "cmms")
+        swap(occ, "b2", "b3", "insp")
+    pending_k = wm.attest(w, "classified-as", {"classified": "o-k-pending", "class": ONE_FOR_ONE}, start=T(5),
+                          until_superseded=True, attester="cmms")           # X7a: by the CMMS, not yet accepted
+    known_before_k_accepted = wm.clock.now
+    wm.accept(pending_k)
+    wm.attest(w, "classified-as", {"classified": "o-k-disputed", "class": ONE_FOR_ONE}, start=T(5),
+              until_superseded=True)
+    wm.accept(wm.deny(w, "classified-as", {"classified": "o-k-disputed", "class": ONE_FOR_ONE}, start=T(5),
+                      until_superseded=True, attester="insp"))              # X7b: an accepted denial: DISPUTED
+    wm.attest(w, "classified-as", {"classified": "o-k-ended", "class": ONE_FOR_ONE}, start=T(1),
+              end=T(4))                                                     # X7c: held, but ended before day 5
     # X6: a plan stipulating its own account of the inherited act
     plan = wm.create_world("plan", kind="hypothetical", base=w, branch_at=T(2), id="plan")
     act("o-act", "cal", "system", world=plan)
     late = wm.create_world("plan-late", kind="hypothetical", base=w, branch_at=T(6), id="plan-late")
     act("o-act", "bea", "system", world=late)
+    # X7d: plans branching after the swaps: one denies the inherited classification, one classifies its own
+    deny_plan = wm.create_world("plan-deny", kind="hypothetical", base=w, branch_at=T(6), id="plan-deny")
+    wm.deny(deny_plan, "classified-as", {"classified": "o-swap-1for1", "class": ONE_FOR_ONE}, start=T(5),
+            until_superseded=True)
+    class_plan = wm.create_world("plan-classify", kind="hypothetical", base=w, branch_at=T(6), id="plan-classify")
+    wm.attest(class_plan, "classified-as", {"classified": "o-swap-plan", "class": ONE_FOR_ONE}, start=T(5),
+              until_superseded=True)
 
     def both(case, occ, world=w, perspective="system", as_of=None, **extra):
         cur = wm.occurrence(world, occ, as_of, perspective)
@@ -207,6 +228,31 @@ try:
     _, prop = both("X6d classified one-for-one only from after the swap began: the constraint does not apply",
                    "o-swap-late")
     assert prop["judged"]["replacement.patient"]["applies"] is False
+
+    def k(prop):
+        return prop["judged"]["replacement.patient"]
+
+    _, prop = both("X7a classified by the CMMS, before the system accepted it (knowledge time)", "o-k-pending",
+                   as_of=known_before_k_accepted)
+    assert k(prop)["applies"] is False and k(prop)["classification"]["judgement"] == "pending"
+    _, prop = both("X7a2 the same, after the system accepted it", "o-k-pending")
+    assert k(prop)["applies"] is True and k(prop)["judgement"] == "disputed"
+    _, prop = both("X7b the classification asserted and denied, both accepted: DISPUTED, so it does not apply",
+                   "o-k-disputed")
+    assert k(prop)["applies"] is False and k(prop)["classification"]["judgement"] == "disputed"
+    _, prop = both("X7c the classification held from day 1 to day 4 only (valid time)", "o-k-ended")
+    assert k(prop)["applies"] is False and k(prop)["classification"]["judgement"] == "not holding"
+    _, prop = both("X7d a plan branching after the swap inherits the classification and the accounts", "o-swap-1for1",
+                   world="plan-late")
+    assert k(prop)["applies"] is True and k(prop)["judgement"] == "disputed"
+    _, prop = both("X7d2 a plan that stipulates the denial of the inherited classification", "o-swap-1for1",
+                   world="plan-deny")
+    assert k(prop)["applies"] is False and k(prop)["classification"]["judgement"] == "not holding"
+    _, prop = both("X7d3 a plan that classifies an occurrence the actual world leaves unclassified", "o-swap-plan",
+                   world="plan-classify")
+    assert k(prop)["applies"] is True and k(prop)["judgement"] == "disputed"
+    _, prop = both("X7d4 the same occurrence in the actual world", "o-swap-plan")
+    assert k(prop)["applies"] is False and k(prop)["classification"]["judgement"] == "unknown"
     print("\nall cases behave as recorded")
 finally:
     driver.databases.get(DB).delete()
