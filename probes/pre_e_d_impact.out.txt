@@ -54,3 +54,7 @@ Totals:
   description listed without an account in the world: 18
   role judged: 12
   views: 398
+  views with a judgement change (a constrained role DISPUTED): 0
+  views with a role-presentation change (`roles` keeps apart what `participants` merges): 8
+
+baseline written: 398 views

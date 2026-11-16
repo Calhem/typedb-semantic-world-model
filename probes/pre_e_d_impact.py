@@ -15,6 +15,8 @@ is its baseline. Output: probes/pre_e_d_impact.out.txt.
 """
 
 import argparse
+import gzip
+import json
 import sys
 from collections import Counter
 from pathlib import Path
@@ -22,6 +24,8 @@ from pathlib import Path
 ap = argparse.ArgumentParser()
 ap.add_argument("checkout")
 ap.add_argument("--db", default="wm-probe-pre-e-d")
+ap.add_argument("--out", help="write the frozen baseline (every view: current answer and proposed judgement), .json.gz")
+ap.add_argument("--compare", help="compare against a frozen baseline: existing fields and judgements, view by view")
 a = ap.parse_args()
 sys.path.insert(0, str(Path(a.checkout).resolve() / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -34,6 +38,19 @@ with wm._reading() as tx:
     worlds = sorted({q.opt(r, "id") for r in q.rows(tx, "match $w isa world, has wm-id $id;")})
 print("Declarations evaluated:", ", ".join(f"{t}.{r}" + (f" (only as {k})" if k else "") for t, r, k in DECLARED))
 totals = Counter()
+views = {}
+
+
+def norm(x):
+    return json.loads(json.dumps(x, sort_keys=True, default=str))
+
+
+def judgement_of(prop):
+    """The judgement part of a proposed view (what may never change silently): per judged role, whether it applies,
+    the classification's judgement, the role's judgement and the players by identity."""
+    return {r: {"applies": j["applies"], "classification": (j.get("classification") or {}).get("judgement"),
+                "judgement": j.get("judgement"), "players": [p["names"] for p in j.get("players", [])]}
+            for r, j in prop["judged"].items()}
 for w in worlds:
     atts = wm.visible(w)
     occs = sorted({x for at in atts.values() if at.kind == "describes" for x in at.roles.get("occurrence", [])})
@@ -48,6 +65,13 @@ for w in worlds:
             totals["views"] += 1
             cur = wm.occurrence(w, occ, as_of, perspective)
             prop = proposed_view(wm, w, occ, as_of, perspective)
+            key = json.dumps([w, occ, perspective, "earlier" if as_of else "latest"])
+            merged = sorted(core for core in cur["participants"]
+                            if len({r for r, e in prop["roles"].items() if e["core_role"] == core}) > 1)
+            views[key] = norm({"current": {"descriptions": cur["descriptions"], "participants": cur["participants"]},
+                               "proposed": {"accounts": prop["descriptions"], "roles": prop["roles"],
+                                            "judgement": judgement_of(prop)},
+                               "presentation_change": merged})
             ctx = f"{occ} [{perspective}{', earlier' if as_of else ''}]"
             for name, j in prop["judged"].items():
                 if not j["applies"]:
@@ -77,5 +101,27 @@ for w in worlds:
                     totals["description listed without an account in the world"] += 1
                     print(f"  {ctx}: current descriptions list {d} (no account in {w})")
 print("\nTotals:")
+totals["views with a role-presentation change (`roles` keeps apart what `participants` merges)"] = \
+    sum(1 for v in views.values() if v["presentation_change"])
+totals["views with a judgement change (a constrained role DISPUTED)"] = \
+    sum(1 for v in views.values() if any(j["judgement"] == "disputed" for j in v["proposed"]["judgement"].values()))
 for k, v in sorted(totals.items()):
     print(f"  {k}: {v}")
+if a.out:
+    with gzip.open(a.out, "wt") as f:
+        json.dump({"views": views}, f, sort_keys=True, indent=0)
+    print(f"\nbaseline written: {len(views)} views")
+if a.compare:
+    with gzip.open(a.compare, "rt") as f:
+        frozen = json.load(f)["views"]
+    same_keys = set(frozen) == set(views)
+    cur_diff = [k for k in frozen if k in views and frozen[k]["current"] != views[k]["current"]]
+    common = [k for k in frozen if k in views]
+    jud_diff = [k for k in common if frozen[k]["proposed"]["judgement"] != views[k]["proposed"]["judgement"]]
+    pres_diff = [k for k in common if frozen[k]["presentation_change"] != views[k]["presentation_change"]]
+    print(f"\ncompared with {a.compare}: {len(frozen)} frozen views, {len(views)} now, same views: {same_keys}")
+    print(f"  existing fields (descriptions, participants) different: {len(cur_diff)}")
+    print(f"  judgements different: {len(jud_diff)}")
+    print(f"  role-presentation changes different: {len(pres_diff)}")
+    for k in cur_diff + jud_diff + pres_diff:
+        print("   ", k)

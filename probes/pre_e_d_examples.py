@@ -5,7 +5,8 @@
 Builds one throwaway database (wm-probe-pre-e-d-*, deleted afterwards) with the core and the three profiles, writes the
 cases of docs/core-0.4/pre-e-increment-d-design.md, section "Examples", and prints for each the current merged view
 (`wm.occurrence`) and the view under the proposed rule. The proposed rule is computed here, in the probe
-(`proposed_view`, in probes/pre_e_d_rule.py), from public readers only; nothing in the library is changed. Each case asserts the current answer
+(`proposed_view`, in probes/pre_e_d_rule.py), from public readers only; nothing in the library is changed.
+Each case asserts the current answer
 and the proposed one, so the output records both. Output: probes/pre_e_d_examples.out.txt.
 
 Proposed rule (design section 3), in short:
