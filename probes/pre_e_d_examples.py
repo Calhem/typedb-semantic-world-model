@@ -5,7 +5,7 @@
 Builds one throwaway database (wm-probe-pre-e-d-*, deleted afterwards) with the core and the three profiles, writes the
 cases of docs/core-0.4/pre-e-increment-d-design.md, section "Examples", and prints for each the current merged view
 (`wm.occurrence`) and the view under the proposed rule. The proposed rule is computed here, in the probe
-(`proposed_view`), from public readers only; nothing in the library is changed. Each case asserts the current answer
+(`proposed_view`, in probes/pre_e_d_rule.py), from public readers only; nothing in the library is changed. Each case asserts the current answer
 and the proposed one, so the output records both. Output: probes/pre_e_d_examples.out.txt.
 
 Proposed rule (design section 3), in short:
@@ -30,14 +30,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(sys.argv[1] if len(sys.argv) > 1 else ".").resolve() / "src"))
 from worldmodel import CORE_MODULES, WorldModel, connect, mechanical as mech, organisation as org  # noqa: E402
-from worldmodel import typeql as q  # noqa: E402
-from worldmodel.semantics import usable  # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from pre_e_d_rule import ONE_FOR_ONE, proposed_view  # noqa: E402
 
 OUT = {}
-ONE_FOR_ONE = "mechanical:one-for-one"
-# (event type, core role, event kind or None): the proposed profile declarations
-DECLARED = (("official-act", "actor", None), ("official-act", "office", None), ("official-act", "office-context", None),
-            ("replacement", "patient", ONE_FOR_ONE), ("replacement", "fitted", ONE_FOR_ONE))
 
 
 def T(day, h=9):
@@ -58,87 +54,6 @@ def show(case, **values):
     print(f"\n=== {case}")
     for k, v in values.items():
         print(f"  {k}: {json.dumps(v, default=str)}")
-
-
-def scoped_roles(wm, d):
-    """{own role name: (core role, [players])} of a description, from its stored (scoped) role labels."""
-    out = {}
-    with wm._reading() as tx:
-        for r in q.rows(tx, "match $e isa event, has wm-id == $id; $e links ($role: $x); $x has wm-id $xid;",
-                        {"id": d}):
-            label = r.get("role").get_label()
-            out.setdefault(label.split(":")[-1], (wm.core_role(label), []))[1].append(q.opt(r, "xid"))
-    return {k: (c, sorted(v)) for k, (c, v) in out.items()}
-
-
-def state(recs, perspective, as_of):
-    """'accepted', 'disputed', 'denied' or 'not accepted', at the nearest depth with a usable claim (as `_judge`)."""
-    use = [a for a in recs if usable(a, perspective, as_of)]
-    if not use:
-        return "not accepted", None
-    depth = min(a.depth for a in use)
-    pol = {a.polarity for a in use if a.depth == depth}
-    return ("disputed" if len(pol) > 1 else "accepted" if True in pol else "denied"), depth
-
-
-def proposed_view(wm, world, occ, as_of=None, perspective="system"):
-    atts = wm.visible(world, as_of, perspective)
-    ident = wm.identity(world, as_of, perspective)
-    members = set(ident.members(occ))
-    links = {}
-    for a in atts.values():
-        if a.kind == "describes" and members & set(a.roles.get("occurrence", [])):
-            for d in a.roles.get("description", []):
-                links.setdefault(d, []).append(a)
-    descs = []
-    for d, recs in sorted(links.items()):
-        link, _ = state(recs, perspective, as_of)
-        accounts = [a for a in atts.values() if a.kind == "event" and a.content == d]
-        account, depth = state(accounts, perspective, as_of) if accounts else ("none in this world", None)
-        starts = [a.start.earliest for a in accounts if usable(a, perspective, as_of) and a.polarity and a.start]
-        descs.append({"description": d, "type": wm.content(d)["type"],
-                      "attesters": sorted({a.attester for a in accounts}),
-                      "link": link, "account": account, "depth": depth, "start": min(starts) if starts else None,
-                      "roles": scoped_roles(wm, d)})
-    roles = {}
-    for x in descs:
-        for own, (core, players) in x["roles"].items():
-            e = roles.setdefault(own, {"core_role": core, "players": {}})
-            for p in players:
-                e["players"].setdefault(p, []).append(x["description"])
-    compared = [x for x in descs if x["link"] == "accepted" and x["account"] == "accepted"]
-    starts = [x["start"] for x in compared if x["start"] is not None]
-    at = min(starts) if starts else None
-    judged = {}
-    for etype, core, kind in DECLARED:
-        group = [x for x in compared if wm.is_a(x["type"], etype)
-                 and any(c == core for c, _ in x["roles"].values())]
-        if not group:
-            continue
-        if kind is not None:
-            cls = wm.holds(world, "classified-as", {"classified": occ, "class": kind}, at, as_of, perspective) \
-                if at is not None else None
-            if cls is None or cls.holds is not True:
-                judged[f"{etype}.{core}"] = {"constraint": f"only as {kind}", "applies": False}
-                continue
-        depth = min(x["depth"] for x in group)
-        near = [x for x in group if x["depth"] == depth]
-        players = {}
-        for x in near:
-            for c, ps in x["roles"].values():
-                if c == core:
-                    for p in ps:
-                        players.setdefault(ident.canonical(p), {}).setdefault(p, []).append(
-                            (x["description"], x["attesters"]))
-        judged[f"{etype}.{core}"] = {
-            "constraint": kind or "declared", "applies": True,
-            "judgement": "disputed" if len(players) > 1 else "established",
-            "players": [{"names": sorted(names), "cited": sorted({c for v in names.values() for c, _ in v})}
-                        for _, names in sorted(players.items())],
-            "overridden": sorted(x["description"] for x in group if x["depth"] != depth)}
-    return {"descriptions": [{k: v for k, v in x.items() if k not in ("roles", "start")} for x in descs],
-            "roles": {r: {"core_role": e["core_role"], "players": e["players"]} for r, e in sorted(roles.items())},
-            "judged": judged}
 
 
 def accept_account(wm, world, event, holder="system", attester=None):
@@ -231,8 +146,10 @@ try:
     assert prop["judged"]["official-act.actor"]["judgement"] == "disputed"
     assert [p["names"] for p in prop["judged"]["official-act.actor"]["players"]] == [["bea"], ["cal"]]
     assert prop["judged"]["official-act.office"]["judgement"] == "established"
-    assert set(prop["roles"]) == {"actor", "location", "official", "office", "office-context"}   # X5: own names
-    assert prop["roles"]["official"]["core_role"] == "actor" and list(prop["roles"]["actor"]["players"]) == ["dan"]
+    assert set(prop["roles"]) == {"event:actor", "event:location", "official-act:official", "official-act:office",
+                                  "official-act:office-context"}                       # X5: stored labels
+    assert prop["roles"]["official-act:official"]["core_role"] == "actor"
+    assert list(prop["roles"]["event:actor"]["players"]) == ["dan"]                    # listed apart, never compared
 
     _, prop = both("X1b the auditor accepts the HR account only", "o-act", perspective="auditor")
     assert prop["judged"]["official-act.actor"]["judgement"] == "established"
@@ -272,13 +189,13 @@ try:
     cur, prop = both("X2 a two-bearing job: two one-for-one accounts, one occurrence", "o-job")
     assert set(cur["participants"]["patient"]) == {"b1", "b2"}
     assert prop["judged"]["replacement.patient"]["applies"] is False       # no dispute: not one-for-one
-    assert set(prop["roles"]["removed"]["players"]) == {"b1", "b2"}
+    assert set(prop["roles"]["replacement:removed"]["players"]) == {"b1", "b2"}
 
     cur, prop = both("X2b two sources disagree about the removed part; occurrence not classified", "o-swap")
     assert prop["judged"]["replacement.patient"]["applies"] is False
     assert set(cur["participants"]["patient"]) == {"b1", "b2", "b3"}        # current: core and profile names merged
-    assert set(prop["roles"]["patient"]["players"]) == {"b3"}
-    assert set(prop["roles"]["removed"]["players"]) == {"b1", "b2"}
+    assert set(prop["roles"]["event:patient"]["players"]) == {"b3"}
+    assert set(prop["roles"]["replacement:removed"]["players"]) == {"b1", "b2"}
 
     _, prop = both("X2c the same occurrence established as one-for-one at its start", "o-swap-1for1")
     assert prop["judged"]["replacement.patient"]["judgement"] == "disputed"
