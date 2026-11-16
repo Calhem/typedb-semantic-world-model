@@ -222,7 +222,9 @@ class DynamicsMixin:
                 support = sorted({a.id for c in classes if judged[c][0] in (True, "disputed") for a in judged[c][1]})
                 rivals = sorted({a.id for c in classes for r in conf.get(c, ()) for a in judged[r][1]})
                 disputed = any(judged[c][0] == "disputed" or c in conf for c in classes)
-                sup = [a for c in classes if judged[c][0] in (True, False) for a in judged[c][1]]
+                # a slot's status: the core rule over the support of the values held, as value_of (increment C,
+                # C-6); an accepted denial of another value is not support for the value held
+                sup = [a for c in classes if judged[c][0] is True for a in judged[c][1]]
                 if info["kind"] == "slot":
                     v = info["value_role"]
                     values = sorted((dict(c[2]) if v == PARAMS_VALUE else list(dict(c[1]).get(v, ())))
