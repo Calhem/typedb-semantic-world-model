@@ -5,8 +5,9 @@
 Builds one throwaway database (wm-probe-pre-e-c-*, deleted afterwards) with the core and the three profiles, writes the
 cases of docs/core-0.4/pre-e-increment-c-design.md, section "Examples", and prints for each the current answer and the
 answer under the proposed rule. The proposed rule is computed here, in the probe, from the canonical records
-(`wm.judgement`): no source file is changed. Each case asserts both, so the probe fails if the current behaviour
-differs from what the design records; after increment C is implemented it is updated to assert the new behaviour.
+(`wm.judgement`), independently of the readers. Since increment C (LABS-1.040) the readers implement it: each case
+asserts that the current answer equals the proposed one (before, at `b1c45c4`, it asserted the old behaviour; that
+output is kept in git history). The permanent tests are tests/test_r_aggregate.py.
 
 Proposed rule for one question answered by several holdings (`capable`, `authorised`, `calibration_status`):
 - DISPUTED if any applicable holding is disputed, or one is established while another is denied (unchanged);
@@ -142,15 +143,15 @@ try:
 
     e1d = cap("E1 capable(dan): general inherited ASSERTED + contextual STIPULATED", "dan")
     e1c = cap("E1 capable(cal): general STIPULATED + contextual inherited ASSERTED (the mirror)", "cal")
-    assert name(e1d["system"]["current"][0]) == "ASSERTED" and name(e1c["system"]["current"][0]) == "STIPULATED"
+    assert name(e1d["system"]["current"][0]) == name(e1c["system"]["current"][0]) == "STIPULATED"
     assert e1d["system"]["proposed"] == e1c["system"]["proposed"] == Status.STIPULATED
     assert name(e1d["audit"]["current"][0]) == name(e1d["audit"]["proposed"]) == "STIPULATED"  # audit: only the plan's
 
     e3 = cap("E3 capable(eve): general INFERRED + contextual ASSERTED, both inherited", "eve")
-    assert name(e3["system"]["current"][0]) == "INFERRED" and e3["system"]["proposed"] == Status.ASSERTED
+    assert name(e3["system"]["current"][0]) == "ASSERTED" and e3["system"]["proposed"] == Status.ASSERTED
 
     e4 = cap("E4 capable(fay): general expired (ASSERTED) + contextual denial STIPULATED", "fay")
-    assert e4["system"]["current"][1] == "denied" and e4["system"]["proposed"] == Status.STIPULATED
+    assert e4["system"]["current"] == [Status.STIPULATED, "denied"] and e4["system"]["proposed"] == Status.STIPULATED
 
     e5 = cap("E5 capable(gus): general established ASSERTED + contextual denial STIPULATED (conflict)", "gus")
     assert name(e5["system"]["current"][0]) == "DISPUTED" == name(e5["system"]["proposed"])
@@ -171,7 +172,7 @@ try:
                   "grants": [(g["grantor"], g["judgement"], g["status"]) for g in r["grants"]],
                   "proposed": proposed(recs)}
     show("E6 authorised(bea, can-sign, depot): acme inherited ASSERTED + board STIPULATED", **row)
-    assert name(row["system"]["current"][0]) == "ASSERTED" and row["system"]["proposed"] == Status.STIPULATED
+    assert row["system"]["current"][0] == row["system"]["proposed"] == Status.STIPULATED
 
     # E7 calibration_status: three certificates in force, three bases
     row = {}
@@ -183,7 +184,7 @@ try:
                   "certificates": [(c["certificate"], c["judgement"], c["status"]) for c in r["certificates"]],
                   "proposed": proposed(recs)}
     show("E7 calibration_status(balance): cert-1 STIPULATED, cert-2 INFERRED, cert-3 ASSERTED", **row)
-    assert row["system"]["proposed"] == Status.STIPULATED
+    assert row["system"]["current"][0] == row["system"]["proposed"] == Status.STIPULATED
 
     # E7b the same, but the stipulated certificate is named cert-4 (sorts last), in a second plan
     plan2 = wm.create_world("plan-2", kind="hypothetical", base=w, branch_at=T(2), id="plan-2")
@@ -195,7 +196,7 @@ try:
          system={"current": [r["status"], r["judgement"]],
                  "certificates": [(c["certificate"], c["judgement"], c["status"]) for c in r["certificates"]],
                  "proposed": proposed(recs)})
-    assert name(r["status"]) == "INFERRED" and proposed(recs) == Status.STIPULATED      # order decides today
+    assert r["status"] == proposed(recs) == Status.STIPULATED            # the names no longer decide
 
     # E8 office_holders: two holders of a non-exclusive office, different statuses (DI-6 as registered)
     row = {}
@@ -205,7 +206,7 @@ try:
                                "appointments": [(x["holder"], x["judgement"], x["status"]) for x in r["appointments"]],
                                "proposed": None if r["holders"] and name(r["status"]) != "DISPUTED" else r["status"]}
     show("E8 office_holders(office-x, depot): bea inherited ASSERTED + cal STIPULATED", **row)
-    assert name(row["plan/system"]["current"]) == "ASSERTED" and row["plan/system"]["proposed"] is None
+    assert all(v["current"] is None and v["proposed"] is None for v in row.values())
 
     # E9 employment: distinct contents, each with its own status; no aggregate exists or is proposed
     org.employ(wm, plan, "acme", "cal", start=T(3))
@@ -213,7 +214,7 @@ try:
     show("E9 employment(acme) in the plan", rows=[(r["employee"], r["judgement"], r["status"]) for r in rows])
     assert [name(r["status"]) for r in rows] == ["ASSERTED", "STIPULATED"]
 
-    # E10 one slot, another value denied: value_of and the changes() track disagree on the status
+    # E10 one slot, another value denied: value_of and the changes() track agree on the status (C-6)
     v = wm.value_of(w, "located-at", {"located": "box"}, T(5))
     ch = wm.changes(w, "box", T(2), T(6))
     tr = [x for x in ch["transitions"] if x["track"]["kind"] == "slot"]
@@ -222,6 +223,6 @@ try:
          changes_transition=[{"category": x["category"], "before": [x["before"]["status"], x["before"]["values"]],
                               "after": [x["after"]["status"], x["after"]["values"]]} for x in tr])
     assert name(v.status) == "INFERRED"
-    assert [name(x["after"]["status"]) for x in tr] == ["ASSERTED"]       # the denial of room-2 is folded in
+    assert [name(x["after"]["status"]) for x in tr] == ["INFERRED"]       # the denial of room-2 is not support
 finally:
     driver.databases.get(DB).delete()
