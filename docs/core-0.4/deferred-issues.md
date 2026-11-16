@@ -20,7 +20,7 @@ tests.
 | # | Issue | Found | Must be resolved | Status |
 |---|---|---|---|---|
 | DI-1 | disputed content omitted from generic fact and role reports (`facts_about`, `roles_of`) | D-1 (LABS-1.023) | before Stage E | corrected in increment B, approved and merged (LABS-1.039, `main` d9d873a) |
-| DI-2 | conflicting event participants are not judged together (single-valued roles) | D-1 (v0.2 D9) | before Stage E | open |
+| DI-2 | conflicting event participants are not judged together (single-valued roles) | D-1 (v0.2 D9) | before Stage E | open; increment D design at review (LABS-1.041) |
 | DI-3 | conflicting mechanical joint kinds are not judged | D-1 | no deadline | open (limitation) |
 | DI-4 | dependency-kind vocabulary is not validated | D-1 | no deadline | open (limitation) |
 | DI-5 | a future-effective appointment (or holding) with an unreviewed counter-claim is labelled "not established" | D-2 (LABS-1.026) | no deadline | corrected in increment B, approved and merged (LABS-1.039, `main` d9d873a) |
@@ -89,6 +89,16 @@ all usable descriptions.
   judged in the merged occurrence view, with DISPUTED and both accounts cited.
 - **(b)** Defer. This would block Stage E.
 - **Recommendation:** (a). It reuses the slot-as-data pattern (A0.3) and needs no schema change.
+
+**Increment D design (LABS-1.041), at review.** [pre-e-increment-d-design.md](pre-e-increment-d-design.md). Two of
+this entry's premises were corrected while preparing it:
+- each event role already holds **at most one player per account** (TypeDB's default `@card(0..1)`), so several
+  players of a role arise only across accounts of one occurrence, and a two-part job can only be recorded that way;
+  whether a replacement's `removed` is single-valued therefore depends on the operation (proposed: constrained only for
+  occurrences established as one-for-one; proposed DI-13 for the per-account cardinality);
+- the review's reference count (bearing-1 against bearing-3 at `o-bearing-replacement`) merged two different roles
+  under the core name `patient`: the CMMS replacement's removed part and the technician's work-log patient. Measured on
+  the reference worlds, the proposed rule changes no judgement (`probes/pre_e_d_impact.out.txt`).
 
 ## DI-3: conflicting mechanical joint kinds
 **What happens.** `connected-to(a, b, bolted)` and `connected-to(a, b, welded)` are two contents. Both can hold, so they
