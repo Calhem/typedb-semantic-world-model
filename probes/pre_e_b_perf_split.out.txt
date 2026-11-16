@@ -1,0 +1,33 @@
+Median ms per call: median over 4 alternating rounds (each round's figure is itself a median of 5 calls); queries per call.
+reader          world           subject          queries old/new/new-no-excl    ms old  ms new  ms new-no-excl
+*facts_about    org             depot-7                             14/19/14      31.3    38.5            32.2
+ facts_about    org             acme                                14/14/14      28.4    29.2            27.9
+*facts_about    org             bea                                 14/24/14      25.4    43.5            23.7
+*facts_about    org-plan-reorg  depot-7                             27/45/27      59.5    77.7            53.1
+ facts_about    org-plan-reorg  acme                                27/27/27      54.8    47.8            45.2
+*facts_about    org-plan-reorg  cal                                 27/47/27      41.2    82.7            39.0
+ parts          org             depot-7                                5/5/5       6.7     6.3             6.5
+ parts          org             acme                                   5/5/5       7.3     6.5             6.7
+ parts          org             bea                                    5/5/5       8.1     6.3             6.7
+ parts          org-plan-reorg  depot-7                             10/10/10      13.1    13.4            12.4
+ parts          org-plan-reorg  acme                                10/10/10      13.9    12.1            12.1
+ parts          org-plan-reorg  cal                                 10/10/10      13.5    12.9            11.7
+ occurrence_status org             o-signoff-9                         48/48/48      63.7    60.7            58.8
+ occurrence_status org-plan-reorg  o-signoff-9                         92/92/92     117.9   113.8           107.0
+ causes_of      org             o-signoff-9                         39/39/39      49.5    46.8            49.8
+ causes_of      org-plan-reorg  o-signoff-9                         75/75/75      89.6    85.0            82.7
+ capable        org             acme/agent                          14/14/14      20.8    21.6            20.8
+ capable        org             auditor/agent                       14/14/14      19.0    16.5            17.1
+ capable        org             bea/agent                           14/14/14      19.9    19.6            19.4
+ capable        org-plan-reorg  acme/agent                          27/27/27      40.0    40.0            38.4
+ capable        org-plan-reorg  auditor/agent                       27/27/27      29.1    28.9            29.4
+ capable        org-plan-reorg  bea/agent                           27/27/27      37.8    34.8            34.9
+*office_holders org             safety-officer                      30/35/30      45.4    51.5            43.8
+*office_holders org             site-manager                        29/34/29      44.2    49.6            44.4
+*office_holders org-plan-reorg  safety-officer                      57/75/57     114.3   108.7            82.0
+*office_holders org-plan-reorg  site-manager                        56/74/56      97.2   106.7            86.5
+*offices_of     org             bea                                 44/59/44      66.2    88.3            66.3
+*offices_of     org             cal                                 15/25/15      22.9    37.0            22.4
+*offices_of     org-plan-reorg  bea                                84/122/84     135.2   174.6           123.5
+*offices_of     org-plan-reorg  cal                                84/122/84     140.8   187.7           125.0
+* = subject where office exclusivity applies (more queries with it on).

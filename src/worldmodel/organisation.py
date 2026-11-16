@@ -25,7 +25,7 @@ conflict, read from the canonical judgement, is reported beside it.
 Functions take the WorldModel, as in `worldmodel.mechanical`.
 """
 
-from .judgement import AttestedConstraint, attested_conflict, without_attested
+from .judgement import AttestedConstraint, attested_conflict, collection_status, combine, without_attested
 from .model import SCHEMA_DIR, SYSTEM
 from .profiles import PROFILES, Profile
 from .semantics import Status
@@ -56,7 +56,7 @@ def _until(attest):
 
 def _public(rows):
     """Drop the internal per-content label from report rows."""
-    return [{k: v for k, v in r.items() if k != "_label"} for r in rows]
+    return [{k: v for k, v in r.items() if not k.startswith("_")} for r in rows]
 
 
 def _judged(wm, entry):
@@ -114,16 +114,6 @@ def _appointments(wm, world, office, context, t, as_of, perspective):
     return sorted(out, key=lambda r: r["holder"]), conflicted
 
 
-def _overall(entries, conflict):
-    established = [h for h in entries if h["judgement"] == "established"]
-    if conflict or any(h["judgement"] == "disputed" for h in entries):
-        return Status.DISPUTED
-    if established:
-        statuses = sorted({h["status"] for h in established}, key=lambda s: s.value)
-        return statuses[0] if len(statuses) == 1 else Status.ASSERTED      # per-holder statuses are authoritative
-    return Status.UNKNOWN if entries else Status.NOT_YET_KNOWN
-
-
 def office_holders(wm, world, office, context, t, as_of=None, perspective=SYSTEM):
     """Who holds `office` in `context` at t, for the perspective.
     - appointments: every appointment content for this office and context, each with its own judgement and evidence
@@ -131,7 +121,11 @@ def office_holders(wm, world, office, context, t, as_of=None, perspective=SYSTEM
     - holders: the established ones;
     - exclusive: the single-holder constraint's own judgement at t;
     - conflict: when the constraint holds and more than one appointment is established: the constraint's support and
-      each conflicting appointment's accepted attestations; the status is then DISPUTED.
+      each conflicting appointment's accepted attestations;
+    - status (rule C, increment C): DISPUTED on a conflict or a disputed appointment; None when holders are
+      established without conflict (there is no single support status for several people, or for the office: each
+      appointment keeps its own status); UNKNOWN when appointments exist but none is established; NOT_YET_KNOWN when
+      there are none.
     Nothing is inferred about anyone not mentioned."""
     _require(wm)
     entries, conflicted = _appointments(wm, world, office, context, t, as_of, perspective)
@@ -144,7 +138,7 @@ def office_holders(wm, world, office, context, t, as_of=None, perspective=SYSTEM
                                       "attestations": [a["attestation"] for a in h["evidence"]
                                                        if a["acceptance"] == "accepted"]}
                                      for h in entries if h["judgement"] == "established"]}
-    return {"office": office, "context": context, "holders": holders, "status": _overall(entries, conflict),
+    return {"office": office, "context": context, "holders": holders, "status": collection_status(entries, conflict),
             "exclusive": exclusive, "conflict": conflict, "appointments": _public(entries)}
 
 
@@ -178,7 +172,8 @@ def authorise(wm, world, grantor, holder, power, scope, attester=SYSTEM, polarit
 
 def authorised(wm, world, holder, power, scope, t, as_of=None, perspective=SYSTEM):
     """Is `holder` authorised to exercise `power` within exactly `scope` at t (D-D-4: no containment)?
-    holds / status / judgement as capable() (same six cases); grants: each authorisation content for that power and
+    holds / status / judgement as capable() (same six cases, combined over the grants by rule Q; `support`: the
+    deciding claims the status rests on); grants: each authorisation content for that power and
     scope, with its grantor and its reporting sources as separate fields and its own judgement and evidence; only_in:
     scopes where the power is established instead; grantor_entitlement: always "not assessed" (D-D-3)."""
     _require(wm)
@@ -188,10 +183,9 @@ def authorised(wm, world, holder, power, scope, t, as_of=None, perspective=SYSTE
             found.append({"grantor": e.stated_roles["grantor"][0], "scope": e.stated_roles["scope"][0],
                           "reported_by": sorted({a["attester"] for a in e.claims()}), **_judged(wm, e)})
     grants = sorted((g for g in found if g["scope"] == scope), key=lambda g: g["grantor"])
-    holds, status, judgement = wm._combine([{"judgement": g["_label"], "status": g["status"]} for g in grants],
-                                           bool(found))
+    holds, status, judgement, support = combine([g["_record"] for g in grants], bool(found))
     return {"holder": holder, "power": power, "scope": scope, "holds": holds, "status": status,
-            "judgement": judgement, "grants": _public(grants),
+            "judgement": judgement, "support": list(support), "grants": _public(grants),
             "only_in": sorted({g["scope"] for g in found if g["scope"] != scope and g["judgement"] == "established"}),
             "grantor_entitlement": NOT_ASSESSED}
 

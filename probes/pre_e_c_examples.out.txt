@@ -1,0 +1,46 @@
+
+=== E1 capable(dan): general inherited ASSERTED + contextual STIPULATED
+  system: {"current": ["STIPULATED", "established"], "holdings": [[null, "accepted", "ASSERTED"], ["depot", "accepted", "STIPULATED"]], "proposed": "STIPULATED"}
+  audit: {"current": ["STIPULATED", "established"], "holdings": [[null, "unreviewed", null], ["depot", "accepted", "STIPULATED"]], "proposed": "STIPULATED"}
+
+=== E1 capable(cal): general STIPULATED + contextual inherited ASSERTED (the mirror)
+  system: {"current": ["STIPULATED", "established"], "holdings": [[null, "accepted", "STIPULATED"], ["depot", "accepted", "ASSERTED"]], "proposed": "STIPULATED"}
+  audit: {"current": ["STIPULATED", "established"], "holdings": [[null, "accepted", "STIPULATED"], ["depot", "unreviewed", null]], "proposed": "STIPULATED"}
+
+=== E3 capable(eve): general INFERRED + contextual ASSERTED, both inherited
+  system: {"current": ["ASSERTED", "established"], "holdings": [[null, "accepted", "INFERRED"], ["depot", "accepted", "ASSERTED"]], "proposed": "ASSERTED"}
+  audit: {"current": ["UNKNOWN", "not established"], "holdings": [[null, "unreviewed", null], ["depot", "unreviewed", null]], "proposed": "UNKNOWN or NOT_YET_KNOWN (unchanged)"}
+
+=== E4 capable(fay): general expired (ASSERTED) + contextual denial STIPULATED
+  system: {"current": ["STIPULATED", "denied"], "holdings": [[null, "expired", "ASSERTED"], ["depot", "denied", "STIPULATED"]], "proposed": "STIPULATED"}
+  audit: {"current": ["STIPULATED", "denied"], "holdings": [[null, "unreviewed", null], ["depot", "denied", "STIPULATED"]], "proposed": "STIPULATED"}
+
+=== E5 capable(gus): general established ASSERTED + contextual denial STIPULATED (conflict)
+  system: {"current": ["DISPUTED", "disputed"], "holdings": [[null, "accepted", "ASSERTED"], ["depot", "denied", "STIPULATED"]], "proposed": "DISPUTED"}
+  audit: {"current": ["STIPULATED", "denied"], "holdings": [[null, "unreviewed", null], ["depot", "denied", "STIPULATED"]], "proposed": "STIPULATED"}
+
+=== E2 capable(dan) in the actual world
+  current: ["ASSERTED", "established"]
+
+=== E6 authorised(bea, can-sign, depot): acme inherited ASSERTED + board STIPULATED
+  system: {"current": ["STIPULATED", "established"], "grants": [["acme", "established", "ASSERTED"], ["board", "established", "STIPULATED"]], "proposed": "STIPULATED"}
+  audit: {"current": ["STIPULATED", "established"], "grants": [["acme", "not established", "UNKNOWN"], ["board", "established", "STIPULATED"]], "proposed": "STIPULATED"}
+
+=== E7 calibration_status(balance): cert-1 STIPULATED, cert-2 INFERRED, cert-3 ASSERTED
+  system: {"current": ["STIPULATED", "established"], "certificates": [["cert-1", "established", "STIPULATED"], ["cert-2", "established", "INFERRED"], ["cert-3", "established", "ASSERTED"]], "proposed": "STIPULATED"}
+  audit: {"current": ["STIPULATED", "established"], "certificates": [["cert-1", "established", "STIPULATED"], ["cert-2", "not established", "UNKNOWN"], ["cert-3", "not established", "UNKNOWN"]], "proposed": "STIPULATED"}
+
+=== E7b calibration_status(balance), plan-2: cert-2 INFERRED, cert-3 ASSERTED, cert-4 STIPULATED
+  system: {"current": ["STIPULATED", "established"], "certificates": [["cert-2", "established", "INFERRED"], ["cert-3", "established", "ASSERTED"], ["cert-4", "established", "STIPULATED"]], "proposed": "STIPULATED"}
+
+=== E8 office_holders(office-x, depot): bea inherited ASSERTED + cal STIPULATED
+  plan/system: {"current": null, "holders": ["bea", "cal"], "appointments": [["bea", "established", "ASSERTED"], ["cal", "established", "STIPULATED"]], "proposed": null}
+  plan/audit: {"current": null, "holders": ["cal"], "appointments": [["bea", "not established", "UNKNOWN"], ["cal", "established", "STIPULATED"]], "proposed": null}
+  w/system: {"current": null, "holders": ["bea"], "appointments": [["bea", "established", "ASSERTED"]], "proposed": null}
+
+=== E9 employment(acme) in the plan
+  rows: [["bea", "established", "ASSERTED"], ["cal", "established", "STIPULATED"]]
+
+=== E10 located-at(box), actual world: room-1 then room-3 INFERRED; room-2 denied, ASSERTED
+  value_of_at_day_5: ["INFERRED", ["room-3"]]
+  changes_transition: [{"category": "world-state", "before": ["INFERRED", [["room-1"]]], "after": ["INFERRED", [["room-3"]]]}]

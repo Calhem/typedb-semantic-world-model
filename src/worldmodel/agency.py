@@ -12,7 +12,7 @@ occurrence's own status, the actor's agency and the capability separately, and c
 planning or prediction.
 """
 
-from .judgement import holding_label
+from .judgement import combine, holding_label
 from .semantics import Status
 
 SYSTEM = "system"
@@ -35,31 +35,11 @@ class AgencyMixin:
 
     def _judgement(self, rec):
         """One content's judgement (a canonical record) in the capable() vocabulary, with its evidence: the shared
-        per-content report of the profiles (organisation, LABS-1.026; laboratory, LABS-1.028)."""
-        label = holding_label(rec)
-        holds, status, judgement = self._combine([{"judgement": label, "status": rec.status}], True)
-        return {"judgement": judgement, "holds": holds, "status": status, "evidence": rec.claims(), "_label": label}
-
-    @staticmethod
-    def _combine(applicable, any_found):
-        """(holds, status, judgement) for a set of applicable holdings, each {"judgement", "status"} (LABS-1.019 cases;
-        shared by capable() and the organisation profile's reports, LABS-1.026). any_found: whether anything at all was
-        found (UNKNOWN rather than NOT_YET_KNOWN when nothing applies)."""
-        labels = {h["judgement"] for h in applicable}
-        if "disputed" in labels or {"accepted", "denied"} <= labels:
-            holds, status = None, Status.DISPUTED
-        elif "accepted" in labels:
-            holds = True
-            status = next(h["status"] for h in applicable if h["judgement"] == "accepted")
-        elif labels & {"denied", "expired"}:
-            holds = False                        # denied, or an accepted holding that has ended (as in holds())
-            status = next(h["status"] for h in applicable if h["judgement"] in ("denied", "expired"))
-        else:
-            holds, status = None, Status.UNKNOWN if any_found else Status.NOT_YET_KNOWN
-        judgement = ("disputed" if status == Status.DISPUTED else "established" if holds else
-                     ("denied" if "denied" in labels else "expired") if holds is False else
-                     "not yet effective" if "not yet effective" in labels else "not established")
-        return holds, status, judgement
+        per-content report of the profiles (organisation, LABS-1.026; laboratory, LABS-1.028). `_label` and `_record`
+        are internal (dropped from reports); `_record` lets a report combine holdings by their deciding claims."""
+        holds, status, judgement, _ = combine([rec], True)
+        return {"judgement": judgement, "holds": holds, "status": status, "evidence": rec.claims(),
+                "_label": holding_label(rec), "_record": rec}
 
     def _holdings(self, world, holder, concept, t, as_of, perspective, types=("classified-as",)):
         """Every classified-as content (or of `types`) of `holder` under `concept`, with its context and the
@@ -70,7 +50,7 @@ class AgencyMixin:
             if holder in e.stated_roles.get("classified", []) and concept in e.stated_roles.get("class", []):
                 ctx = e.stated_roles.get("context", [None])[0]
                 out.append({"context": ctx, "judgement": holding_label(e), "status": e.status,
-                            "attestations": e.claims()})
+                            "attestations": e.claims(), "_record": e})
         return sorted(out, key=lambda x: (x["context"] or "", x["judgement"]))
 
     def capable(self, world, holder, capability, t, context=None, as_of=None, perspective=SYSTEM):
@@ -78,7 +58,9 @@ class AgencyMixin:
         (no context) applies in every context; a contextual one only in its own. Holdings that apply only in other
         contexts are listed in `only_in`; every applicable holding is listed with its evidence in `applicable`.
 
-        holds and status are the core judgement (no new statuses); `judgement` names the case (LABS-1.019):
+        holds and status are the core judgement (no new statuses), combined over the applicable holdings by rule Q
+        (judgement.combine, increment C): the status rests on the union of the deciding claims, listed in `support`;
+        `judgement` names the case (LABS-1.019):
           established        holds True    an applicable holding is accepted at t
           denied             holds False   an accepted denial (polarity false) covers t
           expired            holds False   an accepted holding ended before t (no denial), as holds() treats any end
@@ -89,10 +71,10 @@ class AgencyMixin:
         A capability never establishes an action, and an action never establishes a capability."""
         found = self._holdings(world, holder, capability, t, as_of, perspective)
         applicable = [h for h in found if h["context"] is None or h["context"] == context]
-        holds, status, judgement = self._combine(applicable, bool(found))
+        holds, status, judgement, support = combine([h["_record"] for h in applicable], bool(found))
         return {"holder": holder, "capability": capability, "context": context, "holds": holds, "status": status,
-                "judgement": judgement,
-                "applicable": applicable,
+                "judgement": judgement, "support": list(support),
+                "applicable": [{k: v for k, v in h.items() if not k.startswith("_")} for h in applicable],
                 "only_in": sorted({h["context"] for h in found if h["context"] not in (None, context)
                                    and h["judgement"] == "accepted"})}
 

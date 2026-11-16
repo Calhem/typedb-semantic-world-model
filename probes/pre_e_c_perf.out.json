@@ -1,0 +1,4014 @@
+{
+ "rows": [
+  {
+   "reader": "facts_about",
+   "world": "actual",
+   "subject": "gbx-100",
+   "old": {
+    "queries": 20,
+    "ms": 195.9,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 20,
+    "ms": 151.4,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 20,
+    "ms": 137.0,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "actual",
+   "subject": "technician",
+   "old": {
+    "queries": 14,
+    "ms": 37.9,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 14,
+    "ms": 37.7,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 14,
+    "ms": 36.2,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "actual",
+   "subject": "bay-1",
+   "old": {
+    "queries": 27,
+    "ms": 53.7,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 123.1,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 65.2,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "lab",
+   "subject": "sample-12",
+   "old": {
+    "queries": 15,
+    "ms": 75.6,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 15,
+    "ms": 75.9,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 15,
+    "ms": 77.4,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "lab",
+   "subject": "ana",
+   "old": {
+    "queries": 14,
+    "ms": 25.9,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 14,
+    "ms": 25.9,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 14,
+    "ms": 24.7,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "lab",
+   "subject": "balance-b3",
+   "old": {
+    "queries": 14,
+    "ms": 25.5,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 14,
+    "ms": 24.6,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 14,
+    "ms": 25.4,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "lab-plan-recal",
+   "subject": "sample-12",
+   "old": {
+    "queries": 28,
+    "ms": 82.3,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 28,
+    "ms": 70.7,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 28,
+    "ms": 68.1,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "lab-plan-recal",
+   "subject": "balance-b3",
+   "old": {
+    "queries": 27,
+    "ms": 47.1,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 42.3,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 42.9,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "lab-plan-recal",
+   "subject": "ana",
+   "old": {
+    "queries": 27,
+    "ms": 44.8,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 42.2,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 42.6,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "lab-plan-tom",
+   "subject": "sample-12",
+   "old": {
+    "queries": 28,
+    "ms": 120.9,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 28,
+    "ms": 124.0,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 28,
+    "ms": 56.3,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "lab-plan-tom",
+   "subject": "ana",
+   "old": {
+    "queries": 27,
+    "ms": 41.9,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 41.8,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 39.4,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "lab-plan-tom",
+   "subject": "lab-1",
+   "old": {
+    "queries": 27,
+    "ms": 38.5,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 37.7,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 36.3,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "org",
+   "subject": "depot-7",
+   "old": {
+    "queries": 19,
+    "ms": 85.6,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 19,
+    "ms": 86.4,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 14,
+    "ms": 30.9,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "org",
+   "subject": "acme",
+   "old": {
+    "queries": 14,
+    "ms": 27.3,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 14,
+    "ms": 28.4,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 14,
+    "ms": 27.8,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "org",
+   "subject": "bea",
+   "old": {
+    "queries": 24,
+    "ms": 132.5,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 24,
+    "ms": 134.0,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 14,
+    "ms": 25.1,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "org-plan-reorg",
+   "subject": "depot-7",
+   "old": {
+    "queries": 45,
+    "ms": 181.7,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 45,
+    "ms": 184.0,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 54.1,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "org-plan-reorg",
+   "subject": "acme",
+   "old": {
+    "queries": 27,
+    "ms": 47.4,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 46.5,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 46.1,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "org-plan-reorg",
+   "subject": "cal",
+   "old": {
+    "queries": 47,
+    "ms": 407.6,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 47,
+    "ms": 321.3,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 37.6,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "plan-apprentice",
+   "subject": "gbx-100",
+   "old": {
+    "queries": 38,
+    "ms": 411.4,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 38,
+    "ms": 410.5,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 38,
+    "ms": 357.8,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "plan-apprentice",
+   "subject": "technician",
+   "old": {
+    "queries": 27,
+    "ms": 54.4,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 51.6,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 51.2,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "plan-apprentice",
+   "subject": "bay-1",
+   "old": {
+    "queries": 53,
+    "ms": 438.6,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 53,
+    "ms": 397.9,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 53,
+    "ms": 257.3,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "plan-move-bench",
+   "subject": "gbx-100",
+   "old": {
+    "queries": 37,
+    "ms": 327.4,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 37,
+    "ms": 323.9,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 37,
+    "ms": 315.8,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "plan-move-bench",
+   "subject": "shaft-asm-in",
+   "old": {
+    "queries": 28,
+    "ms": 105.1,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 28,
+    "ms": 104.8,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 28,
+    "ms": 44.6,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "plan-move-bench",
+   "subject": "bearing-1",
+   "old": {
+    "queries": 28,
+    "ms": 108.2,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 28,
+    "ms": 102.9,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 28,
+    "ms": 45.4,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "plan-relubricate-only",
+   "subject": "gbx-100",
+   "old": {
+    "queries": 38,
+    "ms": 394.8,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 38,
+    "ms": 368.5,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 38,
+    "ms": 338.3,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "plan-relubricate-only",
+   "subject": "o-test-run",
+   "old": {
+    "queries": 27,
+    "ms": 38.8,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 37.9,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 41.7,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "plan-relubricate-only",
+   "subject": "bench-1",
+   "old": {
+    "queries": 38,
+    "ms": 365.4,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 38,
+    "ms": 296.1,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 38,
+    "ms": 295.8,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "plan-rig-control",
+   "subject": "gbx-100",
+   "old": {
+    "queries": 38,
+    "ms": 400.9,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 38,
+    "ms": 354.0,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 38,
+    "ms": 346.7,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "plan-rig-control",
+   "subject": "technician",
+   "old": {
+    "queries": 27,
+    "ms": 58.7,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 57.6,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 57.1,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "plan-rig-control",
+   "subject": "bay-1",
+   "old": {
+    "queries": 53,
+    "ms": 104.3,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 53,
+    "ms": 427.5,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 53,
+    "ms": 266.6,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "plan-steel-cover",
+   "subject": "gbx-100",
+   "old": {
+    "queries": 37,
+    "ms": 317.0,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 37,
+    "ms": 161.4,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 37,
+    "ms": 313.0,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "plan-steel-cover",
+   "subject": "cover",
+   "old": {
+    "queries": 27,
+    "ms": 41.6,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 40.6,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 42.6,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "facts_about",
+   "world": "plan-steel-cover",
+   "subject": "shaft-asm-in",
+   "old": {
+    "queries": 28,
+    "ms": 45.8,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 28,
+    "ms": 41.8,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 28,
+    "ms": 42.9,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "actual",
+   "subject": "gbx-100",
+   "old": {
+    "queries": 6,
+    "ms": 27.1,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 6,
+    "ms": 25.8,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 6,
+    "ms": 26.8,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "actual",
+   "subject": "technician",
+   "old": {
+    "queries": 6,
+    "ms": 29.1,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 6,
+    "ms": 26.3,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 6,
+    "ms": 27.0,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "actual",
+   "subject": "bay-1",
+   "old": {
+    "queries": 6,
+    "ms": 26.1,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 6,
+    "ms": 25.2,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 6,
+    "ms": 23.1,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "lab",
+   "subject": "sample-12",
+   "old": {
+    "queries": 5,
+    "ms": 7.3,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 5,
+    "ms": 6.8,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 5,
+    "ms": 7.2,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "lab",
+   "subject": "ana",
+   "old": {
+    "queries": 5,
+    "ms": 7.1,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 5,
+    "ms": 6.6,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 5,
+    "ms": 6.5,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "lab",
+   "subject": "balance-b3",
+   "old": {
+    "queries": 5,
+    "ms": 6.7,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 5,
+    "ms": 6.9,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 5,
+    "ms": 6.4,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "lab-plan-recal",
+   "subject": "sample-12",
+   "old": {
+    "queries": 10,
+    "ms": 13.1,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 10,
+    "ms": 12.5,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 10,
+    "ms": 12.4,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "lab-plan-recal",
+   "subject": "balance-b3",
+   "old": {
+    "queries": 10,
+    "ms": 12.7,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 10,
+    "ms": 12.2,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 10,
+    "ms": 12.2,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "lab-plan-recal",
+   "subject": "ana",
+   "old": {
+    "queries": 10,
+    "ms": 13.0,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 10,
+    "ms": 12.4,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 10,
+    "ms": 12.2,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "lab-plan-tom",
+   "subject": "sample-12",
+   "old": {
+    "queries": 10,
+    "ms": 12.1,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 10,
+    "ms": 12.1,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 10,
+    "ms": 10.8,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "lab-plan-tom",
+   "subject": "ana",
+   "old": {
+    "queries": 10,
+    "ms": 10.9,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 10,
+    "ms": 10.9,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 10,
+    "ms": 10.5,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "lab-plan-tom",
+   "subject": "lab-1",
+   "old": {
+    "queries": 10,
+    "ms": 10.9,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 10,
+    "ms": 10.7,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 10,
+    "ms": 10.2,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "org",
+   "subject": "depot-7",
+   "old": {
+    "queries": 5,
+    "ms": 7.4,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 5,
+    "ms": 7.7,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 5,
+    "ms": 6.6,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "org",
+   "subject": "acme",
+   "old": {
+    "queries": 5,
+    "ms": 6.7,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 5,
+    "ms": 6.5,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 5,
+    "ms": 6.8,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "org",
+   "subject": "bea",
+   "old": {
+    "queries": 5,
+    "ms": 7.7,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 5,
+    "ms": 7.9,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 5,
+    "ms": 6.5,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "org-plan-reorg",
+   "subject": "depot-7",
+   "old": {
+    "queries": 10,
+    "ms": 13.7,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 10,
+    "ms": 12.3,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 10,
+    "ms": 12.5,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "org-plan-reorg",
+   "subject": "acme",
+   "old": {
+    "queries": 10,
+    "ms": 12.8,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 10,
+    "ms": 12.1,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 10,
+    "ms": 12.0,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "org-plan-reorg",
+   "subject": "cal",
+   "old": {
+    "queries": 10,
+    "ms": 13.8,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 10,
+    "ms": 13.3,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 10,
+    "ms": 12.5,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "plan-apprentice",
+   "subject": "gbx-100",
+   "old": {
+    "queries": 11,
+    "ms": 58.4,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 11,
+    "ms": 53.9,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 11,
+    "ms": 54.1,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "plan-apprentice",
+   "subject": "technician",
+   "old": {
+    "queries": 11,
+    "ms": 55.3,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 11,
+    "ms": 54.5,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 11,
+    "ms": 54.4,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "plan-apprentice",
+   "subject": "bay-1",
+   "old": {
+    "queries": 11,
+    "ms": 53.2,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 11,
+    "ms": 53.3,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 11,
+    "ms": 51.4,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "plan-move-bench",
+   "subject": "gbx-100",
+   "old": {
+    "queries": 11,
+    "ms": 25.3,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 11,
+    "ms": 52.6,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 11,
+    "ms": 53.7,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "plan-move-bench",
+   "subject": "shaft-asm-in",
+   "old": {
+    "queries": 11,
+    "ms": 23.6,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 11,
+    "ms": 22.9,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 11,
+    "ms": 22.4,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "plan-move-bench",
+   "subject": "bearing-1",
+   "old": {
+    "queries": 11,
+    "ms": 23.6,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 11,
+    "ms": 23.4,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 11,
+    "ms": 22.0,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "plan-relubricate-only",
+   "subject": "gbx-100",
+   "old": {
+    "queries": 11,
+    "ms": 24.8,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 11,
+    "ms": 26.1,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 11,
+    "ms": 25.7,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "plan-relubricate-only",
+   "subject": "o-test-run",
+   "old": {
+    "queries": 11,
+    "ms": 24.0,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 11,
+    "ms": 23.4,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 11,
+    "ms": 23.7,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "plan-relubricate-only",
+   "subject": "bench-1",
+   "old": {
+    "queries": 11,
+    "ms": 25.0,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 11,
+    "ms": 24.5,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 11,
+    "ms": 25.3,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "plan-rig-control",
+   "subject": "gbx-100",
+   "old": {
+    "queries": 11,
+    "ms": 26.4,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 11,
+    "ms": 24.9,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 11,
+    "ms": 24.0,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "plan-rig-control",
+   "subject": "technician",
+   "old": {
+    "queries": 11,
+    "ms": 24.7,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 11,
+    "ms": 25.4,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 11,
+    "ms": 23.5,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "plan-rig-control",
+   "subject": "bay-1",
+   "old": {
+    "queries": 11,
+    "ms": 25.2,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 11,
+    "ms": 25.7,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 11,
+    "ms": 24.6,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "plan-steel-cover",
+   "subject": "gbx-100",
+   "old": {
+    "queries": 11,
+    "ms": 24.0,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 11,
+    "ms": 23.1,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 11,
+    "ms": 23.1,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "plan-steel-cover",
+   "subject": "cover",
+   "old": {
+    "queries": 11,
+    "ms": 22.1,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 11,
+    "ms": 23.2,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 11,
+    "ms": 22.4,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "parts",
+   "world": "plan-steel-cover",
+   "subject": "shaft-asm-in",
+   "old": {
+    "queries": 11,
+    "ms": 22.6,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 11,
+    "ms": 21.7,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 11,
+    "ms": 24.2,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "actual",
+   "subject": "gbx-100",
+   "old": {
+    "queries": 112,
+    "ms": 285.8,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 112,
+    "ms": 275.4,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 112,
+    "ms": 241.5,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "actual",
+   "subject": "technician",
+   "old": {
+    "queries": 14,
+    "ms": 33.4,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 14,
+    "ms": 31.9,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 14,
+    "ms": 31.3,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "actual",
+   "subject": "bay-1",
+   "old": {
+    "queries": 27,
+    "ms": 44.2,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 44.5,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 41.5,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "lab",
+   "subject": "sample-12",
+   "old": {
+    "queries": 65,
+    "ms": 133.2,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 65,
+    "ms": 137.6,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 65,
+    "ms": 121.7,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "lab",
+   "subject": "ana",
+   "old": {
+    "queries": 53,
+    "ms": 66.8,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 53,
+    "ms": 66.7,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 53,
+    "ms": 67.2,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "lab",
+   "subject": "balance-b3",
+   "old": {
+    "queries": 40,
+    "ms": 50.1,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 40,
+    "ms": 48.6,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 40,
+    "ms": 49.7,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "lab-plan-recal",
+   "subject": "sample-12",
+   "old": {
+    "queries": 127,
+    "ms": 340.7,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 127,
+    "ms": 320.2,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 127,
+    "ms": 320.1,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "lab-plan-recal",
+   "subject": "balance-b3",
+   "old": {
+    "queries": 105,
+    "ms": 123.9,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 105,
+    "ms": 119.2,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 105,
+    "ms": 117.1,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "lab-plan-recal",
+   "subject": "ana",
+   "old": {
+    "queries": 105,
+    "ms": 121.0,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 105,
+    "ms": 127.1,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 105,
+    "ms": 120.8,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "lab-plan-tom",
+   "subject": "sample-12",
+   "old": {
+    "queries": 28,
+    "ms": 56.1,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 28,
+    "ms": 55.8,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 28,
+    "ms": 51.9,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "lab-plan-tom",
+   "subject": "ana",
+   "old": {
+    "queries": 27,
+    "ms": 38.6,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 36.7,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 35.7,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "lab-plan-tom",
+   "subject": "lab-1",
+   "old": {
+    "queries": 79,
+    "ms": 93.0,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 79,
+    "ms": 92.1,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 79,
+    "ms": 89.0,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "org",
+   "subject": "depot-7",
+   "old": {
+    "queries": 107,
+    "ms": 251.5,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 107,
+    "ms": 245.3,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 79,
+    "ms": 91.3,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "org",
+   "subject": "acme",
+   "old": {
+    "queries": 53,
+    "ms": 64.2,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 53,
+    "ms": 69.5,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 53,
+    "ms": 62.1,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "org",
+   "subject": "bea",
+   "old": {
+    "queries": 50,
+    "ms": 120.5,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 50,
+    "ms": 121.2,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 40,
+    "ms": 46.2,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "org-plan-reorg",
+   "subject": "depot-7",
+   "old": {
+    "queries": 275,
+    "ms": 646.7,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 275,
+    "ms": 562.9,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 209,
+    "ms": 222.9,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "org-plan-reorg",
+   "subject": "acme",
+   "old": {
+    "queries": 105,
+    "ms": 119.2,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 105,
+    "ms": 116.7,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 105,
+    "ms": 115.9,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "org-plan-reorg",
+   "subject": "cal",
+   "old": {
+    "queries": 99,
+    "ms": 316.3,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 99,
+    "ms": 230.8,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 79,
+    "ms": 86.2,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "plan-apprentice",
+   "subject": "gbx-100",
+   "old": {
+    "queries": 218,
+    "ms": 686.8,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 218,
+    "ms": 598.8,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 218,
+    "ms": 567.4,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "plan-apprentice",
+   "subject": "technician",
+   "old": {
+    "queries": 27,
+    "ms": 51.6,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 49.9,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 50.0,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "plan-apprentice",
+   "subject": "bay-1",
+   "old": {
+    "queries": 53,
+    "ms": 240.1,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 53,
+    "ms": 218.6,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 53,
+    "ms": 175.8,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "plan-move-bench",
+   "subject": "gbx-100",
+   "old": {
+    "queries": 89,
+    "ms": 288.2,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 89,
+    "ms": 268.0,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 89,
+    "ms": 268.7,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "plan-move-bench",
+   "subject": "shaft-asm-in",
+   "old": {
+    "queries": 80,
+    "ms": 100.6,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 80,
+    "ms": 94.8,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 80,
+    "ms": 95.6,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "plan-move-bench",
+   "subject": "bearing-1",
+   "old": {
+    "queries": 106,
+    "ms": 126.6,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 106,
+    "ms": 131.4,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 106,
+    "ms": 125.7,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "plan-relubricate-only",
+   "subject": "gbx-100",
+   "old": {
+    "queries": 139,
+    "ms": 463.4,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 139,
+    "ms": 458.1,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 139,
+    "ms": 449.0,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "plan-relubricate-only",
+   "subject": "o-test-run",
+   "old": {
+    "queries": 27,
+    "ms": 36.1,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 36.3,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 36.2,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "plan-relubricate-only",
+   "subject": "bench-1",
+   "old": {
+    "queries": 64,
+    "ms": 224.3,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 64,
+    "ms": 232.6,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 64,
+    "ms": 230.4,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "plan-rig-control",
+   "subject": "gbx-100",
+   "old": {
+    "queries": 218,
+    "ms": 553.6,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 218,
+    "ms": 583.3,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 218,
+    "ms": 522.6,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "plan-rig-control",
+   "subject": "technician",
+   "old": {
+    "queries": 27,
+    "ms": 51.8,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 52.6,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 50.7,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "plan-rig-control",
+   "subject": "bay-1",
+   "old": {
+    "queries": 53,
+    "ms": 194.4,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 53,
+    "ms": 200.0,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 53,
+    "ms": 180.2,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "plan-steel-cover",
+   "subject": "gbx-100",
+   "old": {
+    "queries": 37,
+    "ms": 208.3,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 37,
+    "ms": 205.1,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 37,
+    "ms": 203.7,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "plan-steel-cover",
+   "subject": "cover",
+   "old": {
+    "queries": 79,
+    "ms": 98.2,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 79,
+    "ms": 90.9,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 79,
+    "ms": 94.9,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "changes",
+   "world": "plan-steel-cover",
+   "subject": "shaft-asm-in",
+   "old": {
+    "queries": 80,
+    "ms": 93.6,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 80,
+    "ms": 95.5,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 80,
+    "ms": 94.7,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "occurrence_status",
+   "world": "actual",
+   "subject": "o-bearing-replacement",
+   "old": {
+    "queries": 48,
+    "ms": 77.7,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 48,
+    "ms": 77.1,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 48,
+    "ms": 80.6,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "occurrence_status",
+   "world": "actual",
+   "subject": "o-test-run",
+   "old": {
+    "queries": 48,
+    "ms": 78.9,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 48,
+    "ms": 76.0,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 48,
+    "ms": 77.7,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "occurrence_status",
+   "world": "lab",
+   "subject": "o-exp-1",
+   "old": {
+    "queries": 43,
+    "ms": 58.8,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 43,
+    "ms": 56.9,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 43,
+    "ms": 60.1,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "occurrence_status",
+   "world": "lab",
+   "subject": "o-split-b",
+   "old": {
+    "queries": 47,
+    "ms": 66.7,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 47,
+    "ms": 64.2,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 47,
+    "ms": 63.3,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "occurrence_status",
+   "world": "lab-plan-recal",
+   "subject": "o-exp-1",
+   "old": {
+    "queries": 82,
+    "ms": 115.4,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 82,
+    "ms": 104.1,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 82,
+    "ms": 98.6,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "occurrence_status",
+   "world": "lab-plan-recal",
+   "subject": "o-sampling-1",
+   "old": {
+    "queries": 92,
+    "ms": 206.1,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 92,
+    "ms": 194.0,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 92,
+    "ms": 126.4,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "occurrence_status",
+   "world": "org",
+   "subject": "o-signoff-9",
+   "old": {
+    "queries": 48,
+    "ms": 65.3,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 48,
+    "ms": 62.8,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 48,
+    "ms": 60.1,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "occurrence_status",
+   "world": "org-plan-reorg",
+   "subject": "o-signoff-9",
+   "old": {
+    "queries": 92,
+    "ms": 138.0,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 92,
+    "ms": 137.5,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 92,
+    "ms": 105.1,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "occurrence_status",
+   "world": "plan-apprentice",
+   "subject": "o-test-run",
+   "old": {
+    "queries": 92,
+    "ms": 138.2,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 92,
+    "ms": 177.4,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 92,
+    "ms": 130.1,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "occurrence_status",
+   "world": "plan-apprentice",
+   "subject": "o-repair",
+   "old": {
+    "queries": 92,
+    "ms": 142.5,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 92,
+    "ms": 166.7,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 92,
+    "ms": 127.4,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "occurrence_status",
+   "world": "plan-relubricate-only",
+   "subject": "o-test-run",
+   "old": {
+    "queries": 92,
+    "ms": 126.0,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 92,
+    "ms": 126.9,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 92,
+    "ms": 124.5,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "occurrence_status",
+   "world": "plan-relubricate-only",
+   "subject": "o-repair",
+   "old": {
+    "queries": 92,
+    "ms": 121.7,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 92,
+    "ms": 121.4,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 92,
+    "ms": 119.9,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "occurrence_status",
+   "world": "plan-rig-control",
+   "subject": "o-bearing-replacement",
+   "old": {
+    "queries": 92,
+    "ms": 142.0,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 92,
+    "ms": 139.0,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 92,
+    "ms": 134.6,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "occurrence_status",
+   "world": "plan-rig-control",
+   "subject": "o-test-run",
+   "old": {
+    "queries": 92,
+    "ms": 132.1,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 92,
+    "ms": 133.2,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 92,
+    "ms": 133.9,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "causes_of",
+   "world": "actual",
+   "subject": "o-bearing-replacement",
+   "old": {
+    "queries": 99,
+    "ms": 169.9,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 99,
+    "ms": 145.4,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 99,
+    "ms": 149.9,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "causes_of",
+   "world": "actual",
+   "subject": "o-test-run",
+   "old": {
+    "queries": 129,
+    "ms": 215.7,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 129,
+    "ms": 210.3,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 129,
+    "ms": 191.7,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "causes_of",
+   "world": "lab",
+   "subject": "o-exp-1",
+   "old": {
+    "queries": 25,
+    "ms": 31.4,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 25,
+    "ms": 31.2,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 25,
+    "ms": 32.2,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "causes_of",
+   "world": "lab",
+   "subject": "o-split-b",
+   "old": {
+    "queries": 39,
+    "ms": 51.8,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 39,
+    "ms": 50.7,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 39,
+    "ms": 49.2,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "causes_of",
+   "world": "lab-plan-recal",
+   "subject": "o-exp-1",
+   "old": {
+    "queries": 48,
+    "ms": 169.1,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 48,
+    "ms": 155.4,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 48,
+    "ms": 155.2,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "causes_of",
+   "world": "lab-plan-recal",
+   "subject": "o-sampling-1",
+   "old": {
+    "queries": 75,
+    "ms": 187.8,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 75,
+    "ms": 188.6,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 75,
+    "ms": 186.2,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "causes_of",
+   "world": "org",
+   "subject": "o-signoff-9",
+   "old": {
+    "queries": 39,
+    "ms": 50.5,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 39,
+    "ms": 47.0,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 39,
+    "ms": 47.1,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "causes_of",
+   "world": "org-plan-reorg",
+   "subject": "o-signoff-9",
+   "old": {
+    "queries": 75,
+    "ms": 186.2,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 75,
+    "ms": 176.7,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 75,
+    "ms": 168.4,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "causes_of",
+   "world": "plan-apprentice",
+   "subject": "o-test-run",
+   "old": {
+    "queries": 235,
+    "ms": 521.4,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 235,
+    "ms": 514.7,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 235,
+    "ms": 483.7,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "causes_of",
+   "world": "plan-apprentice",
+   "subject": "o-repair",
+   "old": {
+    "queries": 75,
+    "ms": 177.7,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 75,
+    "ms": 191.3,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 75,
+    "ms": 176.2,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "causes_of",
+   "world": "plan-relubricate-only",
+   "subject": "o-test-run",
+   "old": {
+    "queries": 235,
+    "ms": 541.2,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 235,
+    "ms": 424.1,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 235,
+    "ms": 408.8,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "causes_of",
+   "world": "plan-relubricate-only",
+   "subject": "o-repair",
+   "old": {
+    "queries": 75,
+    "ms": 190.4,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 75,
+    "ms": 99.7,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 75,
+    "ms": 90.6,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "causes_of",
+   "world": "plan-rig-control",
+   "subject": "o-bearing-replacement",
+   "old": {
+    "queries": 187,
+    "ms": 256.0,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 187,
+    "ms": 249.4,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 187,
+    "ms": 245.6,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "causes_of",
+   "world": "plan-rig-control",
+   "subject": "o-test-run",
+   "old": {
+    "queries": 235,
+    "ms": 407.2,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 235,
+    "ms": 422.4,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 235,
+    "ms": 352.7,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "actual",
+   "subject": "alu-blank-7/aluminium",
+   "old": {
+    "queries": 14,
+    "ms": 20.1,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 14,
+    "ms": 19.4,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 14,
+    "ms": 19.7,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "actual",
+   "subject": "alu-blank-7/stock",
+   "old": {
+    "queries": 14,
+    "ms": 19.9,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 14,
+    "ms": 19.9,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 14,
+    "ms": 22.2,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "actual",
+   "subject": "aluminium/material",
+   "old": {
+    "queries": 14,
+    "ms": 19.3,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 14,
+    "ms": 18.9,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 14,
+    "ms": 19.3,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "lab",
+   "subject": "ana/agent",
+   "old": {
+    "queries": 14,
+    "ms": 23.1,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 14,
+    "ms": 23.5,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 14,
+    "ms": 21.0,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "lab",
+   "subject": "ana/analyst",
+   "old": {
+    "queries": 14,
+    "ms": 21.7,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 14,
+    "ms": 21.2,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 14,
+    "ms": 20.8,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "lab",
+   "subject": "ana/can-weigh",
+   "old": {
+    "queries": 14,
+    "ms": 21.1,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 14,
+    "ms": 21.6,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 14,
+    "ms": 21.1,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "lab-plan-recal",
+   "subject": "ana/agent",
+   "old": {
+    "queries": 27,
+    "ms": 40.3,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 38.2,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 39.7,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "lab-plan-recal",
+   "subject": "ana/analyst",
+   "old": {
+    "queries": 27,
+    "ms": 43.4,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 41.7,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 38.2,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "lab-plan-recal",
+   "subject": "ana/can-weigh",
+   "old": {
+    "queries": 27,
+    "ms": 39.8,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 39.2,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 38.0,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "lab-plan-tom",
+   "subject": "ana/agent",
+   "old": {
+    "queries": 27,
+    "ms": 39.6,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 36.3,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 36.0,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "lab-plan-tom",
+   "subject": "ana/analyst",
+   "old": {
+    "queries": 27,
+    "ms": 37.9,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 38.5,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 35.5,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "lab-plan-tom",
+   "subject": "ana/can-weigh",
+   "old": {
+    "queries": 27,
+    "ms": 36.5,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 36.4,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 35.6,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "org",
+   "subject": "acme/agent",
+   "old": {
+    "queries": 14,
+    "ms": 21.8,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 14,
+    "ms": 21.9,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 14,
+    "ms": 21.1,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "org",
+   "subject": "auditor/agent",
+   "old": {
+    "queries": 14,
+    "ms": 17.4,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 14,
+    "ms": 17.0,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 14,
+    "ms": 17.4,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "org",
+   "subject": "bea/agent",
+   "old": {
+    "queries": 14,
+    "ms": 19.9,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 14,
+    "ms": 19.4,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 14,
+    "ms": 20.1,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "org-plan-reorg",
+   "subject": "acme/agent",
+   "old": {
+    "queries": 27,
+    "ms": 41.4,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 40.7,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 39.6,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "org-plan-reorg",
+   "subject": "auditor/agent",
+   "old": {
+    "queries": 27,
+    "ms": 30.3,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 30.8,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 29.1,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "org-plan-reorg",
+   "subject": "bea/agent",
+   "old": {
+    "queries": 27,
+    "ms": 36.4,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 34.5,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 35.9,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "plan-apprentice",
+   "subject": "alu-blank-7/aluminium",
+   "old": {
+    "queries": 27,
+    "ms": 41.1,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 32.5,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 32.0,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "plan-apprentice",
+   "subject": "alu-blank-7/stock",
+   "old": {
+    "queries": 27,
+    "ms": 35.5,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 33.0,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 32.4,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "plan-apprentice",
+   "subject": "aluminium/material",
+   "old": {
+    "queries": 27,
+    "ms": 33.4,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 32.9,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 32.5,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "plan-move-bench",
+   "subject": "alu-blank-7/aluminium",
+   "old": {
+    "queries": 27,
+    "ms": 34.0,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 33.0,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 32.7,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "plan-move-bench",
+   "subject": "alu-blank-7/stock",
+   "old": {
+    "queries": 27,
+    "ms": 32.5,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 33.1,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 33.0,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "plan-move-bench",
+   "subject": "aluminium/material",
+   "old": {
+    "queries": 27,
+    "ms": 31.2,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 32.2,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 31.8,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "plan-relubricate-only",
+   "subject": "alu-blank-7/aluminium",
+   "old": {
+    "queries": 27,
+    "ms": 32.8,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 33.9,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 33.1,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "plan-relubricate-only",
+   "subject": "alu-blank-7/stock",
+   "old": {
+    "queries": 27,
+    "ms": 32.9,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 32.0,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 32.1,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "plan-relubricate-only",
+   "subject": "aluminium/material",
+   "old": {
+    "queries": 27,
+    "ms": 32.3,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 31.8,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 32.6,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "plan-rig-control",
+   "subject": "alu-blank-7/aluminium",
+   "old": {
+    "queries": 27,
+    "ms": 34.3,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 35.4,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 33.9,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "plan-rig-control",
+   "subject": "alu-blank-7/stock",
+   "old": {
+    "queries": 27,
+    "ms": 32.6,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 32.3,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 32.3,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "plan-rig-control",
+   "subject": "aluminium/material",
+   "old": {
+    "queries": 27,
+    "ms": 32.8,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 31.4,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 32.3,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "plan-steel-cover",
+   "subject": "alu-blank-7/aluminium",
+   "old": {
+    "queries": 27,
+    "ms": 32.3,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 33.4,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 34.0,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "plan-steel-cover",
+   "subject": "alu-blank-7/stock",
+   "old": {
+    "queries": 27,
+    "ms": 31.7,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 33.8,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 31.9,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "capable",
+   "world": "plan-steel-cover",
+   "subject": "aluminium/material",
+   "old": {
+    "queries": 27,
+    "ms": 33.6,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 27,
+    "ms": 32.4,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 27,
+    "ms": 33.8,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "interpretations",
+   "world": "actual",
+   "subject": "m-housing-scale-3-result",
+   "old": {
+    "queries": 22,
+    "ms": 42.2,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 22,
+    "ms": 39.4,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 22,
+    "ms": 39.6,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "interpretations",
+   "world": "actual",
+   "subject": "m-housing-scale-9-result",
+   "old": {
+    "queries": 22,
+    "ms": 39.9,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 22,
+    "ms": 36.2,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 22,
+    "ms": 40.0,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "interpretations",
+   "world": "lab",
+   "subject": "m-ana-b3-result",
+   "old": {
+    "queries": 23,
+    "ms": 66.8,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 23,
+    "ms": 63.1,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 23,
+    "ms": 64.3,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "interpretations",
+   "world": "lab",
+   "subject": "m-bo-b7-result",
+   "old": {
+    "queries": 23,
+    "ms": 45.3,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 23,
+    "ms": 44.0,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 23,
+    "ms": 43.0,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "interpretations",
+   "world": "lab-plan-recal",
+   "subject": "m-ana-b3-result",
+   "old": {
+    "queries": 36,
+    "ms": 89.7,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 36,
+    "ms": 80.9,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 36,
+    "ms": 69.8,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "interpretations",
+   "world": "lab-plan-recal",
+   "subject": "m-bo-b7-result",
+   "old": {
+    "queries": 36,
+    "ms": 72.5,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 36,
+    "ms": 72.3,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 36,
+    "ms": 69.1,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "interpretations",
+   "world": "lab-plan-tom",
+   "subject": "m-ana-b3-result",
+   "old": {
+    "queries": 36,
+    "ms": 64.0,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 36,
+    "ms": 62.5,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 36,
+    "ms": 61.3,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "interpretations",
+   "world": "lab-plan-tom",
+   "subject": "m-bo-b7-result",
+   "old": {
+    "queries": 36,
+    "ms": 66.8,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 36,
+    "ms": 60.2,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 36,
+    "ms": 61.3,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "interpretations",
+   "world": "plan-apprentice",
+   "subject": "m-housing-scale-3-result",
+   "old": {
+    "queries": 35,
+    "ms": 70.4,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 35,
+    "ms": 65.1,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 35,
+    "ms": 53.6,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "interpretations",
+   "world": "plan-apprentice",
+   "subject": "m-housing-scale-9-result",
+   "old": {
+    "queries": 35,
+    "ms": 56.0,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 35,
+    "ms": 57.9,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 35,
+    "ms": 55.3,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "interpretations",
+   "world": "plan-rig-control",
+   "subject": "m-housing-scale-3-result",
+   "old": {
+    "queries": 35,
+    "ms": 71.5,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 35,
+    "ms": 58.2,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 35,
+    "ms": 57.3,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "interpretations",
+   "world": "plan-rig-control",
+   "subject": "m-housing-scale-9-result",
+   "old": {
+    "queries": 35,
+    "ms": 60.3,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 35,
+    "ms": 55.8,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 35,
+    "ms": 59.9,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "provenance",
+   "world": "lab",
+   "subject": "s12-a",
+   "old": {
+    "queries": 211,
+    "ms": 449.3,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 211,
+    "ms": 442.7,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 211,
+    "ms": 424.7,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "provenance",
+   "world": "lab",
+   "subject": "s12-b",
+   "old": {
+    "queries": 346,
+    "ms": 748.0,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 346,
+    "ms": 713.6,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 346,
+    "ms": 649.9,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "provenance",
+   "world": "lab",
+   "subject": "s12-c",
+   "old": {
+    "queries": 130,
+    "ms": 179.0,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 130,
+    "ms": 174.0,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 130,
+    "ms": 183.4,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "provenance",
+   "world": "lab-plan-recal",
+   "subject": "s12-a",
+   "old": {
+    "queries": 400,
+    "ms": 1361.4,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 400,
+    "ms": 1335.7,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 400,
+    "ms": 1213.4,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "calibration_status",
+   "world": "lab",
+   "subject": "balance-b3",
+   "old": {
+    "queries": 16,
+    "ms": 24.8,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 16,
+    "ms": 25.2,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 16,
+    "ms": 24.2,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "calibration_status",
+   "world": "lab",
+   "subject": "balance-b7",
+   "old": {
+    "queries": 16,
+    "ms": 24.3,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 16,
+    "ms": 23.0,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 16,
+    "ms": 24.0,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "calibration_status",
+   "world": "lab-plan-recal",
+   "subject": "balance-b3",
+   "old": {
+    "queries": 30,
+    "ms": 45.8,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 30,
+    "ms": 47.0,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 30,
+    "ms": 44.0,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "calibration_status",
+   "world": "lab-plan-recal",
+   "subject": "balance-b7",
+   "old": {
+    "queries": 29,
+    "ms": 40.9,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 29,
+    "ms": 39.7,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 29,
+    "ms": 38.7,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "office_holders",
+   "world": "org",
+   "subject": "safety-officer",
+   "old": {
+    "queries": 35,
+    "ms": 54.6,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 35,
+    "ms": 50.8,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 30,
+    "ms": 92.9,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "office_holders",
+   "world": "org",
+   "subject": "site-manager",
+   "old": {
+    "queries": 34,
+    "ms": 49.5,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 34,
+    "ms": 48.4,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 29,
+    "ms": 43.5,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "office_holders",
+   "world": "org-plan-reorg",
+   "subject": "safety-officer",
+   "old": {
+    "queries": 75,
+    "ms": 193.0,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 75,
+    "ms": 103.6,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 57,
+    "ms": 224.8,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "office_holders",
+   "world": "org-plan-reorg",
+   "subject": "site-manager",
+   "old": {
+    "queries": 74,
+    "ms": 104.6,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 74,
+    "ms": 106.6,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 56,
+    "ms": 205.0,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "offices_of",
+   "world": "org",
+   "subject": "bea",
+   "old": {
+    "queries": 59,
+    "ms": 142.9,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 59,
+    "ms": 141.7,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 44,
+    "ms": 111.0,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "offices_of",
+   "world": "org",
+   "subject": "cal",
+   "old": {
+    "queries": 25,
+    "ms": 84.5,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 25,
+    "ms": 84.3,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 15,
+    "ms": 23.9,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "offices_of",
+   "world": "org-plan-reorg",
+   "subject": "bea",
+   "old": {
+    "queries": 122,
+    "ms": 289.8,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 122,
+    "ms": 276.6,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 84,
+    "ms": 254.0,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "offices_of",
+   "world": "org-plan-reorg",
+   "subject": "cal",
+   "old": {
+    "queries": 122,
+    "ms": 276.7,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 122,
+    "ms": 283.8,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 84,
+    "ms": 229.9,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "authorised",
+   "world": "org",
+   "subject": "bea/can-sign-off",
+   "old": {
+    "queries": 15,
+    "ms": 23.0,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 15,
+    "ms": 22.0,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 15,
+    "ms": 21.8,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "authorised",
+   "world": "org",
+   "subject": "dan/can-sign-off",
+   "old": {
+    "queries": 15,
+    "ms": 21.4,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 15,
+    "ms": 20.5,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 15,
+    "ms": 21.0,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "authorised",
+   "world": "org-plan-reorg",
+   "subject": "bea/can-sign-off",
+   "old": {
+    "queries": 28,
+    "ms": 38.8,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 28,
+    "ms": 37.3,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 28,
+    "ms": 38.5,
+    "query_counts_stable": true
+   }
+  },
+  {
+   "reader": "authorised",
+   "world": "org-plan-reorg",
+   "subject": "dan/can-sign-off",
+   "old": {
+    "queries": 28,
+    "ms": 36.4,
+    "query_counts_stable": true
+   },
+   "new": {
+    "queries": 28,
+    "ms": 36.1,
+    "query_counts_stable": true
+   },
+   "noatt": {
+    "queries": 28,
+    "ms": 36.1,
+    "query_counts_stable": true
+   }
+  }
+ ],
+ "totals": {
+  "facts_about": {
+   "old": {
+    "queries": 968,
+    "ms": 4884.500000000001
+   },
+   "new": {
+    "queries": 968,
+    "ms": 4774.900000000001
+   },
+   "noatt": {
+    "queries": 915,
+    "ms": 3689.8999999999996
+   }
+  },
+  "parts": {
+   "old": {
+    "queries": 303,
+    "ms": 696.4000000000002
+   },
+   "new": {
+    "queries": 303,
+    "ms": 706.8000000000001
+   },
+   "noatt": {
+    "queries": 303,
+    "ms": 696.6999999999999
+   }
+  },
+  "changes": {
+   "old": {
+    "queries": 2768,
+    "ms": 6322.800000000001
+   },
+   "new": {
+    "queries": 2768,
+    "ms": 6018.100000000001
+   },
+   "noatt": {
+    "queries": 2644,
+    "ms": 5057.699999999999
+   }
+  },
+  "occurrence_status": {
+   "old": {
+    "queries": 1052,
+    "ms": 1609.3999999999999
+   },
+   "new": {
+    "queries": 1052,
+    "ms": 1637.2
+   },
+   "noatt": {
+    "queries": 1052,
+    "ms": 1442.3000000000002
+   }
+  },
+  "causes_of": {
+   "old": {
+    "queries": 1571,
+    "ms": 3156.3
+   },
+   "new": {
+    "queries": 1571,
+    "ms": 2906.9
+   },
+   "noatt": {
+    "queries": 1571,
+    "ms": 2737.5
+   }
+  },
+  "capable": {
+   "old": {
+    "queries": 774,
+    "ms": 1032.8999999999999
+   },
+   "new": {
+    "queries": 774,
+    "ms": 1012.1999999999997
+   },
+   "noatt": {
+    "queries": 774,
+    "ms": 1000.6999999999999
+   }
+  },
+  "interpretations": {
+   "old": {
+    "queries": 374,
+    "ms": 745.4
+   },
+   "new": {
+    "queries": 374,
+    "ms": 695.6
+   },
+   "noatt": {
+    "queries": 374,
+    "ms": 674.4999999999999
+   }
+  },
+  "provenance": {
+   "old": {
+    "queries": 1087,
+    "ms": 2737.7
+   },
+   "new": {
+    "queries": 1087,
+    "ms": 2666.0
+   },
+   "noatt": {
+    "queries": 1087,
+    "ms": 2471.4
+   }
+  },
+  "calibration_status": {
+   "old": {
+    "queries": 91,
+    "ms": 135.8
+   },
+   "new": {
+    "queries": 91,
+    "ms": 134.9
+   },
+   "noatt": {
+    "queries": 91,
+    "ms": 130.9
+   }
+  },
+  "office_holders": {
+   "old": {
+    "queries": 218,
+    "ms": 401.70000000000005
+   },
+   "new": {
+    "queries": 218,
+    "ms": 309.4
+   },
+   "noatt": {
+    "queries": 172,
+    "ms": 566.2
+   }
+  },
+  "offices_of": {
+   "old": {
+    "queries": 328,
+    "ms": 793.9000000000001
+   },
+   "new": {
+    "queries": 328,
+    "ms": 786.4000000000001
+   },
+   "noatt": {
+    "queries": 227,
+    "ms": 618.8
+   }
+  },
+  "authorised": {
+   "old": {
+    "queries": 86,
+    "ms": 119.6
+   },
+   "new": {
+    "queries": 86,
+    "ms": 115.9
+   },
+   "noatt": {
+    "queries": 86,
+    "ms": 117.4
+   }
+  }
+ }
+}
