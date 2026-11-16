@@ -301,3 +301,81 @@ def test_e10_changes_and_value_of_agree_on_a_slot(m):
         v = wm.value_of("w", "located-at", {"located": "box"}, at)
         assert x["status"] == v.status == Status.INFERRED
         assert x["values"] == [list(v.values)]
+
+
+# ---- readers that inherit rule Q ------------------------------------------------------------------------------------
+@pytest.fixture(scope="module")
+def inh(driver):
+    """bea holds can-sign in depot by an inherited general holding (ASSERTED) and the plan's own (STIPULATED); she is
+    authorised by acme's inherited grant and the board's (plan); she acts in office-x in the plan; the balance is
+    calibrated by cert-3 (inherited, ASSERTED) and cert-1 (plan). kim records a claim but is not an agent."""
+    name = f"wm-test-{uuid.uuid4().hex[:10]}"
+    wm = WorldModel.create(name, driver=driver, modules=CORE_MODULES, clock=FakeClock())
+    try:
+        for p in ("mechanical", "organisation", "laboratory"):
+            wm.install_profile(p)
+        w = wm.create_world("actual", id="w")
+        for p in ("bea", "kim", "hr", "lab"):
+            wm.add_entity("person", p, id=p)
+        wm.add_entity("physical-object", "balance", id="balance")
+        wm.add_entity("physical-object", "sample", id="sample")
+        wm.add_entity("place", "room", id="room")
+        for kind, i in (("organisation", "acme"), ("organisation", "board"), ("organisation", "depot"),
+                        ("social-role", "office-x"), ("capability", "can-sign"), ("category", "agent"),
+                        ("category", "measurement")):
+            wm.add_entity(kind, i, id=i)
+        for c in ("cert-1", "cert-3"):
+            lb.register_certificate(wm, c, reference=c.upper(), id=c)
+        kg = wm.define_unit("kilogram", "mass", id="u-kg")
+        mass = wm.define_quality_kind("mass", "mass", id="q-mass")
+        for att in (wm.grant(w, "bea", "agent", start=T(1), attester="hr"),
+                    wm.grant(w, "bea", "can-sign", start=T(1), attester="hr"),
+                    org.authorise(wm, w, "acme", "bea", "can-sign", "depot", attester="hr", start=T(1)),
+                    org.appoint(wm, w, "bea", "office-x", "depot", start=T(1), attester="hr"),
+                    lb.calibrate(wm, w, "cert-3", "balance", start=T(1), attester="lab")):
+            wm.accept(att)
+        wm.attest(w, "located-at", {"located": "sample", "place": "room"}, start=T(1), attester="kim")
+        plan = wm.create_world("plan", kind="hypothetical", base=w, branch_at=T(2), id="plan")
+        wm.grant(plan, "bea", "can-sign", context="depot", start=T(3))
+        org.authorise(wm, plan, "board", "bea", "can-sign", "depot", start=T(3))
+        lb.calibrate(wm, plan, "cert-1", "balance", start=T(3))
+        org.act_in_office(wm, plan, "bea", "office-x", "depot", AT, id="ev-act")
+        wm.account(plan, {"actor": "bea"}, AT, id="ev-do")
+        wm.measure(plan, "sample", mass, 3.5, kg, 0.02, start=AT, instrument="balance")
+        yield wm
+    finally:
+        driver.databases.get(name).delete()
+
+
+@pytest.mark.parametrize("selective", [True, False], ids=["selective", "full-load"])
+def test_inheriting_readers_report_what_the_reader_they_call_says(inh, selective):
+    wm = inh
+    wm.selective = selective
+    try:
+        cap_ = wm.capable("plan", "bea", "can-sign", AT, context="depot")
+        auth = org.authorised(wm, "plan", "bea", "can-sign", "depot", AT)
+        calib = lb.calibration_status(wm, "plan", "balance", AT)
+        assert cap_["status"] == auth["status"] == calib["status"] == Status.STIPULATED
+        assert wm.is_agent("plan", "bea", AT) == wm.capable("plan", "bea", "agent", AT)
+        actor = wm.check_action("plan", "ev-do", capability="can-sign", context="depot")["actors"][0]
+        assert (actor["agent"], actor["capability"]) == (wm.is_agent("plan", "bea", AT), cap_)
+        act = org.official_act(wm, "plan", "ev-act", power="can-sign")
+        assert (act["authority"]["judgement"], act["authority"]["status"]) == (auth["judgement"], auth["status"])
+        assert sorted(act["authority"]["grantors"]) == ["acme", "board"]
+        assert act["capability"] == {"judgement": cap_["judgement"], "status": cap_["status"]}
+        assert act["agent"] == wm.is_agent("plan", "bea", AT)["judgement"]
+        held = [o for o in org.offices_of(wm, "plan", "bea", AT) if o["office"] == "office-x"][0]
+        assert (act["office_held"]["judgement"], act["office_held"]["status"]) == (held["judgement"], held["status"])
+        rows = lb.measurement_calibration(wm, "plan", "sample", "q-mass")
+        assert [r["attested"] for r in rows] == [calib]
+        report = {r["attester"]: r for r in wm.agency_report("w")}
+        kim_first = min(a.recorded_at for a in wm.visible("w").values() if a.attester == "kim")
+        assert report["kim"]["agent"] == wm.is_agent("w", "kim", kim_first)["status"]
+    finally:
+        wm.selective = True
+
+
+def test_offices_of_keeps_each_appointment_s_own_status(m):
+    wm, ids = m
+    for who, status in (("cal", Status.STIPULATED), ("bea", Status.ASSERTED)):
+        assert [(o["office"], o["status"]) for o in org.offices_of(wm, "plan", who, AT)] == [("office-x", status)]
