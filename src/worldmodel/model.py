@@ -132,7 +132,7 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
         self._lattice = None
         self._slots = None
         self._scopes = None
-        self._event_roles = None
+        self._event_role_cache = None
 
     def _reset_caches(self):
         """Forget everything read from the schema or the module records (after a schema change or a rollback)."""
@@ -141,7 +141,7 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
         self._lattice = None
         self._slots = None
         self._scopes = None
-        self._event_roles = None
+        self._event_role_cache = None
 
     # ---- operations (DI-8) ---------------------------------------------------------------------------------------------
     @contextmanager
@@ -291,7 +291,7 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
         """{event type: [(core role, kind or None, declaring module), ...]}: the event-role constraints each event type
         declares itself (LABS-1.043, ER-1/ER-2). Empty without the core-0.4-event-roles module. See
         `_event_constraints` for what applies to a type."""
-        if self._event_roles is None:
+        if self._event_role_cache is None:
             out = {}
             if EVENT_ROLES_MODULE in self.modules():
                 with self._reading() as tx:
@@ -299,8 +299,8 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
                         has constrained-role $r, has declaring-module $m;
                         fetch { "t": $t, "r": $r, "m": $m, "k": $c.constraint-kind };"""):
                         out.setdefault(d["t"], []).append((d["r"], d["k"], d["m"]))
-            self._event_roles = {t: sorted(cs, key=str) for t, cs in out.items()}
-        return self._event_roles
+            self._event_role_cache = {t: sorted(cs, key=str) for t, cs in out.items()}
+        return self._event_role_cache
 
     def _event_constraints(self, label):
         """Every event-role constraint that applies to an event type: (declaring type, core role, kind, module), its
@@ -1304,17 +1304,33 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
                        for d in a.roles.get("description", [])})
 
     def occurrence(self, world, occurrence, as_of=None, perspective=SYSTEM):
-        """A merged view of an occurrence: its accepted descriptions, and for each role every participant with the
-        descriptions (and sources) that name it. Conflicts stay visible and traceable; nothing is merged in storage."""
+        """A merged view of an occurrence. Conflicts stay visible and traceable; nothing is merged in storage.
+
+        - `descriptions`: the descriptions the perspective accepts as describing it (as `descriptions()`);
+        - `participants`: the core-role projection, unchanged since Core 0.3: for each core role name (a profile's own
+          new role keeps its name) every participant with the descriptions and sources that name it;
+        - `accounts` (LABS-1.043, ER-5): every description linked to it by a visible describes claim, accepted or not,
+          with its event type, sources, link judgement (`describes`, the canonical record's claim label at the
+          account's start), account state (occurrence_status's vocabulary), world depth and roles by stored label;
+        - `roles` (ER-5): keyed by stored role label (`replacement:removed`), with its own name and core role, every
+          player and the accounts naming it, and `constraints`: each applicable event-role constraint (ER-1, ER-2)
+          with whether it applies and why, and the role's judgement by rule Q (ER-4): DISPUTED for two or more
+          distinct players under the perspective's identity, established for one, with status and support. Several
+          players of a role without an applicable, established constraint are a union, never a dispute."""
+        from .dynamics import _Memo
         descs = self.descriptions(world, occurrence, as_of, perspective)
         out = {"occurrence": occurrence, "descriptions": descs, "participants": {}}
+        memo = _Memo(self, world, as_of, perspective)
         if descs:
-            for a in self._load(world, as_of, types=["event"], subjects=None, perspective=perspective).values():
-                if a.content in descs:
-                    for role, ids in a.roles.items():
-                        for x in ids:
-                            out["participants"].setdefault(role, {}).setdefault(x, set()).add((a.content, a.attester))
+            for d, recs in memo.events().items():
+                if d in descs:
+                    for a in recs:
+                        for role, ids in a.roles.items():
+                            for x in ids:
+                                out["participants"].setdefault(role, {}).setdefault(x, set()).add((a.content,
+                                                                                                    a.attester))
         out["participants"] = {r: {x: sorted(v) for x, v in m.items()} for r, m in out["participants"].items()}
+        out["accounts"], out["roles"] = self._event_roles(world, occurrence, memo, as_of, perspective)
         return out
 
     # ---- existence ---------------------------------------------------------------------------------------------

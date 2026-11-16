@@ -17,8 +17,8 @@ full-load answers are the same.
 from datetime import timedelta
 
 from .operations import atomic
-from .judgement import claim_label
-from .semantics import Status, acceptance_state, certainly_before, superseded, usable
+from .judgement import Judgement, claim_label
+from .semantics import Status, acceptance_state, answer_status, certainly_before, superseded, usable
 
 SYSTEM = "system"
 EPS = timedelta(microseconds=1)
@@ -52,6 +52,14 @@ class _Memo:
                     for d in a.roles.get("description", []):
                         self._occurrences.setdefault(d, set()).update(a.roles.get("occurrence", []))
         return sorted(self._occurrences.get(description, ()))
+
+
+def account_state(recs, perspective, as_of):
+    """A description's account for the perspective, in occurrence_status's vocabulary: accepted, unreviewed, rejected
+    (any other decision against it), or none (no attestation of it in the world)."""
+    return ("accepted" if any(a.polarity and usable(a, perspective, as_of) for a in recs) else
+            "unreviewed" if any(acceptance_state(a, perspective, as_of) == "unreviewed" for a in recs)
+            else "rejected" if recs else "none")
 
 
 class DynamicsMixin:
@@ -422,9 +430,7 @@ class DynamicsMixin:
                 continue
             for d in link.stated_roles.get("description", []):
                 recs = memo.events().get(d, [])
-                account = ("accepted" if any(a.polarity and usable(a, perspective, as_of) for a in recs) else
-                           "unreviewed" if any(acceptance_state(a, perspective, as_of) == "unreviewed" for a in recs)
-                           else "rejected" if recs else "none")
+                account = account_state(recs, perspective, as_of)
                 descs.append({"description": d, "account": account,
                               "account_by": sorted({a.attester for a in recs}),
                               "describes": claim_label(link),
@@ -433,6 +439,125 @@ class DynamicsMixin:
                 "existence": [{"judgement": claim_label(e), "status": e.status,
                                "attestations": e.claims()} for e in existence],
                 "descriptions": sorted(descs, key=lambda x: x["description"])}
+
+    # ---- event roles (LABS-1.043, DI-2: ER-1 to ER-5) -------------------------------------------------------------------
+    def _event_roles(self, world, occurrence, memo, as_of=None, perspective=SYSTEM):
+        """(accounts, roles) for `occurrence()`. Every description linked to the occurrence (or to anything the
+        perspective's identity makes the same occurrence) by a visible describes claim is an account, accepted or not.
+        Its link is judged by the canonical record of the describes content at the start of the account (the time it
+        is about); its account state is occurrence_status's. Compared accounts (ER-3): link ESTABLISHED and account
+        accepted. For each event-role constraint of a compared account's type (ER-1), with its kind's classification
+        of the occurrence judged by the canonical record at the occurrence's start (ER-2), the role is judged by rule Q
+        (ER-4) over the compared accounts of the nearest world, players under the perspective's identity. Roles are
+        keyed by stored role label, with the core role alongside (ER-5)."""
+        from . import typeql as q
+        ident = self.identity(world, as_of, perspective, ids=[occurrence])
+        members = set(ident.members(occurrence))
+        links = self._load(world, as_of, types=["describes"], subjects=sorted(members), perspective=perspective)
+        linked = sorted({d for a in links.values() if members & set(a.roles.get("occurrence", []))
+                         for d in a.roles.get("description", [])})
+        events = memo.events()
+        accounts = []
+        with self._reading() as tx:
+            for d in linked:
+                recs = events.get(d, [])
+                use = [a for a in recs if a.polarity and usable(a, perspective, as_of)]
+                starts = [a.start.earliest for a in (use or recs) if a.start is not None]
+                roles, etype = {}, None
+                for r in q.rows(tx, """match $e isa! $t, has wm-id == $id; $e links ($role: $x); $x has wm-id $xid;""",
+                                {"id": d}):
+                    etype = r.get("t").get_label()
+                    label = r.get("role").get_label()
+                    roles.setdefault(label, (self.core_role(label), set()))[1].add(q.opt(r, "xid"))
+                accounts.append({"description": d, "type": etype or (recs[0].ctype if recs else None),
+                                 "attesters": sorted({a.attester for a in recs}),
+                                 "account": account_state(recs, perspective, as_of),
+                                 "depth": min(a.depth for a in use) if use else None,
+                                 "_use": use, "_start": min(starts) if starts else None,
+                                 "_roles": {k: (c, sorted(v)) for k, (c, v) in roles.items()}})
+        # links: the canonical record of describes(description, occurrence), at the start of each account
+        records = {}
+        for t in sorted({x["_start"] for x in accounts if x["_start"] is not None}):
+            for rec in self._contents(world, occurrence, ("describes",), t, as_of, perspective):
+                if members & set(rec.stated_roles.get("occurrence", [])):
+                    for d in rec.stated_roles.get("description", []):
+                        records.setdefault((d, t), rec)
+        for x in accounts:
+            rec = records.get((x["description"], x["_start"]))
+            x["describes"] = claim_label(rec) if rec is not None else None      # None: no account time to judge it at
+            x["describes_by"] = sorted({c["attester"] for c in rec.claims()}) if rec is not None else []
+            x["_compared"] = (rec is not None and rec.judgement is Judgement.ESTABLISHED
+                              and x["account"] == "accepted")
+        compared = [x for x in accounts if x["_compared"]]
+        starts = [x["_start"] for x in compared if x["_start"] is not None]
+        at = min(starts) if starts else None
+        players = sorted({p for x in accounts for _, ids in x["_roles"].values() for p in ids})
+        pid = self.identity(world, as_of, perspective, ids=players) if players else ident
+        scopes = {}
+        for x in compared:
+            for decl, role, kind, module in self._event_constraints(x["type"]):
+                scopes.setdefault((decl, role, kind), module)
+        judged = []
+        for (decl, role, kind), module in sorted(scopes.items(), key=lambda i: (i[0][0], i[0][1], i[0][2] or "")):
+            group = [x for x in compared if self.is_a(x["type"], decl)
+                     and any(c == role for c, _ in x["_roles"].values())]
+            entry = {"event_type": decl, "role": role, "kind": kind, "declared_by": module, "applies": True,
+                     "why": "declared for the event type", "classification": None, "judgement": None, "status": None,
+                     "support": [], "players": [], "overridden": [],
+                     "_labels": sorted({lab for x in group for lab, (c, _) in x["_roles"].items() if c == role})}
+            if kind is not None:
+                rec = self.judgement(world, "classified-as", {"classified": occurrence, "class": kind}, at, as_of,
+                                     perspective)
+                entry["classification"] = {"at": at, "judgement": rec.judgement.value, "reasons": list(rec.reasons),
+                                           "support": rec.support_ids}
+                if rec.judgement is Judgement.ESTABLISHED:
+                    entry["why"] = f"the occurrence is established as {kind} at its start"
+                else:
+                    entry.update(applies=False, why=f"the occurrence is not established as {kind} at its start "
+                                                    f"({rec.judgement.value}): the role is a union")
+            if entry["applies"] and group:
+                depth = min(x["depth"] for x in group)
+                near = [x for x in group if x["depth"] == depth]
+                entry["overridden"] = sorted(x["description"] for x in group if x["depth"] != depth)
+                by = {}
+                for x in near:
+                    for c, ids in x["_roles"].values():
+                        if c != role:
+                            continue
+                        for p in ids:
+                            g = by.setdefault(pid.canonical(p), {"names": set(), "accounts": set(), "recs": {}})
+                            g["names"].add(p)
+                            g["accounts"].add((x["description"], tuple(sorted({a.attester for a in x["_use"]}))))
+                            g["recs"].update({a.id: a for a in x["_use"]})
+                entry["players"] = [{"names": sorted(g["names"]),
+                                     "accounts": [{"description": d, "attesters": list(w)}
+                                                  for d, w in sorted(g["accounts"])],
+                                     "status": answer_status(g["recs"].values())}
+                                    for _, g in sorted(by.items())]
+                if len(by) > 1:
+                    entry.update(judgement="disputed", status=Status.DISPUTED, support=[])
+                else:
+                    recs = {i: a for g in by.values() for i, a in g["recs"].items()}
+                    entry.update(judgement="established", status=answer_status(recs.values()),
+                                 support=sorted(recs))
+            judged.append(entry)
+        roles = {}
+        for x in accounts:
+            for label, (core, ids) in x["_roles"].items():
+                e = roles.setdefault(label, {"name": label.split(":")[-1], "core_role": core, "players": {}})
+                for p in ids:
+                    e["players"].setdefault(p, []).append(x["description"])
+        for label, e in roles.items():
+            e["players"] = {p: sorted(ds) for p, ds in sorted(e["players"].items())}
+            e["constraints"] = [{k: v for k, v in j.items() if not k.startswith("_")}
+                                for j in judged if label in j["_labels"]]
+        public = [{"description": x["description"], "type": x["type"], "attesters": x["attesters"],
+                   "describes": x["describes"], "describes_by": x["describes_by"], "account": x["account"],
+                   "depth": x["depth"],
+                   "roles": {lab: {"name": lab.split(":")[-1], "core_role": c, "players": ids}
+                             for lab, (c, ids) in sorted(x["_roles"].items())}}
+                  for x in accounts]
+        return public, dict(sorted(roles.items()))
 
     def causes_of(self, world, effect, t, as_of=None, perspective=SYSTEM, _memo=None):
         """Every causal claim about what caused `effect` (an occurrence or an event description), judged for the
