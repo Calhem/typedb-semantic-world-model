@@ -86,8 +86,10 @@ def test_installs_alone_with_mechanical_and_with_the_fixtures(make):
 # ---- single-holder offices ----------------------------------------------------------------------------------------------
 def test_sequential_holders(world):
     wm, w, ids = world
-    assert holders(wm, w, 5)[:2] == (["bea"], Status.ASSERTED)
-    assert holders(wm, w, 12) == (["cal"], Status.ASSERTED, {"bea": "expired", "cal": "established"})
+    assert holders(wm, w, 5)[:2] == (["bea"], None)      # rule C (increment C): no office-wide support status
+    assert [a["status"] for a in o.office_holders(wm, w, *SITE, T(5))["appointments"]
+            if a["judgement"] == "established"] == [Status.ASSERTED]          # the holder keeps its own
+    assert holders(wm, w, 12) == (["cal"], None, {"bea": "expired", "cal": "established"})
 
 
 def test_overlapping_accepted_appointments_are_a_cited_conflict(world):
@@ -106,7 +108,7 @@ def test_without_the_constraint_several_holders_are_no_conflict(world):
     wm, w, ids = world
     v = o.office_holders(wm, w, "safety-officer", "depot-7", T(5))
     assert (v["holders"], v["status"], v["conflict"], v["exclusive"]["holds"]) == \
-        (["dan", "eve"], Status.ASSERTED, None, None)
+        (["dan", "eve"], None, None, None)
 
 
 def test_appointments_are_never_rejected_and_keep_their_own_evidence(world):
@@ -151,8 +153,8 @@ def test_an_appointment_event_alone_establishes_nothing(world):
 
 def test_perspectives_knowledge_time_and_worlds(world):
     wm, w, ids = world
-    assert holders(wm, w, 9, as_of=ids["known_before_cal"])[:2] == (["bea"], Status.ASSERTED)
-    assert holders(wm, ids["plan"], 12) == (["dan"], Status.STIPULATED,
+    assert holders(wm, w, 9, as_of=ids["known_before_cal"])[:2] == (["bea"], None)
+    assert holders(wm, ids["plan"], 12) == (["dan"], None,
                                             {"bea": "expired", "cal": "denied", "dan": "established"})
     assert holders(wm, w, 12)[0] == ["cal"]                                                # the plan stays in its world
 

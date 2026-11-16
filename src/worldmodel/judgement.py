@@ -223,6 +223,46 @@ def claim_label(r):
     return "not established"                            # END_UNKNOWN, NOT_SUPPORTING, SILENT
 
 
+def combine(records, any_found):
+    """Rule Q (increment C, DI-6; LABS-1.039/1.040): the answer to one question (does this hold?) decided by several
+    canonical records, one per holding. Returns (holds, status, judgement, support ids). In order:
+    1. conflict first: DISPUTED if any record is disputed, or one is established while another is denied by an
+       accepted denial; no precedence across a conflict (support: none);
+    2. established: if any record is established, the core rule over the union of the deciding support of every
+       established record;
+    3. does not hold: otherwise, if any is denied or has ended, the core rule over the union of the deciding support of
+       the denied and ended records ("denied" if any is denied, else "expired"; an unknown end is never an ending);
+    4. undecided: otherwise UNKNOWN if anything was found, NOT_YET_KNOWN if nothing was.
+    The deciding claims are the records' own (the canonical judgement); each claim counts once however many records
+    or representations carry it, and neither the result nor `support` depends on the order of the records or on
+    identifiers. Undecided records beside a decided one are never folded into the status."""
+    labels = {holding_label(r) for r in records}
+    if "disputed" in labels or {"accepted", "denied"} <= labels:
+        return None, Status.DISPUTED, "disputed", ()
+    if "accepted" in labels:
+        holds, judgement, chosen = True, "established", {"accepted"}
+    elif labels & {"denied", "expired"}:
+        holds, chosen = False, {"denied", "expired"}
+        judgement = "denied" if "denied" in labels else "expired"
+    else:
+        status = Status.UNKNOWN if any_found else Status.NOT_YET_KNOWN
+        return None, status, "not yet effective" if "not yet effective" in labels else "not established", ()
+    support = {a.id: a for r in records if holding_label(r) in chosen for a in r.support}
+    return holds, answer_status(support.values()), judgement, tuple(sorted(support))
+
+
+def collection_status(items, conflict):
+    """Rule C (increment C, DI-6): the status of a report over distinct items (several holders of an office), from
+    each item's judgement: DISPUTED on a conflict or a disputed item; None when items are established without
+    conflict (there is no single support status for several items; each keeps its own); UNKNOWN when items exist but
+    none is established; NOT_YET_KNOWN when there are none."""
+    if conflict or any(i["judgement"] == "disputed" for i in items):
+        return Status.DISPUTED
+    if any(i["judgement"] == "established" for i in items):
+        return None
+    return Status.UNKNOWN if items else Status.NOT_YET_KNOWN
+
+
 def holding_label(r):
     """The holdings vocabulary (capable, the organisation and laboratory reports): the claims label, with an accepted
     holding that has ended (no accepted denial) named `expired`."""

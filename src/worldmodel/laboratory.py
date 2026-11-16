@@ -18,12 +18,13 @@ Over the core and the Stage C measurement model (activity, result record, propos
   Competing interpretations are judged independently: no incompatibility is assumed (D-D3-6).
 
 Specimens and experiments are classifications (`laboratory:specimen`, `laboratory:experiment`); an experiment's
-steps are core `part-of` (read with `process_steps`). Judgement uses the shared helpers (`_judgement`, `_combine`).
+steps are core `part-of` (read with `process_steps`). Judgement uses the shared helpers (`_judgement`, `judgement.combine`).
 Functions take the WorldModel, as in `worldmodel.mechanical` and `worldmodel.organisation`.
 """
 
 from .operations import atomic
 from . import typeql as q
+from .judgement import combine
 from .keys import check_new_id
 from .model import READ, SCHEMA_DIR, SYSTEM
 from .profiles import PROFILES, Profile
@@ -52,7 +53,7 @@ def _until(attest):
 
 
 def _public(rows):
-    return [{k: v for k, v in r.items() if k != "_label"} for r in rows]
+    return [{k: v for k, v in r.items() if not k.startswith("_")} for r in rows]
 
 
 # ---- samples and sampling ----------------------------------------------------------------------------------------------
@@ -209,7 +210,8 @@ def _references(wm, certificates):
 
 def calibration_status(wm, world, instrument, t, as_of=None, perspective=SYSTEM):
     """Is `instrument` calibrated at t, for the perspective? holds / status / judgement as capable() (established,
-    expired, denied, disputed, not yet effective, not established; no new statuses), and every certificate whose
+    expired, denied, disputed, not yet effective, not established; no new statuses; combined over the certificates
+    by rule Q, with the deciding claims in `support`), and every certificate whose
     calibration content names the instrument, with its reference number, its own judgement and its evidence.
     "not established" with no certificates means that no calibration is recorded at all."""
     _require(wm)
@@ -221,9 +223,9 @@ def calibration_status(wm, world, instrument, t, as_of=None, perspective=SYSTEM)
     for c in found:
         c["reference"] = refs[c["certificate"]]
     found.sort(key=lambda c: c["certificate"])
-    holds, status, judgement = wm._combine([{"judgement": c["_label"], "status": c["status"]} for c in found],
-                                           bool(found))
+    holds, status, judgement, support = combine([c["_record"] for c in found], bool(found))
     return {"instrument": instrument, "t": t, "holds": holds, "status": status, "judgement": judgement,
+            "support": list(support),
             "in_force": [c["certificate"] for c in found if c["judgement"] == "established"],
             "certificates": _public(found)}
 

@@ -236,7 +236,7 @@ def test_exclusivity_applies_where_established_and_reports_keep_their_answers(wm
     assert [x["status"] for x in f] == [Status.DISPUTED] and f[0]["conflicts"]
     assert wm.capable(w, "bea", "site-manager", T(5), context="depot-7")["judgement"] == "disputed"
     # another context has no constraint: two holders are compatible
-    assert o.office_holders(wm, w, "site-manager", "depot-9", T(5))["status"] == Status.ASSERTED
+    assert o.office_holders(wm, w, "site-manager", "depot-9", T(5))["status"] is None    # rule C: no conflict
     assert wm.capable(w, "bea", "site-manager", T(5), context="depot-9")["judgement"] == "established"
 
 
@@ -247,7 +247,7 @@ def test_exclusivity_does_not_apply_before_it_starts_or_before_it_is_known(wm, o
     rec = next(h["recorded_at"] for h in wm.history(w, "depot-7") if h["attestation"] == c)
     before = rec - timedelta(microseconds=1)                 # every appointment known and accepted, the constraint not
     v = o.office_holders(wm, w, "site-manager", "depot-7", T(5), as_of=before)
-    assert v["holders"] == ["bea", "cal"] and v["conflict"] is None and v["status"] == Status.ASSERTED
+    assert v["holders"] == ["bea", "cal"] and v["conflict"] is None and v["status"] is None
     assert o.office_holders(wm, w, "site-manager", "depot-7", T(5))["conflict"] is not None
 
 
@@ -264,7 +264,7 @@ def test_an_unestablished_or_disputed_constraint_never_disputes_compatible_holdi
     assert wm.holds(w, "exclusive-office", {"office": "site-manager", "context": "depot-7"}, T(5)).status \
         == Status.DISPUTED
     v = o.office_holders(wm, w, "site-manager", "depot-7", T(5))
-    assert v["conflict"] is None and v["status"] == Status.ASSERTED
+    assert v["conflict"] is None and v["status"] is None
     assert wm.holds(w, "office-holding", {"classified": "bea", "class": "site-manager", "context": "depot-7"},
                     T(5)).status == Status.ASSERTED
 
