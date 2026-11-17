@@ -336,3 +336,8 @@ compared with probes/pre_e_d_occurrence_baseline.json.gz: 398 frozen views, 398 
   existing fields (descriptions, participants) different: 0
   judgements different: 0
   role-presentation changes different: 0
+
+--- 106,752 answers, C (database built by the new code, wm-probe-pre-e-d-new, read by the new code) against S0, masked
+(probes/pre_e_b_repro_check.py: attestation ids and system-clock times masked; the two databases are separate builds)
+answers: frozen 106752, rebuilt 106752; same questions: True
+identical after masking: 106752; different: 0

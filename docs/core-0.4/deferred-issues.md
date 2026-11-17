@@ -20,7 +20,7 @@ tests.
 | # | Issue | Found | Must be resolved | Status |
 |---|---|---|---|---|
 | DI-1 | disputed content omitted from generic fact and role reports (`facts_about`, `roles_of`) | D-1 (LABS-1.023) | before Stage E | corrected in increment B, approved and merged (LABS-1.039, `main` d9d873a) |
-| DI-2 | conflicting event participants are not judged together (single-valued roles) | D-1 (v0.2 D9) | before Stage E | corrected in increment D (LABS-1.043), awaiting review, not merged |
+| DI-2 | conflicting event participants are not judged together (single-valued roles) | D-1 (v0.2 D9) | before Stage E | corrected in increment D (LABS-1.043), validated (LABS-1.044), awaiting review, not merged |
 | DI-3 | conflicting mechanical joint kinds are not judged | D-1 | no deadline | open (limitation) |
 | DI-4 | dependency-kind vocabulary is not validated | D-1 | no deadline | open (limitation) |
 | DI-5 | a future-effective appointment (or holding) with an unreviewed counter-claim is labelled "not established" | D-2 (LABS-1.026) | no deadline | corrected in increment B, approved and merged (LABS-1.039, `main` d9d873a) |
@@ -102,11 +102,13 @@ this entry's premises were corrected while preparing it:
   under the core name `patient`: the CMMS replacement's removed part and the technician's work-log patient. Measured on
   the reference worlds, the proposed rule changes no judgement (`probes/pre_e_d_impact.out.txt`).
 
-**Correction, increment D (LABS-1.043), awaiting review, not merged.** Made on `feature/pre-e-d-event-roles` under the
+**Correction, increment D (LABS-1.043), validated under LABS-1.044, awaiting review, not merged.** Made on `feature/pre-e-d-event-roles` under the
 approved design (ER-1 to ER-8): event-role constraints stored as data (`core-0.4-event-roles`), declared by profiles
 (official-act official, office and office context; replacement removed and fitted only for an occurrence established
 as `mechanical:one-for-one`), judged in `occurrence()` (new fields `accounts` and `roles`) by the canonical mechanism
-([pre-e-increment-d.md](pre-e-increment-d.md)).
+([pre-e-increment-d.md](pre-e-increment-d.md)). Validation: the 106,752 answers unchanged by the new code and by the
+upgrades (and old code on an upgraded database); the 398 views with 0 changes to existing fields or judgements and the
+8 authorised role-presentation additions; the full suite twice in four configurations.
 
 ## DI-3: conflicting mechanical joint kinds
 **What happens.** `connected-to(a, b, bolted)` and `connected-to(a, b, welded)` are two contents. Both can hold, so they
@@ -283,6 +285,17 @@ boundary of a subject's timeline, so it pays the exclusivity cost too (not measu
 10 to 66 extra queries per call, the largest `changes(depot-7)` in the plan world (209 to 275 queries). Increment C's
 aggregation adds no query on any reader or subject (`probes/pre_e_c_perf.out.txt`, three alternating rounds).
 
+**Added (LABS-1.044): the cost of increment D's occurrence view.** `occurrence()` now lists every account and role
+(ER-5) and judges constrained roles. Measured against `bf8bb34` (`probes/pre_e_d_occurrence_bench.out.txt`, three
+alternating rounds, the 398 reference views and the 20 design examples): about 19 queries and 23 ms per view before,
+86 queries and 100 ms after (×4.4 in both, far outside the spread between rounds, at most about 10 %), paid by every view whether a
+constraint applies or not; where a kind-scoped constraint is evaluated, about 141 queries per view. Of the 66.7 queries
+the new part adds to an unconstrained view (`probes/pre_e_d_occurrence_queries.py`): identity of the occurrence and its
+players 32.5, judging each `describes` link at its account's start 18, loading the `describes` claims 15, each
+description's roles 1.2. Options to examine with the rest of DI-9: reuse the identity the view already computed and
+compute player identity only for judged roles; judge every account's link in one batched reading; read all roles in
+one query. Not optimised in increment D.
+
 
 ## DI-10: automated browser regression coverage for the schema explorer (maintenance)
 **What exists.** The explorer's search, filters, navigation, themes and narrow layout were checked by hand in a browser
@@ -363,6 +376,6 @@ checks of `causes_of`) finds none, and `occurrence_status` reports the account a
 
 **Options (later).** (a) `account()` writes the link from the event's start, so a variant inherits link and account
 together (new data only; existing links unchanged); (b) the listing readers mark, or omit, descriptions with no account
-in the world; (c) keep, and document. Increment D does not correct it; its proposed `accounts` field reports the state
-("none in this world").
+in the world; (c) keep, and document. Increment D does not correct it; its `accounts` field reports such an account as `none`
+(`occurrence_status`'s vocabulary, ER-5; the design's prose called it "none in this world").
 

@@ -213,3 +213,36 @@ def test_a_failing_profile_upgrade_leaves_nothing(old, monkeypatch):
     monkeypatch.undo()
     assert state(old) == before
     assert old.upgrade_profile("organisation") is True
+
+
+def test_a_database_not_upgraded_reads_as_before_until_upgraded(old):
+    """Design 8.4 (LABS-1.044): the new code on a database created before increment D lists the new `accounts` and
+    `roles` with no constraint and no judgement; the explicit upgrades then add the judgement and change no existing
+    field of the view, and no account."""
+    from datetime import datetime, timezone
+    from worldmodel import organisation as org
+    T5 = datetime(2026, 11, 5, 9, tzinfo=timezone.utc)
+    w = old.create_world("actual", id="w")
+    for p in ("bea", "cal", "hr", "clerk"):
+        old.add_entity("person", p, id=p)
+    old.add_entity("organisation", "depot", id="depot")
+    old.add_entity("social-role", "site-manager", id="site-manager")
+    old.add_entity("occurrence", "o-act", id="o-act")
+    for official, attester in (("bea", "hr"), ("cal", "clerk")):
+        e = org.act_in_office(old, w, official, "site-manager", "depot", T5, occurrence="o-act", attester=attester,
+                              id=f"act-{attester}")
+        for a in old.account_attestations(w, e):
+            old.accept(a)
+    before = old.occurrence("w", "o-act")
+    assert sorted(a["description"] for a in before["accounts"]) == ["act-clerk", "act-hr"]
+    assert {a["account"] for a in before["accounts"]} == {"accepted"}
+    assert before["roles"]["official-act:official"]["players"] == {"bea": ["act-hr"], "cal": ["act-clerk"]}
+    assert all(r["constraints"] == [] for r in before["roles"].values())          # nothing is judged
+    old.upgrade_to_event_roles()
+    old.upgrade_profile("organisation")
+    after = old.occurrence("w", "o-act")
+    assert (after["descriptions"], after["participants"], after["accounts"]) == \
+        (before["descriptions"], before["participants"], before["accounts"])
+    official = after["roles"]["official-act:official"]
+    assert official["players"] == before["roles"]["official-act:official"]["players"]
+    assert [(c["role"], c["applies"], c["judgement"]) for c in official["constraints"]] == [("actor", True, "disputed")]
