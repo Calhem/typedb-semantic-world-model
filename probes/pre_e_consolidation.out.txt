@@ -1,0 +1,27 @@
+Pre-Stage E consolidation (LABS-1.045): probes/pre_e_consolidation.py on feature/pre-e-consolidation (merged main 9464403
+plus the install-error wording; no semantic change), one throwaway database, 2026-11-17.
+
+== DI-3: joint kinds of one connection
+  without a slot: [('mechanical:bolted', <Status.ASSERTED: 'ASSERTED'>), ('mechanical:pressed', <Status.ASSERTED: 'ASSERTED'>)]
+  with slot (endpoint -> joint-kind), probe database only: [('mechanical:bolted', <Status.DISPUTED: 'DISPUTED'>), ('mechanical:pressed', <Status.DISPUTED: 'DISPUTED'>)]
+
+== DI-4: an unseeded dependency kind
+  depend(kind='steel') accepted: True
+
+== same-as identity and event roles
+  o-1 before same-as(o-1, o-1-alias): {'players': {'bea': ['act-1-hr']}, 'judgement': [(True, 'established', [['bea']])]}
+  o-1 after: {'players': {'bea': ['act-1-hr'], 'cal': ['act-1-clerk']}, 'judgement': [(True, 'established', [['bea']])]}
+    accounts (description, describes judgement, account): [('act-1-clerk', None, 'accepted'), ('act-1-hr', 'accepted', 'accepted')]
+    describes(act-1-clerk, o-1-alias): established
+  o-1-alias (the other name): {'players': {'bea': ['act-1-hr'], 'cal': ['act-1-clerk']}, 'judgement': [(True, 'established', [['cal']])]}
+  o-2 (bea / b-smith), no same-as: {'players': {'b-smith': ['act-2-clerk'], 'bea': ['act-2-hr']}, 'judgement': [(True, 'disputed', [['b-smith'], ['bea']])]}
+  o-2, same-as accepted: {'players': {'b-smith': ['act-2-clerk'], 'bea': ['act-2-hr']}, 'judgement': [(True, 'established', [['b-smith', 'bea']])]}
+  o-2, same-as also denied (accepted denial): {'players': {'b-smith': ['act-2-clerk'], 'bea': ['act-2-hr']}, 'judgement': [(True, 'established', [['b-smith', 'bea']])]}
+    canonical judgement of same-as(bea, b-smith) now: disputed | identity merges them: True
+  o-2, as known before the denial: {'players': {'b-smith': ['act-2-clerk'], 'bea': ['act-2-hr']}, 'judgement': [(True, 'established', [['b-smith', 'bea']])]}
+  o-2 for the perspective 'hr' (accepts nothing itself): {'players': {'b-smith': ['act-2-clerk'], 'bea': ['act-2-hr']}, 'judgement': [(True, 'established', [['bea']])]}
+
+== DI-13: several players of one role
+  one description with two actors: refused, TypeDBDriverException 
+  two-technician job as two accounts by one source: actor players {'dan': ['ev-team-dan'], 'eve': ['ev-team-eve']} constraints [] | accounts 2
+  co-signed act as two accounts by one source: {'players': {'bea': ['act-cosign-bea'], 'cal': ['act-cosign-cal']}, 'judgement': [(True, 'disputed', [['bea'], ['cal']])]}
