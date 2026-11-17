@@ -1,0 +1,338 @@
+Increment D (LABS-1.044): compatibility comparisons on one reference database, wm-probe-pre-e-d-u.
+Built by the code before increment D (bf8bb34); read by old and new code before and after the explicit upgrade;
+then a database built by the new code. 106,752-answer diffs are answer by answer against S0 on the same database
+(identical / extended / changed / other); the 398-view comparisons are against probes/pre_e_d_occurrence_baseline.json.gz.
+Old code: bf8bb34. New code: 2c1874d (library code identical to the branch head).
+
+--- Modules before the upgrade
+{'profile:mechanical': '0.1', 'profile:organisation': '0.1', 'profile:laboratory': '0.1', 'core': '0.3.0', 'core-0.4-a0': '0.4.0-a0', 'core-0.4-a': '0.4.0-a1', 'core-0.4-a2': '0.4.0-a2', 'core-0.4-b': '0.4.0-b', 'core-0.4-c': '0.4.0-c', 'core-0.4-d': '0.4.0-d'}
+
+--- Upgrade: upgrades_available(); first run (module, mechanical, organisation, laboratory); second run; modules after; available after
+available {'event_roles_module': True, 'profiles': {'mechanical': ('0.1', '0.2'), 'organisation': ('0.1', '0.2')}}
+first True True True False
+again False False False False
+modules {'profile:laboratory': '0.1', 'profile:mechanical': '0.2', 'profile:organisation': '0.2', 'core': '0.3.0', 'core-0.4-a0': '0.4.0-a0', 'core-0.4-a': '0.4.0-a1', 'core-0.4-a2': '0.4.0-a2', 'core-0.4-b': '0.4.0-b', 'core-0.4-c': '0.4.0-c', 'core-0.4-d': '0.4.0-d', 'core-0.4-event-roles': '0.4.0-er'}
+available {'event_roles_module': False, 'profiles': {}}
+
+--- 106,752 answers, S1 new code, not upgraded, against S0 (old code, not upgraded)
+reader                           identical extended  changed  other
+agency_report                           11        0        0      0
+authorised                              20        0        0      0
+calibration_status                    3575        0        0      0
+capable                               2410        0        0      0
+capable@acme                           145        0        0      0
+capable@ana                            335        0        0      0
+capable@apprentice                    1345        0        0      0
+capable@auditor                        145        0        0      0
+capable@bea                            145        0        0      0
+capable@bo                             335        0        0      0
+capable@cal                            145        0        0      0
+capable@cal-lab                        240        0        0      0
+capable@cam-2                         1265        0        0      0
+capable@cm-1                          1345        0        0      0
+capable@cmms                           710        0        0      0
+capable@design-office                 1760        0        0      0
+capable@hr                             145        0        0      0
+capable@inspector                     1760        0        0      0
+capable@lab-2                          335        0        0      0
+capable@qa                             335        0        0      0
+capable@scale-3                       1760        0        0      0
+capable@tag-reader                    1265        0        0      0
+capable@technician                    1345        0        0      0
+capable@tom                            335        0        0      0
+causes_of                              590        0        0      0
+changes                                715        0        0      0
+check_action                            74        0        0      0
+compare_measurements                    80        0        0      0
+composition                           3575        0        0      0
+connections                           3575        0        0      0
+contents                               100        0        0      0
+dependencies                          3575        0        0      0
+direct_dependencies                   3575        0        0      0
+effects_of                             370        0        0      0
+employment                            3575        0        0      0
+exists                                3575        0        0      0
+facts_about                           3575        0        0      0
+facts_about@acme                       180        0        0      0
+facts_about@ana                        835        0        0      0
+facts_about@apprentice                2115        0        0      0
+facts_about@as_of                     3575        0        0      0
+facts_about@auditor                    180        0        0      0
+facts_about@bea                        180        0        0      0
+facts_about@bo                         835        0        0      0
+facts_about@cal                        180        0        0      0
+facts_about@cal-lab                    655        0        0      0
+facts_about@cam-2                     1935        0        0      0
+facts_about@cm-1                      2115        0        0      0
+facts_about@cmms                      1185        0        0      0
+facts_about@design-office             2560        0        0      0
+facts_about@hr                         180        0        0      0
+facts_about@inspector                 2560        0        0      0
+facts_about@lab-2                      835        0        0      0
+facts_about@qa                         835        0        0      0
+facts_about@scale-3                   2560        0        0      0
+facts_about@tag-reader                1935        0        0      0
+facts_about@technician                2115        0        0      0
+facts_about@tom                        835        0        0      0
+frame_info                             110        0        0      0
+holds                                 4975        0        0      0
+holds@as_of                           4975        0        0      0
+interpretations                        165        0        0      0
+materials                             3575        0        0      0
+measurement_calibration                 80        0        0      0
+measurements                            80        0        0      0
+occurrence_status                      220        0        0      0
+office_holders                          20        0        0      0
+offices_of                            3575        0        0      0
+official_act                             2        0        0      0
+parts                                 3575        0        0      0
+poses                                 3575        0        0      0
+process_steps                          220        0        0      0
+provenance                              20        0        0      0
+replacement                            370        0        0      0
+roles_of                              3575        0        0      0
+transform_between                      150        0        0      0
+value_of                               940        0        0      0
+total 106752 0 0 0
+
+--- 106,752 answers, S2 old code, upgraded, against S0 (old code, not upgraded)
+reader                           identical extended  changed  other
+agency_report                           11        0        0      0
+authorised                              20        0        0      0
+calibration_status                    3575        0        0      0
+capable                               2410        0        0      0
+capable@acme                           145        0        0      0
+capable@ana                            335        0        0      0
+capable@apprentice                    1345        0        0      0
+capable@auditor                        145        0        0      0
+capable@bea                            145        0        0      0
+capable@bo                             335        0        0      0
+capable@cal                            145        0        0      0
+capable@cal-lab                        240        0        0      0
+capable@cam-2                         1265        0        0      0
+capable@cm-1                          1345        0        0      0
+capable@cmms                           710        0        0      0
+capable@design-office                 1760        0        0      0
+capable@hr                             145        0        0      0
+capable@inspector                     1760        0        0      0
+capable@lab-2                          335        0        0      0
+capable@qa                             335        0        0      0
+capable@scale-3                       1760        0        0      0
+capable@tag-reader                    1265        0        0      0
+capable@technician                    1345        0        0      0
+capable@tom                            335        0        0      0
+causes_of                              590        0        0      0
+changes                                715        0        0      0
+check_action                            74        0        0      0
+compare_measurements                    80        0        0      0
+composition                           3575        0        0      0
+connections                           3575        0        0      0
+contents                               100        0        0      0
+dependencies                          3575        0        0      0
+direct_dependencies                   3575        0        0      0
+effects_of                             370        0        0      0
+employment                            3575        0        0      0
+exists                                3575        0        0      0
+facts_about                           3575        0        0      0
+facts_about@acme                       180        0        0      0
+facts_about@ana                        835        0        0      0
+facts_about@apprentice                2115        0        0      0
+facts_about@as_of                     3575        0        0      0
+facts_about@auditor                    180        0        0      0
+facts_about@bea                        180        0        0      0
+facts_about@bo                         835        0        0      0
+facts_about@cal                        180        0        0      0
+facts_about@cal-lab                    655        0        0      0
+facts_about@cam-2                     1935        0        0      0
+facts_about@cm-1                      2115        0        0      0
+facts_about@cmms                      1185        0        0      0
+facts_about@design-office             2560        0        0      0
+facts_about@hr                         180        0        0      0
+facts_about@inspector                 2560        0        0      0
+facts_about@lab-2                      835        0        0      0
+facts_about@qa                         835        0        0      0
+facts_about@scale-3                   2560        0        0      0
+facts_about@tag-reader                1935        0        0      0
+facts_about@technician                2115        0        0      0
+facts_about@tom                        835        0        0      0
+frame_info                             110        0        0      0
+holds                                 4975        0        0      0
+holds@as_of                           4975        0        0      0
+interpretations                        165        0        0      0
+materials                             3575        0        0      0
+measurement_calibration                 80        0        0      0
+measurements                            80        0        0      0
+occurrence_status                      220        0        0      0
+office_holders                          20        0        0      0
+offices_of                            3575        0        0      0
+official_act                             2        0        0      0
+parts                                 3575        0        0      0
+poses                                 3575        0        0      0
+process_steps                          220        0        0      0
+provenance                              20        0        0      0
+replacement                            370        0        0      0
+roles_of                              3575        0        0      0
+transform_between                      150        0        0      0
+value_of                               940        0        0      0
+total 106752 0 0 0
+
+--- 106,752 answers, S3 new code, upgraded, against S0 (old code, not upgraded)
+reader                           identical extended  changed  other
+agency_report                           11        0        0      0
+authorised                              20        0        0      0
+calibration_status                    3575        0        0      0
+capable                               2410        0        0      0
+capable@acme                           145        0        0      0
+capable@ana                            335        0        0      0
+capable@apprentice                    1345        0        0      0
+capable@auditor                        145        0        0      0
+capable@bea                            145        0        0      0
+capable@bo                             335        0        0      0
+capable@cal                            145        0        0      0
+capable@cal-lab                        240        0        0      0
+capable@cam-2                         1265        0        0      0
+capable@cm-1                          1345        0        0      0
+capable@cmms                           710        0        0      0
+capable@design-office                 1760        0        0      0
+capable@hr                             145        0        0      0
+capable@inspector                     1760        0        0      0
+capable@lab-2                          335        0        0      0
+capable@qa                             335        0        0      0
+capable@scale-3                       1760        0        0      0
+capable@tag-reader                    1265        0        0      0
+capable@technician                    1345        0        0      0
+capable@tom                            335        0        0      0
+causes_of                              590        0        0      0
+changes                                715        0        0      0
+check_action                            74        0        0      0
+compare_measurements                    80        0        0      0
+composition                           3575        0        0      0
+connections                           3575        0        0      0
+contents                               100        0        0      0
+dependencies                          3575        0        0      0
+direct_dependencies                   3575        0        0      0
+effects_of                             370        0        0      0
+employment                            3575        0        0      0
+exists                                3575        0        0      0
+facts_about                           3575        0        0      0
+facts_about@acme                       180        0        0      0
+facts_about@ana                        835        0        0      0
+facts_about@apprentice                2115        0        0      0
+facts_about@as_of                     3575        0        0      0
+facts_about@auditor                    180        0        0      0
+facts_about@bea                        180        0        0      0
+facts_about@bo                         835        0        0      0
+facts_about@cal                        180        0        0      0
+facts_about@cal-lab                    655        0        0      0
+facts_about@cam-2                     1935        0        0      0
+facts_about@cm-1                      2115        0        0      0
+facts_about@cmms                      1185        0        0      0
+facts_about@design-office             2560        0        0      0
+facts_about@hr                         180        0        0      0
+facts_about@inspector                 2560        0        0      0
+facts_about@lab-2                      835        0        0      0
+facts_about@qa                         835        0        0      0
+facts_about@scale-3                   2560        0        0      0
+facts_about@tag-reader                1935        0        0      0
+facts_about@technician                2115        0        0      0
+facts_about@tom                        835        0        0      0
+frame_info                             110        0        0      0
+holds                                 4975        0        0      0
+holds@as_of                           4975        0        0      0
+interpretations                        165        0        0      0
+materials                             3575        0        0      0
+measurement_calibration                 80        0        0      0
+measurements                            80        0        0      0
+occurrence_status                      220        0        0      0
+office_holders                          20        0        0      0
+offices_of                            3575        0        0      0
+official_act                             2        0        0      0
+parts                                 3575        0        0      0
+poses                                 3575        0        0      0
+process_steps                          220        0        0      0
+provenance                              20        0        0      0
+replacement                            370        0        0      0
+roles_of                              3575        0        0      0
+transform_between                      150        0        0      0
+value_of                               940        0        0      0
+total 106752 0 0 0
+
+--- 398 views, S0 old code, not upgraded (prototype rule)
+Totals:
+  constraint not applying (kind not established): 12
+  core role merging differently named roles: 8
+  description listed without an account in the world: 18
+  role judged: 12
+  views: 398
+  views with a judgement change (a constrained role DISPUTED): 0
+  views with a role-presentation change (`roles` keeps apart what `participants` merges): 8
+
+compared with probes/pre_e_d_occurrence_baseline.json.gz: 398 frozen views, 398 now, same views: True
+  existing fields (descriptions, participants) different: 0
+  judgements different: 0
+  role-presentation changes different: 0
+
+--- 398 views, S1 new code, not upgraded (library)
+Totals:
+  core role merging differently named roles: 8
+  views: 398
+  views with a judgement change (a constrained role DISPUTED): 0
+  views with a role-presentation change (`roles` keeps apart what `participants` merges): 8
+
+compared with probes/pre_e_d_occurrence_baseline.json.gz: 398 frozen views, 398 now, same views: True
+  existing fields (descriptions, participants) different: 0
+  judgements different: 10
+  role-presentation changes different: 0
+    ["actual", "o-bearing-replacement", "cmms", "latest"]
+    ["actual", "o-bearing-replacement", "inspector", "latest"]
+    ["actual", "o-bearing-replacement", "system", "latest"]
+    ["org", "o-signoff-9", "cal", "latest"]
+    ["org", "o-signoff-9", "system", "latest"]
+    ["org-plan-reorg", "o-signoff-9", "cal", "latest"]
+    ["org-plan-reorg", "o-signoff-9", "system", "latest"]
+    ["plan-rig-control", "o-bearing-replacement", "cmms", "latest"]
+    ["plan-rig-control", "o-bearing-replacement", "inspector", "latest"]
+    ["plan-rig-control", "o-bearing-replacement", "system", "latest"]
+
+--- 398 views, S2 old code, upgraded (prototype rule)
+Totals:
+  constraint not applying (kind not established): 12
+  core role merging differently named roles: 8
+  description listed without an account in the world: 18
+  role judged: 12
+  views: 398
+  views with a judgement change (a constrained role DISPUTED): 0
+  views with a role-presentation change (`roles` keeps apart what `participants` merges): 8
+
+compared with probes/pre_e_d_occurrence_baseline.json.gz: 398 frozen views, 398 now, same views: True
+  existing fields (descriptions, participants) different: 0
+  judgements different: 0
+  role-presentation changes different: 0
+
+--- 398 views, S3 new code, upgraded (library)
+Totals:
+  constraint not applying (kind not established): 12
+  core role merging differently named roles: 8
+  role judged: 12
+  views: 398
+  views with a judgement change (a constrained role DISPUTED): 0
+  views with a role-presentation change (`roles` keeps apart what `participants` merges): 8
+
+compared with probes/pre_e_d_occurrence_baseline.json.gz: 398 frozen views, 398 now, same views: True
+  existing fields (descriptions, participants) different: 0
+  judgements different: 0
+  role-presentation changes different: 0
+
+--- 398 views, C database built by the new code (library)
+Totals:
+  constraint not applying (kind not established): 12
+  core role merging differently named roles: 8
+  role judged: 12
+  views: 398
+  views with a judgement change (a constrained role DISPUTED): 0
+  views with a role-presentation change (`roles` keeps apart what `participants` merges): 8
+
+compared with probes/pre_e_d_occurrence_baseline.json.gz: 398 frozen views, 398 now, same views: True
+  existing fields (descriptions, participants) different: 0
+  judgements different: 0
+  role-presentation changes different: 0

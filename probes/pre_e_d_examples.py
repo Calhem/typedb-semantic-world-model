@@ -1,6 +1,6 @@
 """Increment D design (LABS-1.041, DI-2): executable examples of event-role exclusivity in the merged occurrence view.
 
-    uv run python -I probes/pre_e_d_examples.py <checkout>
+    uv run python -I probes/pre_e_d_examples.py <checkout> [<database to keep>]
 
 Builds one throwaway database (wm-probe-pre-e-d-*, deleted afterwards) with the core and the three profiles, writes the
 cases of docs/core-0.4/pre-e-increment-d-design.md, section "Examples", and prints for each the current merged view
@@ -65,7 +65,8 @@ def accept_account(wm, world, event, holder="system", attester=None):
 
 
 driver = connect()
-DB = f"wm-probe-pre-e-d-{uuid.uuid4().hex[:8]}"
+KEEP = sys.argv[2] if len(sys.argv) > 2 else None        # a database name: build there and keep it (benchmarks)
+DB = KEEP or f"wm-probe-pre-e-d-{uuid.uuid4().hex[:8]}"
 wm = WorldModel.create(DB, driver=driver, modules=CORE_MODULES, clock=Clock())
 try:
     for p in ("mechanical", "organisation", "laboratory"):
@@ -260,4 +261,5 @@ try:
     assert k(prop)["applies"] is False and k(prop)["classification"]["judgement"] == "unknown"
     print("\nall cases behave as recorded")
 finally:
-    driver.databases.get(DB).delete()
+    if not KEEP:
+        driver.databases.get(DB).delete()
