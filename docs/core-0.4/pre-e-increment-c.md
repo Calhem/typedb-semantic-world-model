@@ -139,3 +139,19 @@ aggregation alone, and no-exclusivity → new is the exclusivity cost.
 Per-content judgement (increment B), `holds`, `value_of`, every collection's per-item statuses, `offices_of`,
 `employment`, `provenance`, `interpretations`. DI-2 (increment D), DI-3, DI-4, DI-7, DI-9, DI-10 and DI-12. The
 foundational ontology and the schema. Stage E has not begun.
+
+## After the merge (LABS-1.041)
+- **Merge.** The approved head `cc14034` was unchanged, local and remote, and the tracked files clean; merged with
+  `--no-ff` into `main` as `bf8bb34` (pushed and verified on the remote).
+- **Regression on merged `main`.** 529 passed in each of the four configurations (both query paths, with and without
+  core protection, which installs all three profiles), and no test database was left over. Each run reports one
+  warning: a `SyntaxWarning` from a docstring in the TypeDB driver package, printed when Python first compiles that
+  file in a freshly installed environment; it does not come from this project's code, and the package versions are
+  the same as in the development checkout.
+- **Reproducibility.** The reference database was rebuilt from merged `main` (`wm-probe-pre-e-d`) and every reader
+  re-read: compared with the increment C snapshot (`wm-probe-pre-e-b`, new code), 106,752 of 106,752 answers are
+  identical once attestation ids and system-clock times are masked (`probes/pre_e_b_repro_check.py`, output
+  `probes/pre_e_c_repro_check.out.txt`). The older probe database was then dropped; `wm-probe-pre-e-d` is kept as the
+  baseline for increment D.
+- **Performance findings** stay under DI-9 unchanged (the office-exclusivity overhead, including `changes`); nothing
+  was optimised and the canonical judgement mechanism was not changed.

@@ -1,0 +1,54 @@
+A. Minimal reproduction (throwaway database)
+
+  occurrence o, description ev-pickup (account day 5, link with no start):
+  w:
+    describes link visible: [('w', 'none (from the start of the world)')]
+    account visible:        [('w', '2026-11-05T09:00:00+00:00')]
+    descriptions():         ['ev-pickup']
+    interval():             2026-11-05T09:00:00+00:00
+    occurrence_status:      status 'accepted'; account ['accepted']
+    occurrence() roles:     {'patient': {'box': [('ev-pickup', 'system')]}}
+  plan-early:
+    describes link visible: [('w', 'none (from the start of the world)')]
+    account visible:        []
+    descriptions():         ['ev-pickup']
+    interval():             None
+    occurrence_status:      status 'not established'; account ['none']
+    occurrence() roles:     {}
+  plan-late:
+    describes link visible: [('w', 'none (from the start of the world)')]
+    account visible:        [('w', '2026-11-05T09:00:00+00:00')]
+    descriptions():         ['ev-pickup']
+    interval():             2026-11-05T09:00:00+00:00
+    occurrence_status:      status 'accepted'; account ['accepted']
+    occurrence() roles:     {'patient': {'box': [('ev-pickup', 'system')]}}
+
+  occurrence o2, description ev-drop (account day 5, link from day 5):
+  plan-early-2:
+    describes link visible: []
+    account visible:        []
+    descriptions():         []
+    interval():             None
+    occurrence_status:      status 'not established'; account []
+    occurrence() roles:     {}
+
+B. Every reference case (database wm-probe-pre-e-d)
+  lab-plan-recal o-split-b ev-split-b [system]: link start ['none (from the start of the world)'], account starts 2026-11-10T15:30:00+00:00, branch 2026-11-10T15:30:00+00:00; interval None, occurrence_status account 'none': True
+  lab-plan-recal o-split-b ev-split-b [bo]: link start ['none (from the start of the world)'], account starts 2026-11-10T15:30:00+00:00, branch 2026-11-10T15:30:00+00:00; interval None, occurrence_status account 'none': True
+  lab-plan-recal o-split-c ev-split-c [bo]: link start ['none (from the start of the world)'], account starts 2026-11-10T15:30:00+00:00, branch 2026-11-10T15:30:00+00:00; interval None, occurrence_status account 'none': True
+  plan-relubricate-only o-bearing-replacement ev-maintenance-record [system]: link start ['none (from the start of the world)'], account starts 2026-11-05T13:50:00+00:00, branch 2026-11-05T12:00:00+00:00; interval None, occurrence_status account 'none': True
+  plan-relubricate-only o-bearing-replacement ev-worklog-replacement [system]: link start ['none (from the start of the world)'], account starts 2026-11-05T13:50:00+00:00, branch 2026-11-05T12:00:00+00:00; interval None, occurrence_status account 'none': True
+  plan-relubricate-only o-bearing-replacement ev-worklog-replacement [technician]: link start ['none (from the start of the world)'], account starts 2026-11-05T13:50:00+00:00, branch 2026-11-05T12:00:00+00:00; interval None, occurrence_status account 'none': True
+  plan-relubricate-only o-disassembly ev-disassembly [system]: link start ['none (from the start of the world)'], account starts 2026-11-05T13:00:00+00:00, branch 2026-11-05T12:00:00+00:00; interval None, occurrence_status account 'none': True
+  plan-relubricate-only o-disassembly ev-disassembly [technician]: link start ['none (from the start of the world)'], account starts 2026-11-05T13:00:00+00:00, branch 2026-11-05T12:00:00+00:00; interval None, occurrence_status account 'none': True
+  plan-relubricate-only o-reassembly ev-reassembly [system]: link start ['none (from the start of the world)'], account starts 2026-11-05T14:15:00+00:00, branch 2026-11-05T12:00:00+00:00; interval None, occurrence_status account 'none': True
+  plan-relubricate-only o-reassembly ev-reassembly [technician]: link start ['none (from the start of the world)'], account starts 2026-11-05T14:15:00+00:00, branch 2026-11-05T12:00:00+00:00; interval None, occurrence_status account 'none': True
+  plan-relubricate-only o-relubrication ev-relubrication [system]: link start ['none (from the start of the world)'], account starts 2026-11-05T14:05:00+00:00, branch 2026-11-05T12:00:00+00:00; interval None, occurrence_status account 'none': True
+  plan-relubricate-only o-relubrication ev-relubrication [technician]: link start ['none (from the start of the world)'], account starts 2026-11-05T14:05:00+00:00, branch 2026-11-05T12:00:00+00:00; interval None, occurrence_status account 'none': True
+  plan-relubricate-only o-repair ev-repair [system]: link start ['none (from the start of the world)'], account starts 2026-11-05T13:00:00+00:00, branch 2026-11-05T12:00:00+00:00; interval None, occurrence_status account 'none': True
+  plan-relubricate-only o-repair ev-repair [technician]: link start ['none (from the start of the world)'], account starts 2026-11-05T13:00:00+00:00, branch 2026-11-05T12:00:00+00:00; interval None, occurrence_status account 'none': True
+  plan-relubricate-only o-sign-off ev-sign-off [system]: link start ['none (from the start of the world)'], account starts 2026-11-05T16:00:00+00:00, branch 2026-11-05T12:00:00+00:00; interval None, occurrence_status account 'none': True
+  plan-relubricate-only o-sign-off ev-sign-off [inspector]: link start ['none (from the start of the world)'], account starts 2026-11-05T16:00:00+00:00, branch 2026-11-05T12:00:00+00:00; interval None, occurrence_status account 'none': True
+  plan-relubricate-only o-test-run ev-test-run [system]: link start ['none (from the start of the world)'], account starts 2026-11-05T15:30:00+00:00, branch 2026-11-05T12:00:00+00:00; interval None, occurrence_status account 'none': True
+  plan-relubricate-only o-test-run ev-test-run [technician]: link start ['none (from the start of the world)'], account starts 2026-11-05T15:30:00+00:00, branch 2026-11-05T12:00:00+00:00; interval None, occurrence_status account 'none': True
+  cases: 18; every one is an inherited link with no start whose account starts after the branch point, and no interval or status is taken from it

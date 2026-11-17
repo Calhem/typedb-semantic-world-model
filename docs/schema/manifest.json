@@ -4,8 +4,8 @@
   "provenance": "database",
   "database": "wm-schema-reference",
   "server_version": "TypeDB CE 3.14.1",
-  "schema_sha256": "bba547c25973ff97b3e12f979cfbb3dffc858ae3b6a53c932c4ef621805d73c5",
-  "schema_characters": 10502,
+  "schema_sha256": "cd6a7e6ac8216d2dea38b1a50c7eaab87a3108ffeeba564e8ea1bd45b8030576",
+  "schema_characters": 10951,
   "modules": {
    "core": "0.3.0",
    "core-0.4-a": "0.4.0-a1",
@@ -14,18 +14,19 @@
    "core-0.4-b": "0.4.0-b",
    "core-0.4-c": "0.4.0-c",
    "core-0.4-d": "0.4.0-d",
+   "core-0.4-event-roles": "0.4.0-er",
    "profile:laboratory": "0.1",
-   "profile:mechanical": "0.1",
-   "profile:organisation": "0.1"
+   "profile:mechanical": "0.2",
+   "profile:organisation": "0.2"
   }
  },
  "export": {
   "exporter": "worldmodel.schema_export 1.0.0",
-  "exported_at": "2026-11-13T01:46:21+00:00",
-  "code_commit": "be2abe1f1469192c49415673169c2895737ebd81",
+  "exported_at": "2026-11-16T21:45:53+00:00",
+  "code_commit": "e452fdb47c8830ddd4c81c4df1b617d5530f1e87",
   "code_dirty": true
  },
- "schema_sha256": "bba547c25973ff97b3e12f979cfbb3dffc858ae3b6a53c932c4ef621805d73c5",
+ "schema_sha256": "cd6a7e6ac8216d2dea38b1a50c7eaab87a3108ffeeba564e8ea1bd45b8030576",
  "verification": {
   "parse": true,
   "query_cross_check": true,
@@ -34,7 +35,7 @@
  "replay_verification": "verified",
  "replay_problems": [],
  "attribution_counts": {
-  "attributed": 487,
+  "attributed": 508,
   "shared": 0,
   "consistent_unverified": 0,
   "unresolved": 0
@@ -42,23 +43,23 @@
  "unresolved": [],
  "files": {
   "schema-explorer.html": {
-   "sha256": "5a40f4beb0b0b41963cb62bc7522e21d82b6361010196d9fc3559842e079017d",
-   "bytes": 356228
+   "sha256": "e207f427db2a9fffae934289ab6291e44f15d5bd6ff4d7b9c26506206783c9a4",
+   "bytes": 371844
   },
   "schema.json": {
-   "sha256": "93c9b4ffcdb0c7c9cafaacca637e313a6741cdc482a8a6d00657f07419ab8b61",
-   "bytes": 425069
+   "sha256": "069370d125e6b2176172e3f5784aeed500780501e530e827b9cfe2a62d02fd9c",
+   "bytes": 444610
   },
   "schema.tql": {
-   "sha256": "bba547c25973ff97b3e12f979cfbb3dffc858ae3b6a53c932c4ef621805d73c5",
-   "bytes": 10502
+   "sha256": "cd6a7e6ac8216d2dea38b1a50c7eaab87a3108ffeeba564e8ea1bd45b8030576",
+   "bytes": 10951
   }
  },
  "module_data_verification": "verified",
  "module_data_unresolved": [],
  "documentation": {
   "provenance": "repository",
-  "types_documented": 36,
+  "types_documented": 41,
   "unknown_labels": []
  }
 }

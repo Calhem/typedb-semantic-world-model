@@ -1,0 +1,17 @@
+# Core 0.4, pre-Stage E increment D (LABS-1.043, DI-2): event-role constraints, stored as data in TypeDB (choice H).
+#
+# A constraint says: for one occurrence, the compared accounts (event descriptions whose describes link to it is
+# established and whose account is accepted) of `constrained-event-type`, or of any of its subtypes, name at most one
+# player, under the perspective's identity, of the core role `constrained-role`. With `constraint-kind` it applies only
+# where classified-as(occurrence, kind) is established (judged by the canonical record) at the occurrence's start.
+# Constraints are declared only by profiles, on their own event types (`declaring-module`); the core declares none.
+# Additive: no existing type, role or attribute is changed. See docs/core-0.4/pre-e-increment-d-design.md.
+
+define
+attribute event-role-constraint-id, value string;    # "<event type>|<core role>|<kind id, or *>"
+attribute constrained-event-type, value string;      # a profile's own event type label, e.g. official-act
+attribute constrained-role, value string;            # a core role name, e.g. actor (official-act:official)
+attribute constraint-kind, value string;             # a category id; absent: unconditional
+attribute declaring-module, value string;            # the module record that declared it, e.g. profile:organisation
+entity event-role-constraint, owns event-role-constraint-id @key, owns constrained-event-type @card(1..1),
+  owns constrained-role @card(1..1), owns constraint-kind @card(0..1), owns declaring-module @card(1..1);

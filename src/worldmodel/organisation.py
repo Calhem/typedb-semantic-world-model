@@ -27,7 +27,7 @@ Functions take the WorldModel, as in `worldmodel.mechanical`.
 
 from .judgement import AttestedConstraint, attested_conflict, collection_status, combine, without_attested
 from .model import SCHEMA_DIR, SYSTEM
-from .profiles import PROFILES, Profile
+from .profiles import PROFILES, EventRole, Profile
 from .semantics import Status
 
 NAME = "organisation"
@@ -35,10 +35,16 @@ NAME = "organisation"
 # (class) and context has at most one holder (classified). Judged by the core's canonical mechanism (LABS-1.038).
 EXCLUSIVE_OFFICE = AttestedConstraint("exclusive-office", "office-holding",
                                       (("office", "class"), ("context", "context")), "classified")
-PROFILE = Profile(NAME, "0.1", (str(SCHEMA_DIR / "profiles" / "organisation" / "organisation-0.1.tql"),),
+# An official act is one official's act in one office within one context (a joint act is several acts), so for one
+# occurrence its official (actor), office and office context are single-valued, unconditionally (LABS-1.043, ER-6).
+# 0.2 (LABS-1.043) adds these three event-role constraints to 0.1 (data only; the schema file is unchanged).
+PROFILE = Profile(NAME, "0.2", (str(SCHEMA_DIR / "profiles" / "organisation" / "organisation-0.1.tql"),),
                   vocabulary=(("category", "organisation:appointment", "appointment"),
                               ("category", "organisation:dismissal", "dismissal")),
-                  attested_constraints=(EXCLUSIVE_OFFICE,))
+                  attested_constraints=(EXCLUSIVE_OFFICE,),
+                  event_roles=(EventRole("official-act", "actor"), EventRole("official-act", "office"),
+                               EventRole("official-act", "office-context")),
+                  upgrades_from="0.1")
 PROFILES[NAME] = PROFILE
 NOT_ASSESSED = "not assessed"
 

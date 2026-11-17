@@ -1,5 +1,5 @@
 {
- "format": "wm-schema-export/1",
+ "format": "wm-schema-export/2",
  "provenance": {
   "database": "Read from the TypeDB database (schema() text, query answers, records), or computed by the exporter from those reads alone.",
   "reconstructed": "Needs this repository's code as well as the database: core and profile attribution by replaying the recorded modules into temporary databases and comparing with the database. Checked against the database, not stored in it. It shows how the schema is reproduced from the recorded modules, not how this database was actually built: TypeDB keeps no installation history.",
@@ -9,8 +9,8 @@
   "provenance": "database",
   "database": "wm-schema-reference",
   "server_version": "TypeDB CE 3.14.1",
-  "schema_sha256": "bba547c25973ff97b3e12f979cfbb3dffc858ae3b6a53c932c4ef621805d73c5",
-  "schema_characters": 10502,
+  "schema_sha256": "cd6a7e6ac8216d2dea38b1a50c7eaab87a3108ffeeba564e8ea1bd45b8030576",
+  "schema_characters": 10951,
   "modules": {
    "core": "0.3.0",
    "core-0.4-a": "0.4.0-a1",
@@ -19,15 +19,16 @@
    "core-0.4-b": "0.4.0-b",
    "core-0.4-c": "0.4.0-c",
    "core-0.4-d": "0.4.0-d",
+   "core-0.4-event-roles": "0.4.0-er",
    "profile:laboratory": "0.1",
-   "profile:mechanical": "0.1",
-   "profile:organisation": "0.1"
+   "profile:mechanical": "0.2",
+   "profile:organisation": "0.2"
   }
  },
  "export": {
   "exporter": "worldmodel.schema_export 1.0.0",
-  "exported_at": "2026-11-13T01:46:21+00:00",
-  "code_commit": "be2abe1f1469192c49415673169c2895737ebd81",
+  "exported_at": "2026-11-16T21:45:53+00:00",
+  "code_commit": "e452fdb47c8830ddd4c81c4df1b617d5530f1e87",
   "code_dirty": true
  },
  "verification": {
@@ -35,24 +36,24 @@
   "parse": {
    "passed": true,
    "exact": true,
-   "facts": 487
+   "facts": 508
   },
   "query_cross_check": {
    "passed": true,
    "compared": {
-    "kinds": 107,
+    "kinds": 113,
     "sub": 49,
-    "owns": 180,
+    "owns": 185,
     "plays": 460,
     "relates": 99,
     "role_parents": 5,
-    "value_types": 51
+    "value_types": 56
    }
   },
   "round_trip": {
    "passed": true,
    "identical_schema_text": true,
-   "characters": 10502
+   "characters": 10951
   },
   "single_source": {
    "annotations": "From the schema() text only: TypeDB 3.14.1 cannot query annotations (REP254). Checked by the exact parse and the round trip, not by a query.",
@@ -86,13 +87,13 @@
    "functions": "From the schema() text only: TypeDB 3.14.1 has no query that lists functions. Checked by the exact parse and the round trip; signatures are parsed, bodies are kept as text."
   },
   "counts": {
-   "types": 107,
-   "entity": 21,
+   "types": 113,
+   "entity": 22,
    "relation": 35,
-   "attribute": 51,
+   "attribute": 56,
    "roles": 78,
    "functions": 2,
-   "facts": 487
+   "facts": 508
   },
   "types": {
    "acceptance": {
@@ -1416,6 +1417,78 @@
     ],
     "functions": []
    },
+   "constrained-event-type": {
+    "label": "constrained-event-type",
+    "kind": "attribute",
+    "annotations": [],
+    "abstract": false,
+    "supertype": null,
+    "supertypes": [],
+    "subtypes": [],
+    "value_type": {
+     "type": "string",
+     "from": "constrained-event-type",
+     "declared": true,
+     "annotations": []
+    },
+    "owns": [],
+    "plays": [],
+    "relates": [],
+    "statement": "attribute constrained-event-type,\n value string;",
+    "facts": [
+     "attribute constrained-event-type",
+     "constrained-event-type value string"
+    ],
+    "functions": []
+   },
+   "constrained-role": {
+    "label": "constrained-role",
+    "kind": "attribute",
+    "annotations": [],
+    "abstract": false,
+    "supertype": null,
+    "supertypes": [],
+    "subtypes": [],
+    "value_type": {
+     "type": "string",
+     "from": "constrained-role",
+     "declared": true,
+     "annotations": []
+    },
+    "owns": [],
+    "plays": [],
+    "relates": [],
+    "statement": "attribute constrained-role,\n value string;",
+    "facts": [
+     "attribute constrained-role",
+     "constrained-role value string"
+    ],
+    "functions": []
+   },
+   "constraint-kind": {
+    "label": "constraint-kind",
+    "kind": "attribute",
+    "annotations": [],
+    "abstract": false,
+    "supertype": null,
+    "supertypes": [],
+    "subtypes": [],
+    "value_type": {
+     "type": "string",
+     "from": "constraint-kind",
+     "declared": true,
+     "annotations": []
+    },
+    "owns": [],
+    "plays": [],
+    "relates": [],
+    "statement": "attribute constraint-kind,\n value string;",
+    "facts": [
+     "attribute constraint-kind",
+     "constraint-kind value string"
+    ],
+    "functions": []
+   },
    "coverage-factor": {
     "label": "coverage-factor",
     "kind": "attribute",
@@ -1491,6 +1564,30 @@
      "attribute credence",
      "credence value @range(0.0..1.0)",
      "credence value double"
+    ],
+    "functions": []
+   },
+   "declaring-module": {
+    "label": "declaring-module",
+    "kind": "attribute",
+    "annotations": [],
+    "abstract": false,
+    "supertype": null,
+    "supertypes": [],
+    "subtypes": [],
+    "value_type": {
+     "type": "string",
+     "from": "declaring-module",
+     "declared": true,
+     "annotations": []
+    },
+    "owns": [],
+    "plays": [],
+    "relates": [],
+    "statement": "attribute declaring-module,\n value string;",
+    "facts": [
+     "attribute declaring-module",
+     "declaring-module value string"
     ],
     "functions": []
    },
@@ -1976,6 +2073,99 @@
      "event relates origin",
      "event relates patient",
      "relation event"
+    ],
+    "functions": []
+   },
+   "event-role-constraint": {
+    "label": "event-role-constraint",
+    "kind": "entity",
+    "annotations": [],
+    "abstract": false,
+    "supertype": null,
+    "supertypes": [],
+    "subtypes": [],
+    "value_type": null,
+    "owns": [
+     {
+      "attribute": "constrained-event-type",
+      "annotations": [
+       "@card(1..1)"
+      ],
+      "from": "event-role-constraint",
+      "declared": true
+     },
+     {
+      "attribute": "constrained-role",
+      "annotations": [
+       "@card(1..1)"
+      ],
+      "from": "event-role-constraint",
+      "declared": true
+     },
+     {
+      "attribute": "constraint-kind",
+      "annotations": [
+       "@card(0..1)"
+      ],
+      "from": "event-role-constraint",
+      "declared": true
+     },
+     {
+      "attribute": "declaring-module",
+      "annotations": [
+       "@card(1..1)"
+      ],
+      "from": "event-role-constraint",
+      "declared": true
+     },
+     {
+      "attribute": "event-role-constraint-id",
+      "annotations": [
+       "@key"
+      ],
+      "from": "event-role-constraint",
+      "declared": true
+     }
+    ],
+    "plays": [],
+    "relates": [],
+    "statement": "entity event-role-constraint,\n  owns constrained-event-type @card(1..1),\n  owns constrained-role @card(1..1),\n  owns constraint-kind @card(0..1),\n  owns declaring-module @card(1..1),\n  owns event-role-constraint-id @key;",
+    "facts": [
+     "entity event-role-constraint",
+     "event-role-constraint owns constrained-event-type",
+     "event-role-constraint owns constrained-event-type @card(1..1)",
+     "event-role-constraint owns constrained-role",
+     "event-role-constraint owns constrained-role @card(1..1)",
+     "event-role-constraint owns constraint-kind",
+     "event-role-constraint owns constraint-kind @card(0..1)",
+     "event-role-constraint owns declaring-module",
+     "event-role-constraint owns declaring-module @card(1..1)",
+     "event-role-constraint owns event-role-constraint-id",
+     "event-role-constraint owns event-role-constraint-id @key"
+    ],
+    "functions": []
+   },
+   "event-role-constraint-id": {
+    "label": "event-role-constraint-id",
+    "kind": "attribute",
+    "annotations": [],
+    "abstract": false,
+    "supertype": null,
+    "supertypes": [],
+    "subtypes": [],
+    "value_type": {
+     "type": "string",
+     "from": "event-role-constraint-id",
+     "declared": true,
+     "annotations": []
+    },
+    "owns": [],
+    "plays": [],
+    "relates": [],
+    "statement": "attribute event-role-constraint-id,\n value string;",
+    "facts": [
+     "attribute event-role-constraint-id",
+     "event-role-constraint-id value string"
     ],
     "functions": []
    },
@@ -9619,6 +9809,15 @@
    "condition": [
     "information-object"
    ],
+   "constrained-event-type": [
+    "event-role-constraint"
+   ],
+   "constrained-role": [
+    "event-role-constraint"
+   ],
+   "constraint-kind": [
+    "event-role-constraint"
+   ],
    "coverage-factor": [
     "information-object"
    ],
@@ -9627,6 +9826,9 @@
    ],
    "credence": [
     "attestation"
+   ],
+   "declaring-module": [
+    "event-role-constraint"
    ],
    "description": [
     "attestation",
@@ -9660,6 +9862,9 @@
    ],
    "end-basis": [
     "attestation"
+   ],
+   "event-role-constraint-id": [
+    "event-role-constraint"
    ],
    "knowledge-at": [
     "branching"
@@ -10153,6 +10358,21 @@
     "kind": "type",
     "type_kind": "attribute"
    },
+   "attribute constrained-event-type": {
+    "subject": "constrained-event-type",
+    "kind": "type",
+    "type_kind": "attribute"
+   },
+   "attribute constrained-role": {
+    "subject": "constrained-role",
+    "kind": "type",
+    "type_kind": "attribute"
+   },
+   "attribute constraint-kind": {
+    "subject": "constraint-kind",
+    "kind": "type",
+    "type_kind": "attribute"
+   },
    "attribute coverage-factor": {
     "subject": "coverage-factor",
     "kind": "type",
@@ -10168,6 +10388,11 @@
     "kind": "type",
     "type_kind": "attribute"
    },
+   "attribute declaring-module": {
+    "subject": "declaring-module",
+    "kind": "type",
+    "type_kind": "attribute"
+   },
    "attribute description": {
     "subject": "description",
     "kind": "type",
@@ -10180,6 +10405,11 @@
    },
    "attribute end-basis": {
     "subject": "end-basis",
+    "kind": "type",
+    "type_kind": "attribute"
+   },
+   "attribute event-role-constraint-id": {
+    "subject": "event-role-constraint-id",
     "kind": "type",
     "type_kind": "attribute"
    },
@@ -10628,6 +10858,21 @@
     "kind": "sub",
     "target": "proposition"
    },
+   "constrained-event-type value string": {
+    "subject": "constrained-event-type",
+    "kind": "value",
+    "target": "string"
+   },
+   "constrained-role value string": {
+    "subject": "constrained-role",
+    "kind": "value",
+    "target": "string"
+   },
+   "constraint-kind value string": {
+    "subject": "constraint-kind",
+    "kind": "value",
+    "target": "string"
+   },
    "coverage-factor value double": {
     "subject": "coverage-factor",
     "kind": "value",
@@ -10654,6 +10899,11 @@
     "subject": "credence",
     "kind": "value",
     "target": "double"
+   },
+   "declaring-module value string": {
+    "subject": "declaring-module",
+    "kind": "value",
+    "target": "string"
    },
    "depends-on relates dependee": {
     "subject": "depends-on",
@@ -10757,6 +11007,11 @@
     "kind": "annotation",
     "of": "entity concept",
     "annotation": "@abstract"
+   },
+   "entity event-role-constraint": {
+    "subject": "event-role-constraint",
+    "kind": "type",
+    "type_kind": "entity"
    },
    "entity functional-slot": {
     "subject": "functional-slot",
@@ -10940,6 +11195,66 @@
     "subject": "event",
     "kind": "relates",
     "target": "patient"
+   },
+   "event-role-constraint owns constrained-event-type": {
+    "subject": "event-role-constraint",
+    "kind": "owns",
+    "target": "constrained-event-type"
+   },
+   "event-role-constraint owns constrained-event-type @card(1..1)": {
+    "subject": "event-role-constraint",
+    "kind": "annotation",
+    "of": "event-role-constraint owns constrained-event-type",
+    "annotation": "@card(1..1)"
+   },
+   "event-role-constraint owns constrained-role": {
+    "subject": "event-role-constraint",
+    "kind": "owns",
+    "target": "constrained-role"
+   },
+   "event-role-constraint owns constrained-role @card(1..1)": {
+    "subject": "event-role-constraint",
+    "kind": "annotation",
+    "of": "event-role-constraint owns constrained-role",
+    "annotation": "@card(1..1)"
+   },
+   "event-role-constraint owns constraint-kind": {
+    "subject": "event-role-constraint",
+    "kind": "owns",
+    "target": "constraint-kind"
+   },
+   "event-role-constraint owns constraint-kind @card(0..1)": {
+    "subject": "event-role-constraint",
+    "kind": "annotation",
+    "of": "event-role-constraint owns constraint-kind",
+    "annotation": "@card(0..1)"
+   },
+   "event-role-constraint owns declaring-module": {
+    "subject": "event-role-constraint",
+    "kind": "owns",
+    "target": "declaring-module"
+   },
+   "event-role-constraint owns declaring-module @card(1..1)": {
+    "subject": "event-role-constraint",
+    "kind": "annotation",
+    "of": "event-role-constraint owns declaring-module",
+    "annotation": "@card(1..1)"
+   },
+   "event-role-constraint owns event-role-constraint-id": {
+    "subject": "event-role-constraint",
+    "kind": "owns",
+    "target": "event-role-constraint-id"
+   },
+   "event-role-constraint owns event-role-constraint-id @key": {
+    "subject": "event-role-constraint",
+    "kind": "annotation",
+    "of": "event-role-constraint owns event-role-constraint-id",
+    "annotation": "@key"
+   },
+   "event-role-constraint-id value string": {
+    "subject": "event-role-constraint-id",
+    "kind": "value",
+    "target": "string"
    },
    "exclusive-office relates context": {
     "subject": "exclusive-office",
@@ -12417,7 +12732,7 @@
     "target": "double"
    }
   },
-  "typeql": "define\n\nattribute wm-id,\n value string;\nattribute name,\n value string;\nattribute alt-name,\n value string;\nattribute description,\n value string;\nattribute module-name,\n value string;\nattribute module-version,\n value string;\nattribute proposition-key,\n value string;\nattribute time-point @abstract,\n value datetime-tz;\nattribute valid-from-earliest,\n  sub time-point;\nattribute valid-from-latest,\n  sub time-point;\nattribute valid-to-earliest,\n  sub time-point;\nattribute valid-to-latest,\n  sub time-point;\nattribute recorded-at,\n  sub time-point;\nattribute branch-at,\n  sub time-point;\nattribute knowledge-at,\n  sub time-point;\nattribute end-basis,\n value string @values(\"stated\", \"unknown\", \"until-superseded\");\nattribute stance,\n value string @values(\"asserts\", \"believes\", \"doubts\", \"hypothesises\", \"stipulates\");\nattribute polarity,\n value boolean;\nattribute basis,\n value string @values(\"observation\", \"testimony\", \"inference\", \"stipulation\");\nattribute credence,\n value double @range(0.0..1.0);\nattribute verdict,\n value string @values(\"accepted\", \"rejected\", \"retracted\");\nattribute reason,\n value string;\nattribute world-kind,\n value string @values(\"actual\", \"hypothetical\", \"simulated\");\nattribute lower,\n value double;\nattribute upper,\n value double;\nattribute coverage-level,\n value double @range(0.0..1.0);\nattribute slot-id,\n value string;\nattribute slot-predicate,\n value string;\nattribute slot-role,\n value string;\nattribute value-role,\n value string;\nattribute x-min,\n value double;\nattribute x-max,\n value double;\nattribute y-min,\n value double;\nattribute y-max,\n value double;\nattribute z-min,\n value double;\nattribute z-max,\n value double;\nattribute qw,\n value double;\nattribute qx,\n value double;\nattribute qy,\n value double;\nattribute qz,\n value double;\nattribute tx,\n value double;\nattribute ty,\n value double;\nattribute tz,\n value double;\nattribute dimension,\n value string;\nattribute si-factor,\n value double;\nattribute si-offset,\n value double;\nattribute raw-value,\n value double;\nattribute standard-uncertainty,\n value double;\nattribute coverage-factor,\n value double;\nattribute condition,\n value string;\nattribute calibration-ref,\n value string;\nentity schema-module,\n  owns module-name @key,\n  owns module-version;\nentity particular @abstract,\n  owns alt-name,\n  owns description,\n  owns name,\n  owns wm-id @key,\n  plays anchored-to:anchor,\n  plays authorisation:grantor,\n  plays authorisation:holder,\n  plays authorisation:scope,\n  plays classified-as:classified,\n  plays classified-as:context,\n  plays constitution:constituent,\n  plays constitution:constituted,\n  plays depends-on:dependee,\n  plays depends-on:dependent,\n  plays event:actor,\n  plays event:destination,\n  plays event:instrument,\n  plays event:location,\n  plays event:origin,\n  plays event:patient,\n  plays exclusive-office:context,\n  plays existence:existent,\n  plays has-quality:bearer,\n  plays member-of:group,\n  plays member-of:member,\n  plays official-act:office-context,\n  plays official-act:official,\n  plays part-of:part,\n  plays part-of:whole,\n  plays positioned-in:positioned,\n  plays same-as:same,\n  plays sampling:sampler;\nentity physical-object,\n  sub particular,\n  plays acceptance:holder,\n  plays attestation:attester,\n  plays calibration-of:calibrated,\n  plays connected-to:endpoint,\n  plays located-at:located,\n  plays replacement:fitted,\n  plays replacement:removed,\n  plays sampling:sampled;\nentity social-object,\n  sub particular,\n  plays acceptance:holder,\n  plays attestation:attester;\nentity place,\n  sub particular,\n  plays located-at:located,\n  plays located-at:place;\nentity information-object,\n  sub particular,\n  owns calibration-ref,\n  owns condition @card(0..),\n  owns coverage-factor,\n  owns raw-value,\n  owns standard-uncertainty,\n  plays calibration-of:certificate,\n  plays expressed-in:record,\n  plays produced:result,\n  plays reports:result,\n  plays rests-on:record;\nentity occurrence,\n  sub particular,\n  plays causes:cause,\n  plays causes:effect,\n  plays describes:occurrence;\nentity concept @abstract,\n  owns description,\n  owns name,\n  owns wm-id @key,\n  plays classified-as:class,\n  plays classified-as:classified,\n  plays has-quality:value;\nentity category,\n  sub concept,\n  plays connected-to:joint-kind,\n  plays depends-on:kind;\nentity social-role,\n  sub concept,\n  plays exclusive-office:office,\n  plays official-act:office;\nentity quality-kind,\n  sub concept,\n  owns dimension,\n  plays has-quality:quality;\nentity reference-system @abstract,\n  owns description,\n  owns name,\n  owns wm-id @key;\nentity clock,\n  sub reference-system,\n  plays attestation:clock;\nentity spatial-frame,\n  sub reference-system,\n  plays anchored-to:frame,\n  plays frame-transform:child,\n  plays frame-transform:parent,\n  plays positioned-in:frame;\nentity unit,\n  sub reference-system,\n  owns dimension,\n  owns si-factor,\n  owns si-offset,\n  plays expressed-in:unit,\n  plays has-quality:unit;\nentity world,\n  owns description,\n  owns name,\n  owns wm-id @key,\n  owns world-kind,\n  plays attestation:context,\n  plays branching:base,\n  plays branching:variant;\nentity functional-slot,\n  owns slot-id @key,\n  owns slot-predicate @card(1..1),\n  owns slot-role @card(1..),\n  owns value-role @card(1..1);\nentity capability,\n  sub concept,\n  plays authorisation:power;\nentity person,\n  sub physical-object,\n  plays employment:employee;\nentity organisation,\n  sub social-object,\n  plays employment:employer;\nentity sample,\n  sub physical-object,\n  plays sampling:product;\nrelation branching,\n  relates base,\n  relates variant,\n  owns branch-at,\n  owns knowledge-at,\n  owns recorded-at;\nrelation proposition @abstract,\n  owns proposition-key @key,\n  owns wm-id @key,\n  plays attestation:content,\n  plays initiates:outcome,\n  plays reports:content,\n  plays terminates:outcome;\nrelation existence,\n  sub proposition,\n  relates existent;\nrelation located-at,\n  sub proposition,\n  relates located,\n  relates place;\nrelation part-of,\n  sub proposition,\n  relates part,\n  relates whole;\nrelation member-of,\n  sub proposition,\n  relates group,\n  relates member;\nrelation depends-on,\n  sub proposition,\n  relates dependee,\n  relates dependent,\n  relates kind @card(0..1);\nrelation classified-as,\n  sub proposition,\n  relates class,\n  relates classified,\n  relates context;\nrelation has-quality,\n  sub proposition,\n  relates bearer,\n  relates quality,\n  relates unit,\n  relates value,\n  owns coverage-level,\n  owns lower,\n  owns upper;\nrelation same-as,\n  sub proposition,\n  relates same @card(2..2);\nrelation describes,\n  sub proposition,\n  relates description,\n  relates occurrence;\nrelation initiates,\n  sub proposition,\n  relates event,\n  relates outcome;\nrelation terminates,\n  sub proposition,\n  relates event,\n  relates outcome;\nrelation event,\n  relates actor,\n  relates destination,\n  relates instrument,\n  relates location,\n  relates origin,\n  relates patient,\n  owns description,\n  owns wm-id @key,\n  plays attestation:content,\n  plays causes:cause,\n  plays causes:effect,\n  plays classified-as:classified,\n  plays describes:description,\n  plays initiates:event,\n  plays produced:activity,\n  plays terminates:event;\nrelation attestation,\n  relates attester @card(1..1),\n  relates clock @card(0..1),\n  relates content @card(1..1),\n  relates context @card(1..1),\n  owns basis,\n  owns credence,\n  owns description,\n  owns end-basis,\n  owns polarity,\n  owns recorded-at,\n  owns stance,\n  owns valid-from-earliest,\n  owns valid-from-latest,\n  owns valid-to-earliest,\n  owns valid-to-latest,\n  owns wm-id @key,\n  plays acceptance:accepted,\n  plays rests-on:attestation,\n  plays supersession:new,\n  plays supersession:old;\nrelation supersession,\n  relates new @card(1..1),\n  relates old @card(1..1),\n  owns recorded-at;\nrelation acceptance,\n  relates accepted @card(1..1),\n  relates holder @card(1..1),\n  owns reason,\n  owns recorded-at,\n  owns verdict,\n  owns wm-id @key;\nrelation constitution,\n  sub proposition,\n  relates constituent,\n  relates constituted;\nrelation positioned-in,\n  sub proposition,\n  relates frame,\n  relates positioned,\n  owns qw,\n  owns qx,\n  owns qy,\n  owns qz,\n  owns x-max,\n  owns x-min,\n  owns y-max,\n  owns y-min,\n  owns z-max,\n  owns z-min;\nrelation anchored-to,\n  sub proposition,\n  relates anchor,\n  relates frame;\nrelation frame-transform,\n  sub proposition,\n  relates child,\n  relates parent,\n  owns qw,\n  owns qx,\n  owns qy,\n  owns qz,\n  owns tx,\n  owns ty,\n  owns tz;\nrelation causes,\n  sub proposition,\n  relates cause,\n  relates effect;\nrelation expressed-in,\n  relates record @card(1..1),\n  relates unit @card(1..1);\nrelation rests-on,\n  relates attestation @card(1..1),\n  relates record @card(1..1);\nrelation produced,\n  sub proposition,\n  relates activity,\n  relates result;\nrelation reports,\n  sub proposition,\n  relates content,\n  relates result;\nrelation connected-to,\n  sub proposition,\n  relates endpoint @card(2..2),\n  relates joint-kind @card(0..1);\nrelation replacement,\n  sub event,\n  relates fitted,\n  relates removed as patient;\nrelation employment,\n  sub proposition,\n  relates employee,\n  relates employer;\nrelation office-holding,\n  sub classified-as;\nrelation exclusive-office,\n  sub proposition,\n  relates context,\n  relates office;\nrelation authorisation,\n  sub proposition,\n  relates grantor,\n  relates holder,\n  relates power,\n  relates scope;\nrelation official-act,\n  sub event,\n  relates office,\n  relates office-context,\n  relates official as actor;\nrelation sampling,\n  sub event,\n  relates product as destination,\n  relates sampled as origin,\n  relates sampler as actor;\nrelation calibration-of,\n  sub proposition,\n  relates calibrated,\n  relates certificate;\nfun parts_in($whole: particular, $w: world) -> { particular }:\n  match\n    { $c isa part-of (whole: $whole, part: $p); attestation (content: $c, context: $w); } or\n    { $c isa part-of (whole: $whole, part: $m); attestation (content: $c, context: $w); let $p in parts_in($m, $w); };\n  return { $p };\nfun frames_linked($f: spatial-frame, $w: world) -> { spatial-frame }:\n  match\n    { $c1 isa frame-transform (parent: $f, child: $g); attestation (content: $c1, context: $w); } or\n    { $c2 isa frame-transform (child: $f, parent: $g); attestation (content: $c2, context: $w); } or\n    { $c3 isa frame-transform (parent: $f, child: $m3); attestation (content: $c3, context: $w);\n      let $g in frames_linked($m3, $w); } or\n    { $c4 isa frame-transform (child: $f, parent: $m4); attestation (content: $c4, context: $w);\n      let $g in frames_linked($m4, $w); };\n  return { $g };"
+  "typeql": "define\n\nattribute wm-id,\n value string;\nattribute name,\n value string;\nattribute alt-name,\n value string;\nattribute description,\n value string;\nattribute module-name,\n value string;\nattribute module-version,\n value string;\nattribute proposition-key,\n value string;\nattribute time-point @abstract,\n value datetime-tz;\nattribute valid-from-earliest,\n  sub time-point;\nattribute valid-from-latest,\n  sub time-point;\nattribute valid-to-earliest,\n  sub time-point;\nattribute valid-to-latest,\n  sub time-point;\nattribute recorded-at,\n  sub time-point;\nattribute branch-at,\n  sub time-point;\nattribute knowledge-at,\n  sub time-point;\nattribute end-basis,\n value string @values(\"stated\", \"unknown\", \"until-superseded\");\nattribute stance,\n value string @values(\"asserts\", \"believes\", \"doubts\", \"hypothesises\", \"stipulates\");\nattribute polarity,\n value boolean;\nattribute basis,\n value string @values(\"observation\", \"testimony\", \"inference\", \"stipulation\");\nattribute credence,\n value double @range(0.0..1.0);\nattribute verdict,\n value string @values(\"accepted\", \"rejected\", \"retracted\");\nattribute reason,\n value string;\nattribute world-kind,\n value string @values(\"actual\", \"hypothetical\", \"simulated\");\nattribute lower,\n value double;\nattribute upper,\n value double;\nattribute coverage-level,\n value double @range(0.0..1.0);\nattribute slot-id,\n value string;\nattribute slot-predicate,\n value string;\nattribute slot-role,\n value string;\nattribute value-role,\n value string;\nattribute x-min,\n value double;\nattribute x-max,\n value double;\nattribute y-min,\n value double;\nattribute y-max,\n value double;\nattribute z-min,\n value double;\nattribute z-max,\n value double;\nattribute qw,\n value double;\nattribute qx,\n value double;\nattribute qy,\n value double;\nattribute qz,\n value double;\nattribute tx,\n value double;\nattribute ty,\n value double;\nattribute tz,\n value double;\nattribute dimension,\n value string;\nattribute si-factor,\n value double;\nattribute si-offset,\n value double;\nattribute raw-value,\n value double;\nattribute standard-uncertainty,\n value double;\nattribute coverage-factor,\n value double;\nattribute condition,\n value string;\nattribute calibration-ref,\n value string;\nattribute event-role-constraint-id,\n value string;\nattribute constrained-event-type,\n value string;\nattribute constrained-role,\n value string;\nattribute constraint-kind,\n value string;\nattribute declaring-module,\n value string;\nentity schema-module,\n  owns module-name @key,\n  owns module-version;\nentity particular @abstract,\n  owns alt-name,\n  owns description,\n  owns name,\n  owns wm-id @key,\n  plays anchored-to:anchor,\n  plays authorisation:grantor,\n  plays authorisation:holder,\n  plays authorisation:scope,\n  plays classified-as:classified,\n  plays classified-as:context,\n  plays constitution:constituent,\n  plays constitution:constituted,\n  plays depends-on:dependee,\n  plays depends-on:dependent,\n  plays event:actor,\n  plays event:destination,\n  plays event:instrument,\n  plays event:location,\n  plays event:origin,\n  plays event:patient,\n  plays exclusive-office:context,\n  plays existence:existent,\n  plays has-quality:bearer,\n  plays member-of:group,\n  plays member-of:member,\n  plays official-act:office-context,\n  plays official-act:official,\n  plays part-of:part,\n  plays part-of:whole,\n  plays positioned-in:positioned,\n  plays same-as:same,\n  plays sampling:sampler;\nentity physical-object,\n  sub particular,\n  plays acceptance:holder,\n  plays attestation:attester,\n  plays calibration-of:calibrated,\n  plays connected-to:endpoint,\n  plays located-at:located,\n  plays replacement:fitted,\n  plays replacement:removed,\n  plays sampling:sampled;\nentity social-object,\n  sub particular,\n  plays acceptance:holder,\n  plays attestation:attester;\nentity place,\n  sub particular,\n  plays located-at:located,\n  plays located-at:place;\nentity information-object,\n  sub particular,\n  owns calibration-ref,\n  owns condition @card(0..),\n  owns coverage-factor,\n  owns raw-value,\n  owns standard-uncertainty,\n  plays calibration-of:certificate,\n  plays expressed-in:record,\n  plays produced:result,\n  plays reports:result,\n  plays rests-on:record;\nentity occurrence,\n  sub particular,\n  plays causes:cause,\n  plays causes:effect,\n  plays describes:occurrence;\nentity concept @abstract,\n  owns description,\n  owns name,\n  owns wm-id @key,\n  plays classified-as:class,\n  plays classified-as:classified,\n  plays has-quality:value;\nentity category,\n  sub concept,\n  plays connected-to:joint-kind,\n  plays depends-on:kind;\nentity social-role,\n  sub concept,\n  plays exclusive-office:office,\n  plays official-act:office;\nentity quality-kind,\n  sub concept,\n  owns dimension,\n  plays has-quality:quality;\nentity reference-system @abstract,\n  owns description,\n  owns name,\n  owns wm-id @key;\nentity clock,\n  sub reference-system,\n  plays attestation:clock;\nentity spatial-frame,\n  sub reference-system,\n  plays anchored-to:frame,\n  plays frame-transform:child,\n  plays frame-transform:parent,\n  plays positioned-in:frame;\nentity unit,\n  sub reference-system,\n  owns dimension,\n  owns si-factor,\n  owns si-offset,\n  plays expressed-in:unit,\n  plays has-quality:unit;\nentity world,\n  owns description,\n  owns name,\n  owns wm-id @key,\n  owns world-kind,\n  plays attestation:context,\n  plays branching:base,\n  plays branching:variant;\nentity functional-slot,\n  owns slot-id @key,\n  owns slot-predicate @card(1..1),\n  owns slot-role @card(1..),\n  owns value-role @card(1..1);\nentity capability,\n  sub concept,\n  plays authorisation:power;\nentity event-role-constraint,\n  owns constrained-event-type @card(1..1),\n  owns constrained-role @card(1..1),\n  owns constraint-kind @card(0..1),\n  owns declaring-module @card(1..1),\n  owns event-role-constraint-id @key;\nentity person,\n  sub physical-object,\n  plays employment:employee;\nentity organisation,\n  sub social-object,\n  plays employment:employer;\nentity sample,\n  sub physical-object,\n  plays sampling:product;\nrelation branching,\n  relates base,\n  relates variant,\n  owns branch-at,\n  owns knowledge-at,\n  owns recorded-at;\nrelation proposition @abstract,\n  owns proposition-key @key,\n  owns wm-id @key,\n  plays attestation:content,\n  plays initiates:outcome,\n  plays reports:content,\n  plays terminates:outcome;\nrelation existence,\n  sub proposition,\n  relates existent;\nrelation located-at,\n  sub proposition,\n  relates located,\n  relates place;\nrelation part-of,\n  sub proposition,\n  relates part,\n  relates whole;\nrelation member-of,\n  sub proposition,\n  relates group,\n  relates member;\nrelation depends-on,\n  sub proposition,\n  relates dependee,\n  relates dependent,\n  relates kind @card(0..1);\nrelation classified-as,\n  sub proposition,\n  relates class,\n  relates classified,\n  relates context;\nrelation has-quality,\n  sub proposition,\n  relates bearer,\n  relates quality,\n  relates unit,\n  relates value,\n  owns coverage-level,\n  owns lower,\n  owns upper;\nrelation same-as,\n  sub proposition,\n  relates same @card(2..2);\nrelation describes,\n  sub proposition,\n  relates description,\n  relates occurrence;\nrelation initiates,\n  sub proposition,\n  relates event,\n  relates outcome;\nrelation terminates,\n  sub proposition,\n  relates event,\n  relates outcome;\nrelation event,\n  relates actor,\n  relates destination,\n  relates instrument,\n  relates location,\n  relates origin,\n  relates patient,\n  owns description,\n  owns wm-id @key,\n  plays attestation:content,\n  plays causes:cause,\n  plays causes:effect,\n  plays classified-as:classified,\n  plays describes:description,\n  plays initiates:event,\n  plays produced:activity,\n  plays terminates:event;\nrelation attestation,\n  relates attester @card(1..1),\n  relates clock @card(0..1),\n  relates content @card(1..1),\n  relates context @card(1..1),\n  owns basis,\n  owns credence,\n  owns description,\n  owns end-basis,\n  owns polarity,\n  owns recorded-at,\n  owns stance,\n  owns valid-from-earliest,\n  owns valid-from-latest,\n  owns valid-to-earliest,\n  owns valid-to-latest,\n  owns wm-id @key,\n  plays acceptance:accepted,\n  plays rests-on:attestation,\n  plays supersession:new,\n  plays supersession:old;\nrelation supersession,\n  relates new @card(1..1),\n  relates old @card(1..1),\n  owns recorded-at;\nrelation acceptance,\n  relates accepted @card(1..1),\n  relates holder @card(1..1),\n  owns reason,\n  owns recorded-at,\n  owns verdict,\n  owns wm-id @key;\nrelation constitution,\n  sub proposition,\n  relates constituent,\n  relates constituted;\nrelation positioned-in,\n  sub proposition,\n  relates frame,\n  relates positioned,\n  owns qw,\n  owns qx,\n  owns qy,\n  owns qz,\n  owns x-max,\n  owns x-min,\n  owns y-max,\n  owns y-min,\n  owns z-max,\n  owns z-min;\nrelation anchored-to,\n  sub proposition,\n  relates anchor,\n  relates frame;\nrelation frame-transform,\n  sub proposition,\n  relates child,\n  relates parent,\n  owns qw,\n  owns qx,\n  owns qy,\n  owns qz,\n  owns tx,\n  owns ty,\n  owns tz;\nrelation causes,\n  sub proposition,\n  relates cause,\n  relates effect;\nrelation expressed-in,\n  relates record @card(1..1),\n  relates unit @card(1..1);\nrelation rests-on,\n  relates attestation @card(1..1),\n  relates record @card(1..1);\nrelation produced,\n  sub proposition,\n  relates activity,\n  relates result;\nrelation reports,\n  sub proposition,\n  relates content,\n  relates result;\nrelation connected-to,\n  sub proposition,\n  relates endpoint @card(2..2),\n  relates joint-kind @card(0..1);\nrelation replacement,\n  sub event,\n  relates fitted,\n  relates removed as patient;\nrelation employment,\n  sub proposition,\n  relates employee,\n  relates employer;\nrelation office-holding,\n  sub classified-as;\nrelation exclusive-office,\n  sub proposition,\n  relates context,\n  relates office;\nrelation authorisation,\n  sub proposition,\n  relates grantor,\n  relates holder,\n  relates power,\n  relates scope;\nrelation official-act,\n  sub event,\n  relates office,\n  relates office-context,\n  relates official as actor;\nrelation sampling,\n  sub event,\n  relates product as destination,\n  relates sampled as origin,\n  relates sampler as actor;\nrelation calibration-of,\n  sub proposition,\n  relates calibrated,\n  relates certificate;\nfun parts_in($whole: particular, $w: world) -> { particular }:\n  match\n    { $c isa part-of (whole: $whole, part: $p); attestation (content: $c, context: $w); } or\n    { $c isa part-of (whole: $whole, part: $m); attestation (content: $c, context: $w); let $p in parts_in($m, $w); };\n  return { $p };\nfun frames_linked($f: spatial-frame, $w: world) -> { spatial-frame }:\n  match\n    { $c1 isa frame-transform (parent: $f, child: $g); attestation (content: $c1, context: $w); } or\n    { $c2 isa frame-transform (child: $f, parent: $g); attestation (content: $c2, context: $w); } or\n    { $c3 isa frame-transform (parent: $f, child: $m3); attestation (content: $c3, context: $w);\n      let $g in frames_linked($m3, $w); } or\n    { $c4 isa frame-transform (child: $f, parent: $m4); attestation (content: $c4, context: $w);\n      let $g in frames_linked($m4, $w); };\n  return { $g };"
  },
  "attribution": {
   "provenance": "reconstructed",
@@ -12431,7 +12746,7 @@
    "unresolved": "Attribution cannot be established: no replay step adds it."
   },
   "counts": {
-   "attributed": 487,
+   "attributed": 508,
    "shared": 0,
    "consistent_unverified": 0,
    "unresolved": 0
@@ -12508,6 +12823,16 @@
     }
    },
    {
+    "name": "core-0.4-event-roles",
+    "kind": "core",
+    "recorded_version": "0.4.0-er",
+    "code_version": "0.4.0-er",
+    "replay": "replayable",
+    "facts": {
+     "attributed": 21
+    }
+   },
+   {
     "name": "profile:laboratory",
     "kind": "profile",
     "recorded_version": "0.1",
@@ -12520,8 +12845,8 @@
    {
     "name": "profile:mechanical",
     "kind": "profile",
-    "recorded_version": "0.1",
-    "code_version": "0.1",
+    "recorded_version": "0.2",
+    "code_version": "0.2",
     "replay": "replayable",
     "facts": {
      "attributed": 15
@@ -12530,8 +12855,8 @@
    {
     "name": "profile:organisation",
     "kind": "profile",
-    "recorded_version": "0.1",
-    "code_version": "0.1",
+    "recorded_version": "0.2",
+    "code_version": "0.2",
     "replay": "replayable",
     "facts": {
      "attributed": 37
@@ -12805,6 +13130,24 @@
      "core-0.4-c"
     ]
    },
+   "attribute constrained-event-type": {
+    "status": "attributed",
+    "modules": [
+     "core-0.4-event-roles"
+    ]
+   },
+   "attribute constrained-role": {
+    "status": "attributed",
+    "modules": [
+     "core-0.4-event-roles"
+    ]
+   },
+   "attribute constraint-kind": {
+    "status": "attributed",
+    "modules": [
+     "core-0.4-event-roles"
+    ]
+   },
    "attribute coverage-factor": {
     "status": "attributed",
     "modules": [
@@ -12823,6 +13166,12 @@
      "core"
     ]
    },
+   "attribute declaring-module": {
+    "status": "attributed",
+    "modules": [
+     "core-0.4-event-roles"
+    ]
+   },
    "attribute description": {
     "status": "attributed",
     "modules": [
@@ -12839,6 +13188,12 @@
     "status": "attributed",
     "modules": [
      "core"
+    ]
+   },
+   "attribute event-role-constraint-id": {
+    "status": "attributed",
+    "modules": [
+     "core-0.4-event-roles"
     ]
    },
    "attribute knowledge-at": {
@@ -13369,6 +13724,24 @@
      "core-0.4-a"
     ]
    },
+   "constrained-event-type value string": {
+    "status": "attributed",
+    "modules": [
+     "core-0.4-event-roles"
+    ]
+   },
+   "constrained-role value string": {
+    "status": "attributed",
+    "modules": [
+     "core-0.4-event-roles"
+    ]
+   },
+   "constraint-kind value string": {
+    "status": "attributed",
+    "modules": [
+     "core-0.4-event-roles"
+    ]
+   },
    "coverage-factor value double": {
     "status": "attributed",
     "modules": [
@@ -13397,6 +13770,12 @@
     "status": "attributed",
     "modules": [
      "core"
+    ]
+   },
+   "declaring-module value string": {
+    "status": "attributed",
+    "modules": [
+     "core-0.4-event-roles"
     ]
    },
    "depends-on relates dependee": {
@@ -13517,6 +13896,12 @@
     "status": "attributed",
     "modules": [
      "core"
+    ]
+   },
+   "entity event-role-constraint": {
+    "status": "attributed",
+    "modules": [
+     "core-0.4-event-roles"
     ]
    },
    "entity functional-slot": {
@@ -13733,6 +14118,72 @@
     "status": "attributed",
     "modules": [
      "core"
+    ]
+   },
+   "event-role-constraint owns constrained-event-type": {
+    "status": "attributed",
+    "modules": [
+     "core-0.4-event-roles"
+    ]
+   },
+   "event-role-constraint owns constrained-event-type @card(1..1)": {
+    "status": "attributed",
+    "modules": [
+     "core-0.4-event-roles"
+    ]
+   },
+   "event-role-constraint owns constrained-role": {
+    "status": "attributed",
+    "modules": [
+     "core-0.4-event-roles"
+    ]
+   },
+   "event-role-constraint owns constrained-role @card(1..1)": {
+    "status": "attributed",
+    "modules": [
+     "core-0.4-event-roles"
+    ]
+   },
+   "event-role-constraint owns constraint-kind": {
+    "status": "attributed",
+    "modules": [
+     "core-0.4-event-roles"
+    ]
+   },
+   "event-role-constraint owns constraint-kind @card(0..1)": {
+    "status": "attributed",
+    "modules": [
+     "core-0.4-event-roles"
+    ]
+   },
+   "event-role-constraint owns declaring-module": {
+    "status": "attributed",
+    "modules": [
+     "core-0.4-event-roles"
+    ]
+   },
+   "event-role-constraint owns declaring-module @card(1..1)": {
+    "status": "attributed",
+    "modules": [
+     "core-0.4-event-roles"
+    ]
+   },
+   "event-role-constraint owns event-role-constraint-id": {
+    "status": "attributed",
+    "modules": [
+     "core-0.4-event-roles"
+    ]
+   },
+   "event-role-constraint owns event-role-constraint-id @key": {
+    "status": "attributed",
+    "modules": [
+     "core-0.4-event-roles"
+    ]
+   },
+   "event-role-constraint-id value string": {
+    "status": "attributed",
+    "modules": [
+     "core-0.4-event-roles"
     ]
    },
    "exclusive-office relates context": {
@@ -15861,6 +16312,54 @@
     },
     "unresolved": []
    },
+   "constrained-event-type": {
+    "introduced_by": {
+     "status": "attributed",
+     "modules": [
+      "core-0.4-event-roles"
+     ]
+    },
+    "extended_by": [],
+    "contributions": {
+     "core-0.4-event-roles": [
+      "attribute constrained-event-type",
+      "constrained-event-type value string"
+     ]
+    },
+    "unresolved": []
+   },
+   "constrained-role": {
+    "introduced_by": {
+     "status": "attributed",
+     "modules": [
+      "core-0.4-event-roles"
+     ]
+    },
+    "extended_by": [],
+    "contributions": {
+     "core-0.4-event-roles": [
+      "attribute constrained-role",
+      "constrained-role value string"
+     ]
+    },
+    "unresolved": []
+   },
+   "constraint-kind": {
+    "introduced_by": {
+     "status": "attributed",
+     "modules": [
+      "core-0.4-event-roles"
+     ]
+    },
+    "extended_by": [],
+    "contributions": {
+     "core-0.4-event-roles": [
+      "attribute constraint-kind",
+      "constraint-kind value string"
+     ]
+    },
+    "unresolved": []
+   },
    "coverage-factor": {
     "introduced_by": {
      "status": "attributed",
@@ -15907,6 +16406,22 @@
       "attribute credence",
       "credence value @range(0.0..1.0)",
       "credence value double"
+     ]
+    },
+    "unresolved": []
+   },
+   "declaring-module": {
+    "introduced_by": {
+     "status": "attributed",
+     "modules": [
+      "core-0.4-event-roles"
+     ]
+    },
+    "extended_by": [],
+    "contributions": {
+     "core-0.4-event-roles": [
+      "attribute declaring-module",
+      "declaring-module value string"
      ]
     },
     "unresolved": []
@@ -16055,6 +16570,47 @@
      ],
      "core-0.4-c": [
       "event plays produced:activity"
+     ]
+    },
+    "unresolved": []
+   },
+   "event-role-constraint": {
+    "introduced_by": {
+     "status": "attributed",
+     "modules": [
+      "core-0.4-event-roles"
+     ]
+    },
+    "extended_by": [],
+    "contributions": {
+     "core-0.4-event-roles": [
+      "entity event-role-constraint",
+      "event-role-constraint owns constrained-event-type",
+      "event-role-constraint owns constrained-event-type @card(1..1)",
+      "event-role-constraint owns constrained-role",
+      "event-role-constraint owns constrained-role @card(1..1)",
+      "event-role-constraint owns constraint-kind",
+      "event-role-constraint owns constraint-kind @card(0..1)",
+      "event-role-constraint owns declaring-module",
+      "event-role-constraint owns declaring-module @card(1..1)",
+      "event-role-constraint owns event-role-constraint-id",
+      "event-role-constraint owns event-role-constraint-id @key"
+     ]
+    },
+    "unresolved": []
+   },
+   "event-role-constraint-id": {
+    "introduced_by": {
+     "status": "attributed",
+     "modules": [
+      "core-0.4-event-roles"
+     ]
+    },
+    "extended_by": [],
+    "contributions": {
+     "core-0.4-event-roles": [
+      "attribute event-role-constraint-id",
+      "event-role-constraint-id value string"
      ]
     },
     "unresolved": []
@@ -17623,6 +18179,14 @@
      "unread": [],
      "missing_from_scan": []
     },
+    "core-0.4-event-roles": {
+     "files": [
+      "schema/core/core-0.4-event-roles.tql"
+     ],
+     "statements": 6,
+     "unread": [],
+     "missing_from_scan": []
+    },
     "profile:laboratory": {
      "files": [
       "schema/profiles/laboratory/laboratory-0.1.tql"
@@ -17654,6 +18218,12 @@
   "provenance": "repository",
   "description": "Comments from the .tql files of the modules recorded in the database, read from this repository (export.code_commit). Not checked against the database; they never affect attribution or any database field.",
   "modules": {
+   "profile:laboratory": {
+    "files": [
+     "schema/profiles/laboratory/laboratory-0.1.tql"
+    ],
+    "header": "Profile laboratory-0.1 (Core 0.4 Stage D-3, LABS-1.028). Additive vocabulary only (D-D-1, D-D-9): installed after the full core with WorldModel.install_profile(\"laboratory\"). Measurement (activity, result record, proposition), rests-on, comparability, units, corrections, constitution, location, hypotheses (stance) and processes are core (Stage B and C). Specimens and experiments are classifications (laboratory:specimen, laboratory:experiment)."
+   },
    "profile:mechanical": {
     "files": [
      "schema/profiles/mechanical/mechanical-0.1.tql"
@@ -17665,12 +18235,6 @@
      "schema/profiles/organisation/organisation-0.1.tql"
     ],
     "header": "Profile organisation-0.1 (Core 0.4 Stage D-2, LABS-1.026). Additive vocabulary only (D-D-1, D-D-9): installed after the full core with WorldModel.install_profile(\"organisation\"). Membership (member-of), organisational structure (part-of), ordinary roles, abilities (capability classifications) and agency are core."
-   },
-   "profile:laboratory": {
-    "files": [
-     "schema/profiles/laboratory/laboratory-0.1.tql"
-    ],
-    "header": "Profile laboratory-0.1 (Core 0.4 Stage D-3, LABS-1.028). Additive vocabulary only (D-D-1, D-D-9): installed after the full core with WorldModel.install_profile(\"laboratory\"). Measurement (activity, result record, proposition), rests-on, comparability, units, corrections, constitution, location, hypotheses (stance) and processes are core (Stage B and C). Specimens and experiments are classifications (laboratory:specimen, laboratory:experiment)."
    },
    "core": {
     "files": [
@@ -17715,6 +18279,12 @@
      "schema/core/core-0.4-d.tql"
     ],
     "header": "Core 0.4 Stage D (LABS-1.023; decision D-D-2): the dependency kind of World Ontology v0.2 §3.4 (\"depends-on with a dependency-kind concept\"). Core conformance, not a profile: profiles never modify core types. Additive: a depends-on without a kind keeps its canonical key and its provenance, and is read as \"kind unspecified\", never as any particular kind. A typed dependency is a different proposition from the untyped one for the same pair. The kinds are categories; the core seeds physical, functional, informational and control (model.MODULE_CONCEPTS), and profiles may add their own."
+   },
+   "core-0.4-event-roles": {
+    "files": [
+     "schema/core/core-0.4-event-roles.tql"
+    ],
+    "header": "Core 0.4, pre-Stage E increment D (LABS-1.043, DI-2): event-role constraints, stored as data in TypeDB (choice H). A constraint says: for one occurrence, the compared accounts (event descriptions whose describes link to it is established and whose account is accepted) of `constrained-event-type`, or of any of its subtypes, name at most one player, under the perspective's identity, of the core role `constrained-role`. With `constraint-kind` it applies only where classified-as(occurrence, kind) is established (judged by the canonical record) at the occurrence's start. Constraints are declared only by profiles, on their own event types (`declaring-module`); the core declares none. Additive: no existing type, role or attribute is changed. See docs/core-0.4/pre-e-increment-d-design.md."
    }
   },
   "types": {
@@ -17898,6 +18468,54 @@
      ]
     }
    ],
+   "constrained-event-type": [
+    {
+     "module": "core-0.4-event-roles",
+     "file": "schema/core/core-0.4-event-roles.tql",
+     "line": 12,
+     "comment": "a profile's own event type label, e.g. official-act",
+     "declares": [
+      "attribute constrained-event-type",
+      "constrained-event-type value string"
+     ]
+    }
+   ],
+   "constrained-role": [
+    {
+     "module": "core-0.4-event-roles",
+     "file": "schema/core/core-0.4-event-roles.tql",
+     "line": 13,
+     "comment": "a core role name, e.g. actor (official-act:official)",
+     "declares": [
+      "attribute constrained-role",
+      "constrained-role value string"
+     ]
+    }
+   ],
+   "constraint-kind": [
+    {
+     "module": "core-0.4-event-roles",
+     "file": "schema/core/core-0.4-event-roles.tql",
+     "line": 14,
+     "comment": "a category id; absent: unconditional",
+     "declares": [
+      "attribute constraint-kind",
+      "constraint-kind value string"
+     ]
+    }
+   ],
+   "declaring-module": [
+    {
+     "module": "core-0.4-event-roles",
+     "file": "schema/core/core-0.4-event-roles.tql",
+     "line": 15,
+     "comment": "the module record that declared it, e.g. profile:organisation",
+     "declares": [
+      "attribute declaring-module",
+      "declaring-module value string"
+     ]
+    }
+   ],
    "employment": [
     {
      "module": "profile:organisation",
@@ -17934,6 +18552,18 @@
       "event plays classified-as:classified",
       "event plays initiates:event",
       "event plays terminates:event"
+     ]
+    }
+   ],
+   "event-role-constraint-id": [
+    {
+     "module": "core-0.4-event-roles",
+     "file": "schema/core/core-0.4-event-roles.tql",
+     "line": 11,
+     "comment": "\"<event type>|<core role>|<kind id, or *>\"",
+     "declares": [
+      "attribute event-role-constraint-id",
+      "event-role-constraint-id value string"
      ]
     }
    ],
@@ -18315,6 +18945,7 @@
    "description",
    "dimension",
    "end-basis",
+   "event-role-constraint",
    "existence",
    "expressed-in",
    "frame-transform",
@@ -18374,7 +19005,7 @@
  "module_data": {
   "provenance": "database",
   "attribution_provenance": "reconstructed",
-  "description": "Concept and functional-slot records written by module installation. A record with source 'database' is read from the database; which module wrote it is reconstructed by replay. A record with source 'reconstructed' is written by the replay but absent from the database.",
+  "description": "Concept, functional-slot and event-role-constraint records written by module installation. A record with source 'database' is read from the database; which module wrote it is reconstructed by replay. A record with source 'reconstructed' is written by the replay but absent from the database.",
   "verification": "verified",
   "problems": [],
   "records": [
@@ -18511,6 +19142,19 @@
    {
     "kind": "concept",
     "type": "category",
+    "id": "mechanical:one-for-one",
+    "name": "one-for-one replacement",
+    "source": "database",
+    "attribution": {
+     "status": "attributed",
+     "modules": [
+      "profile:mechanical"
+     ]
+    }
+   },
+   {
+    "kind": "concept",
+    "type": "category",
     "id": "mechanical:pressed",
     "name": "press fit",
     "source": "database",
@@ -18557,6 +19201,81 @@
      "status": "attributed",
      "modules": [
       "profile:organisation"
+     ]
+    }
+   },
+   {
+    "kind": "event-role-constraint",
+    "id": "official-act|actor|*",
+    "event_type": "official-act",
+    "role": "actor",
+    "event_kind": null,
+    "declared_by": "profile:organisation",
+    "source": "database",
+    "attribution": {
+     "status": "attributed",
+     "modules": [
+      "profile:organisation"
+     ]
+    }
+   },
+   {
+    "kind": "event-role-constraint",
+    "id": "official-act|office-context|*",
+    "event_type": "official-act",
+    "role": "office-context",
+    "event_kind": null,
+    "declared_by": "profile:organisation",
+    "source": "database",
+    "attribution": {
+     "status": "attributed",
+     "modules": [
+      "profile:organisation"
+     ]
+    }
+   },
+   {
+    "kind": "event-role-constraint",
+    "id": "official-act|office|*",
+    "event_type": "official-act",
+    "role": "office",
+    "event_kind": null,
+    "declared_by": "profile:organisation",
+    "source": "database",
+    "attribution": {
+     "status": "attributed",
+     "modules": [
+      "profile:organisation"
+     ]
+    }
+   },
+   {
+    "kind": "event-role-constraint",
+    "id": "replacement|fitted|mechanical:one-for-one",
+    "event_type": "replacement",
+    "role": "fitted",
+    "event_kind": "mechanical:one-for-one",
+    "declared_by": "profile:mechanical",
+    "source": "database",
+    "attribution": {
+     "status": "attributed",
+     "modules": [
+      "profile:mechanical"
+     ]
+    }
+   },
+   {
+    "kind": "event-role-constraint",
+    "id": "replacement|patient|mechanical:one-for-one",
+    "event_type": "replacement",
+    "role": "patient",
+    "event_kind": "mechanical:one-for-one",
+    "declared_by": "profile:mechanical",
+    "source": "database",
+    "attribution": {
+     "status": "attributed",
+     "modules": [
+      "profile:mechanical"
      ]
     }
    },

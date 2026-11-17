@@ -1,6 +1,6 @@
 # Deferred correctness issues (register)
 
-**Opened 2026-11-11 under LABS-1.025; DI-5 added under LABS-1.026, DI-6 under LABS-1.027, DI-7 under LABS-1.028, DI-8 and DI-9 under LABS-1.030, DI-10 and DI-11 under LABS-1.034, DI-12 under LABS-1.038.** These are known correctness issues (DI-1 to DI-8, DI-11), one
+**Opened 2026-11-11 under LABS-1.025; DI-5 added under LABS-1.026, DI-6 under LABS-1.027, DI-7 under LABS-1.028, DI-8 and DI-9 under LABS-1.030, DI-10 and DI-11 under LABS-1.034, DI-12 under LABS-1.038, DI-14 under LABS-1.042, DI-13 under LABS-1.043.** These are known correctness issues (DI-1 to DI-8, DI-11), one
 tracked performance concern (DI-9) and one maintenance item (DI-10), kept apart from the stage documents.
 None of them has had its semantics changed yet. The pre-Stage E correctness review
 ([pre-stage-e-correctness-review.md](pre-stage-e-correctness-review.md), LABS-1.034) reproduces DI-1 to DI-6 and DI-8,
@@ -20,7 +20,7 @@ tests.
 | # | Issue | Found | Must be resolved | Status |
 |---|---|---|---|---|
 | DI-1 | disputed content omitted from generic fact and role reports (`facts_about`, `roles_of`) | D-1 (LABS-1.023) | before Stage E | corrected in increment B, approved and merged (LABS-1.039, `main` d9d873a) |
-| DI-2 | conflicting event participants are not judged together (single-valued roles) | D-1 (v0.2 D9) | before Stage E | open |
+| DI-2 | conflicting event participants are not judged together (single-valued roles) | D-1 (v0.2 D9) | before Stage E | corrected in increment D (LABS-1.043), validated (LABS-1.044), awaiting review, not merged |
 | DI-3 | conflicting mechanical joint kinds are not judged | D-1 | no deadline | open (limitation) |
 | DI-4 | dependency-kind vocabulary is not validated | D-1 | no deadline | open (limitation) |
 | DI-5 | a future-effective appointment (or holding) with an unreviewed counter-claim is labelled "not established" | D-2 (LABS-1.026) | no deadline | corrected in increment B, approved and merged (LABS-1.039, `main` d9d873a) |
@@ -31,6 +31,8 @@ tests.
 | DI-10 | the schema explorer has no automated browser regression tests (search, filters, navigation were checked by hand) | LABS-1.024 gate (registered LABS-1.034) | no deadline (maintenance) | open (non-blocking) |
 | DI-11 | reports built on `_claims` (capable, the profile reports) ignore functional-slot conflicts; the mirror image of DI-1 | pre-Stage E review (LABS-1.034) | proposed: before Stage E | corrected in increment B, approved and merged (LABS-1.039, `main` d9d873a) |
 | DI-12 | the transitive traversals (`parts`, `dependencies`) judge their links without the perspective's same-as identity | increment B design (LABS-1.037, registered LABS-1.038) | no deadline (deferred) | open |
+| DI-13 | every event role holds at most one player per account (TypeDB's default `@card(0..1)`), a universal per-account cardinality the domain does not always have | increment D design (LABS-1.041; registered LABS-1.043, ER-8) | no deadline (deferred limitation) | open (limitation) |
+| DI-14 | in a variant world, descriptions whose account is not inherited are listed (their `describes` link is) without saying the world holds no account of them | increment D design (registered LABS-1.042) | no deadline (deferred) | open (reporting; no judgement affected) |
 
 ## DI-1: `facts_about` omits content disputed by polarity
 **What happens.** `facts_about(world, subject, t)` lists only content whose judgement at t is "holds". Two kinds of
@@ -89,6 +91,24 @@ all usable descriptions.
   judged in the merged occurrence view, with DISPUTED and both accounts cited.
 - **(b)** Defer. This would block Stage E.
 - **Recommendation:** (a). It reuses the slot-as-data pattern (A0.3) and needs no schema change.
+
+**Increment D design (LABS-1.041), at review.** [pre-e-increment-d-design.md](pre-e-increment-d-design.md). Two of
+this entry's premises were corrected while preparing it:
+- each event role already holds **at most one player per account** (TypeDB's default `@card(0..1)`), so several
+  players of a role arise only across accounts of one occurrence, and a two-part job can only be recorded that way;
+  whether a replacement's `removed` is single-valued therefore depends on the operation (proposed: constrained only for
+  occurrences established as one-for-one; proposed DI-13 for the per-account cardinality);
+- the review's reference count (bearing-1 against bearing-3 at `o-bearing-replacement`) merged two different roles
+  under the core name `patient`: the CMMS replacement's removed part and the technician's work-log patient. Measured on
+  the reference worlds, the proposed rule changes no judgement (`probes/pre_e_d_impact.out.txt`).
+
+**Correction, increment D (LABS-1.043), validated under LABS-1.044, awaiting review, not merged.** Made on `feature/pre-e-d-event-roles` under the
+approved design (ER-1 to ER-8): event-role constraints stored as data (`core-0.4-event-roles`), declared by profiles
+(official-act official, office and office context; replacement removed and fitted only for an occurrence established
+as `mechanical:one-for-one`), judged in `occurrence()` (new fields `accounts` and `roles`) by the canonical mechanism
+([pre-e-increment-d.md](pre-e-increment-d.md)). Validation: the 106,752 answers unchanged by the new code and by the
+upgrades (and old code on an upgraded database); the 398 views with 0 changes to existing fields or judgements and the
+8 authorised role-presentation additions; the full suite twice in four configurations.
 
 ## DI-3: conflicting mechanical joint kinds
 **What happens.** `connected-to(a, b, bolted)` and `connected-to(a, b, welded)` are two contents. Both can hold, so they
@@ -265,6 +285,17 @@ boundary of a subject's timeline, so it pays the exclusivity cost too (not measu
 10 to 66 extra queries per call, the largest `changes(depot-7)` in the plan world (209 to 275 queries). Increment C's
 aggregation adds no query on any reader or subject (`probes/pre_e_c_perf.out.txt`, three alternating rounds).
 
+**Added (LABS-1.044): the cost of increment D's occurrence view.** `occurrence()` now lists every account and role
+(ER-5) and judges constrained roles. Measured against `bf8bb34` (`probes/pre_e_d_occurrence_bench.out.txt`, three
+alternating rounds, the 398 reference views and the 20 design examples): about 19 queries and 23 ms per view before,
+86 queries and 100 ms after (×4.4 in both, far outside the spread between rounds, at most about 10 %), paid by every view whether a
+constraint applies or not; where a kind-scoped constraint is evaluated, about 141 queries per view. Of the 66.7 queries
+the new part adds to an unconstrained view (`probes/pre_e_d_occurrence_queries.py`): identity of the occurrence and its
+players 32.5, judging each `describes` link at its account's start 18, loading the `describes` claims 15, each
+description's roles 1.2. Options to examine with the rest of DI-9: reuse the identity the view already computed and
+compute player identity only for judged roles; judge every account's link in one batched reading; read all roles in
+one query. Not optimised in increment D.
+
 
 ## DI-10: automated browser regression coverage for the schema explorer (maintenance)
 **What exists.** The explorer's search, filters, navigation, themes and narrow layout were checked by hand in a browser
@@ -315,3 +346,36 @@ no traversal content names an aliased thing.
 **Options.** (a) Judge closures under the perspective's identity, traversing equivalence classes, as `holds` does;
 (b) keep id-level traversal and report links that name an aliased thing. Either needs its own decision and tests; the
 selection difference would be decided with it.
+
+## DI-13: one player per event role per account
+**What happens.** In TypeDB 3.14.1 a role with no cardinality annotation is `@card(0..1)`, and no event role (core or
+profile) declares another, so one event description can name at most one actor, patient, removed part, product and
+so on. Writing a description with two is refused by the database (`[CNT5]`).
+
+**Consequence.** An operation with several participants in one role (a two-part replacement, a team sampling, several
+aliquots) can only be recorded as several accounts of one occurrence. Increment D handles that correctly: several
+players across accounts are a union unless an applicable, established constraint makes the role exclusive.
+
+**Options (later).** (a) Keep it, and document (current); (b) declare `@card(0..)` on the event roles whose
+cardinality depends on the operation, which changes the core and profile schemas and needs its own decision.
+
+## DI-14: descriptions listed in a variant without an account there
+**What happens.** `account()` writes a description's own attestation over the event's interval, and its `describes`
+link with no start (until superseded). A variant world inherits a base attestation when it has no start or starts
+before the branch point, and keeps it whole. So in a plan branching before an event, the link is inherited and the
+account is not: `descriptions()` lists the description, `occurrence()` lists it under `descriptions` (with no
+participants from it), and `process_steps` lists it among a step's descriptions, without saying that the plan holds no
+account of it.
+
+**Reproduction:** `probes/pre_e_d_inherited_links.py` (output `.out.txt`): a minimal case, and the 18 reference views
+(`plan-relubricate-only`: 15; `lab-plan-recal`: 3, whose accounts start exactly at the branch instant).
+
+**Classification.** Expected visibility under the inheritance rule as specified, not incorrect inheritance. No
+judgement is affected: every reader that judges from an account (`interval`, `occurrence_status`, the occurrence
+checks of `causes_of`) finds none, and `occurrence_status` reports the account as "none".
+
+**Options (later).** (a) `account()` writes the link from the event's start, so a variant inherits link and account
+together (new data only; existing links unchanged); (b) the listing readers mark, or omit, descriptions with no account
+in the world; (c) keep, and document. Increment D does not correct it; its `accounts` field reports such an account as `none`
+(`occurrence_status`'s vocabulary, ER-5; the design's prose called it "none in this world").
+

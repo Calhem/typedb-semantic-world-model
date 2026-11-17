@@ -1,7 +1,7 @@
 """Increment B (LABS-1.038): read cost of the readers the canonical judgement touches, with a checkout's own code.
 
     uv run python -I probes/pre_e_b_read_bench.py <checkout> [--n 5] [--db wm-probe-pre-e-b] [--worlds w1,w2]
-                                                  [--no-attested] [--more]
+                                                  [--no-attested] [--more] [--occurrence]
 
 Reads the kept reference database built by pre_e_b_snapshot.py --build (the same data before and after). For each
 reader, on fixed subjects in an actual world and in a variant (plan) world that inherits from it, it reports the
@@ -15,6 +15,8 @@ increment B, which has no attested constraints.
 
 --more (LABS-1.040) also reads changes (over the world's whole span) for the three most-mentioned particulars and
 authorised for two grants, the other readers increment C touches. Off by default, so earlier runs stay comparable.
+--occurrence (LABS-1.043) also reads the merged view `occurrence` of every occurrence a describes claim names, the
+reader increment D changes.
 """
 
 import argparse
@@ -33,6 +35,7 @@ ap.add_argument("--db", default="wm-probe-pre-e-b")
 ap.add_argument("--worlds")
 ap.add_argument("--no-attested", action="store_true")
 ap.add_argument("--more", action="store_true")
+ap.add_argument("--occurrence", action="store_true")
 a = ap.parse_args()
 sys.path.insert(0, str(Path(a.checkout).resolve() / "src"))
 from worldmodel import WorldModel, connect, laboratory as lab, organisation as org  # noqa: E402
@@ -101,6 +104,9 @@ for w in ids:
         calls[("parts", w, x)] = (wm.parts, (w, x, t), {})
         if a.more:
             calls[("changes", w, x)] = (wm.changes, (w, x, bounds[0], bounds[-1]), {})
+    if a.occurrence:
+        for x in sorted({o for at in atts.values() if at.kind == "describes" for o in at.roles.get("occurrence", [])}):
+            calls[("occurrence", w, x)] = (wm.occurrence, (w, x), {})
     for x in top("occurrence"):
         calls[("occurrence_status", w, x)] = (wm.occurrence_status, (w, x, t), {})
         calls[("causes_of", w, x)] = (wm.causes_of, (w, x, t), {})

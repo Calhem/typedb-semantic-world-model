@@ -557,6 +557,9 @@ function dataTable(records) {
   return table(["record", "details", "source", "attribution"], records.map(r => [
     h("span", {class: "mono small"}, r.id),
     r.kind === "concept" ? h("span", {}, typeLink(r.type), " “" + r.name + "”")
+      : r.kind === "event-role-constraint"
+      ? h("span", {class: "small"}, "event-role constraint on ", typeLink(r.event_type), ": core role ", r.role,
+          r.event_kind ? "; only for occurrences established as " + r.event_kind : "; unconditional")
       : h("span", {class: "small"}, "functional slot on ", typeLink(r.predicate), ": key roles ", r.key_roles.join(", "), "; value role ", r.value_role),
     srcBadge(r.source),
     h("span", {class: "chips"}, stBadge(r.attribution.status), r.attribution.modules.map(modLink))]));
