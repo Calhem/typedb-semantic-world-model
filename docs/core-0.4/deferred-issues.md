@@ -1,6 +1,6 @@
 # Deferred correctness issues (register)
 
-**Opened 2026-11-11 under LABS-1.025; DI-5 added under LABS-1.026, DI-6 under LABS-1.027, DI-7 under LABS-1.028, DI-8 and DI-9 under LABS-1.030, DI-10 and DI-11 under LABS-1.034, DI-12 under LABS-1.038, DI-14 under LABS-1.042.** These are known correctness issues (DI-1 to DI-8, DI-11), one
+**Opened 2026-11-11 under LABS-1.025; DI-5 added under LABS-1.026, DI-6 under LABS-1.027, DI-7 under LABS-1.028, DI-8 and DI-9 under LABS-1.030, DI-10 and DI-11 under LABS-1.034, DI-12 under LABS-1.038, DI-14 under LABS-1.042, DI-13 under LABS-1.043.** These are known correctness issues (DI-1 to DI-8, DI-11), one
 tracked performance concern (DI-9) and one maintenance item (DI-10), kept apart from the stage documents.
 None of them has had its semantics changed yet. The pre-Stage E correctness review
 ([pre-stage-e-correctness-review.md](pre-stage-e-correctness-review.md), LABS-1.034) reproduces DI-1 to DI-6 and DI-8,
@@ -20,7 +20,7 @@ tests.
 | # | Issue | Found | Must be resolved | Status |
 |---|---|---|---|---|
 | DI-1 | disputed content omitted from generic fact and role reports (`facts_about`, `roles_of`) | D-1 (LABS-1.023) | before Stage E | corrected in increment B, approved and merged (LABS-1.039, `main` d9d873a) |
-| DI-2 | conflicting event participants are not judged together (single-valued roles) | D-1 (v0.2 D9) | before Stage E | open; increment D design at review (LABS-1.041) |
+| DI-2 | conflicting event participants are not judged together (single-valued roles) | D-1 (v0.2 D9) | before Stage E | corrected in increment D (LABS-1.043), awaiting review, not merged |
 | DI-3 | conflicting mechanical joint kinds are not judged | D-1 | no deadline | open (limitation) |
 | DI-4 | dependency-kind vocabulary is not validated | D-1 | no deadline | open (limitation) |
 | DI-5 | a future-effective appointment (or holding) with an unreviewed counter-claim is labelled "not established" | D-2 (LABS-1.026) | no deadline | corrected in increment B, approved and merged (LABS-1.039, `main` d9d873a) |
@@ -31,6 +31,7 @@ tests.
 | DI-10 | the schema explorer has no automated browser regression tests (search, filters, navigation were checked by hand) | LABS-1.024 gate (registered LABS-1.034) | no deadline (maintenance) | open (non-blocking) |
 | DI-11 | reports built on `_claims` (capable, the profile reports) ignore functional-slot conflicts; the mirror image of DI-1 | pre-Stage E review (LABS-1.034) | proposed: before Stage E | corrected in increment B, approved and merged (LABS-1.039, `main` d9d873a) |
 | DI-12 | the transitive traversals (`parts`, `dependencies`) judge their links without the perspective's same-as identity | increment B design (LABS-1.037, registered LABS-1.038) | no deadline (deferred) | open |
+| DI-13 | every event role holds at most one player per account (TypeDB's default `@card(0..1)`), a universal per-account cardinality the domain does not always have | increment D design (LABS-1.041; registered LABS-1.043, ER-8) | no deadline (deferred limitation) | open (limitation) |
 | DI-14 | in a variant world, descriptions whose account is not inherited are listed (their `describes` link is) without saying the world holds no account of them | increment D design (registered LABS-1.042) | no deadline (deferred) | open (reporting; no judgement affected) |
 
 ## DI-1: `facts_about` omits content disputed by polarity
@@ -100,6 +101,12 @@ this entry's premises were corrected while preparing it:
 - the review's reference count (bearing-1 against bearing-3 at `o-bearing-replacement`) merged two different roles
   under the core name `patient`: the CMMS replacement's removed part and the technician's work-log patient. Measured on
   the reference worlds, the proposed rule changes no judgement (`probes/pre_e_d_impact.out.txt`).
+
+**Correction, increment D (LABS-1.043), awaiting review, not merged.** Made on `feature/pre-e-d-event-roles` under the
+approved design (ER-1 to ER-8): event-role constraints stored as data (`core-0.4-event-roles`), declared by profiles
+(official-act official, office and office context; replacement removed and fitted only for an occurrence established
+as `mechanical:one-for-one`), judged in `occurrence()` (new fields `accounts` and `roles`) by the canonical mechanism
+([pre-e-increment-d.md](pre-e-increment-d.md)).
 
 ## DI-3: conflicting mechanical joint kinds
 **What happens.** `connected-to(a, b, bolted)` and `connected-to(a, b, welded)` are two contents. Both can hold, so they
@@ -326,6 +333,18 @@ no traversal content names an aliased thing.
 **Options.** (a) Judge closures under the perspective's identity, traversing equivalence classes, as `holds` does;
 (b) keep id-level traversal and report links that name an aliased thing. Either needs its own decision and tests; the
 selection difference would be decided with it.
+
+## DI-13: one player per event role per account
+**What happens.** In TypeDB 3.14.1 a role with no cardinality annotation is `@card(0..1)`, and no event role (core or
+profile) declares another, so one event description can name at most one actor, patient, removed part, product and
+so on. Writing a description with two is refused by the database (`[CNT5]`).
+
+**Consequence.** An operation with several participants in one role (a two-part replacement, a team sampling, several
+aliquots) can only be recorded as several accounts of one occurrence. Increment D handles that correctly: several
+players across accounts are a union unless an applicable, established constraint makes the role exclusive.
+
+**Options (later).** (a) Keep it, and document (current); (b) declare `@card(0..)` on the event roles whose
+cardinality depends on the operation, which changes the core and profile schemas and needs its own decision.
 
 ## DI-14: descriptions listed in a variant without an account there
 **What happens.** `account()` writes a description's own attestation over the event's interval, and its `describes`

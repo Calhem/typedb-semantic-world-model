@@ -1,10 +1,10 @@
 # Pre-Stage E correction, increment D: event-role exclusivity (DI-2), design
 
-**Status: accepted in principle at `b6d4d11` (LABS-1.042); clarified under LABS-1.042 (section 13); implementation
-not approved, not begun.** Branch `feature/pre-e-d-event-roles`, from `main` at `bf8bb34` (increment C merged). No
-library code has changed. Stage E has not begun. The foundational
-ontology is unchanged; the one schema addition proposed (section 8) is an additive storage module, as functional slots
-were (A0.3).
+**Status: approved at `4596507` (LABS-1.043, ER-1 to ER-8); implemented on the same branch, awaiting review, not
+merged. See [pre-e-increment-d.md](pre-e-increment-d.md).** Sections 6 and 7 describe the state before
+implementation ("Current" is the code as merged after increment C). Branch `feature/pre-e-d-event-roles`, from
+`main` at `bf8bb34` (increment C merged). Stage E has not begun. The foundational ontology is unchanged; the one schema
+addition (section 8) is an additive storage module, as functional slots were (A0.3).
 
 Approved direction: R-6 with choices F, G and H ([pre-stage-e-correctness-review.md](pre-stage-e-correctness-review.md),
 sections 5 and 6), and LABS-1.036:
