@@ -1,6 +1,11 @@
 """Summary of the fresh Core 0.3 workload baseline (LABS-1.046, Stage E entry criterion P-1).
 
     python3 -I probes/pre_e_core03_baseline_summary.py docs/core-0.4/bench-pre-e-baseline
+    python3 -I probes/pre_e_core03_baseline_summary.py docs/core-0.4/bench-pre-e-controlled --first 60
+
+`--first N` adds the run-level median and p95 of the first N questions only: with the bench's fixed seed, the first 60
+questions of a 180-question run are the 60 questions of the original workload (they are drawn first, after the same
+build).
 
 Reads the run records `NN-<impl>.json` written by `probes/pre_e_core03_baseline.py` (`00-warmup-*` is discarded), where
 <impl> is `main` (the entry commit) or `c03` (unchanged Core 0.3, b64f635), and prints:
@@ -20,6 +25,7 @@ import sys
 from pathlib import Path
 
 folder = Path(sys.argv[1])
+FIRST = int(sys.argv[sys.argv.index("--first") + 1]) if "--first" in sys.argv else None
 runs = []
 for f in sorted(folder.glob("[0-9][0-9]-*.json")):
     if "warmup" in f.name:
@@ -110,7 +116,8 @@ for key, label, unit, _, limit in MEASURES:
     print(f"| {label} | {fmt(c, unit)} {unit} | {fmt(m, unit)} {unit} | {100 * d:+.1f} % | "
           f"{'+' + str(int(limit * 100)) + ' %' if limit else '-'} | {100 * cvc:.1f} % / {100 * cvm:.1f} % | {result} |")
 
-print("\n## Selective path, question by question (the same 60 questions in every run)")
+nq = len(by["main"][0]["distribution"]["selective"]["latencies_ms"])
+print(f"\n## Selective path, question by question (the same {nq} questions in every run)")
 lat = {i: [r["distribution"]["selective"]["latencies_ms"] for r in by[i]] for i, _ in IMPLS}
 ratios = sorted(statistics.median(x[q] for x in lat["main"]) / statistics.median(x[q] for x in lat["c03"])
                 for q in range(len(lat["main"][0])))
@@ -125,6 +132,19 @@ for i, _ in IMPLS:
     ins = [r["instrumented"]["selective"] for r in by[i]]
     print(f"{NAME[i]}: TypeDB reads median {statistics.median(x['typedb_reads']['median_ms'] for x in ins):.1f} ms, "
           f"Python median {statistics.median(x['python']['median_ms'] for x in ins):.1f} ms (medians of run medians)")
+
+if FIRST:
+    print(f"\n## The first {FIRST} questions only (the original question set; run-level medians and p95 recomputed)")
+    print("| Measure | " + " | ".join(f"{NAME[i]}: median (min-max, CV)" for i, _ in IMPLS) + " | difference |")
+    print("|---|---|---|---|")
+    for path in ("selective", "full"):
+        for label, fn in (("median", statistics.median), ("p95", lambda xs: sorted(xs)[min(len(xs) - 1, int(round(
+                0.95 * (len(xs) - 1))))])):
+            per = {i: [fn(r["distribution"][path]["latencies_ms"][:FIRST]) for r in by[i]] for i, _ in IMPLS}
+            cells = [f"{statistics.median(per[i]):,.1f} ms ({min(per[i]):,.1f}-{max(per[i]):,.1f}, "
+                     f"{100 * cv(per[i]):.1f} %)" for i, _ in IMPLS]
+            d = statistics.median(per["main"]) / statistics.median(per["c03"]) - 1
+            print(f"| {path} {label} | " + " | ".join(cells) + f" | {100 * d:+.1f} % |")
 
 envs = {json.dumps({k: v for k, v in r["environment"].items() if k not in ("commit", "containers_running")},
                    sort_keys=True) for _, _, r in runs}
