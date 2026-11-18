@@ -55,7 +55,7 @@ def cv(xs):
     return statistics.stdev(xs) / statistics.fmean(xs) if len(xs) > 1 else 0.0
 
 
-print("## Runs (after one discarded warm-up)")
+print("## Runs (warm-ups discarded)")
 print("| Run | Impl. | Selective median / p95 (ms) | Full median (ms) | Ingest (s) | Move median / p95 (ms) | DB (MB) |")
 print("|---|---|---|---|---|---|---|")
 for n, impl, r in runs:

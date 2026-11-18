@@ -1,0 +1,10 @@
+/gupi-typedb restart=unless-stopped
+/noodlelab-api restart=unless-stopped
+/noodlelab-typedb restart=unless-stopped
+/apex-web restart=unless-stopped
+/apex-api restart=unless-stopped
+/apex-typedb restart=unless-stopped
+/newslens-worker restart=unless-stopped
+/newslens-api restart=unless-stopped
+/newslens-web restart=unless-stopped
+/newslens-typedb restart=unless-stopped
