@@ -82,6 +82,19 @@ def test_a_database_without_the_module_still_installs_profiles_without_event_rol
     assert "profile:laboratory" in wm.modules() and EVENT_ROLES_MODULE not in wm.modules()
 
 
+@pytest.mark.parametrize("name", ["organisation", "mechanical"])
+def test_installing_a_profile_with_event_roles_on_an_older_database_says_what_to_run(make, name):
+    """Accepted under LABS-1.045: a database created before increment D must run upgrade_to_event_roles() before a
+    first installation of organisation or mechanical 0.2; the refusal says so and writes nothing."""
+    wm = make(PROFILE_BASE_MODULES)
+    before = (wm.modules(), entity_types(wm))
+    with pytest.raises(ProfileError, match=r"run wm\.upgrade_to_event_roles\(\) first, then install the profile"):
+        wm.install_profile(name)
+    assert (wm.modules(), entity_types(wm)) == before
+    assert wm.upgrade_to_event_roles() is True and wm.install_profile(name)
+    assert wm.modules()[f"profile:{name}"] == "0.2" and wm.event_role_constraints()
+
+
 # ---- profile declarations (ER-1, ER-2, ER-6) ----------------------------------------------------------------------
 def all_profiles(wm):
     for p in ("mechanical", "organisation", "laboratory"):

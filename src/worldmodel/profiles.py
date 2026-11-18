@@ -10,7 +10,10 @@ A profile is domain vocabulary installed after the full core, through the existi
 
 Rules, checked by `install_profile` before anything is committed:
 - the profile requires the full core (CORE_MODULES) and nothing else: **no cross-profile dependencies**, so every
-  profile installs on its own, and any set of profiles installs in any order;
+  profile installs on its own, and any set of profiles installs in any order. A database created before increment D
+  lacks `core-0.4-event-roles`: it still installs profiles that declare no event roles (laboratory), but one that
+  does (organisation 0.2, mechanical 0.2) is refused, nothing written, with the instruction to run
+  `upgrade_to_event_roles()` first (accepted under LABS-1.045);
 - it must not redeclare or extend any existing type (core or another profile's). A collision is refused, never merged,
   so **installation order cannot silently change meaning**;
 - it must not add roles or attributes to existing types, or declare slots on existing predicates, so **core semantics
@@ -227,7 +230,7 @@ class ProfileMixin:
         written in **one schema transaction** (TypeDB 3.14.1 schema transactions also write data) and committed only
         after every check passed, so a profile is either completely installed and recorded, or not at all. Refusals
         raise ProfileError; any failure, including at commit, leaves the database unchanged."""
-        from .model import CORE_LABELS, CORE_MODULES, PROFILE_BASE_MODULES
+        from .model import CORE_LABELS, CORE_MODULES, EVENT_ROLES_MODULE, PROFILE_BASE_MODULES
         from .keys import check_new_id
         if isinstance(profile, str):
             profile = PROFILES[profile]
@@ -240,6 +243,10 @@ class ProfileMixin:
         # a profile declaring event-role constraints needs their module; any other needs the core as before (LABS-1.043)
         missing = [m for m in (CORE_MODULES if getattr(profile, "event_roles", ()) else PROFILE_BASE_MODULES)
                    if m not in installed]
+        if missing == [EVENT_ROLES_MODULE]:            # a database created before increment D (LABS-1.045)
+            raise ProfileError(f"profile {profile.name!r} {profile.version} declares event-role constraints, which need "
+                               f"the core module {EVENT_ROLES_MODULE!r}; this database was created without it: run "
+                               f"wm.upgrade_to_event_roles() first, then install the profile (nothing written)")
         if missing:
             raise ProfileError(f"profile {profile.name!r} needs the full core; missing modules {missing}")
         bad_ids = [i for _, i, _ in profile.vocabulary if not i.startswith(profile.name + ":")]

@@ -1,6 +1,6 @@
 # Deferred correctness issues (register)
 
-**Opened 2026-11-11 under LABS-1.025; DI-5 added under LABS-1.026, DI-6 under LABS-1.027, DI-7 under LABS-1.028, DI-8 and DI-9 under LABS-1.030, DI-10 and DI-11 under LABS-1.034, DI-12 under LABS-1.038, DI-14 under LABS-1.042, DI-13 under LABS-1.043.** These are known correctness issues (DI-1 to DI-8, DI-11), one
+**Opened 2026-11-11 under LABS-1.025; DI-5 added under LABS-1.026, DI-6 under LABS-1.027, DI-7 under LABS-1.028, DI-8 and DI-9 under LABS-1.030, DI-10 and DI-11 under LABS-1.034, DI-12 under LABS-1.038, DI-14 under LABS-1.042, DI-13 under LABS-1.043, DI-15 and DI-16 under LABS-1.045.** The pre-Stage E consolidation ([pre-stage-e-consolidation.md](pre-stage-e-consolidation.md), LABS-1.045, at review) recommends a disposition for every open issue. These are known correctness issues (DI-1 to DI-8, DI-11), one
 tracked performance concern (DI-9) and one maintenance item (DI-10), kept apart from the stage documents.
 None of them has had its semantics changed yet. The pre-Stage E correctness review
 ([pre-stage-e-correctness-review.md](pre-stage-e-correctness-review.md), LABS-1.034) reproduces DI-1 to DI-6 and DI-8,
@@ -20,7 +20,7 @@ tests.
 | # | Issue | Found | Must be resolved | Status |
 |---|---|---|---|---|
 | DI-1 | disputed content omitted from generic fact and role reports (`facts_about`, `roles_of`) | D-1 (LABS-1.023) | before Stage E | corrected in increment B, approved and merged (LABS-1.039, `main` d9d873a) |
-| DI-2 | conflicting event participants are not judged together (single-valued roles) | D-1 (v0.2 D9) | before Stage E | corrected in increment D (LABS-1.043), validated (LABS-1.044), awaiting review, not merged |
+| DI-2 | conflicting event participants are not judged together (single-valued roles) | D-1 (v0.2 D9) | before Stage E | corrected in increment D, approved and merged (LABS-1.045, `main` 9464403); residual: DI-15 |
 | DI-3 | conflicting mechanical joint kinds are not judged | D-1 | no deadline | open (limitation) |
 | DI-4 | dependency-kind vocabulary is not validated | D-1 | no deadline | open (limitation) |
 | DI-5 | a future-effective appointment (or holding) with an unreviewed counter-claim is labelled "not established" | D-2 (LABS-1.026) | no deadline | corrected in increment B, approved and merged (LABS-1.039, `main` d9d873a) |
@@ -33,6 +33,8 @@ tests.
 | DI-12 | the transitive traversals (`parts`, `dependencies`) judge their links without the perspective's same-as identity | increment B design (LABS-1.037, registered LABS-1.038) | no deadline (deferred) | open |
 | DI-13 | every event role holds at most one player per account (TypeDB's default `@card(0..1)`), a universal per-account cardinality the domain does not always have | increment D design (LABS-1.041; registered LABS-1.043, ER-8) | no deadline (deferred limitation) | open (limitation) |
 | DI-14 | in a variant world, descriptions whose account is not inherited are listed (their `describes` link is) without saying the world holds no account of them | increment D design (registered LABS-1.042) | no deadline (deferred) | open (reporting; no judgement affected) |
+| DI-15 | an occurrence's aliases (accepted same-as) are listed in `occurrence()` but their accounts are never compared, so two names of one occurrence give different role judgements | consolidation (LABS-1.045) | proposed: before Stage E | open (correction not approved) |
+| DI-16 | identity merges on a same-as whose canonical judgement is DISPUTED (accepted denials are ignored) | consolidation (LABS-1.045) | proposed: decide before Stage E | open (decision needed) |
 
 ## DI-1: `facts_about` omits content disputed by polarity
 **What happens.** `facts_about(world, subject, t)` lists only content whose judgement at t is "holds". Two kinds of
@@ -102,7 +104,8 @@ this entry's premises were corrected while preparing it:
   under the core name `patient`: the CMMS replacement's removed part and the technician's work-log patient. Measured on
   the reference worlds, the proposed rule changes no judgement (`probes/pre_e_d_impact.out.txt`).
 
-**Correction, increment D (LABS-1.043), validated under LABS-1.044, awaiting review, not merged.** Made on `feature/pre-e-d-event-roles` under the
+**Correction, increment D (LABS-1.043), validated under LABS-1.044, approved and merged (LABS-1.045, `main`
+9464403).** Made on `feature/pre-e-d-event-roles` under the
 approved design (ER-1 to ER-8): event-role constraints stored as data (`core-0.4-event-roles`), declared by profiles
 (official-act official, office and office context; replacement removed and fitted only for an occurrence established
 as `mechanical:one-for-one`), judged in `occurrence()` (new fields `accounts` and `roles`) by the canonical mechanism
@@ -122,6 +125,11 @@ are reported, and neither is DISPUTED.
   role (not verified);
 - or accept that parts can have several joints (often true: bolted *and* sealed).
 - **Current:** accepted limitation. The profile documents it.
+
+**Consolidation (LABS-1.045): the mechanism exists.** Declared in a probe database only, a slot keyed by the two
+endpoints (`declare_slot("connected-to", ["endpoint"], "joint-kind")`, one role played twice) makes "bolted" against
+"pressed" for one pair DISPUTED (`probes/pre_e_consolidation.out.txt`). What remains is the domain choice (whether a
+pair has one joint kind), to be made in the mechanical profile if a scenario needs it. Recommended: close with evidence.
 
 ## DI-4: dependency-kind vocabulary is not validated
 **What happens.** Any category can be a dependency's `kind`. The core seeds four (`dependency:physical`, `functional`,
@@ -295,6 +303,10 @@ players 32.5, judging each `describes` link at its account's start 18, loading t
 description's roles 1.2. Options to examine with the rest of DI-9: reuse the identity the view already computed and
 compute player identity only for judged roles; judge every account's link in one batched reading; read all roles in
 one query. Not optimised in increment D.
+Retained under LABS-1.045 (merge of increment D): about 19 → 86 queries and 23 → 100 ms per view, about 4.4×. The
+benchmark (`probes/pre_e_d_occurrence_bench.py`, summary `pre_e_d_occurrence_bench_summary.py`) and the query
+breakdown (`probes/pre_e_d_occurrence_queries.py`) are kept for Stage E. Also noted by the consolidation: the
+unchanged Core 0.3 workload (plan 9.4) has not been measured since A0.
 
 
 ## DI-10: automated browser regression coverage for the schema explorer (maintenance)
@@ -359,6 +371,12 @@ players across accounts are a union unless an applicable, established constraint
 **Options (later).** (a) Keep it, and document (current); (b) declare `@card(0..)` on the event roles whose
 cardinality depends on the operation, which changes the core and profile schemas and needs its own decision.
 
+**Consolidation (LABS-1.045): faithful representation.** A joint action can only be recorded as several accounts from
+one source: a two-technician job becomes two accounts (the union is right, the account count is not), and a
+co-signed official act becomes two accounts that organisation 0.2's unconditional `official` constraint judges
+**DISPUTED**, a false conflict (`probes/pre_e_consolidation.out.txt`). Recommended: decide before Stage E (see the
+consolidation, section 2).
+
 ## DI-14: descriptions listed in a variant without an account there
 **What happens.** `account()` writes a description's own attestation over the event's interval, and its `describes`
 link with no start (until superseded). A variant world inherits a base attestation when it has no start or starts
@@ -379,3 +397,29 @@ together (new data only; existing links unchanged); (b) the listing readers mark
 in the world; (c) keep, and document. Increment D does not correct it; its `accounts` field reports such an account as `none`
 (`occurrence_status`'s vocabulary, ER-5; the design's prose called it "none in this world").
 
+## DI-15: an occurrence's aliases are listed but not compared
+**What happens** (`probes/pre_e_consolidation.py`). `act-1-hr` describes `o-1` (official bea) and `act-1-clerk`
+describes `o-1-alias` (official cal); both accounts are accepted, and `same-as(o-1, o-1-alias)` is accepted.
+`occurrence(o-1)` lists both accounts and both players, but its `official` role is **established: bea**;
+`occurrence(o-1-alias)` gives **established: cal**. The alias's account is listed with `describes: None`, though the
+canonical judgement of `describes(act-1-clerk, o-1-alias)` is established, so it is never compared.
+
+**Cause.** `_event_roles` judges the accounts' links through `_contents(world, occurrence, ...)`, which selects
+contents by the occurrence's own id: the selection difference recorded under DI-12. v0.2 (section 3.2) counts
+descriptions linked to anything accepted as `same-as` the occurrence, and requires DISPUTED for different players of a
+declared single-valued role.
+
+**Impact.** None on the reference worlds (no accepted same-as link), so the 398-view baseline is unaffected.
+**Recommended:** correct before Stage E, with DI-12 and DI-16, as one identity increment (consolidation, section 2).
+
+## DI-16: identity merges on a disputed same-as
+**What happens** (`probes/pre_e_consolidation.py`). `same-as(bea, b-smith)` is asserted and accepted, then denied by
+an accepted denial. Its canonical judgement is DISPUTED, but `Identity` unions every usable same-as assertion and
+ignores denials, so `identity()` still merges bea and b-smith, and an official act naming bea in one account and
+b-smith in another is **established**, not DISPUTED.
+
+**Classification.** Predates increment D and satisfies the Core 0.3 rule as written ("only accepted ones merge"), but
+since increment B every other content is judged by its canonical record; identity is the exception. Options: (a) merge
+only on an ESTABLISHED same-as, from the denial's recording time on (earlier views stay reproducible); (b) keep, and
+report the dispute beside merged answers; (c) keep and document. **Recommended:** decide before Stage E (a core
+semantic change, with its own design gate).

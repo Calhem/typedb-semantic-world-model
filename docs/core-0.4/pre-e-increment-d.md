@@ -1,7 +1,7 @@
 # Pre-Stage E correction, increment D: event roles in the merged occurrence view (DI-2)
 
-**Status: implemented under LABS-1.043 and validated under LABS-1.044 on `feature/pre-e-d-event-roles`; awaiting
-review, not merged.** Approved design: [pre-e-increment-d-design.md](pre-e-increment-d-design.md) at `4596507`,
+**Status: implemented under LABS-1.043 on `feature/pre-e-d-event-roles`, validated under LABS-1.044, approved and
+merged under LABS-1.045 (`main` `9464403`; see "After the merge").** Approved design: [pre-e-increment-d-design.md](pre-e-increment-d-design.md) at `4596507`,
 decisions ER-1 to ER-8. Stage E has not begun; DI-13 and DI-14 are not implemented. The foundational ontology and the
 canonical judgement mechanism are unchanged.
 
@@ -209,3 +209,21 @@ None found. Points decided in implementation, for review:
   operations"). `tests/test_k_d1_mechanical.py` was updated to call the upgrade first.
 - **Constraints per stored role.** Each entry in `roles` carries a list `constraints` (one per applicable declaration
   on that core role), so a subtype adding a constraint to an inherited one is shown, never merged.
+
+## After the merge (LABS-1.045)
+- **Merge.** The approved head `4a3d330` was unchanged, local and remote, and the tracked files clean; merged with
+  `--no-ff` into `main` as `9464403` (pushed and verified on the remote).
+- **Accepted implementation decisions.**
+  - **`none`:** an account the world does not hold is reported in `occurrence()`'s `accounts` as `none`,
+    `occurrence_status`'s vocabulary (ER-5). The design's prose "none in this world" is superseded.
+  - **Event-role prerequisite:** on a database created before increment D, a first installation of organisation 0.2
+    or mechanical 0.2 needs `upgrade_to_event_roles()` first; the laboratory profile, which declares no event roles,
+    installs as before. The refusal now says exactly that and writes nothing: "profile 'organisation' 0.2 declares
+    event-role constraints, which need the core module 'core-0.4-event-roles'; this database was created without it:
+    run wm.upgrade_to_event_roles() first, then install the profile (nothing written)"
+    (`tests/test_s_event_roles.py::test_installing_a_profile_with_event_roles_on_an_older_database_says_what_to_run`;
+    rule documented in `src/worldmodel/profiles.py`). Made on `feature/pre-e-consolidation`, not on `main`.
+- **Performance.** The `occurrence()` overhead stays in DI-9 (about 19 → 86 queries and 23 → 100 ms per view, about
+  4.4×), not optimised; the benchmark and query-breakdown probes are kept for Stage E.
+- **Regression on merged `main`.** 598 tests pass in each of the four configurations (`WM_SELECTIVE` 1/0 × `WM_PROFILES` 0/1) at `9464403`, run from a clean checkout; no `wm-test-*` databases left over. The only warning is the driver's own `SyntaxWarning` (`typedb/common/promise.py`, an invalid escape in a docstring), in the first run only, as at `87f8310`. (598 = the 597 of the LABS-1.044 matrix plus the not-upgraded test added after it.)
+- **Baselines on merged `main`.** With merged `main`, the 398-view comparison (`probes/pre_e_d_occurrence_baseline.json.gz`, `--compare`) reproduces on both the upgraded old-built database and the new-built one: 398 views, 0 field changes, 0 judgement changes, the same 8 role-presentation changes. The 106,752-answer snapshot rebuilt with merged `main` on the new-built database is identical, answer for answer, to the one taken there with the branch (106,752 identical, 0 extended, 0 changed) and to the frozen increment C snapshot once attestation ids and clock times are masked (`probes/pre_e_b_repro_check.py`: 106,752 identical, 0 different). No unexpected difference.
