@@ -1,0 +1,13 @@
+case                                                                                   rule  judgement
+M1 two-technician job, one account names both (event:actor, unconstrained)             union union: ['dan', 'eve'] (no applicable constraint)
+M2 co-signed act, kind co-signed established, one account names both                   set   established: ['bea', 'cal'] (every account states the same set)
+M3 the same account, kind not established (ordinary act)                               one   DISPUTED: ['bea', 'cal'] (several players in one account: act)
+M4 ordinary act, two accounts, one official each, different                            one   DISPUTED: ['bea', 'cal'] (accounts name different players)
+M5 co-signed act, two accounts naming the same two officials                           set   established: ['bea', 'cal'] (every account states the same set)
+M6 co-signed act, one account names both, another only one                             set   DISPUTED: {'act-clerk': ['bea'], 'act-hr': ['bea', 'cal']} (accounts state different sets)
+M7 co-signed act, accounts disagree on the second official                             set   DISPUTED: {'act-clerk': ['bea', 'dan'], 'act-hr': ['bea', 'cal']} (accounts state different sets)
+M8 ordinary act, one account names bea and b-smith, established same-as                one   established: ['bea'] (one player)
+M9 ordinary act, the same account, same-as not established                             one   DISPUTED: ['b-smith', 'bea'] (several players in one account: act)
+M10 one-for-one replacement, one account removes two parts                             one   DISPUTED: ['p1', 'p2'] (several players in one account: rep)
+M11 replacement not one-for-one (multi-part), one account removes two parts            union union: ['p1', 'p2'] (no applicable constraint)
+M12 team sampling, two accounts, different samplers (sampling:sampler, unconstrained)  union union: ['ana', 'bo', 'tom'] (no applicable constraint)

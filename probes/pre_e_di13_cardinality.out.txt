@@ -1,0 +1,25 @@
+  existing data: an event with one actor: written (ev-one)
+== C1: the default cardinality
+  event with two actors: refused, TypeDBDriverException: [CNT5] Constraint '@card(0..1)' has been violated: found 2 instances. | Caused: [DVL11] Instance [1F00 0D00 0000 0000 0000 01] of relation type 'event' has a relates constraint violation for role type 'event:actor'.
+  official-act with two officials: refused, TypeDBDriverException: [CNT5] Constraint '@card(0..1)' has been violated: found 2 instances. | Caused: [DVL11] Instance [1F00 1E00 0000 0000 0000 00] of relation type 'official-act' has a relates constraint violation for role type 'event:actor
+
+== C2: open event:actor only (define on a database holding data)
+  define relation event relates actor @card(0..): accepted
+  event with two actors: written (ev-two)
+  the existing one-actor event reads: {'patient': ['pump'], 'actor': ['dan']}
+  the two-actor event reads: {'patient': ['pump'], 'actor': ['dan', 'eve']}
+
+== C3: a specialised role (official-act:official as actor) after C2
+  official-act with two officials: refused, TypeDBDriverException: [CNT5] Constraint '@card(0..1)' has been violated: found 2 instances. | Caused: [DVL11] Instance [1F00 1E00 0000 0000 0000 01] of relation type 'official-act' has a relates constraint violation for role type 'official-ac
+
+== C4: open official-act:official itself
+  define relation official-act relates official @card(0..): accepted
+  official-act with two officials: written (act-two)
+
+== C5: narrowing back while data uses the wider cardinality
+  redefine relation event relates actor @card(0..1): refused, TypeDBDriverException: [CNT5] Constraint '@card(0..1)' has been violated: found 2 instances. | Caused: [DVL11] Instance [1F00 0D00 0000 0000 0000 02] of relation type 'event' has a relates constraint violation for role type 'event:actor'.
+
+== C6: today's rule Q reading one accepted account that names two officials (a co-signed act)
+  players: {'bea': ['act-two'], 'cal': ['act-two']}
+  constraints: [(True, 'disputed', [['bea'], ['cal']])]
+  (one account, one source, two officials: today DISPUTED, the same as two conflicting accounts)
