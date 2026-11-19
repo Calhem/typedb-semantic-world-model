@@ -112,6 +112,8 @@ attribute constraint-kind,
  value string;
 attribute declaring-module,
  value string;
+attribute role-multiplicity,
+ value string @values("one", "set");
 entity schema-module,
   owns module-name @key,
   owns module-version;
@@ -243,7 +245,8 @@ entity event-role-constraint,
   owns constrained-role @card(1..1),
   owns constraint-kind @card(0..1),
   owns declaring-module @card(1..1),
-  owns event-role-constraint-id @key;
+  owns event-role-constraint-id @key,
+  owns role-multiplicity @card(0..1);
 entity person,
   sub physical-object,
   plays employment:employee;
@@ -316,12 +319,12 @@ relation terminates,
   relates event,
   relates outcome;
 relation event,
-  relates actor,
+  relates actor @card(0..),
   relates destination,
   relates instrument,
   relates location,
   relates origin,
-  relates patient,
+  relates patient @card(0..),
   owns description,
   owns wm-id @key,
   plays attestation:content,
@@ -421,8 +424,8 @@ relation connected-to,
   relates joint-kind @card(0..1);
 relation replacement,
   sub event,
-  relates fitted,
-  relates removed as patient;
+  relates fitted @card(0..),
+  relates removed as patient @card(0..);
 relation employment,
   sub proposition,
   relates employee,
@@ -443,12 +446,12 @@ relation official-act,
   sub event,
   relates office,
   relates office-context,
-  relates official as actor;
+  relates official as actor @card(0..);
 relation sampling,
   sub event,
   relates product as destination,
   relates sampled as origin,
-  relates sampler as actor;
+  relates sampler as actor @card(0..);
 relation calibration-of,
   sub proposition,
   relates calibrated,

@@ -654,6 +654,17 @@
     },
     "declared_by": {
      "type": "string"
+    },
+    "multiplicity": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "enum": [
+      "one",
+      "set",
+      null
+     ]
     }
    }
   },

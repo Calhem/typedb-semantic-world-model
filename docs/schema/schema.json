@@ -9,8 +9,8 @@
   "provenance": "database",
   "database": "wm-schema-reference",
   "server_version": "TypeDB CE 3.14.1",
-  "schema_sha256": "cd6a7e6ac8216d2dea38b1a50c7eaab87a3108ffeeba564e8ea1bd45b8030576",
-  "schema_characters": 10951,
+  "schema_sha256": "60df8b1f06ecfbff769077f738f112e4f6080a71d97847758b582f35e82361bf",
+  "schema_characters": 11121,
   "modules": {
    "core": "0.3.0",
    "core-0.4-a": "0.4.0-a1",
@@ -19,16 +19,17 @@
    "core-0.4-b": "0.4.0-b",
    "core-0.4-c": "0.4.0-c",
    "core-0.4-d": "0.4.0-d",
+   "core-0.4-event-multiplicity": "0.4.0-mp",
    "core-0.4-event-roles": "0.4.0-er",
-   "profile:laboratory": "0.1",
-   "profile:mechanical": "0.2",
-   "profile:organisation": "0.2"
+   "profile:laboratory": "0.2",
+   "profile:mechanical": "0.3",
+   "profile:organisation": "0.3"
   }
  },
  "export": {
   "exporter": "worldmodel.schema_export 1.0.0",
-  "exported_at": "2026-11-16T21:45:53+00:00",
-  "code_commit": "e452fdb47c8830ddd4c81c4df1b617d5530f1e87",
+  "exported_at": "2026-11-19T14:04:44+00:00",
+  "code_commit": "ba4ac2121dbd05e7c4f2172c4dab27c28850ada5",
   "code_dirty": true
  },
  "verification": {
@@ -36,24 +37,24 @@
   "parse": {
    "passed": true,
    "exact": true,
-   "facts": 508
+   "facts": 519
   },
   "query_cross_check": {
    "passed": true,
    "compared": {
-    "kinds": 113,
+    "kinds": 114,
     "sub": 49,
-    "owns": 185,
+    "owns": 186,
     "plays": 460,
     "relates": 99,
     "role_parents": 5,
-    "value_types": 56
+    "value_types": 57
    }
   },
   "round_trip": {
    "passed": true,
    "identical_schema_text": true,
-   "characters": 10951
+   "characters": 11121
   },
   "single_source": {
    "annotations": "From the schema() text only: TypeDB 3.14.1 cannot query annotations (REP254). Checked by the exact parse and the round trip, not by a query.",
@@ -87,13 +88,13 @@
    "functions": "From the schema() text only: TypeDB 3.14.1 has no query that lists functions. Checked by the exact parse and the round trip; signatures are parsed, bodies are kept as text."
   },
   "counts": {
-   "types": 113,
+   "types": 114,
    "entity": 22,
    "relation": 35,
-   "attribute": 56,
+   "attribute": 57,
    "roles": 78,
    "functions": 2,
-   "facts": 508
+   "facts": 519
   },
   "types": {
    "acceptance": {
@@ -2008,7 +2009,9 @@
       "role": "event:actor",
       "name": "actor",
       "specialises": null,
-      "annotations": [],
+      "annotations": [
+       "@card(0..)"
+      ],
       "from": "event",
       "declared": true
      },
@@ -2048,12 +2051,14 @@
       "role": "event:patient",
       "name": "patient",
       "specialises": null,
-      "annotations": [],
+      "annotations": [
+       "@card(0..)"
+      ],
       "from": "event",
       "declared": true
      }
     ],
-    "statement": "relation event,\n  relates actor,\n  relates destination,\n  relates instrument,\n  relates location,\n  relates origin,\n  relates patient,\n  owns description,\n  owns wm-id @key,\n  plays attestation:content,\n  plays causes:cause,\n  plays causes:effect,\n  plays classified-as:classified,\n  plays describes:description,\n  plays initiates:event,\n  plays produced:activity,\n  plays terminates:event;",
+    "statement": "relation event,\n  relates actor @card(0..),\n  relates destination,\n  relates instrument,\n  relates location,\n  relates origin,\n  relates patient @card(0..),\n  owns description,\n  owns wm-id @key,\n  plays attestation:content,\n  plays causes:cause,\n  plays causes:effect,\n  plays classified-as:classified,\n  plays describes:description,\n  plays initiates:event,\n  plays produced:activity,\n  plays terminates:event;",
     "facts": [
      "event owns description",
      "event owns wm-id",
@@ -2067,11 +2072,13 @@
      "event plays produced:activity",
      "event plays terminates:event",
      "event relates actor",
+     "event relates actor @card(0..)",
      "event relates destination",
      "event relates instrument",
      "event relates location",
      "event relates origin",
      "event relates patient",
+     "event relates patient @card(0..)",
      "relation event"
     ],
     "functions": []
@@ -2125,11 +2132,19 @@
       ],
       "from": "event-role-constraint",
       "declared": true
+     },
+     {
+      "attribute": "role-multiplicity",
+      "annotations": [
+       "@card(0..1)"
+      ],
+      "from": "event-role-constraint",
+      "declared": true
      }
     ],
     "plays": [],
     "relates": [],
-    "statement": "entity event-role-constraint,\n  owns constrained-event-type @card(1..1),\n  owns constrained-role @card(1..1),\n  owns constraint-kind @card(0..1),\n  owns declaring-module @card(1..1),\n  owns event-role-constraint-id @key;",
+    "statement": "entity event-role-constraint,\n  owns constrained-event-type @card(1..1),\n  owns constrained-role @card(1..1),\n  owns constraint-kind @card(0..1),\n  owns declaring-module @card(1..1),\n  owns event-role-constraint-id @key,\n  owns role-multiplicity @card(0..1);",
     "facts": [
      "entity event-role-constraint",
      "event-role-constraint owns constrained-event-type",
@@ -2141,7 +2156,9 @@
      "event-role-constraint owns declaring-module",
      "event-role-constraint owns declaring-module @card(1..1)",
      "event-role-constraint owns event-role-constraint-id",
-     "event-role-constraint owns event-role-constraint-id @key"
+     "event-role-constraint owns event-role-constraint-id @key",
+     "event-role-constraint owns role-multiplicity",
+     "event-role-constraint owns role-multiplicity @card(0..1)"
     ],
     "functions": []
    },
@@ -3747,7 +3764,9 @@
       "role": "event:actor",
       "name": "actor",
       "specialises": null,
-      "annotations": [],
+      "annotations": [
+       "@card(0..)"
+      ],
       "from": "event",
       "declared": false
      },
@@ -3787,7 +3806,9 @@
       "role": "event:patient",
       "name": "patient",
       "specialises": null,
-      "annotations": [],
+      "annotations": [
+       "@card(0..)"
+      ],
       "from": "event",
       "declared": false
      },
@@ -3811,16 +3832,19 @@
       "role": "official-act:official",
       "name": "official",
       "specialises": "event:actor",
-      "annotations": [],
+      "annotations": [
+       "@card(0..)"
+      ],
       "from": "official-act",
       "declared": true
      }
     ],
-    "statement": "relation official-act,\n  sub event,\n  relates office,\n  relates office-context,\n  relates official as actor;",
+    "statement": "relation official-act,\n  sub event,\n  relates office,\n  relates office-context,\n  relates official as actor @card(0..);",
     "facts": [
      "official-act relates office",
      "official-act relates office-context",
      "official-act relates official",
+     "official-act relates official @card(0..)",
      "official-act relates official as actor",
      "official-act sub event",
      "relation official-act"
@@ -5940,7 +5964,9 @@
       "role": "event:actor",
       "name": "actor",
       "specialises": null,
-      "annotations": [],
+      "annotations": [
+       "@card(0..)"
+      ],
       "from": "event",
       "declared": false
      },
@@ -5980,7 +6006,9 @@
       "role": "event:patient",
       "name": "patient",
       "specialises": null,
-      "annotations": [],
+      "annotations": [
+       "@card(0..)"
+      ],
       "from": "event",
       "declared": false
      },
@@ -5988,7 +6016,9 @@
       "role": "replacement:fitted",
       "name": "fitted",
       "specialises": null,
-      "annotations": [],
+      "annotations": [
+       "@card(0..)"
+      ],
       "from": "replacement",
       "declared": true
      },
@@ -5996,16 +6026,20 @@
       "role": "replacement:removed",
       "name": "removed",
       "specialises": "event:patient",
-      "annotations": [],
+      "annotations": [
+       "@card(0..)"
+      ],
       "from": "replacement",
       "declared": true
      }
     ],
-    "statement": "relation replacement,\n  sub event,\n  relates fitted,\n  relates removed as patient;",
+    "statement": "relation replacement,\n  sub event,\n  relates fitted @card(0..),\n  relates removed as patient @card(0..);",
     "facts": [
      "relation replacement",
      "replacement relates fitted",
+     "replacement relates fitted @card(0..)",
      "replacement relates removed",
+     "replacement relates removed @card(0..)",
      "replacement relates removed as patient",
      "replacement sub event"
     ],
@@ -6133,6 +6167,33 @@
      "rests-on relates attestation @card(1..1)",
      "rests-on relates record",
      "rests-on relates record @card(1..1)"
+    ],
+    "functions": []
+   },
+   "role-multiplicity": {
+    "label": "role-multiplicity",
+    "kind": "attribute",
+    "annotations": [],
+    "abstract": false,
+    "supertype": null,
+    "supertypes": [],
+    "subtypes": [],
+    "value_type": {
+     "type": "string",
+     "from": "role-multiplicity",
+     "declared": true,
+     "annotations": [
+      "@values(\"one\", \"set\")"
+     ]
+    },
+    "owns": [],
+    "plays": [],
+    "relates": [],
+    "statement": "attribute role-multiplicity,\n value string @values(\"one\", \"set\");",
+    "facts": [
+     "attribute role-multiplicity",
+     "role-multiplicity value @values(\"one\", \"set\")",
+     "role-multiplicity value string"
     ],
     "functions": []
    },
@@ -6567,7 +6628,9 @@
       "role": "event:actor",
       "name": "actor",
       "specialises": null,
-      "annotations": [],
+      "annotations": [
+       "@card(0..)"
+      ],
       "from": "event",
       "declared": false
      },
@@ -6607,7 +6670,9 @@
       "role": "event:patient",
       "name": "patient",
       "specialises": null,
-      "annotations": [],
+      "annotations": [
+       "@card(0..)"
+      ],
       "from": "event",
       "declared": false
      },
@@ -6631,12 +6696,14 @@
       "role": "sampling:sampler",
       "name": "sampler",
       "specialises": "event:actor",
-      "annotations": [],
+      "annotations": [
+       "@card(0..)"
+      ],
       "from": "sampling",
       "declared": true
      }
     ],
-    "statement": "relation sampling,\n  sub event,\n  relates product as destination,\n  relates sampled as origin,\n  relates sampler as actor;",
+    "statement": "relation sampling,\n  sub event,\n  relates product as destination,\n  relates sampled as origin,\n  relates sampler as actor @card(0..);",
     "facts": [
      "relation sampling",
      "sampling relates product",
@@ -6644,6 +6711,7 @@
      "sampling relates sampled",
      "sampling relates sampled as origin",
      "sampling relates sampler",
+     "sampling relates sampler @card(0..)",
      "sampling relates sampler as actor",
      "sampling sub event"
     ],
@@ -8727,7 +8795,9 @@
     "relation": "event",
     "name": "actor",
     "specialises": null,
-    "annotations": [],
+    "annotations": [
+     "@card(0..)"
+    ],
     "specialised_by": [
      "official-act:official",
      "sampling:sampler"
@@ -8874,7 +8944,9 @@
     "relation": "event",
     "name": "patient",
     "specialises": null,
-    "annotations": [],
+    "annotations": [
+     "@card(0..)"
+    ],
     "specialised_by": [
      "replacement:removed"
     ],
@@ -9314,7 +9386,9 @@
     "relation": "official-act",
     "name": "official",
     "specialises": "event:actor",
-    "annotations": [],
+    "annotations": [
+     "@card(0..)"
+    ],
     "specialised_by": [],
     "related_by": [
      "official-act"
@@ -9468,7 +9542,9 @@
     "relation": "replacement",
     "name": "fitted",
     "specialises": null,
-    "annotations": [],
+    "annotations": [
+     "@card(0..)"
+    ],
     "specialised_by": [],
     "related_by": [
      "replacement"
@@ -9487,7 +9563,9 @@
     "relation": "replacement",
     "name": "removed",
     "specialises": "event:patient",
-    "annotations": [],
+    "annotations": [
+     "@card(0..)"
+    ],
     "specialised_by": [],
     "related_by": [
      "replacement"
@@ -9665,7 +9743,9 @@
     "relation": "sampling",
     "name": "sampler",
     "specialises": "event:actor",
-    "annotations": [],
+    "annotations": [
+     "@card(0..)"
+    ],
     "specialised_by": [],
     "related_by": [
      "sampling"
@@ -9956,6 +10036,9 @@
     "attestation",
     "branching",
     "supersession"
+   ],
+   "role-multiplicity": [
+    "event-role-constraint"
    ],
    "si-factor": [
     "unit"
@@ -10480,6 +10563,11 @@
    },
    "attribute recorded-at": {
     "subject": "recorded-at",
+    "kind": "type",
+    "type_kind": "attribute"
+   },
+   "attribute role-multiplicity": {
+    "subject": "role-multiplicity",
     "kind": "type",
     "type_kind": "attribute"
    },
@@ -11171,6 +11259,12 @@
     "kind": "relates",
     "target": "actor"
    },
+   "event relates actor @card(0..)": {
+    "subject": "event",
+    "kind": "annotation",
+    "of": "event relates actor",
+    "annotation": "@card(0..)"
+   },
    "event relates destination": {
     "subject": "event",
     "kind": "relates",
@@ -11195,6 +11289,12 @@
     "subject": "event",
     "kind": "relates",
     "target": "patient"
+   },
+   "event relates patient @card(0..)": {
+    "subject": "event",
+    "kind": "annotation",
+    "of": "event relates patient",
+    "annotation": "@card(0..)"
    },
    "event-role-constraint owns constrained-event-type": {
     "subject": "event-role-constraint",
@@ -11250,6 +11350,17 @@
     "kind": "annotation",
     "of": "event-role-constraint owns event-role-constraint-id",
     "annotation": "@key"
+   },
+   "event-role-constraint owns role-multiplicity": {
+    "subject": "event-role-constraint",
+    "kind": "owns",
+    "target": "role-multiplicity"
+   },
+   "event-role-constraint owns role-multiplicity @card(0..1)": {
+    "subject": "event-role-constraint",
+    "kind": "annotation",
+    "of": "event-role-constraint owns role-multiplicity",
+    "annotation": "@card(0..1)"
    },
    "event-role-constraint-id value string": {
     "subject": "event-role-constraint-id",
@@ -11615,6 +11726,12 @@
     "subject": "official-act",
     "kind": "relates",
     "target": "official"
+   },
+   "official-act relates official @card(0..)": {
+    "subject": "official-act",
+    "kind": "annotation",
+    "of": "official-act relates official",
+    "annotation": "@card(0..)"
    },
    "official-act relates official as actor": {
     "subject": "official-act",
@@ -12278,10 +12395,22 @@
     "kind": "relates",
     "target": "fitted"
    },
+   "replacement relates fitted @card(0..)": {
+    "subject": "replacement",
+    "kind": "annotation",
+    "of": "replacement relates fitted",
+    "annotation": "@card(0..)"
+   },
    "replacement relates removed": {
     "subject": "replacement",
     "kind": "relates",
     "target": "removed"
+   },
+   "replacement relates removed @card(0..)": {
+    "subject": "replacement",
+    "kind": "annotation",
+    "of": "replacement relates removed",
+    "annotation": "@card(0..)"
    },
    "replacement relates removed as patient": {
     "subject": "replacement",
@@ -12331,6 +12460,17 @@
     "kind": "annotation",
     "of": "rests-on relates record",
     "annotation": "@card(1..1)"
+   },
+   "role-multiplicity value @values(\"one\", \"set\")": {
+    "subject": "role-multiplicity",
+    "kind": "annotation",
+    "of": "role-multiplicity value string",
+    "annotation": "@values(\"one\", \"set\")"
+   },
+   "role-multiplicity value string": {
+    "subject": "role-multiplicity",
+    "kind": "value",
+    "target": "string"
    },
    "same-as relates same": {
     "subject": "same-as",
@@ -12386,6 +12526,12 @@
     "subject": "sampling",
     "kind": "relates",
     "target": "sampler"
+   },
+   "sampling relates sampler @card(0..)": {
+    "subject": "sampling",
+    "kind": "annotation",
+    "of": "sampling relates sampler",
+    "annotation": "@card(0..)"
    },
    "sampling relates sampler as actor": {
     "subject": "sampling",
@@ -12732,7 +12878,7 @@
     "target": "double"
    }
   },
-  "typeql": "define\n\nattribute wm-id,\n value string;\nattribute name,\n value string;\nattribute alt-name,\n value string;\nattribute description,\n value string;\nattribute module-name,\n value string;\nattribute module-version,\n value string;\nattribute proposition-key,\n value string;\nattribute time-point @abstract,\n value datetime-tz;\nattribute valid-from-earliest,\n  sub time-point;\nattribute valid-from-latest,\n  sub time-point;\nattribute valid-to-earliest,\n  sub time-point;\nattribute valid-to-latest,\n  sub time-point;\nattribute recorded-at,\n  sub time-point;\nattribute branch-at,\n  sub time-point;\nattribute knowledge-at,\n  sub time-point;\nattribute end-basis,\n value string @values(\"stated\", \"unknown\", \"until-superseded\");\nattribute stance,\n value string @values(\"asserts\", \"believes\", \"doubts\", \"hypothesises\", \"stipulates\");\nattribute polarity,\n value boolean;\nattribute basis,\n value string @values(\"observation\", \"testimony\", \"inference\", \"stipulation\");\nattribute credence,\n value double @range(0.0..1.0);\nattribute verdict,\n value string @values(\"accepted\", \"rejected\", \"retracted\");\nattribute reason,\n value string;\nattribute world-kind,\n value string @values(\"actual\", \"hypothetical\", \"simulated\");\nattribute lower,\n value double;\nattribute upper,\n value double;\nattribute coverage-level,\n value double @range(0.0..1.0);\nattribute slot-id,\n value string;\nattribute slot-predicate,\n value string;\nattribute slot-role,\n value string;\nattribute value-role,\n value string;\nattribute x-min,\n value double;\nattribute x-max,\n value double;\nattribute y-min,\n value double;\nattribute y-max,\n value double;\nattribute z-min,\n value double;\nattribute z-max,\n value double;\nattribute qw,\n value double;\nattribute qx,\n value double;\nattribute qy,\n value double;\nattribute qz,\n value double;\nattribute tx,\n value double;\nattribute ty,\n value double;\nattribute tz,\n value double;\nattribute dimension,\n value string;\nattribute si-factor,\n value double;\nattribute si-offset,\n value double;\nattribute raw-value,\n value double;\nattribute standard-uncertainty,\n value double;\nattribute coverage-factor,\n value double;\nattribute condition,\n value string;\nattribute calibration-ref,\n value string;\nattribute event-role-constraint-id,\n value string;\nattribute constrained-event-type,\n value string;\nattribute constrained-role,\n value string;\nattribute constraint-kind,\n value string;\nattribute declaring-module,\n value string;\nentity schema-module,\n  owns module-name @key,\n  owns module-version;\nentity particular @abstract,\n  owns alt-name,\n  owns description,\n  owns name,\n  owns wm-id @key,\n  plays anchored-to:anchor,\n  plays authorisation:grantor,\n  plays authorisation:holder,\n  plays authorisation:scope,\n  plays classified-as:classified,\n  plays classified-as:context,\n  plays constitution:constituent,\n  plays constitution:constituted,\n  plays depends-on:dependee,\n  plays depends-on:dependent,\n  plays event:actor,\n  plays event:destination,\n  plays event:instrument,\n  plays event:location,\n  plays event:origin,\n  plays event:patient,\n  plays exclusive-office:context,\n  plays existence:existent,\n  plays has-quality:bearer,\n  plays member-of:group,\n  plays member-of:member,\n  plays official-act:office-context,\n  plays official-act:official,\n  plays part-of:part,\n  plays part-of:whole,\n  plays positioned-in:positioned,\n  plays same-as:same,\n  plays sampling:sampler;\nentity physical-object,\n  sub particular,\n  plays acceptance:holder,\n  plays attestation:attester,\n  plays calibration-of:calibrated,\n  plays connected-to:endpoint,\n  plays located-at:located,\n  plays replacement:fitted,\n  plays replacement:removed,\n  plays sampling:sampled;\nentity social-object,\n  sub particular,\n  plays acceptance:holder,\n  plays attestation:attester;\nentity place,\n  sub particular,\n  plays located-at:located,\n  plays located-at:place;\nentity information-object,\n  sub particular,\n  owns calibration-ref,\n  owns condition @card(0..),\n  owns coverage-factor,\n  owns raw-value,\n  owns standard-uncertainty,\n  plays calibration-of:certificate,\n  plays expressed-in:record,\n  plays produced:result,\n  plays reports:result,\n  plays rests-on:record;\nentity occurrence,\n  sub particular,\n  plays causes:cause,\n  plays causes:effect,\n  plays describes:occurrence;\nentity concept @abstract,\n  owns description,\n  owns name,\n  owns wm-id @key,\n  plays classified-as:class,\n  plays classified-as:classified,\n  plays has-quality:value;\nentity category,\n  sub concept,\n  plays connected-to:joint-kind,\n  plays depends-on:kind;\nentity social-role,\n  sub concept,\n  plays exclusive-office:office,\n  plays official-act:office;\nentity quality-kind,\n  sub concept,\n  owns dimension,\n  plays has-quality:quality;\nentity reference-system @abstract,\n  owns description,\n  owns name,\n  owns wm-id @key;\nentity clock,\n  sub reference-system,\n  plays attestation:clock;\nentity spatial-frame,\n  sub reference-system,\n  plays anchored-to:frame,\n  plays frame-transform:child,\n  plays frame-transform:parent,\n  plays positioned-in:frame;\nentity unit,\n  sub reference-system,\n  owns dimension,\n  owns si-factor,\n  owns si-offset,\n  plays expressed-in:unit,\n  plays has-quality:unit;\nentity world,\n  owns description,\n  owns name,\n  owns wm-id @key,\n  owns world-kind,\n  plays attestation:context,\n  plays branching:base,\n  plays branching:variant;\nentity functional-slot,\n  owns slot-id @key,\n  owns slot-predicate @card(1..1),\n  owns slot-role @card(1..),\n  owns value-role @card(1..1);\nentity capability,\n  sub concept,\n  plays authorisation:power;\nentity event-role-constraint,\n  owns constrained-event-type @card(1..1),\n  owns constrained-role @card(1..1),\n  owns constraint-kind @card(0..1),\n  owns declaring-module @card(1..1),\n  owns event-role-constraint-id @key;\nentity person,\n  sub physical-object,\n  plays employment:employee;\nentity organisation,\n  sub social-object,\n  plays employment:employer;\nentity sample,\n  sub physical-object,\n  plays sampling:product;\nrelation branching,\n  relates base,\n  relates variant,\n  owns branch-at,\n  owns knowledge-at,\n  owns recorded-at;\nrelation proposition @abstract,\n  owns proposition-key @key,\n  owns wm-id @key,\n  plays attestation:content,\n  plays initiates:outcome,\n  plays reports:content,\n  plays terminates:outcome;\nrelation existence,\n  sub proposition,\n  relates existent;\nrelation located-at,\n  sub proposition,\n  relates located,\n  relates place;\nrelation part-of,\n  sub proposition,\n  relates part,\n  relates whole;\nrelation member-of,\n  sub proposition,\n  relates group,\n  relates member;\nrelation depends-on,\n  sub proposition,\n  relates dependee,\n  relates dependent,\n  relates kind @card(0..1);\nrelation classified-as,\n  sub proposition,\n  relates class,\n  relates classified,\n  relates context;\nrelation has-quality,\n  sub proposition,\n  relates bearer,\n  relates quality,\n  relates unit,\n  relates value,\n  owns coverage-level,\n  owns lower,\n  owns upper;\nrelation same-as,\n  sub proposition,\n  relates same @card(2..2);\nrelation describes,\n  sub proposition,\n  relates description,\n  relates occurrence;\nrelation initiates,\n  sub proposition,\n  relates event,\n  relates outcome;\nrelation terminates,\n  sub proposition,\n  relates event,\n  relates outcome;\nrelation event,\n  relates actor,\n  relates destination,\n  relates instrument,\n  relates location,\n  relates origin,\n  relates patient,\n  owns description,\n  owns wm-id @key,\n  plays attestation:content,\n  plays causes:cause,\n  plays causes:effect,\n  plays classified-as:classified,\n  plays describes:description,\n  plays initiates:event,\n  plays produced:activity,\n  plays terminates:event;\nrelation attestation,\n  relates attester @card(1..1),\n  relates clock @card(0..1),\n  relates content @card(1..1),\n  relates context @card(1..1),\n  owns basis,\n  owns credence,\n  owns description,\n  owns end-basis,\n  owns polarity,\n  owns recorded-at,\n  owns stance,\n  owns valid-from-earliest,\n  owns valid-from-latest,\n  owns valid-to-earliest,\n  owns valid-to-latest,\n  owns wm-id @key,\n  plays acceptance:accepted,\n  plays rests-on:attestation,\n  plays supersession:new,\n  plays supersession:old;\nrelation supersession,\n  relates new @card(1..1),\n  relates old @card(1..1),\n  owns recorded-at;\nrelation acceptance,\n  relates accepted @card(1..1),\n  relates holder @card(1..1),\n  owns reason,\n  owns recorded-at,\n  owns verdict,\n  owns wm-id @key;\nrelation constitution,\n  sub proposition,\n  relates constituent,\n  relates constituted;\nrelation positioned-in,\n  sub proposition,\n  relates frame,\n  relates positioned,\n  owns qw,\n  owns qx,\n  owns qy,\n  owns qz,\n  owns x-max,\n  owns x-min,\n  owns y-max,\n  owns y-min,\n  owns z-max,\n  owns z-min;\nrelation anchored-to,\n  sub proposition,\n  relates anchor,\n  relates frame;\nrelation frame-transform,\n  sub proposition,\n  relates child,\n  relates parent,\n  owns qw,\n  owns qx,\n  owns qy,\n  owns qz,\n  owns tx,\n  owns ty,\n  owns tz;\nrelation causes,\n  sub proposition,\n  relates cause,\n  relates effect;\nrelation expressed-in,\n  relates record @card(1..1),\n  relates unit @card(1..1);\nrelation rests-on,\n  relates attestation @card(1..1),\n  relates record @card(1..1);\nrelation produced,\n  sub proposition,\n  relates activity,\n  relates result;\nrelation reports,\n  sub proposition,\n  relates content,\n  relates result;\nrelation connected-to,\n  sub proposition,\n  relates endpoint @card(2..2),\n  relates joint-kind @card(0..1);\nrelation replacement,\n  sub event,\n  relates fitted,\n  relates removed as patient;\nrelation employment,\n  sub proposition,\n  relates employee,\n  relates employer;\nrelation office-holding,\n  sub classified-as;\nrelation exclusive-office,\n  sub proposition,\n  relates context,\n  relates office;\nrelation authorisation,\n  sub proposition,\n  relates grantor,\n  relates holder,\n  relates power,\n  relates scope;\nrelation official-act,\n  sub event,\n  relates office,\n  relates office-context,\n  relates official as actor;\nrelation sampling,\n  sub event,\n  relates product as destination,\n  relates sampled as origin,\n  relates sampler as actor;\nrelation calibration-of,\n  sub proposition,\n  relates calibrated,\n  relates certificate;\nfun parts_in($whole: particular, $w: world) -> { particular }:\n  match\n    { $c isa part-of (whole: $whole, part: $p); attestation (content: $c, context: $w); } or\n    { $c isa part-of (whole: $whole, part: $m); attestation (content: $c, context: $w); let $p in parts_in($m, $w); };\n  return { $p };\nfun frames_linked($f: spatial-frame, $w: world) -> { spatial-frame }:\n  match\n    { $c1 isa frame-transform (parent: $f, child: $g); attestation (content: $c1, context: $w); } or\n    { $c2 isa frame-transform (child: $f, parent: $g); attestation (content: $c2, context: $w); } or\n    { $c3 isa frame-transform (parent: $f, child: $m3); attestation (content: $c3, context: $w);\n      let $g in frames_linked($m3, $w); } or\n    { $c4 isa frame-transform (child: $f, parent: $m4); attestation (content: $c4, context: $w);\n      let $g in frames_linked($m4, $w); };\n  return { $g };"
+  "typeql": "define\n\nattribute wm-id,\n value string;\nattribute name,\n value string;\nattribute alt-name,\n value string;\nattribute description,\n value string;\nattribute module-name,\n value string;\nattribute module-version,\n value string;\nattribute proposition-key,\n value string;\nattribute time-point @abstract,\n value datetime-tz;\nattribute valid-from-earliest,\n  sub time-point;\nattribute valid-from-latest,\n  sub time-point;\nattribute valid-to-earliest,\n  sub time-point;\nattribute valid-to-latest,\n  sub time-point;\nattribute recorded-at,\n  sub time-point;\nattribute branch-at,\n  sub time-point;\nattribute knowledge-at,\n  sub time-point;\nattribute end-basis,\n value string @values(\"stated\", \"unknown\", \"until-superseded\");\nattribute stance,\n value string @values(\"asserts\", \"believes\", \"doubts\", \"hypothesises\", \"stipulates\");\nattribute polarity,\n value boolean;\nattribute basis,\n value string @values(\"observation\", \"testimony\", \"inference\", \"stipulation\");\nattribute credence,\n value double @range(0.0..1.0);\nattribute verdict,\n value string @values(\"accepted\", \"rejected\", \"retracted\");\nattribute reason,\n value string;\nattribute world-kind,\n value string @values(\"actual\", \"hypothetical\", \"simulated\");\nattribute lower,\n value double;\nattribute upper,\n value double;\nattribute coverage-level,\n value double @range(0.0..1.0);\nattribute slot-id,\n value string;\nattribute slot-predicate,\n value string;\nattribute slot-role,\n value string;\nattribute value-role,\n value string;\nattribute x-min,\n value double;\nattribute x-max,\n value double;\nattribute y-min,\n value double;\nattribute y-max,\n value double;\nattribute z-min,\n value double;\nattribute z-max,\n value double;\nattribute qw,\n value double;\nattribute qx,\n value double;\nattribute qy,\n value double;\nattribute qz,\n value double;\nattribute tx,\n value double;\nattribute ty,\n value double;\nattribute tz,\n value double;\nattribute dimension,\n value string;\nattribute si-factor,\n value double;\nattribute si-offset,\n value double;\nattribute raw-value,\n value double;\nattribute standard-uncertainty,\n value double;\nattribute coverage-factor,\n value double;\nattribute condition,\n value string;\nattribute calibration-ref,\n value string;\nattribute event-role-constraint-id,\n value string;\nattribute constrained-event-type,\n value string;\nattribute constrained-role,\n value string;\nattribute constraint-kind,\n value string;\nattribute declaring-module,\n value string;\nattribute role-multiplicity,\n value string @values(\"one\", \"set\");\nentity schema-module,\n  owns module-name @key,\n  owns module-version;\nentity particular @abstract,\n  owns alt-name,\n  owns description,\n  owns name,\n  owns wm-id @key,\n  plays anchored-to:anchor,\n  plays authorisation:grantor,\n  plays authorisation:holder,\n  plays authorisation:scope,\n  plays classified-as:classified,\n  plays classified-as:context,\n  plays constitution:constituent,\n  plays constitution:constituted,\n  plays depends-on:dependee,\n  plays depends-on:dependent,\n  plays event:actor,\n  plays event:destination,\n  plays event:instrument,\n  plays event:location,\n  plays event:origin,\n  plays event:patient,\n  plays exclusive-office:context,\n  plays existence:existent,\n  plays has-quality:bearer,\n  plays member-of:group,\n  plays member-of:member,\n  plays official-act:office-context,\n  plays official-act:official,\n  plays part-of:part,\n  plays part-of:whole,\n  plays positioned-in:positioned,\n  plays same-as:same,\n  plays sampling:sampler;\nentity physical-object,\n  sub particular,\n  plays acceptance:holder,\n  plays attestation:attester,\n  plays calibration-of:calibrated,\n  plays connected-to:endpoint,\n  plays located-at:located,\n  plays replacement:fitted,\n  plays replacement:removed,\n  plays sampling:sampled;\nentity social-object,\n  sub particular,\n  plays acceptance:holder,\n  plays attestation:attester;\nentity place,\n  sub particular,\n  plays located-at:located,\n  plays located-at:place;\nentity information-object,\n  sub particular,\n  owns calibration-ref,\n  owns condition @card(0..),\n  owns coverage-factor,\n  owns raw-value,\n  owns standard-uncertainty,\n  plays calibration-of:certificate,\n  plays expressed-in:record,\n  plays produced:result,\n  plays reports:result,\n  plays rests-on:record;\nentity occurrence,\n  sub particular,\n  plays causes:cause,\n  plays causes:effect,\n  plays describes:occurrence;\nentity concept @abstract,\n  owns description,\n  owns name,\n  owns wm-id @key,\n  plays classified-as:class,\n  plays classified-as:classified,\n  plays has-quality:value;\nentity category,\n  sub concept,\n  plays connected-to:joint-kind,\n  plays depends-on:kind;\nentity social-role,\n  sub concept,\n  plays exclusive-office:office,\n  plays official-act:office;\nentity quality-kind,\n  sub concept,\n  owns dimension,\n  plays has-quality:quality;\nentity reference-system @abstract,\n  owns description,\n  owns name,\n  owns wm-id @key;\nentity clock,\n  sub reference-system,\n  plays attestation:clock;\nentity spatial-frame,\n  sub reference-system,\n  plays anchored-to:frame,\n  plays frame-transform:child,\n  plays frame-transform:parent,\n  plays positioned-in:frame;\nentity unit,\n  sub reference-system,\n  owns dimension,\n  owns si-factor,\n  owns si-offset,\n  plays expressed-in:unit,\n  plays has-quality:unit;\nentity world,\n  owns description,\n  owns name,\n  owns wm-id @key,\n  owns world-kind,\n  plays attestation:context,\n  plays branching:base,\n  plays branching:variant;\nentity functional-slot,\n  owns slot-id @key,\n  owns slot-predicate @card(1..1),\n  owns slot-role @card(1..),\n  owns value-role @card(1..1);\nentity capability,\n  sub concept,\n  plays authorisation:power;\nentity event-role-constraint,\n  owns constrained-event-type @card(1..1),\n  owns constrained-role @card(1..1),\n  owns constraint-kind @card(0..1),\n  owns declaring-module @card(1..1),\n  owns event-role-constraint-id @key,\n  owns role-multiplicity @card(0..1);\nentity person,\n  sub physical-object,\n  plays employment:employee;\nentity organisation,\n  sub social-object,\n  plays employment:employer;\nentity sample,\n  sub physical-object,\n  plays sampling:product;\nrelation branching,\n  relates base,\n  relates variant,\n  owns branch-at,\n  owns knowledge-at,\n  owns recorded-at;\nrelation proposition @abstract,\n  owns proposition-key @key,\n  owns wm-id @key,\n  plays attestation:content,\n  plays initiates:outcome,\n  plays reports:content,\n  plays terminates:outcome;\nrelation existence,\n  sub proposition,\n  relates existent;\nrelation located-at,\n  sub proposition,\n  relates located,\n  relates place;\nrelation part-of,\n  sub proposition,\n  relates part,\n  relates whole;\nrelation member-of,\n  sub proposition,\n  relates group,\n  relates member;\nrelation depends-on,\n  sub proposition,\n  relates dependee,\n  relates dependent,\n  relates kind @card(0..1);\nrelation classified-as,\n  sub proposition,\n  relates class,\n  relates classified,\n  relates context;\nrelation has-quality,\n  sub proposition,\n  relates bearer,\n  relates quality,\n  relates unit,\n  relates value,\n  owns coverage-level,\n  owns lower,\n  owns upper;\nrelation same-as,\n  sub proposition,\n  relates same @card(2..2);\nrelation describes,\n  sub proposition,\n  relates description,\n  relates occurrence;\nrelation initiates,\n  sub proposition,\n  relates event,\n  relates outcome;\nrelation terminates,\n  sub proposition,\n  relates event,\n  relates outcome;\nrelation event,\n  relates actor @card(0..),\n  relates destination,\n  relates instrument,\n  relates location,\n  relates origin,\n  relates patient @card(0..),\n  owns description,\n  owns wm-id @key,\n  plays attestation:content,\n  plays causes:cause,\n  plays causes:effect,\n  plays classified-as:classified,\n  plays describes:description,\n  plays initiates:event,\n  plays produced:activity,\n  plays terminates:event;\nrelation attestation,\n  relates attester @card(1..1),\n  relates clock @card(0..1),\n  relates content @card(1..1),\n  relates context @card(1..1),\n  owns basis,\n  owns credence,\n  owns description,\n  owns end-basis,\n  owns polarity,\n  owns recorded-at,\n  owns stance,\n  owns valid-from-earliest,\n  owns valid-from-latest,\n  owns valid-to-earliest,\n  owns valid-to-latest,\n  owns wm-id @key,\n  plays acceptance:accepted,\n  plays rests-on:attestation,\n  plays supersession:new,\n  plays supersession:old;\nrelation supersession,\n  relates new @card(1..1),\n  relates old @card(1..1),\n  owns recorded-at;\nrelation acceptance,\n  relates accepted @card(1..1),\n  relates holder @card(1..1),\n  owns reason,\n  owns recorded-at,\n  owns verdict,\n  owns wm-id @key;\nrelation constitution,\n  sub proposition,\n  relates constituent,\n  relates constituted;\nrelation positioned-in,\n  sub proposition,\n  relates frame,\n  relates positioned,\n  owns qw,\n  owns qx,\n  owns qy,\n  owns qz,\n  owns x-max,\n  owns x-min,\n  owns y-max,\n  owns y-min,\n  owns z-max,\n  owns z-min;\nrelation anchored-to,\n  sub proposition,\n  relates anchor,\n  relates frame;\nrelation frame-transform,\n  sub proposition,\n  relates child,\n  relates parent,\n  owns qw,\n  owns qx,\n  owns qy,\n  owns qz,\n  owns tx,\n  owns ty,\n  owns tz;\nrelation causes,\n  sub proposition,\n  relates cause,\n  relates effect;\nrelation expressed-in,\n  relates record @card(1..1),\n  relates unit @card(1..1);\nrelation rests-on,\n  relates attestation @card(1..1),\n  relates record @card(1..1);\nrelation produced,\n  sub proposition,\n  relates activity,\n  relates result;\nrelation reports,\n  sub proposition,\n  relates content,\n  relates result;\nrelation connected-to,\n  sub proposition,\n  relates endpoint @card(2..2),\n  relates joint-kind @card(0..1);\nrelation replacement,\n  sub event,\n  relates fitted @card(0..),\n  relates removed as patient @card(0..);\nrelation employment,\n  sub proposition,\n  relates employee,\n  relates employer;\nrelation office-holding,\n  sub classified-as;\nrelation exclusive-office,\n  sub proposition,\n  relates context,\n  relates office;\nrelation authorisation,\n  sub proposition,\n  relates grantor,\n  relates holder,\n  relates power,\n  relates scope;\nrelation official-act,\n  sub event,\n  relates office,\n  relates office-context,\n  relates official as actor @card(0..);\nrelation sampling,\n  sub event,\n  relates product as destination,\n  relates sampled as origin,\n  relates sampler as actor @card(0..);\nrelation calibration-of,\n  sub proposition,\n  relates calibrated,\n  relates certificate;\nfun parts_in($whole: particular, $w: world) -> { particular }:\n  match\n    { $c isa part-of (whole: $whole, part: $p); attestation (content: $c, context: $w); } or\n    { $c isa part-of (whole: $whole, part: $m); attestation (content: $c, context: $w); let $p in parts_in($m, $w); };\n  return { $p };\nfun frames_linked($f: spatial-frame, $w: world) -> { spatial-frame }:\n  match\n    { $c1 isa frame-transform (parent: $f, child: $g); attestation (content: $c1, context: $w); } or\n    { $c2 isa frame-transform (child: $f, parent: $g); attestation (content: $c2, context: $w); } or\n    { $c3 isa frame-transform (parent: $f, child: $m3); attestation (content: $c3, context: $w);\n      let $g in frames_linked($m3, $w); } or\n    { $c4 isa frame-transform (child: $f, parent: $m4); attestation (content: $c4, context: $w);\n      let $g in frames_linked($m4, $w); };\n  return { $g };"
  },
  "attribution": {
   "provenance": "reconstructed",
@@ -12746,7 +12892,7 @@
    "unresolved": "Attribution cannot be established: no replay step adds it."
   },
   "counts": {
-   "attributed": 508,
+   "attributed": 519,
    "shared": 0,
    "consistent_unverified": 0,
    "unresolved": 0
@@ -12833,33 +12979,43 @@
     }
    },
    {
-    "name": "profile:laboratory",
-    "kind": "profile",
-    "recorded_version": "0.1",
-    "code_version": "0.1",
+    "name": "core-0.4-event-multiplicity",
+    "kind": "core",
+    "recorded_version": "0.4.0-mp",
+    "code_version": "0.4.0-mp",
     "replay": "replayable",
     "facts": {
-     "attributed": 19
+     "attributed": 7
+    }
+   },
+   {
+    "name": "profile:laboratory",
+    "kind": "profile",
+    "recorded_version": "0.2",
+    "code_version": "0.2",
+    "replay": "replayable",
+    "facts": {
+     "attributed": 20
     }
    },
    {
     "name": "profile:mechanical",
     "kind": "profile",
-    "recorded_version": "0.2",
-    "code_version": "0.2",
+    "recorded_version": "0.3",
+    "code_version": "0.3",
     "replay": "replayable",
     "facts": {
-     "attributed": 15
+     "attributed": 17
     }
    },
    {
     "name": "profile:organisation",
     "kind": "profile",
-    "recorded_version": "0.2",
-    "code_version": "0.2",
+    "recorded_version": "0.3",
+    "code_version": "0.3",
     "replay": "replayable",
     "facts": {
-     "attributed": 37
+     "attributed": 38
     }
    },
    {
@@ -13278,6 +13434,12 @@
     "status": "attributed",
     "modules": [
      "core"
+    ]
+   },
+   "attribute role-multiplicity": {
+    "status": "attributed",
+    "modules": [
+     "core-0.4-event-multiplicity"
     ]
    },
    "attribute si-factor": {
@@ -14090,6 +14252,12 @@
      "core"
     ]
    },
+   "event relates actor @card(0..)": {
+    "status": "attributed",
+    "modules": [
+     "core-0.4-event-multiplicity"
+    ]
+   },
    "event relates destination": {
     "status": "attributed",
     "modules": [
@@ -14118,6 +14286,12 @@
     "status": "attributed",
     "modules": [
      "core"
+    ]
+   },
+   "event relates patient @card(0..)": {
+    "status": "attributed",
+    "modules": [
+     "core-0.4-event-multiplicity"
     ]
    },
    "event-role-constraint owns constrained-event-type": {
@@ -14178,6 +14352,18 @@
     "status": "attributed",
     "modules": [
      "core-0.4-event-roles"
+    ]
+   },
+   "event-role-constraint owns role-multiplicity": {
+    "status": "attributed",
+    "modules": [
+     "core-0.4-event-multiplicity"
+    ]
+   },
+   "event-role-constraint owns role-multiplicity @card(0..1)": {
+    "status": "attributed",
+    "modules": [
+     "core-0.4-event-multiplicity"
     ]
    },
    "event-role-constraint-id value string": {
@@ -14607,6 +14793,12 @@
     ]
    },
    "official-act relates official": {
+    "status": "attributed",
+    "modules": [
+     "profile:organisation"
+    ]
+   },
+   "official-act relates official @card(0..)": {
     "status": "attributed",
     "modules": [
      "profile:organisation"
@@ -15398,7 +15590,19 @@
      "profile:mechanical"
     ]
    },
+   "replacement relates fitted @card(0..)": {
+    "status": "attributed",
+    "modules": [
+     "profile:mechanical"
+    ]
+   },
    "replacement relates removed": {
+    "status": "attributed",
+    "modules": [
+     "profile:mechanical"
+    ]
+   },
+   "replacement relates removed @card(0..)": {
     "status": "attributed",
     "modules": [
      "profile:mechanical"
@@ -15458,6 +15662,18 @@
      "core-0.4-c"
     ]
    },
+   "role-multiplicity value @values(\"one\", \"set\")": {
+    "status": "attributed",
+    "modules": [
+     "core-0.4-event-multiplicity"
+    ]
+   },
+   "role-multiplicity value string": {
+    "status": "attributed",
+    "modules": [
+     "core-0.4-event-multiplicity"
+    ]
+   },
    "same-as relates same": {
     "status": "attributed",
     "modules": [
@@ -15513,6 +15729,12 @@
     ]
    },
    "sampling relates sampler": {
+    "status": "attributed",
+    "modules": [
+     "profile:laboratory"
+    ]
+   },
+   "sampling relates sampler @card(0..)": {
     "status": "attributed",
     "modules": [
      "profile:laboratory"
@@ -16544,7 +16766,8 @@
     },
     "extended_by": [
      "core-0.4-b",
-     "core-0.4-c"
+     "core-0.4-c",
+     "core-0.4-event-multiplicity"
     ],
     "contributions": {
      "core": [
@@ -16570,6 +16793,10 @@
      ],
      "core-0.4-c": [
       "event plays produced:activity"
+     ],
+     "core-0.4-event-multiplicity": [
+      "event relates actor @card(0..)",
+      "event relates patient @card(0..)"
      ]
     },
     "unresolved": []
@@ -16581,8 +16808,14 @@
       "core-0.4-event-roles"
      ]
     },
-    "extended_by": [],
+    "extended_by": [
+     "core-0.4-event-multiplicity"
+    ],
     "contributions": {
+     "core-0.4-event-multiplicity": [
+      "event-role-constraint owns role-multiplicity",
+      "event-role-constraint owns role-multiplicity @card(0..1)"
+     ],
      "core-0.4-event-roles": [
       "entity event-role-constraint",
       "event-role-constraint owns constrained-event-type",
@@ -16960,6 +17193,7 @@
       "official-act relates office",
       "official-act relates office-context",
       "official-act relates official",
+      "official-act relates official @card(0..)",
       "official-act relates official as actor",
       "official-act sub event",
       "relation official-act"
@@ -17402,7 +17636,9 @@
      "profile:mechanical": [
       "relation replacement",
       "replacement relates fitted",
+      "replacement relates fitted @card(0..)",
       "replacement relates removed",
+      "replacement relates removed @card(0..)",
       "replacement relates removed as patient",
       "replacement sub event"
      ]
@@ -17442,6 +17678,23 @@
       "rests-on relates attestation @card(1..1)",
       "rests-on relates record",
       "rests-on relates record @card(1..1)"
+     ]
+    },
+    "unresolved": []
+   },
+   "role-multiplicity": {
+    "introduced_by": {
+     "status": "attributed",
+     "modules": [
+      "core-0.4-event-multiplicity"
+     ]
+    },
+    "extended_by": [],
+    "contributions": {
+     "core-0.4-event-multiplicity": [
+      "attribute role-multiplicity",
+      "role-multiplicity value @values(\"one\", \"set\")",
+      "role-multiplicity value string"
      ]
     },
     "unresolved": []
@@ -17497,6 +17750,7 @@
       "sampling relates sampled",
       "sampling relates sampled as origin",
       "sampling relates sampler",
+      "sampling relates sampler @card(0..)",
       "sampling relates sampler as actor",
       "sampling sub event"
      ]
@@ -18116,8 +18370,17 @@
   "repository_notes": {
    "provenance": "repository",
    "also_declared_in_source": {
+    "event relates actor": [
+     "core-0.4-event-multiplicity"
+    ],
+    "event relates patient": [
+     "core-0.4-event-multiplicity"
+    ],
     "relation depends-on": [
      "core-0.4-d"
+    ],
+    "relation event": [
+     "core-0.4-event-multiplicity"
     ]
    },
    "scan": {
@@ -18187,27 +18450,38 @@
      "unread": [],
      "missing_from_scan": []
     },
+    "core-0.4-event-multiplicity": {
+     "files": [
+      "schema/core/core-0.4-event-multiplicity.tql"
+     ],
+     "statements": 3,
+     "unread": [],
+     "missing_from_scan": []
+    },
     "profile:laboratory": {
      "files": [
-      "schema/profiles/laboratory/laboratory-0.1.tql"
+      "schema/profiles/laboratory/laboratory-0.1.tql",
+      "schema/profiles/laboratory/laboratory-0.2.tql"
      ],
-     "statements": 8,
+     "statements": 9,
      "unread": [],
      "missing_from_scan": []
     },
     "profile:mechanical": {
      "files": [
-      "schema/profiles/mechanical/mechanical-0.1.tql"
+      "schema/profiles/mechanical/mechanical-0.1.tql",
+      "schema/profiles/mechanical/mechanical-0.3.tql"
      ],
-     "statements": 5,
+     "statements": 6,
      "unread": [],
      "missing_from_scan": []
     },
     "profile:organisation": {
      "files": [
-      "schema/profiles/organisation/organisation-0.1.tql"
+      "schema/profiles/organisation/organisation-0.1.tql",
+      "schema/profiles/organisation/organisation-0.3.tql"
      ],
-     "statements": 16,
+     "statements": 17,
      "unread": [],
      "missing_from_scan": []
     }
@@ -18220,21 +18494,24 @@
   "modules": {
    "profile:laboratory": {
     "files": [
-     "schema/profiles/laboratory/laboratory-0.1.tql"
+     "schema/profiles/laboratory/laboratory-0.1.tql",
+     "schema/profiles/laboratory/laboratory-0.2.tql"
     ],
-    "header": "Profile laboratory-0.1 (Core 0.4 Stage D-3, LABS-1.028). Additive vocabulary only (D-D-1, D-D-9): installed after the full core with WorldModel.install_profile(\"laboratory\"). Measurement (activity, result record, proposition), rests-on, comparability, units, corrections, constitution, location, hypotheses (stance) and processes are core (Stage B and C). Specimens and experiments are classifications (laboratory:specimen, laboratory:experiment)."
+    "header": "Profile laboratory-0.1 (Core 0.4 Stage D-3, LABS-1.028). Additive vocabulary only (D-D-1, D-D-9): installed after the full core with WorldModel.install_profile(\"laboratory\"). Measurement (activity, result record, proposition), rests-on, comparability, units, corrections, constitution, location, hypotheses (stance) and processes are core (Stage B and C). Specimens and experiments are classifications (laboratory:specimen, laboratory:experiment). Profile laboratory-0.2 (LABS-1.049, DI-13, MP-1): team sampling names several samplers in one account. Widens a cardinality only (no type, role, plays or owns is added): needs core-0.4-event-multiplicity, which opens event:actor. The sampled source (origin) and the product (destination) stay single: several products need a separate decision (LABS-1.048)."
    },
    "profile:mechanical": {
     "files": [
-     "schema/profiles/mechanical/mechanical-0.1.tql"
+     "schema/profiles/mechanical/mechanical-0.1.tql",
+     "schema/profiles/mechanical/mechanical-0.3.tql"
     ],
-    "header": "Profile mechanical-0.1 (Core 0.4 Stage D-1, LABS-1.023). Additive vocabulary only (D-D-1, D-D-9): installed after the full core with WorldModel.install_profile(\"mechanical\"). Assemblies and components use core part-of; part kinds, materials, joint kinds and the assembly/component categories are vocabulary (D-D-11: \"component\" is a category, not a kind). Dependency kinds are core (core-0.4-d)."
+    "header": "Profile mechanical-0.1 (Core 0.4 Stage D-1, LABS-1.023). Additive vocabulary only (D-D-1, D-D-9): installed after the full core with WorldModel.install_profile(\"mechanical\"). Assemblies and components use core part-of; part kinds, materials, joint kinds and the assembly/component categories are vocabulary (D-D-11: \"component\" is a category, not a kind). Dependency kinds are core (core-0.4-d). Profile mechanical-0.3 (LABS-1.049, DI-13, MP-1): a multi-part replacement names several removed and fitted parts in one account. Widens cardinalities only (no type, role, plays or owns is added): needs core-0.4-event-multiplicity, which opens event:patient. A replacement established as mechanical:one-for-one keeps one part each (the 0.2 constraints, multiplicity `one`)."
    },
    "profile:organisation": {
     "files": [
-     "schema/profiles/organisation/organisation-0.1.tql"
+     "schema/profiles/organisation/organisation-0.1.tql",
+     "schema/profiles/organisation/organisation-0.3.tql"
     ],
-    "header": "Profile organisation-0.1 (Core 0.4 Stage D-2, LABS-1.026). Additive vocabulary only (D-D-1, D-D-9): installed after the full core with WorldModel.install_profile(\"organisation\"). Membership (member-of), organisational structure (part-of), ordinary roles, abilities (capability classifications) and agency are core."
+    "header": "Profile organisation-0.1 (Core 0.4 Stage D-2, LABS-1.026). Additive vocabulary only (D-D-1, D-D-9): installed after the full core with WorldModel.install_profile(\"organisation\"). Membership (member-of), organisational structure (part-of), ordinary roles, abilities (capability classifications) and agency are core. Profile organisation-0.3 (LABS-1.049, DI-13, MP-1): a co-signed act names several officials in one account. Widens a cardinality only (no type, role, plays or owns is added): needs core-0.4-event-multiplicity, which opens event:actor. The office and its context stay single. Whether several officials are co-signatories or conflicting evidence is judged by the event-role constraints (MP-2, MP-4): `one` unless the act is established as organisation:co-signed."
    },
    "core": {
     "files": [
@@ -18285,6 +18562,12 @@
      "schema/core/core-0.4-event-roles.tql"
     ],
     "header": "Core 0.4, pre-Stage E increment D (LABS-1.043, DI-2): event-role constraints, stored as data in TypeDB (choice H). A constraint says: for one occurrence, the compared accounts (event descriptions whose describes link to it is established and whose account is accepted) of `constrained-event-type`, or of any of its subtypes, name at most one player, under the perspective's identity, of the core role `constrained-role`. With `constraint-kind` it applies only where classified-as(occurrence, kind) is established (judged by the canonical record) at the occurrence's start. Constraints are declared only by profiles, on their own event types (`declaring-module`); the core declares none. Additive: no existing type, role or attribute is changed. See docs/core-0.4/pre-e-increment-d-design.md."
+   },
+   "core-0.4-event-multiplicity": {
+    "files": [
+     "schema/core/core-0.4-event-multiplicity.tql"
+    ],
+    "header": "Core 0.4, pre-Stage E multiplicity increment (LABS-1.049, DI-13): several participants in one role of one account. MP-1 (as restricted by LABS-1.048): opens two core event roles to several players per account (one description): - event:actor: joint actions (a two-technician job, co-signatories, team sampling); - event:patient: several things acted on in one operation (several parts removed in one replacement). Every other event role stays at one player per account (TypeDB's default @card(0..1)): location, origin, destination and instrument; so do the profile roles that specialise them (a profile opens its own roles only in its next version). Opening widens a cardinality and never narrows one; existing descriptions read as before. MP-3: an event-role constraint may declare its multiplicity: \"one\" (several players are DISPUTED, the meaning of every constraint before this module) or \"set\" (co-participation, judged as a whole). Absent means \"one\". Requires core-0.4-event-roles (the constraint entity). See docs/core-0.4/pre-e-multiplicity-design.md."
    }
   },
   "types": {
@@ -18972,6 +19255,7 @@
    "reason",
    "reference-system",
    "reports",
+   "role-multiplicity",
    "same-as",
    "schema-module",
    "si-factor",
@@ -19194,6 +19478,19 @@
    {
     "kind": "concept",
     "type": "category",
+    "id": "organisation:co-signed",
+    "name": "co-signed act",
+    "source": "database",
+    "attribution": {
+     "status": "attributed",
+     "modules": [
+      "profile:organisation"
+     ]
+    }
+   },
+   {
+    "kind": "concept",
+    "type": "category",
     "id": "organisation:dismissal",
     "name": "dismissal",
     "source": "database",
@@ -19211,6 +19508,23 @@
     "role": "actor",
     "event_kind": null,
     "declared_by": "profile:organisation",
+    "multiplicity": null,
+    "source": "database",
+    "attribution": {
+     "status": "attributed",
+     "modules": [
+      "profile:organisation"
+     ]
+    }
+   },
+   {
+    "kind": "event-role-constraint",
+    "id": "official-act|actor|organisation:co-signed",
+    "event_type": "official-act",
+    "role": "actor",
+    "event_kind": "organisation:co-signed",
+    "declared_by": "profile:organisation",
+    "multiplicity": "set",
     "source": "database",
     "attribution": {
      "status": "attributed",
@@ -19226,6 +19540,7 @@
     "role": "office-context",
     "event_kind": null,
     "declared_by": "profile:organisation",
+    "multiplicity": null,
     "source": "database",
     "attribution": {
      "status": "attributed",
@@ -19241,6 +19556,7 @@
     "role": "office",
     "event_kind": null,
     "declared_by": "profile:organisation",
+    "multiplicity": null,
     "source": "database",
     "attribution": {
      "status": "attributed",
@@ -19256,6 +19572,7 @@
     "role": "fitted",
     "event_kind": "mechanical:one-for-one",
     "declared_by": "profile:mechanical",
+    "multiplicity": null,
     "source": "database",
     "attribution": {
      "status": "attributed",
@@ -19271,6 +19588,7 @@
     "role": "patient",
     "event_kind": "mechanical:one-for-one",
     "declared_by": "profile:mechanical",
+    "multiplicity": null,
     "source": "database",
     "attribution": {
      "status": "attributed",

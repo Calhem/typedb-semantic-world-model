@@ -4,8 +4,8 @@
   "provenance": "database",
   "database": "wm-schema-reference",
   "server_version": "TypeDB CE 3.14.1",
-  "schema_sha256": "cd6a7e6ac8216d2dea38b1a50c7eaab87a3108ffeeba564e8ea1bd45b8030576",
-  "schema_characters": 10951,
+  "schema_sha256": "60df8b1f06ecfbff769077f738f112e4f6080a71d97847758b582f35e82361bf",
+  "schema_characters": 11121,
   "modules": {
    "core": "0.3.0",
    "core-0.4-a": "0.4.0-a1",
@@ -14,19 +14,20 @@
    "core-0.4-b": "0.4.0-b",
    "core-0.4-c": "0.4.0-c",
    "core-0.4-d": "0.4.0-d",
+   "core-0.4-event-multiplicity": "0.4.0-mp",
    "core-0.4-event-roles": "0.4.0-er",
-   "profile:laboratory": "0.1",
-   "profile:mechanical": "0.2",
-   "profile:organisation": "0.2"
+   "profile:laboratory": "0.2",
+   "profile:mechanical": "0.3",
+   "profile:organisation": "0.3"
   }
  },
  "export": {
   "exporter": "worldmodel.schema_export 1.0.0",
-  "exported_at": "2026-11-16T21:45:53+00:00",
-  "code_commit": "e452fdb47c8830ddd4c81c4df1b617d5530f1e87",
+  "exported_at": "2026-11-19T14:04:44+00:00",
+  "code_commit": "ba4ac2121dbd05e7c4f2172c4dab27c28850ada5",
   "code_dirty": true
  },
- "schema_sha256": "cd6a7e6ac8216d2dea38b1a50c7eaab87a3108ffeeba564e8ea1bd45b8030576",
+ "schema_sha256": "60df8b1f06ecfbff769077f738f112e4f6080a71d97847758b582f35e82361bf",
  "verification": {
   "parse": true,
   "query_cross_check": true,
@@ -35,7 +36,7 @@
  "replay_verification": "verified",
  "replay_problems": [],
  "attribution_counts": {
-  "attributed": 508,
+  "attributed": 519,
   "shared": 0,
   "consistent_unverified": 0,
   "unresolved": 0
@@ -43,16 +44,16 @@
  "unresolved": [],
  "files": {
   "schema-explorer.html": {
-   "sha256": "e207f427db2a9fffae934289ab6291e44f15d5bd6ff4d7b9c26506206783c9a4",
-   "bytes": 371844
+   "sha256": "21c4c0036dcbf88a7e228106f07068b818eee083030f3d7aa5d6da9786a183a5",
+   "bytes": 380574
   },
   "schema.json": {
-   "sha256": "069370d125e6b2176172e3f5784aeed500780501e530e827b9cfe2a62d02fd9c",
-   "bytes": 444610
+   "sha256": "11dedc6e8f396de6459ea985d0bf6ca6bdf761f9db9de8f28743b255a27b6a0c",
+   "bytes": 455208
   },
   "schema.tql": {
-   "sha256": "cd6a7e6ac8216d2dea38b1a50c7eaab87a3108ffeeba564e8ea1bd45b8030576",
-   "bytes": 10951
+   "sha256": "60df8b1f06ecfbff769077f738f112e4f6080a71d97847758b582f35e82361bf",
+   "bytes": 11121
   }
  },
  "module_data_verification": "verified",

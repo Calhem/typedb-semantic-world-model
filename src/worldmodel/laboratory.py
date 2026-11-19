@@ -30,10 +30,15 @@ from .model import READ, SCHEMA_DIR, SYSTEM
 from .profiles import PROFILES, Profile
 
 NAME = "laboratory"
-PROFILE = Profile(NAME, "0.1", (str(SCHEMA_DIR / "profiles" / "laboratory" / "laboratory-0.1.tql"),),
-                  vocabulary=(("category", "laboratory:specimen", "specimen"),
-                              ("category", "laboratory:experiment", "experiment"),
-                              ("category", "laboratory:calibration", "calibration")))
+_SCHEMA_01 = (str(SCHEMA_DIR / "profiles" / "laboratory" / "laboratory-0.1.tql"),)
+_VOCAB_01 = (("category", "laboratory:specimen", "specimen"),
+             ("category", "laboratory:experiment", "experiment"),
+             ("category", "laboratory:calibration", "calibration"))
+PROFILE_01 = Profile(NAME, "0.1", _SCHEMA_01, vocabulary=_VOCAB_01)
+# 0.2 (LABS-1.049, DI-13, MP-1) opens the sampler to several players per account (team sampling, a union: no
+# constraint, MP-4). The sampled source and the product stay single. upgrade_profile("laboratory") brings 0.1 to 0.2.
+PROFILE = Profile(NAME, "0.2", _SCHEMA_01 + (str(SCHEMA_DIR / "profiles" / "laboratory" / "laboratory-0.2.tql"),),
+                  vocabulary=_VOCAB_01, upgrades_from="0.1", opens=("sampling:sampler",), previous=PROFILE_01)
 PROFILES[NAME] = PROFILE
 SPECIMEN, EXPERIMENT, CALIBRATION = "laboratory:specimen", "laboratory:experiment", "laboratory:calibration"
 NO_DERIVATION = "not a formal derivation: no named rule or premises are recorded (Stage E, DI-7)"

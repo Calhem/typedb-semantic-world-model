@@ -70,7 +70,8 @@ def read_modules(tx, kinds):
 
 def read_module_data(tx, kinds):
     """Every concept record (kind, id, name), functional-slot record (id, predicate, key roles, value role) and
-    event-role-constraint record (id, event type, core role, kind or None, declaring module), as hashable tuples. Which of them a module wrote is decided by replay (attribution.py), never from ids or names."""
+    event-role-constraint record (id, event type, core role, kind or None, declaring module, multiplicity or None:
+    LABS-1.049), as hashable tuples. Which of them a module wrote is decided by replay (attribution.py), never from ids or names."""
     out = set()
     if kinds.get("concept") == "entity":
         for r in _rows(tx, "match $c isa concept, has wm-id $id, has name $n; $c isa! $t;"):
@@ -84,10 +85,12 @@ def read_module_data(tx, kinds):
             slots[q.opt(r, "id")][2].add(q.opt(r, "k"))
         out |= {("slot", i, p, tuple(sorted(k)), v) for i, (p, v, k) in slots.items()}
     if kinds.get("event-role-constraint") == "entity":            # format 2 (LABS-1.043, increment D)
-        for d in q.documents(tx, """match $c isa event-role-constraint, has event-role-constraint-id $id,
+        # the multiplicity (LABS-1.049, MP-3) only where the module defines it; None when a record has none ("one")
+        mult = ', "u": $c.role-multiplicity' if kinds.get("role-multiplicity") == "attribute" else ""
+        for d in q.documents(tx, f"""match $c isa event-role-constraint, has event-role-constraint-id $id,
                 has constrained-event-type $t, has constrained-role $r, has declaring-module $m;
-                fetch { "id": $id, "t": $t, "r": $r, "m": $m, "k": $c.constraint-kind };"""):
-            out.add(("event-role", d["id"], d["t"], d["r"], d["k"], d["m"]))
+                fetch {{ "id": $id, "t": $t, "r": $r, "m": $m, "k": $c.constraint-kind{mult} }};"""):
+            out.add(("event-role", d["id"], d["t"], d["r"], d["k"], d["m"], d.get("u")))
     return frozenset(out)
 
 

@@ -47,10 +47,13 @@ PROFILE_PREFIX = "profile:"
 class EventRole:
     """An event-role constraint a profile declares (LABS-1.043, ER-1/ER-2): for one occurrence, the compared accounts of
     `event_type` (or a subtype) name at most one player of the core role `role`; with `kind` (a category id of the
-    profile's vocabulary), only where classified-as(occurrence, kind) is established at the occurrence's start."""
+    profile's vocabulary), only where classified-as(occurrence, kind) is established at the occurrence's start.
+    multiplicity (LABS-1.049, MP-3): "one" (the meaning above) or "set" (co-participation: established when every
+    compared account names the same set of players); "set" needs the core-0.4-event-multiplicity module."""
     event_type: str
     role: str
     kind: str | None = None
+    multiplicity: str = "one"
 
     @property
     def id(self):
@@ -66,11 +69,30 @@ class Profile:
     vocabulary: tuple = ()           # (concept kind, id, name): ids must start with "<name>:"
     attested_constraints: tuple = ()  # AttestedConstraint: single-value constraints that are themselves claims
     event_roles: tuple = ()          # EventRole: on the profile's own event types only (LABS-1.043)
-    upgrades_from: str | None = None  # the installed version upgrade_profile accepts (data-only upgrades)
+    upgrades_from: str | None = None  # the version this one upgrades from (equal to previous.version when given)
+    opens: tuple = ()                # role labels of its own event types it opens to several players (LABS-1.049, MP-1)
+    previous: "Profile | None" = None  # the version it upgrades from, as it was (LABS-1.049: upgrades walk the chain)
 
     @property
     def module(self):
         return PROFILE_PREFIX + self.name
+
+    def chain(self):
+        """This version and every earlier one it upgrades from, newest first."""
+        out, p = [], self
+        while p is not None:
+            out.append(p)
+            p = p.previous
+        return out
+
+    def requires(self):
+        """The core modules this version needs (LABS-1.049): the core before increment D; the event-role module when it
+        declares event-role constraints or opens a role; the multiplicity module when it opens a role or declares a
+        "set" constraint."""
+        from .model import EVENT_ROLES_MODULE, MULTIPLICITY_MODULE, PROFILE_BASE_MODULES
+        opens = bool(self.opens) or any(er.multiplicity != "one" for er in self.event_roles)
+        return (tuple(PROFILE_BASE_MODULES) + ((EVENT_ROLES_MODULE,) if self.event_roles or opens else ())
+                + ((MULTIPLICITY_MODULE,) if opens else ()))
 
 
 PROFILES = {}                        # name -> Profile; domain profiles are registered here (none yet)
@@ -185,14 +207,60 @@ def _event_role_problems(profile, own, after, event_types, core_labels):
         if er.kind is not None and er.kind not in vocab:
             out.append(f"event-role constraint on {er.event_type!r}: kind {er.kind!r} is not in the profile's "
                        f"vocabulary")
+        if er.multiplicity not in ("one", "set"):
+            out.append(f"event-role constraint {er.id!r}: multiplicity {er.multiplicity!r} is not one of ('one', 'set')")
+    # MP-3: two kind-scoped declarations for one event type and role with different multiplicities could both apply
+    # to one occurrence (both kinds established), so they are refused when declared: evaluation never has to choose
+    scoped = {}
+    for er in profile.event_roles:
+        if er.kind is not None:
+            scoped.setdefault((er.event_type, er.role), set()).add(er.multiplicity)
+    for (t, r), ms in sorted(scoped.items()):
+        if len(ms) > 1:
+            out.append(f"event-role constraints on {t!r}, role {r!r}: kind-scoped declarations with different "
+                       f"multiplicities {sorted(ms)} (MP-3: refused)")
     return out
 
 
 def _insert_event_role(tx, profile, er):
+    """Write one constraint. Its multiplicity is written only when it is "set": absent means "one" (MP-3), so every
+    constraint declared before LABS-1.049 is stored exactly as it was."""
     kind = ", has constraint-kind == $k" if er.kind else ""
+    mult = ", has role-multiplicity == $u" if er.multiplicity != "one" else ""
     q.run(tx, f"""insert $c isa event-role-constraint, has event-role-constraint-id == $id,
-        has constrained-event-type == $t, has constrained-role == $r, has declaring-module == $m{kind};""",
-          {"id": er.id, "t": er.event_type, "r": er.role, "m": profile.module, **({"k": er.kind} if er.kind else {})})
+        has constrained-event-type == $t, has constrained-role == $r, has declaring-module == $m{kind}{mult};""",
+          {"id": er.id, "t": er.event_type, "r": er.role, "m": profile.module, **({"k": er.kind} if er.kind else {}),
+           **({"u": er.multiplicity} if mult else {})})
+
+
+def _opens_problems(profile, own, tx):
+    """`opens` must name roles of the profile's own event types (LABS-1.049, MP-1). That the schema really opens them is
+    checked by the tests (the schema files are the source of truth)."""
+    out = []
+    for label in profile.opens:
+        rel, _, role = label.partition(":")
+        if rel not in own or not role:
+            out.append(f"opens {label!r}: not a role of one of this profile's own event types")
+    return out
+
+
+def _requirement_error(profile, installed, action):
+    """The actionable refusal (LABS-1.045 pattern, extended LABS-1.049) when a profile needs core modules this database
+    lacks, or None. Names the explicit upgrades to run, in order."""
+    from .model import EVENT_ROLES_MODULE, MULTIPLICITY_MODULE
+    missing = [m for m in profile.requires() if m not in installed]
+    if not missing:
+        return None
+    upgrades = [m for m in missing if m in (EVENT_ROLES_MODULE, MULTIPLICITY_MODULE)]
+    if missing != upgrades:
+        return ProfileError(f"profile {profile.name!r} needs the full core; missing modules {missing}")
+    steps = [{EVENT_ROLES_MODULE: "wm.upgrade_to_event_roles()",
+              MULTIPLICITY_MODULE: "wm.upgrade_to_event_multiplicity()"}[m] for m in upgrades]
+    why = (f"declares event-role constraints or opens roles to several players" if profile.opens or
+           any(er.multiplicity != "one" for er in profile.event_roles) else "declares event-role constraints")
+    return ProfileError(f"profile {profile.name!r} {profile.version} {why}, which need the core module(s) "
+                        f"{upgrades}; this database was created without them: run {', then '.join(steps)} first, "
+                        f"then {action} the profile (nothing written)")
 
 
 def _schema_facts(text, own):
@@ -230,7 +298,7 @@ class ProfileMixin:
         written in **one schema transaction** (TypeDB 3.14.1 schema transactions also write data) and committed only
         after every check passed, so a profile is either completely installed and recorded, or not at all. Refusals
         raise ProfileError; any failure, including at commit, leaves the database unchanged."""
-        from .model import CORE_LABELS, CORE_MODULES, EVENT_ROLES_MODULE, PROFILE_BASE_MODULES
+        from .model import CORE_LABELS
         from .keys import check_new_id
         if isinstance(profile, str):
             profile = PROFILES[profile]
@@ -240,15 +308,11 @@ class ProfileMixin:
                 return []
             raise ProfileError(f"profile {profile.name!r} {installed[profile.module]} is installed; "
                                f"{profile.version} would change it (profiles are never replaced in place)")
-        # a profile declaring event-role constraints needs their module; any other needs the core as before (LABS-1.043)
-        missing = [m for m in (CORE_MODULES if getattr(profile, "event_roles", ()) else PROFILE_BASE_MODULES)
-                   if m not in installed]
-        if missing == [EVENT_ROLES_MODULE]:            # a database created before increment D (LABS-1.045)
-            raise ProfileError(f"profile {profile.name!r} {profile.version} declares event-role constraints, which need "
-                               f"the core module {EVENT_ROLES_MODULE!r}; this database was created without it: run "
-                               f"wm.upgrade_to_event_roles() first, then install the profile (nothing written)")
-        if missing:
-            raise ProfileError(f"profile {profile.name!r} needs the full core; missing modules {missing}")
+        # a profile declaring event-role constraints needs their module, one opening roles the multiplicity module
+        # too; any other needs the core as before (LABS-1.043, LABS-1.049)
+        error = _requirement_error(profile, installed, "install")
+        if error:
+            raise error
         bad_ids = [i for _, i, _ in profile.vocabulary if not i.startswith(profile.name + ":")]
         if bad_ids:
             raise ProfileError(f"vocabulary ids must start with {profile.name + ':'!r}: {bad_ids}")
@@ -272,6 +336,7 @@ class ProfileMixin:
                     problems = ["adds no types: its schema is empty"]
                 problems += _slot_problems(profile, new, after, CORE_LABELS)
                 problems += _event_role_problems(profile, new, after, _event_types(tx), CORE_LABELS)
+                problems += _opens_problems(profile, new, tx)
                 concepts = {t for t, r in after["plays"] if r == "classified-as:class"}   # concept types, incl. new ones
                 bad_kinds = sorted({k for k, _, _ in profile.vocabulary if k not in concepts})
                 if bad_kinds:
@@ -301,13 +366,13 @@ class ProfileMixin:
         """How this database's schema for the profile's own types differs from what its schema files define (empty:
         identical, annotations included). Exact: the core and the profile's files are replayed into a temporary
         database (always deleted) and both schema() texts are parsed into facts, as the schema export does."""
-        from .model import MODULES, PROFILE_BASE_MODULES, SCHEMA, SCHEMA_DIR
+        from .model import MODULES, SCHEMA, SCHEMA_DIR
         own = _declared_labels("\n".join(Path(f).read_text() for f in profile.schema))
         name = f"wm-upgrade-tmp-{uuid.uuid4().hex[:10]}"
         self.driver.databases.create(name)
         try:
             with self.driver.transaction(name, SCHEMA) as tx:
-                for module in PROFILE_BASE_MODULES:
+                for module in profile.requires():
                     for f in MODULES[module][1]:
                         tx.query((SCHEMA_DIR / f).read_text()).resolve()
                 for f in profile.schema:
@@ -323,18 +388,21 @@ class ProfileMixin:
                 [f"differs: {k}" for k in sorted(set(expected) & set(actual)) if expected[k] != actual[k]])
 
     def upgrade_profile(self, profile):
-        """Bring an installed profile from its previous version to the code's version (LABS-1.043, ER-7). Explicit only:
-        nothing is upgraded when a database is opened. Data only: the new version's vocabulary items, slots and
-        event-role constraints that are absent are written, and the module record's version is replaced, in **one
-        schema operation** (all or nothing). No attestation, acceptance, content or world is touched, and no type.
+        """Bring an installed profile from an earlier version to the code's version (LABS-1.043, ER-7; LABS-1.049: any
+        earlier version in its chain, `Profile.previous`, in one step). Explicit only: nothing is upgraded when a
+        database is opened. In **one schema operation** (all or nothing): the schema files the code's version adds over
+        the installed one are applied, and they may only widen role cardinalities (MP-1: no type, role, plays or owns is
+        added or removed); then the code's vocabulary items, slots and event-role constraints that are absent are
+        written, and the module record's version is replaced. No attestation, acceptance, content or world is touched.
 
         Returns False, writing nothing, when the installed version is already the code's (idempotent); True after an
-        upgrade. Refused with ProfileError, nothing written, when: the profile is not installed; the installed
-        version is not the one this version upgrades from; it declares event-role constraints and the
-        core-0.4-event-roles module is missing (run upgrade_to_event_roles() first); the database's schema for the
-        profile's types differs in any fact from its schema files (`_schema_differences`); a vocabulary item, slot or
-        constraint with the same id but other content exists; or a declaration is invalid. There is no downgrade."""
-        from .model import CORE_LABELS, EVENT_ROLES_MODULE
+        upgrade. Refused with ProfileError, nothing written, when: the profile is not installed; the installed version
+        is not in the chain; the code's version needs core modules the database lacks (the error names the upgrades
+        to run, in order); the database's schema for the profile's types differs in any fact from the installed
+        version's files (`_schema_differences`); a schema step does more than widen cardinalities; a vocabulary item,
+        slot or constraint with the same id but other content exists; or a declaration is invalid. There is no
+        downgrade, and an opened role cannot be narrowed once a description uses it (TypeDB refuses)."""
+        from .model import CORE_LABELS
         if isinstance(profile, str):
             profile = PROFILES[profile]
         installed = self.modules()
@@ -343,23 +411,43 @@ class ProfileMixin:
             raise ProfileError(f"profile {profile.name!r} is not installed (use install_profile)")
         if current == profile.version:
             return False
-        if profile.upgrades_from != current:
+        chain = profile.chain()
+        earlier = [p.version for p in chain[1:]]
+        if current not in earlier:
             raise ProfileError(f"profile {profile.name!r} {current} is installed; {profile.version} upgrades only from "
-                               f"{profile.upgrades_from} (nothing written)")
-        if profile.event_roles and EVENT_ROLES_MODULE not in installed:
-            raise ProfileError(f"profile {profile.name!r} {profile.version} declares event-role constraints: run "
-                               f"upgrade_to_event_roles() first (nothing written)")
-        differences = self._schema_differences(profile)
+                               f"{', '.join(earlier) or 'no earlier version'} (nothing written)")
+        base = chain[1 + earlier.index(current)]
+        error = _requirement_error(profile, installed, "upgrade")
+        if error:
+            raise error
+        differences = self._schema_differences(base)
         if differences:
             raise ProfileError(f"profile {profile.name!r}: the database's schema differs from the profile's files "
                                f"(nothing written): " + "; ".join(differences[:10]))
         own = _declared_labels("\n".join(Path(f).read_text() for f in profile.schema))
+        steps = [f for f in profile.schema if f not in base.schema]
         try:
             with self.operation(schema=True) as op:
                 tx = op.tx
+                problems = []
+                if steps:
+                    before = schema_snapshot(tx)
+                    stray = sorted(_declared_labels("\n".join(Path(f).read_text() for f in steps)) - own)
+                    if stray:
+                        problems.append(f"schema step names types that are not the profile's own: {stray}")
+                    try:
+                        for f in steps:
+                            tx.query(Path(f).read_text()).resolve()
+                    except TypeDBDriverException as e:
+                        raise ProfileError(f"profile {profile.name!r} upgrade refused: TypeDB rejected its schema "
+                                           f"step (nothing written): " + " ".join(str(e).split())[:400]) from None
+                    if schema_snapshot(tx) != before:
+                        problems.append("a schema step adds or removes types, roles, plays or owns: an upgrade may "
+                                        "only widen role cardinalities")
                 after = schema_snapshot(tx)
-                problems = _slot_problems(profile, own, after, CORE_LABELS)
+                problems += _slot_problems(profile, own, after, CORE_LABELS)
                 problems += _event_role_problems(profile, own, after, _event_types(tx), CORE_LABELS)
+                problems += _opens_problems(profile, own, tx)
                 for kind, cid, name in profile.vocabulary:
                     rows = q.rows(tx, "match $c has wm-id == $id, has name $n; $c isa! $k;", {"id": cid})
                     if not rows:
@@ -376,14 +464,16 @@ class ProfileMixin:
                             has value-role == $v{attrs};""",
                               {"id": sid, "p": predicate, "v": value_role,
                                **{f"k{i}": r for i, r in enumerate(key_roles)}})
+                mult = ', "u": $c.role-multiplicity' if any(er.multiplicity != "one" for er in profile.event_roles) \
+                    or "role-multiplicity" in after["types"] else ""
                 for er in profile.event_roles:
-                    rows = q.documents(tx, """match $c isa event-role-constraint, has event-role-constraint-id == $id;
-                        fetch { "t": $c.constrained-event-type, "r": $c.constrained-role, "k": $c.constraint-kind,
-                                "m": $c.declaring-module };""", {"id": er.id})
+                    rows = q.documents(tx, f"""match $c isa event-role-constraint, has event-role-constraint-id == $id;
+                        fetch {{ "t": $c.constrained-event-type, "r": $c.constrained-role, "k": $c.constraint-kind,
+                                "m": $c.declaring-module{mult} }};""", {"id": er.id})
                     if not rows:
                         _insert_event_role(tx, profile, er)
-                    elif (rows[0]["t"], rows[0]["r"], rows[0]["k"], rows[0]["m"]) != \
-                            (er.event_type, er.role, er.kind, profile.module):
+                    elif (rows[0]["t"], rows[0]["r"], rows[0]["k"], rows[0]["m"], rows[0].get("u") or "one") != \
+                            (er.event_type, er.role, er.kind, profile.module, er.multiplicity):
                         problems.append(f"event-role constraint {er.id!r} exists with other content")
                 if problems:
                     raise ProfileError(f"profile {profile.name!r} upgrade refused (nothing written): "
@@ -398,11 +488,12 @@ class ProfileMixin:
 
     def upgrades_available(self):
         """What the explicit upgrades would do on this database, without writing anything: whether
-        upgrade_to_event_roles() would add its module, and each installed profile whose code version is newer
-        ({name: (installed version, code version)})."""
-        from .model import EVENT_ROLES_MODULE
+        upgrade_to_event_roles() and upgrade_to_event_multiplicity() would add their modules, and each installed
+        profile whose code version is newer ({name: (installed version, code version)})."""
+        from .model import EVENT_ROLES_MODULE, MULTIPLICITY_MODULE
         installed = self.modules()
         return {"event_roles_module": EVENT_ROLES_MODULE not in installed,
+                "multiplicity_module": MULTIPLICITY_MODULE not in installed,
                 "profiles": {p.name: (installed[p.module], p.version) for p in PROFILES.values()
                              if p.module in installed and installed[p.module] != p.version}}
 

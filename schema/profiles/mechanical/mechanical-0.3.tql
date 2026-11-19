@@ -1,0 +1,6 @@
+# Profile mechanical-0.3 (LABS-1.049, DI-13, MP-1): a multi-part replacement names several removed and fitted parts in
+# one account. Widens cardinalities only (no type, role, plays or owns is added): needs core-0.4-event-multiplicity,
+# which opens event:patient. A replacement established as mechanical:one-for-one keeps one part each (the 0.2
+# constraints, multiplicity `one`).
+define
+relation replacement relates removed @card(0..), relates fitted @card(0..);

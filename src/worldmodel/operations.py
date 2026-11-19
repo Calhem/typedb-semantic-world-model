@@ -5,6 +5,7 @@
 """
 
 import functools
+import re
 
 from typedb.driver import TransactionType
 
@@ -13,6 +14,29 @@ SCHEMA, WRITE = TransactionType.SCHEMA, TransactionType.WRITE
 
 class OperationError(RuntimeError):
     """An operation could not run or commit as one unit; nothing it wrote is kept."""
+
+
+class RoleCardinalityError(OperationError):
+    """A write named more players of a role than the schema allows in one relation (TypeDB's `@card`, checked when the
+    operation commits): refused, nothing written (LABS-1.049). `role` is the role type, `limit` the cardinality and
+    `found` the number of players given. Raised instead of the raw database error, which it chains."""
+
+    def __init__(self, role, limit, found, detail):
+        self.role, self.limit, self.found = role, limit, found
+        super().__init__(f"refused: the role {role} takes {limit} player(s) per description or relation, and {found} "
+                         f"were given; nothing was written ({detail})")
+
+
+_CARD = re.compile(r"Constraint '@card\(([^)]*)\)' has been violated: found (\d+) instances.*?role type '([^']+)'", re.S)
+
+
+def cardinality_error(exc):
+    """The RoleCardinalityError for a TypeDB `[CNT5]` role cardinality violation, or None for any other error."""
+    text = " ".join(str(exc).split())
+    m = _CARD.search(text) if "CNT5" in text else None
+    if not m or "relates constraint violation" not in text:
+        return None
+    return RoleCardinalityError(m.group(3), m.group(1), int(m.group(2)), text[:300])
 
 
 class Operation:

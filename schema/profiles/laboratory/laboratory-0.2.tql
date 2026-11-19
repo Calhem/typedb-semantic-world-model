@@ -1,0 +1,6 @@
+# Profile laboratory-0.2 (LABS-1.049, DI-13, MP-1): team sampling names several samplers in one account. Widens a
+# cardinality only (no type, role, plays or owns is added): needs core-0.4-event-multiplicity, which opens
+# event:actor. The sampled source (origin) and the product (destination) stay single: several products need a
+# separate decision (LABS-1.048).
+define
+relation sampling relates sampler @card(0..);

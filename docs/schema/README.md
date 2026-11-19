@@ -3,7 +3,7 @@
 The schema of a reference database, exported from the live database by `worldmodel.schema_export`
 (LABS-1.024; design and decisions in [../schema-export/design.md](../schema-export/design.md)).
 
-The reference database holds the full core (seven modules) and the three domain profiles (mechanical,
+The reference database holds the full core (nine modules) and the three domain profiles (mechanical,
 organisation, laboratory), installed in their registered order. It is built, exported and deleted by:
 
     uv run python scripts/export_schema.py --reference

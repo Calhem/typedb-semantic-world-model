@@ -715,11 +715,14 @@ def test_event_role_constraints_are_exported_attributed_and_recreatable(exported
     from worldmodel.schema_export.introspect import read_module_data
     doc, _, snap = exported
     rows = [r for r in doc["module_data"]["records"] if r["kind"] == "event-role-constraint"]
-    assert sorted((r["event_type"], r["role"], r["event_kind"], r["declared_by"]) for r in rows) == [
-        ("official-act", "actor", None, "profile:organisation"), ("official-act", "office", None, "profile:organisation"),
-        ("official-act", "office-context", None, "profile:organisation"),
-        ("replacement", "fitted", "mechanical:one-for-one", "profile:mechanical"),
-        ("replacement", "patient", "mechanical:one-for-one", "profile:mechanical")]
+    assert sorted((r["event_type"], r["role"], r["event_kind"] or "", r["declared_by"], r["multiplicity"])
+                  for r in rows) == [
+        ("official-act", "actor", "", "profile:organisation", None),
+        ("official-act", "actor", "organisation:co-signed", "profile:organisation", "set"),   # LABS-1.049, MP-4
+        ("official-act", "office", "", "profile:organisation", None),
+        ("official-act", "office-context", "", "profile:organisation", None),
+        ("replacement", "fitted", "mechanical:one-for-one", "profile:mechanical", None),
+        ("replacement", "patient", "mechanical:one-for-one", "profile:mechanical", None)]
     assert {(r["source"], r["attribution"]["status"]) for r in rows} == {("database", "attributed")}
     assert {r["declared_by"]: r["attribution"]["modules"] for r in rows} == {
         "profile:organisation": ["profile:organisation"], "profile:mechanical": ["profile:mechanical"]}
@@ -731,10 +734,12 @@ def test_event_role_constraints_are_exported_attributed_and_recreatable(exported
         with wm.operation():
             for r in rows:
                 kind = ", has constraint-kind == $k" if r["event_kind"] else ""
+                mult = ", has role-multiplicity == $u" if r["multiplicity"] else ""
                 q.run(wm._op.tx, f"""insert $c isa event-role-constraint, has event-role-constraint-id == $id,
-                    has constrained-event-type == $t, has constrained-role == $r, has declaring-module == $m{kind};""",
+                    has constrained-event-type == $t, has constrained-role == $r, has declaring-module == $m{kind}{mult};""",
                       {"id": r["id"], "t": r["event_type"], "r": r["role"], "m": r["declared_by"],
-                       **({"k": r["event_kind"]} if r["event_kind"] else {})})
+                       **({"k": r["event_kind"]} if r["event_kind"] else {}),
+                       **({"u": r["multiplicity"]} if r["multiplicity"] else {})})
         with wm.driver.transaction(wm.database, READ) as tx:
             again = {d for d in read_module_data(tx, snap.answers["kinds"]) if d[0] == "event-role"}
         assert again == {d for d in snap.data if d[0] == "event-role"}
