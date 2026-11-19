@@ -28,7 +28,7 @@ from .physical import PhysicalMixin
 from .judgement import JudgementMixin
 from .spatial import params_compatible
 from .operations import Operation, OperationError, atomic, atomic_schema  # noqa: F401
-from .semantics import (Answer, AttestationRecord, Identity, Replacement, Status, Window, acceptance_state,
+from .semantics import (Answer, AttestationRecord, Identity, Replacement, Status, Window, acceptance_state, decide,
                         answer_status, certainly_before, superseded, usable, verdict)
 
 READ, WRITE, SCHEMA = TransactionType.READ, TransactionType.WRITE, TransactionType.SCHEMA
@@ -643,6 +643,9 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
         attestation, its records and the links are written atomically.
         batch (LABS-1.020): write into a shared transaction (see _batch) with its transaction time; not committed here.
         """
+        if type is not None and (start is not None or end is not None) and self.core_type(type) == "same-as":
+            raise ValueError("identity is timeless (ID-3): a same-as attestation takes no start or end; record a "
+                             "period of co-reference with a profile type instead")
         if supersedes is not None and self._attestation(supersedes)["attester"] != attester:
             raise ValueError("an attestation can only be superseded by its own attester (E3)")
         kind = self.world_kind(world)
@@ -927,8 +930,9 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
         return Identity(same.values(), perspective, as_of)
 
     def _identity_links(self, world, as_of, perspective, ids, same=None, known=None):
-        """same-as attestations reachable from `ids` through links usable by the perspective (transitively), added to
-        `same`; `known` is every id whose links are loaded. World, knowledge time and perspective rules apply as in
+        """same-as attestations reachable from `ids` through links established for the perspective (transitively, also
+        inside a component in conflict, so every denial among its names is loaded: ID-5, TI-4), added to `same`;
+        `known` is every id whose links are loaded. World, knowledge time and perspective rules apply as in
         _load. Returns (same, known)."""
         same = dict(same or {})
         known = set(known or ())
@@ -937,7 +941,7 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
         while frontier:
             same.update(self._load(world, as_of, types=["same-as"], subjects=frontier, perspective=perspective))
             ident = Identity(same.values(), perspective, as_of)
-            group = {m for i in known for m in ident.members(i)}
+            group = {m for i in known for m in ident.reach(i)}
             frontier = sorted(group - known)
             known |= group
         return same, known
@@ -998,7 +1002,11 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
     # ---- reading: answers ----------------------------------------------------------------------------------------
     @staticmethod
     def _class(a, ident):
-        """Content equivalence class under the perspective's identity (v0.2 §4.2: semantic, not structural)."""
+        """Content equivalence class under the perspective's identity (v0.2 §4.2: semantic, not structural). An
+        identity link is keyed by its stated names, never through identity (ID-1, LABS-1.048)."""
+        if a.kind == "same-as":
+            return (a.ctype, tuple(sorted((r, tuple(sorted(set(ids)))) for r, ids in a.roles.items())),
+                    tuple(sorted(a.params.items())))
         return (a.ctype, tuple(sorted((r, tuple(sorted({ident.canonical(x) for x in ids}))) for r, ids in a.roles.items())),
                 tuple(sorted(a.params.items())))
 
@@ -1017,19 +1025,9 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
                 deciding.setdefault(self._class(a, ident), []).append((a, v))
         out = {}
         for cls, items in deciding.items():
-            # A stated end says the content stopped holding, but only until the content is attested to start again:
-            # drop an ended attestation's "does not hold" when a usable positive attestation of the same content
-            # started after that end and by t. Genuine conflicts (an account begun before the end) still dispute.
-            restarts = [a.start for a, v in items if a.polarity and a.start is not None]
-            items = [(a, v) for a, v in items if not (
-                v is False and a.polarity and a.end is not None and a.end.latest is not None
-                and any(st.earliest >= a.end.latest and st.latest <= t for st in restarts))]
-            if not items:
-                continue
-            depth = min(a.depth for a, _ in items)
-            near = [(a, v) for a, v in items if a.depth == depth]
-            vals = {v for _, v in near}
-            out[cls] = ("disputed" if len(vals) > 1 else vals.pop(), [a for a, _ in near], depth)
+            d = decide(items, t)              # the polarity layer, shared with identity links (semantics.decide)
+            if d is not None:
+                out[cls] = d
         slot_depth, slots = {}, {}
         for cls, (val, support, depth) in out.items():
             if val is not True:
@@ -1186,6 +1184,8 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
             ident = self._selective_identity(world, as_of, perspective, same, known, atts)
         else:
             atts, ident = self._view(world, as_of, perspective, None, ids)
+        if self.core_type(type) == "same-as":
+            ident = Identity([], perspective, as_of)     # an identity link is judged by its stated names (ID-1)
         want = {r: {ident.canonical(x) for x in as_ids(v)} for r, v in roles.items()}
 
         def matches(a):
@@ -1330,7 +1330,10 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
                                 out["participants"].setdefault(role, {}).setdefault(x, set()).add((a.content,
                                                                                                     a.attester))
         out["participants"] = {r: {x: sorted(v) for x, v in m.items()} for r, m in out["participants"].items()}
-        out["accounts"], out["roles"] = self._event_roles(world, occurrence, memo, as_of, perspective)
+        ident = self.identity(world, as_of, perspective, ids=[occurrence])
+        out["accounts"], out["roles"] = self._event_roles(world, occurrence, memo, as_of, perspective, ident=ident)
+        out["aliases"] = ident.members(occurrence)        # ID-9 (LABS-1.048): the same view from every alias
+        out["identity"] = ident.report(occurrence)
         return out
 
     # ---- existence ---------------------------------------------------------------------------------------------
@@ -1433,24 +1436,27 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
 
     def _contents(self, world, subject, types, t, as_of=None, perspective=SYSTEM, attested=True, memo=None,
                   where=None):
-        """The canonical records (ContentJudgement) of every content of `types` naming `subject` (by its own id, as
-        the profile reports always have), sorted by type and stated roles. Each keeps every claim about the content
+        """The canonical records (ContentJudgement) of every content of `types` naming `subject` or any name in its
+        identity class (ID-8, LABS-1.048; before, by its own id only), sorted by type and stated roles. Each record's
+        `subject` holds the class, so a report asks `about(role)` rather than comparing its own id. Each keeps every claim about the content
         separately (`claims()`): unaccepted and rejected claims are listed, marked. Rivals under declared and attested
         single-value constraints are loaded and applied (DI-11). attested False: only declared constraints (the
         per-appointment entries of office_holders, choice A)."""
         atts, ident = self._view(world, as_of, perspective, None, [subject])
-        mine = [a for a in atts.values() if any(self.is_a(a.ctype, ty) for ty in types)
-                and any(subject in ids for ids in a.roles.values()) and (where is None or where(a.roles))]
-        pool = None if self.selective else atts
         me = set(ident.members(subject))
+        mine = [a for a in atts.values() if any(self.is_a(a.ctype, ty) for ty in types)
+                and any(me & set(ids) for ids in a.roles.values()) and (where is None or where(a.roles))]
+        pool = None if self.selective else atts
         rivals = self._slot_rivals(world, as_of, perspective, mine, me, ident, pool=pool)
         memo = {} if memo is None else memo
         if attested:
             rivals += self._scope_rivals(world, as_of, perspective, mine + rivals, ident, pool=pool, t=t, memo=memo,
-                                         me={subject} if where is None else None)   # mine: by the subject's own id
+                                         me=me if where is None else None)   # mine: by the subject's class
         wanted = {self._class(a, ident) for a in mine}
         recs = self._records(mine + rivals, ident, t, perspective, as_of, world=world, attested=attested, memo=memo,
                              wanted=wanted)
+        for r in recs.values():
+            r.subject = frozenset(me)
         return sorted(recs.values(), key=lambda r: (r.type, str(r.stated_roles)))
 
     def _slot_rivals(self, world, as_of, perspective, recs, me, ident, at=None, pool=None):
@@ -1521,41 +1527,53 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
             roles = r.stated_roles
             # established, or disputed (by polarity or under a constraint): a disputed dependency is listed as
             # DISPUTED, never dropped
-            if dependent in roles.get("dependent", []) and r.judgement in (Judgement.ESTABLISHED, Judgement.DISPUTED):
+            if r.about("dependent") and r.judgement in (Judgement.ESTABLISHED, Judgement.DISPUTED):
                 for dee in roles.get("dependee", []):
                     out.append({"dependee": dee, "kind": (roles.get("kind") or [UNSPECIFIED])[0], "status": r.status,
                                 "support": [c["attestation"] for c in r.claims() if c["acceptance"] == "accepted"]})
         return sorted(out, key=lambda d: (d["dependee"], d["kind"]))
 
     def _closure(self, world, type, from_role, to_role, start, t, as_of, perspective, kind=None, report=False):
-        """Traverse established links only (LABS-1.031, choice B). Links are judged without the perspective's
-        same-as identity: DI-12, registered and deferred (LABS-1.038)."""
+        """Traverse established links only (LABS-1.031, choice B), under the perspective's identity (DI-12, ID-8,
+        LABS-1.048): links are judged with the context's identity (one same-as load), and from a reached thing every
+        link naming any name of its class is followed. Reported ids are the ones the links state (an established
+        link: its deciding attestations; a link not traversed: every attestation of it)."""
         from .judgement import Judgement
         atts = self._load(world, as_of, types=[type], perspective=perspective)
-        ident = Identity([], perspective, as_of)
+        ident = self.identity(world, as_of, perspective)
         edges, held_back = {}, {}
+
+        def stated(its, role):
+            return {x for a in its for x in a.roles.get(role, ())}
+
         for cls, r in self._records(list(atts.values()), ident, t, perspective, as_of, world=world).items():
             roles = dict(cls[1])
             if kind is not None and tuple(roles.get("kind", ())) != (kind,):
                 continue                          # another kind, or no kind (unspecified): not this kind (D-D-2)
             if r.judgement is Judgement.ESTABLISHED:
                 for a in roles.get(from_role, ()):
-                    edges.setdefault(a, set()).update(roles.get(to_role, ()))
+                    edges.setdefault(a, set()).update(stated(r.support, to_role))
             elif r.judgement is not Judgement.NOT_HOLDING:
                 for a in roles.get(from_role, ()):
-                    held_back.setdefault(a, []).append((roles, r))
-        seen, todo = set(), [start]
+                    held_back.setdefault(a, []).append((r, sorted(stated(r.attestations, from_role)),
+                                                        sorted(stated(r.attestations, to_role))))
+        seen, todo, done = set(), [start], set()
         while todo:
-            for n in edges.get(todo.pop(), ()):
+            c = ident.canonical(todo.pop())
+            if c in done:
+                continue
+            done.add(c)
+            for n in edges.get(c, ()):
                 if n not in seen:
                     seen.add(n)
                     todo.append(n)
         if not report:
             return sorted(seen)
-        links = [{from_role: a, to_role: sorted(roles.get(to_role, ())), "judgement": r.judgement.value,
+        links = [{from_role: a, to_role: dst, "judgement": r.judgement.value,
                   "reasons": list(r.reasons), "status": r.status, "support": r.support_ids,
                   "pending": list(r.pending), "conflicts": r.conflict_ids}
-                 for a in sorted({start} | seen) for roles, r in held_back.get(a, [])]
+                 for c in sorted({ident.canonical(x) for x in {start} | seen})
+                 for r, src, dst in held_back.get(c, []) for a in src if ident.canonical(a) == c]
         return {"reached": sorted(seen), "not_traversed": sorted(links, key=lambda x: (x[from_role], x[to_role]))}
 
     def parts_in_database(self, world, whole):

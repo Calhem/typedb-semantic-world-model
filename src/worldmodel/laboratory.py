@@ -128,7 +128,7 @@ def provenance(wm, world, sample, t, as_of=None, perspective=SYSTEM):
     def claims_of(x):
         if x not in claims:
             claims[x] = [(src, wm._judgement(e)) for e in wm._contents(world, x, ("constitution",), t, as_of, perspective)
-                         if x in e.stated_roles.get("constituted", []) for src in e.stated_roles.get("constituent", [])]
+                         if e.about("constituted") for src in e.stated_roles.get("constituent", [])]
         return claims[x]
 
     todo = [(sample, [], (sample,))]                     # breadth first: (material, route so far, materials on it)
@@ -155,7 +155,7 @@ def provenance(wm, world, sample, t, as_of=None, perspective=SYSTEM):
                     "evidence": c["evidence"], "paths": [p["path"] for p in c["paths"] if p["established"]]}
                    for c in chain if c["ancestry"] == "established"]
     existence = [wm._judgement(e) for e in wm._contents(world, sample, ("existence",), t, as_of, perspective)
-                 if sample in e.stated_roles.get("existent", [])]
+                 if e.about("existent")]
     core = wm.exists(world, sample, t, as_of, perspective)
     here = wm.value_of(world, "located-at", {"located": sample}, t, as_of, perspective)
     return {"sample": sample, "t": t, "chain": _public(chain), "established": established,
@@ -217,7 +217,7 @@ def calibration_status(wm, world, instrument, t, as_of=None, perspective=SYSTEM)
     _require(wm)
     found = []
     for e in wm._contents(world, instrument, ("calibration-of",), t, as_of, perspective):
-        if instrument in e.stated_roles.get("calibrated", []):
+        if e.about("calibrated"):
             found.append({"certificate": e.stated_roles["certificate"][0], **wm._judgement(e)})
     refs = _references(wm, [c["certificate"] for c in found])
     for c in found:

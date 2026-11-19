@@ -86,6 +86,15 @@ class ContentJudgement:
     attestations: tuple = ()        # every attestation of the content in the judged pool, each kept separately
     _claims: list | None = field(default=None, repr=False)
     _pending: tuple | None = field(default=None, repr=False)
+    subject: frozenset = field(default=frozenset(), repr=False)   # set by `_contents`: the subject's identity class
+
+    def stated(self, role):
+        """Every id any attestation of the content states for `role` (sorted)."""
+        return sorted({x for a in self.attestations for x in a.roles.get(role, [])})
+
+    def about(self, role):
+        """True when `role` names the subject `_contents` was asked about, by any name of its identity class (ID-8)."""
+        return bool(self.subject & set(self.stated(role)))
 
     @property
     def pending(self):

@@ -83,7 +83,7 @@ def employment(wm, world, x, t, as_of=None, perspective=SYSTEM):
     established, denied, expired, not yet effective, disputed, or not established (only unreviewed/rejected claims)."""
     out = []
     for e in wm._contents(world, x, ("employment",), t, as_of, perspective):
-        if x in e.stated_roles.get("employer", []) + e.stated_roles.get("employee", []):
+        if e.about("employer") or e.about("employee"):
             out.append({"employer": e.stated_roles["employer"][0], "employee": e.stated_roles["employee"][0],
                         **_judged(wm, e)})
     return _public(sorted(out, key=lambda r: (r["employer"], r["employee"])))
@@ -114,8 +114,9 @@ def _appointments(wm, world, office, context, t, as_of, perspective):
     whether the canonical judgement puts established appointments in conflict under that constraint)."""
     out, conflicted = [], False
     for e in wm._contents(world, context, ("office-holding",), t, as_of, perspective):
-        if office in e.stated_roles.get("class", []) and context in e.stated_roles.get("context", []):
-            conflicted = conflicted or attested_conflict(e, "exclusive-office", (office, context)) is not None
+        if office in e.stated("class") and e.about("context"):
+            # the constraint key holds canonical players: the least name of the class (Identity.canonical)
+            conflicted = conflicted or attested_conflict(e, "exclusive-office", (office, min(e.subject))) is not None
             out.append({"holder": e.stated_roles["classified"][0], **_judged(wm, without_attested(e))})
     return sorted(out, key=lambda r: r["holder"]), conflicted
 
@@ -155,7 +156,7 @@ def offices_of(wm, world, person, t, as_of=None, perspective=SYSTEM):
     _require(wm)
     out = []
     for e in wm._contents(world, person, ("office-holding",), t, as_of, perspective):
-        if person not in e.stated_roles.get("classified", []):
+        if not e.about("classified"):
             continue
         office, context = e.stated_roles["class"][0], e.stated_roles["context"][0]
         entry = {"office": office, "context": context, **_judged(wm, without_attested(e)), "conflict": None}
@@ -185,7 +186,7 @@ def authorised(wm, world, holder, power, scope, t, as_of=None, perspective=SYSTE
     _require(wm)
     found = []
     for e in wm._contents(world, holder, ("authorisation",), t, as_of, perspective):
-        if holder in e.stated_roles.get("holder", []) and power in e.stated_roles.get("power", []):
+        if e.about("holder") and power in e.stated("power"):
             found.append({"grantor": e.stated_roles["grantor"][0], "scope": e.stated_roles["scope"][0],
                           "reported_by": sorted({a["attester"] for a in e.claims()}), **_judged(wm, e)})
     grants = sorted((g for g in found if g["scope"] == scope), key=lambda g: g["grantor"])

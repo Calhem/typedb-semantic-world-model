@@ -30,11 +30,11 @@ tests.
 | DI-9 | performance: high query counts in the D-3 reports, and questions slowing as other worlds' data grows | D-3 benchmark (LABS-1.029; registered LABS-1.030) | tracked into Stage E | open (performance) |
 | DI-10 | the schema explorer has no automated browser regression tests (search, filters, navigation were checked by hand) | LABS-1.024 gate (registered LABS-1.034) | no deadline (maintenance) | open (non-blocking) |
 | DI-11 | reports built on `_claims` (capable, the profile reports) ignore functional-slot conflicts; the mirror image of DI-1 | pre-Stage E review (LABS-1.034) | proposed: before Stage E | corrected in increment B, approved and merged (LABS-1.039, `main` d9d873a) |
-| DI-12 | the transitive traversals (`parts`, `dependencies`) judge their links without the perspective's same-as identity | increment B design (LABS-1.037, registered LABS-1.038) | no deadline (deferred) | open |
-| DI-13 | every event role holds at most one player per account (TypeDB's default `@card(0..1)`), a universal per-account cardinality the domain does not always have | increment D design (LABS-1.041; registered LABS-1.043, ER-8) | no deadline (deferred limitation) | open (limitation) |
+| DI-12 | the transitive traversals (`parts`, `dependencies`) judge their links without the perspective's same-as identity | increment B design (LABS-1.037, registered LABS-1.038) | before Stage E (LABS-1.046) | corrected on `feature/pre-e-identity` (LABS-1.048, ID-8), at the identity review gate; closes when merged ([report](pre-e-identity-increment.md)) |
+| DI-13 | every event role holds at most one player per account (TypeDB's default `@card(0..1)`), a universal per-account cardinality the domain does not always have | increment D design (LABS-1.041; registered LABS-1.043, ER-8) | before Stage E (LABS-1.046) | open: additive correction designed, at review ([design](pre-e-multiplicity-design.md)) |
 | DI-14 | in a variant world, descriptions whose account is not inherited are listed (their `describes` link is) without saying the world holds no account of them | increment D design (registered LABS-1.042) | no deadline (deferred) | open (reporting; no judgement affected) |
-| DI-15 | an occurrence's aliases (accepted same-as) are listed in `occurrence()` but their accounts are never compared, so two names of one occurrence give different role judgements | consolidation (LABS-1.045) | proposed: before Stage E | open (correction not approved) |
-| DI-16 | identity merges on a same-as whose canonical judgement is DISPUTED (accepted denials are ignored) | consolidation (LABS-1.045) | proposed: decide before Stage E | open (decision needed) |
+| DI-15 | an occurrence's aliases (accepted same-as) are listed in `occurrence()` but their accounts are never compared, so two names of one occurrence give different role judgements | consolidation (LABS-1.045) | before Stage E (LABS-1.046) | corrected on `feature/pre-e-identity` (LABS-1.048, ID-9), at the identity review gate; closes when merged ([report](pre-e-identity-increment.md)) |
+| DI-16 | identity merges on a same-as whose canonical judgement is DISPUTED (accepted denials are ignored) | consolidation (LABS-1.045) | before Stage E (LABS-1.046) | corrected by option (a) on `feature/pre-e-identity` (LABS-1.048, ID-2, ID-5, ID-6), reproduction a permanent test; at the identity review gate; closes when merged ([report](pre-e-identity-increment.md)) |
 
 ## DI-1: `facts_about` omits content disputed by polarity
 **What happens.** `facts_about(world, subject, t)` lists only content whose judgement at t is "holds". Two kinds of
@@ -359,6 +359,8 @@ no traversal content names an aliased thing.
 (b) keep id-level traversal and report links that name an aliased thing. Either needs its own decision and tests; the
 selection difference would be decided with it.
 
+**LABS-1.046: correction designed** with DI-15 and DI-16 as one identity increment, not implemented: [pre-e-identity-design.md](pre-e-identity-design.md) (ID-8: option (a), traversal between identity classes, and selection by class).
+
 ## DI-13: one player per event role per account
 **What happens.** In TypeDB 3.14.1 a role with no cardinality annotation is `@card(0..1)`, and no event role (core or
 profile) declares another, so one event description can name at most one actor, patient, removed part, product and
@@ -376,6 +378,8 @@ one source: a two-technician job becomes two accounts (the union is right, the a
 co-signed official act becomes two accounts that organisation 0.2's unconditional `official` constraint judges
 **DISPUTED**, a false conflict (`probes/pre_e_consolidation.out.txt`). Recommended: decide before Stage E (see the
 consolidation, section 2).
+
+**LABS-1.046: additive correction designed**, not implemented: [pre-e-multiplicity-design.md](pre-e-multiplicity-design.md). Selected event roles open to several players per account (core module `core-0.4-event-multiplicity`, profile next versions), and rule Q compares each account's set of players (union without a constraint; `one`: DISPUTED for several players in one account or across accounts; new `set`: established when every account states the same set). TypeDB evidence: `probes/pre_e_di13_cardinality.out.txt` (a role opens on live data; a specialised role must be opened itself; narrowing back is refused once used); rule prototype: `probes/pre_e_di13_rule.out.txt`.
 
 ## DI-14: descriptions listed in a variant without an account there
 **What happens.** `account()` writes a description's own attestation over the event's interval, and its `describes`
@@ -412,6 +416,8 @@ declared single-valued role.
 **Impact.** None on the reference worlds (no accepted same-as link), so the 398-view baseline is unaffected.
 **Recommended:** correct before Stage E, with DI-12 and DI-16, as one identity increment (consolidation, section 2).
 
+**LABS-1.046: correction designed**, not implemented: [pre-e-identity-design.md](pre-e-identity-design.md) (ID-9: one view from every name of an occurrence). Reproduced again in `probes/pre_e_identity_cases.out.txt`.
+
 ## DI-16: identity merges on a disputed same-as
 **What happens** (`probes/pre_e_consolidation.py`). `same-as(bea, b-smith)` is asserted and accepted, then denied by
 an accepted denial. Its canonical judgement is DISPUTED, but `Identity` unions every usable same-as assertion and
@@ -423,3 +429,5 @@ since increment B every other content is judged by its canonical record; identit
 only on an ESTABLISHED same-as, from the denial's recording time on (earlier views stay reproducible); (b) keep, and
 report the dispute beside merged answers; (c) keep and document. **Recommended:** decide before Stage E (a core
 semantic change, with its own design gate).
+
+**LABS-1.046: clarified, not implemented or closed:** [pre-e-di16-clarification.md](pre-e-di16-clarification.md) (exact entry, minimal reproduction `probes/pre_e_di16_repro.py`, proposed decision: option (a)). Further forms found (`probes/pre_e_identity_cases.out.txt`): a chain merging two names whose own link is denied or disputed (I16, I18); a plan world's stipulated denial of an inherited link ignored (I12). Recorded here with them, as it has the same remedy: the same-as content is itself judged through identity, so a neighbouring link's dispute can make an established link read disputed (I18) and a link with no record read established (I15) (finding F-1 of the identity design).
