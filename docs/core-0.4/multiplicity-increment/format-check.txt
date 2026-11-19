@@ -1,0 +1,10 @@
+new export vs format-2 schema as on main (dd58b25): 6 errors
+   $.module_data.records[16]: unexpected 'multiplicity'
+   $.module_data.records[17]: unexpected 'multiplicity'
+   $.module_data.records[18]: unexpected 'multiplicity'
+   $.module_data.records[19]: unexpected 'multiplicity'
+   $.module_data.records[20]: unexpected 'multiplicity'
+   $.module_data.records[21]: unexpected 'multiplicity'
+new export vs updated format-2 schema: 0 errors
+previous export (main) vs updated format-2 schema: 0 errors
+event-role records: 6 with multiplicity key: 6 non-null: 1

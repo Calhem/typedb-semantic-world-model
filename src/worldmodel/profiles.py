@@ -11,9 +11,11 @@ A profile is domain vocabulary installed after the full core, through the existi
 Rules, checked by `install_profile` before anything is committed:
 - the profile requires the full core (CORE_MODULES) and nothing else: **no cross-profile dependencies**, so every
   profile installs on its own, and any set of profiles installs in any order. A database created before increment D
-  lacks `core-0.4-event-roles`: it still installs profiles that declare no event roles (laboratory), but one that
+  lacks `core-0.4-event-roles`: it still installs profiles that declare no event roles (laboratory 0.1), but one that
   does (organisation 0.2, mechanical 0.2) is refused, nothing written, with the instruction to run
-  `upgrade_to_event_roles()` first (accepted under LABS-1.045);
+  `upgrade_to_event_roles()` first (accepted under LABS-1.045); a profile that opens roles (organisation 0.3,
+  mechanical 0.3, laboratory 0.2) also needs `core-0.4-event-multiplicity`, and the refusal names both upgrades in
+  order (LABS-1.049, `Profile.requires`);
 - it must not redeclare or extend any existing type (core or another profile's). A collision is refused, never merged,
   so **installation order cannot silently change meaning**;
 - it must not add roles or attributes to existing types, or declare slots on existing predicates, so **core semantics
@@ -22,9 +24,11 @@ Rules, checked by `install_profile` before anything is committed:
   ontological rule).
 
 Installation is atomic: schema, vocabulary, slots, event-role constraints and the module record commit in one schema
-transaction. A newer version of an installed profile that adds only data (vocabulary, slots, event-role constraints;
-its schema files unchanged) is brought in by the explicit `upgrade_profile` (LABS-1.043, ER-7); profiles are never
-replaced in place otherwise, and nothing is upgraded implicitly.
+transaction. A newer version of an installed profile is brought in by the explicit `upgrade_profile` (LABS-1.043,
+ER-7), from any earlier version of its chain (`Profile.previous`, LABS-1.049). An upgrade adds data (vocabulary,
+slots, event-role constraints) and may add schema files that only widen role cardinalities of the profile's own
+event types (`opens`, MP-1, which need core-0.4-event-multiplicity); profiles are never replaced in place otherwise,
+and nothing is upgraded implicitly.
 
 Ownership: a profile's schema lives in `schema/profiles/<name>/`; its registry entry is in PROFILES below; its example
 worlds are in `src/worldmodel/examples/`; its tests are in `tests/`. No domain profile is registered yet (Stage D

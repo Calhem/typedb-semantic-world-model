@@ -34,7 +34,7 @@ tests.
 | DI-10 | the schema explorer has no automated browser regression tests (search, filters, navigation were checked by hand) | LABS-1.024 gate (registered LABS-1.034) | no deadline (maintenance) | open (non-blocking) |
 | DI-11 | reports built on `_claims` (capable, the profile reports) ignore functional-slot conflicts; the mirror image of DI-1 | pre-Stage E review (LABS-1.034) | proposed: before Stage E | corrected in increment B, approved and merged (LABS-1.039, `main` d9d873a) |
 | DI-12 | the transitive traversals (`parts`, `dependencies`) judge their links without the perspective's same-as identity | increment B design (LABS-1.037, registered LABS-1.038) | before Stage E (LABS-1.046) | **closed**: corrected by the identity increment (ID-8), approved and merged (LABS-1.049, `main` dd58b25; [report](pre-e-identity-increment.md)) |
-| DI-13 | every event role holds at most one player per account (TypeDB's default `@card(0..1)`), a universal per-account cardinality the domain does not always have | increment D design (LABS-1.041; registered LABS-1.043, ER-8) | before Stage E (LABS-1.046) | open: additive correction designed, at review ([design](pre-e-multiplicity-design.md)) |
+| DI-13 | every event role holds at most one player per account (TypeDB's default `@card(0..1)`), a universal per-account cardinality the domain does not always have | increment D design (LABS-1.041; registered LABS-1.043, ER-8) | before Stage E (LABS-1.046) | corrected on `feature/pre-e-multiplicity` (LABS-1.049; MP-1 restricted, MP-2 to MP-5, and the `move()` origin defect), at the multiplicity review gate; closes when merged ([report](pre-e-multiplicity-increment.md)) |
 | DI-14 | in a variant world, descriptions whose account is not inherited are listed (their `describes` link is) without saying the world holds no account of them | increment D design (registered LABS-1.042) | no deadline (deferred) | open (reporting; no judgement affected) |
 | DI-15 | an occurrence's aliases (accepted same-as) are listed in `occurrence()` but their accounts are never compared, so two names of one occurrence give different role judgements | consolidation (LABS-1.045) | before Stage E (LABS-1.046) | **closed**: corrected by the identity increment (ID-9), approved and merged (LABS-1.049, `main` dd58b25; [report](pre-e-identity-increment.md)) |
 | DI-16 | identity merges on a same-as whose canonical judgement is DISPUTED (accepted denials are ignored) | consolidation (LABS-1.045) | before Stage E (LABS-1.046) | **closed**: option (a), corrected by the identity increment (ID-2, ID-5, ID-6), reproduction a permanent test; approved and merged (LABS-1.049, `main` dd58b25; [report](pre-e-identity-increment.md)) |
@@ -386,6 +386,13 @@ co-signed official act becomes two accounts that organisation 0.2's unconditiona
 consolidation, section 2).
 
 **LABS-1.046: additive correction designed**, not implemented: [pre-e-multiplicity-design.md](pre-e-multiplicity-design.md). Selected event roles open to several players per account (core module `core-0.4-event-multiplicity`, profile next versions), and rule Q compares each account's set of players (union without a constraint; `one`: DISPUTED for several players in one account or across accounts; new `set`: established when every account states the same set). TypeDB evidence: `probes/pre_e_di13_cardinality.out.txt` (a role opens on live data; a specialised role must be opened itself; narrowing back is refused once used); rule prototype: `probes/pre_e_di13_rule.out.txt`.
+
+**LABS-1.049: corrected on `feature/pre-e-multiplicity`, at the review gate; not closed.** Actor, patient and the
+profile roles official, sampler, removed and fitted accept several players per account; origin, destination, location,
+instrument, product and sampled stay single. Several players are judged per account set (MP-2) under a declared
+multiplicity (MP-3, MP-4); existing databases upgrade explicitly (MP-5). The `move()` defect (two origins refused with
+a raw database error, LABS-1.047) is corrected: a domain-level `MovementConflict`, nothing written. Report:
+[pre-e-multiplicity-increment.md](pre-e-multiplicity-increment.md).
 
 ## DI-14: descriptions listed in a variant without an account there
 **What happens.** `account()` writes a description's own attestation over the event's interval, and its `describes`

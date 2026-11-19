@@ -1395,7 +1395,9 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
           player and the accounts naming it, and `constraints`: each applicable event-role constraint (ER-1, ER-2)
           with whether it applies and why, and the role's judgement by rule Q (ER-4): DISPUTED for two or more
           distinct players under the perspective's identity, established for one, with status and support. Several
-          players of a role without an applicable, established constraint are a union, never a dispute."""
+          players of a role without an applicable, established constraint are a union, never a dispute.
+          LABS-1.049 (DI-13): each constraint also gives its `multiplicity` ("one" or "set"), the `reason` for a
+          dispute, and for "set" each compared account's set (`sets`); see `_event_roles`."""
         from .dynamics import _Memo
         descs = self.descriptions(world, occurrence, as_of, perspective)
         out = {"occurrence": occurrence, "descriptions": descs, "participants": {}}

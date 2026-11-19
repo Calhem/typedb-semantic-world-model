@@ -449,7 +449,14 @@ class DynamicsMixin:
         accepted. For each event-role constraint of a compared account's type (ER-1), with its kind's classification
         of the occurrence judged by the canonical record at the occurrence's start (ER-2), the role is judged by rule Q
         (ER-4) over the compared accounts of the nearest world, players under the perspective's identity. Roles are
-        keyed by stored role label, with the core role alongside (ER-5)."""
+        keyed by stored role label, with the core role alongside (ER-5).
+
+        Multiplicity (LABS-1.049, DI-13, MP-2/MP-3): each compared account gives a *set* of players. Under a `one`
+        declaration the role is DISPUTED when more than one player is named, with `reason` "several players in one
+        account" and/or "accounts name different players"; under `set` it is established when every compared account
+        names the same set, otherwise DISPUTED ("accounts name different sets of players", each account's set in
+        `sets`). For one event type and role, an applicable kind-scoped declaration overrides an unconditional one,
+        which is listed with applies False and why."""
         from . import typeql as q
         ident = ident or self.identity(world, as_of, perspective, ids=[occurrence])
         members = set(ident.members(occurrence))

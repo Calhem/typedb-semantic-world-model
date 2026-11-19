@@ -1,0 +1,33 @@
+{
+ "event_role_constraints_identical": true,
+ "module_data": {
+  "a": 76,
+  "b": 76,
+  "only_a": [],
+  "only_b": []
+ },
+ "modules": {
+  "core": "0.3.0",
+  "core-0.4-a": "0.4.0-a1",
+  "core-0.4-a0": "0.4.0-a0",
+  "core-0.4-a2": "0.4.0-a2",
+  "core-0.4-b": "0.4.0-b",
+  "core-0.4-c": "0.4.0-c",
+  "core-0.4-d": "0.4.0-d",
+  "core-0.4-event-multiplicity": "0.4.0-mp",
+  "core-0.4-event-roles": "0.4.0-er",
+  "profile:laboratory": "0.2",
+  "profile:mechanical": "0.3",
+  "profile:organisation": "0.3"
+ },
+ "modules_identical": true,
+ "query_answers_identical": true,
+ "schema_facts": {
+  "a": 519,
+  "b": 519,
+  "differing": [],
+  "only_a": [],
+  "only_b": []
+ },
+ "schema_text_identical": true
+}

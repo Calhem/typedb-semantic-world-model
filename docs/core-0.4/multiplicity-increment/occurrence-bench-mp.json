@@ -1,0 +1,4596 @@
+[
+{
+"world": "actual",
+"occurrence": "o-bearing-replacement",
+"perspective": "apprentice",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 68,
+"median_ms": 112.2
+},
+{
+"world": "actual",
+"occurrence": "o-bearing-replacement",
+"perspective": "cam-2",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 68,
+"median_ms": 93.57
+},
+{
+"world": "actual",
+"occurrence": "o-bearing-replacement",
+"perspective": "cm-1",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 68,
+"median_ms": 107.65
+},
+{
+"world": "actual",
+"occurrence": "o-bearing-replacement",
+"perspective": "cmms",
+"flags": [
+"perspective"
+],
+"category": "inapplicable",
+"queries": 96,
+"median_ms": 277.28
+},
+{
+"world": "actual",
+"occurrence": "o-bearing-replacement",
+"perspective": "design-office",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 68,
+"median_ms": 106.74
+},
+{
+"world": "actual",
+"occurrence": "o-bearing-replacement",
+"perspective": "inspector",
+"flags": [
+"perspective"
+],
+"category": "inapplicable",
+"queries": 96,
+"median_ms": 232.86
+},
+{
+"world": "actual",
+"occurrence": "o-bearing-replacement",
+"perspective": "scale-3",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 68,
+"median_ms": 88.86
+},
+{
+"world": "actual",
+"occurrence": "o-bearing-replacement",
+"perspective": "system",
+"flags": [
+"earlier"
+],
+"category": "unconstrained",
+"queries": 96,
+"median_ms": 191.63
+},
+{
+"world": "actual",
+"occurrence": "o-bearing-replacement",
+"perspective": "system",
+"flags": [],
+"category": "inapplicable",
+"queries": 96,
+"median_ms": 210.11
+},
+{
+"world": "actual",
+"occurrence": "o-bearing-replacement",
+"perspective": "tag-reader",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 68,
+"median_ms": 87.53
+},
+{
+"world": "actual",
+"occurrence": "o-bearing-replacement",
+"perspective": "technician",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 68,
+"median_ms": 93.91
+},
+{
+"world": "actual",
+"occurrence": "o-disassembly",
+"perspective": "apprentice",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 75.66
+},
+{
+"world": "actual",
+"occurrence": "o-disassembly",
+"perspective": "cam-2",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 74.0
+},
+{
+"world": "actual",
+"occurrence": "o-disassembly",
+"perspective": "cm-1",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 76.3
+},
+{
+"world": "actual",
+"occurrence": "o-disassembly",
+"perspective": "cmms",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 74.52
+},
+{
+"world": "actual",
+"occurrence": "o-disassembly",
+"perspective": "design-office",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 75.19
+},
+{
+"world": "actual",
+"occurrence": "o-disassembly",
+"perspective": "inspector",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 72.74
+},
+{
+"world": "actual",
+"occurrence": "o-disassembly",
+"perspective": "scale-3",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 72.38
+},
+{
+"world": "actual",
+"occurrence": "o-disassembly",
+"perspective": "system",
+"flags": [
+"earlier"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 69.38
+},
+{
+"world": "actual",
+"occurrence": "o-disassembly",
+"perspective": "system",
+"flags": [],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 75.78
+},
+{
+"world": "actual",
+"occurrence": "o-disassembly",
+"perspective": "tag-reader",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 68.58
+},
+{
+"world": "actual",
+"occurrence": "o-disassembly",
+"perspective": "technician",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 104.73
+},
+{
+"world": "actual",
+"occurrence": "o-inspection",
+"perspective": "apprentice",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 57,
+"median_ms": 101.18
+},
+{
+"world": "actual",
+"occurrence": "o-inspection",
+"perspective": "cam-2",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 57,
+"median_ms": 75.3
+},
+{
+"world": "actual",
+"occurrence": "o-inspection",
+"perspective": "cm-1",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 57,
+"median_ms": 75.46
+},
+{
+"world": "actual",
+"occurrence": "o-inspection",
+"perspective": "cmms",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 57,
+"median_ms": 73.73
+},
+{
+"world": "actual",
+"occurrence": "o-inspection",
+"perspective": "design-office",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 57,
+"median_ms": 76.84
+},
+{
+"world": "actual",
+"occurrence": "o-inspection",
+"perspective": "inspector",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 57,
+"median_ms": 75.53
+},
+{
+"world": "actual",
+"occurrence": "o-inspection",
+"perspective": "scale-3",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 57,
+"median_ms": 74.86
+},
+{
+"world": "actual",
+"occurrence": "o-inspection",
+"perspective": "system",
+"flags": [
+"earlier"
+],
+"category": "unconstrained",
+"queries": 57,
+"median_ms": 103.76
+},
+{
+"world": "actual",
+"occurrence": "o-inspection",
+"perspective": "system",
+"flags": [],
+"category": "unconstrained",
+"queries": 57,
+"median_ms": 105.6
+},
+{
+"world": "actual",
+"occurrence": "o-inspection",
+"perspective": "tag-reader",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 57,
+"median_ms": 77.84
+},
+{
+"world": "actual",
+"occurrence": "o-inspection",
+"perspective": "technician",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 57,
+"median_ms": 72.5
+},
+{
+"world": "actual",
+"occurrence": "o-reassembly",
+"perspective": "apprentice",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 69.01
+},
+{
+"world": "actual",
+"occurrence": "o-reassembly",
+"perspective": "cam-2",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 68.05
+},
+{
+"world": "actual",
+"occurrence": "o-reassembly",
+"perspective": "cm-1",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 68.28
+},
+{
+"world": "actual",
+"occurrence": "o-reassembly",
+"perspective": "cmms",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 81.49
+},
+{
+"world": "actual",
+"occurrence": "o-reassembly",
+"perspective": "design-office",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 83.24
+},
+{
+"world": "actual",
+"occurrence": "o-reassembly",
+"perspective": "inspector",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 69.02
+},
+{
+"world": "actual",
+"occurrence": "o-reassembly",
+"perspective": "scale-3",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 70.19
+},
+{
+"world": "actual",
+"occurrence": "o-reassembly",
+"perspective": "system",
+"flags": [
+"earlier"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 70.73
+},
+{
+"world": "actual",
+"occurrence": "o-reassembly",
+"perspective": "system",
+"flags": [],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 76.59
+},
+{
+"world": "actual",
+"occurrence": "o-reassembly",
+"perspective": "tag-reader",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 81.58
+},
+{
+"world": "actual",
+"occurrence": "o-reassembly",
+"perspective": "technician",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 76.82
+},
+{
+"world": "actual",
+"occurrence": "o-relubrication",
+"perspective": "apprentice",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 71.71
+},
+{
+"world": "actual",
+"occurrence": "o-relubrication",
+"perspective": "cam-2",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 79.32
+},
+{
+"world": "actual",
+"occurrence": "o-relubrication",
+"perspective": "cm-1",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 71.91
+},
+{
+"world": "actual",
+"occurrence": "o-relubrication",
+"perspective": "cmms",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 65.6
+},
+{
+"world": "actual",
+"occurrence": "o-relubrication",
+"perspective": "design-office",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 71.29
+},
+{
+"world": "actual",
+"occurrence": "o-relubrication",
+"perspective": "inspector",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 75.01
+},
+{
+"world": "actual",
+"occurrence": "o-relubrication",
+"perspective": "scale-3",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 75.86
+},
+{
+"world": "actual",
+"occurrence": "o-relubrication",
+"perspective": "system",
+"flags": [
+"earlier"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 79.07
+},
+{
+"world": "actual",
+"occurrence": "o-relubrication",
+"perspective": "system",
+"flags": [],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 72.41
+},
+{
+"world": "actual",
+"occurrence": "o-relubrication",
+"perspective": "tag-reader",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 71.35
+},
+{
+"world": "actual",
+"occurrence": "o-relubrication",
+"perspective": "technician",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 71.03
+},
+{
+"world": "actual",
+"occurrence": "o-repair",
+"perspective": "apprentice",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 69.17
+},
+{
+"world": "actual",
+"occurrence": "o-repair",
+"perspective": "cam-2",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 65.91
+},
+{
+"world": "actual",
+"occurrence": "o-repair",
+"perspective": "cm-1",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 67.05
+},
+{
+"world": "actual",
+"occurrence": "o-repair",
+"perspective": "cmms",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 72.9
+},
+{
+"world": "actual",
+"occurrence": "o-repair",
+"perspective": "design-office",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 77.2
+},
+{
+"world": "actual",
+"occurrence": "o-repair",
+"perspective": "inspector",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 75.28
+},
+{
+"world": "actual",
+"occurrence": "o-repair",
+"perspective": "scale-3",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 73.27
+},
+{
+"world": "actual",
+"occurrence": "o-repair",
+"perspective": "system",
+"flags": [
+"earlier"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 77.25
+},
+{
+"world": "actual",
+"occurrence": "o-repair",
+"perspective": "system",
+"flags": [],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 78.19
+},
+{
+"world": "actual",
+"occurrence": "o-repair",
+"perspective": "tag-reader",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 77.19
+},
+{
+"world": "actual",
+"occurrence": "o-repair",
+"perspective": "technician",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 74.68
+},
+{
+"world": "actual",
+"occurrence": "o-sign-off",
+"perspective": "apprentice",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 49,
+"median_ms": 70.4
+},
+{
+"world": "actual",
+"occurrence": "o-sign-off",
+"perspective": "cam-2",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 49,
+"median_ms": 71.01
+},
+{
+"world": "actual",
+"occurrence": "o-sign-off",
+"perspective": "cm-1",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 49,
+"median_ms": 67.79
+},
+{
+"world": "actual",
+"occurrence": "o-sign-off",
+"perspective": "cmms",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 49,
+"median_ms": 64.65
+},
+{
+"world": "actual",
+"occurrence": "o-sign-off",
+"perspective": "design-office",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 49,
+"median_ms": 68.93
+},
+{
+"world": "actual",
+"occurrence": "o-sign-off",
+"perspective": "inspector",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 49,
+"median_ms": 64.87
+},
+{
+"world": "actual",
+"occurrence": "o-sign-off",
+"perspective": "scale-3",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 49,
+"median_ms": 67.89
+},
+{
+"world": "actual",
+"occurrence": "o-sign-off",
+"perspective": "system",
+"flags": [
+"earlier"
+],
+"category": "unconstrained",
+"queries": 49,
+"median_ms": 90.13
+},
+{
+"world": "actual",
+"occurrence": "o-sign-off",
+"perspective": "system",
+"flags": [],
+"category": "unconstrained",
+"queries": 49,
+"median_ms": 75.76
+},
+{
+"world": "actual",
+"occurrence": "o-sign-off",
+"perspective": "tag-reader",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 49,
+"median_ms": 67.07
+},
+{
+"world": "actual",
+"occurrence": "o-sign-off",
+"perspective": "technician",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 49,
+"median_ms": 64.27
+},
+{
+"world": "actual",
+"occurrence": "o-test-run",
+"perspective": "apprentice",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 57,
+"median_ms": 81.55
+},
+{
+"world": "actual",
+"occurrence": "o-test-run",
+"perspective": "cam-2",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 57,
+"median_ms": 79.3
+},
+{
+"world": "actual",
+"occurrence": "o-test-run",
+"perspective": "cm-1",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 57,
+"median_ms": 77.63
+},
+{
+"world": "actual",
+"occurrence": "o-test-run",
+"perspective": "cmms",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 57,
+"median_ms": 78.47
+},
+{
+"world": "actual",
+"occurrence": "o-test-run",
+"perspective": "design-office",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 57,
+"median_ms": 79.08
+},
+{
+"world": "actual",
+"occurrence": "o-test-run",
+"perspective": "inspector",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 57,
+"median_ms": 80.53
+},
+{
+"world": "actual",
+"occurrence": "o-test-run",
+"perspective": "scale-3",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 57,
+"median_ms": 98.01
+},
+{
+"world": "actual",
+"occurrence": "o-test-run",
+"perspective": "system",
+"flags": [
+"earlier"
+],
+"category": "unconstrained",
+"queries": 57,
+"median_ms": 94.29
+},
+{
+"world": "actual",
+"occurrence": "o-test-run",
+"perspective": "system",
+"flags": [],
+"category": "unconstrained",
+"queries": 57,
+"median_ms": 100.99
+},
+{
+"world": "actual",
+"occurrence": "o-test-run",
+"perspective": "tag-reader",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 57,
+"median_ms": 93.79
+},
+{
+"world": "actual",
+"occurrence": "o-test-run",
+"perspective": "technician",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 57,
+"median_ms": 85.81
+},
+{
+"world": "lab",
+"occurrence": "o-sampling-1",
+"perspective": "ana",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 76.4
+},
+{
+"world": "lab",
+"occurrence": "o-sampling-1",
+"perspective": "bo",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 82.16
+},
+{
+"world": "lab",
+"occurrence": "o-sampling-1",
+"perspective": "cal-lab",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 77.06
+},
+{
+"world": "lab",
+"occurrence": "o-sampling-1",
+"perspective": "lab-2",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 77.58
+},
+{
+"world": "lab",
+"occurrence": "o-sampling-1",
+"perspective": "qa",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 74.5
+},
+{
+"world": "lab",
+"occurrence": "o-sampling-1",
+"perspective": "system",
+"flags": [
+"earlier"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 79.2
+},
+{
+"world": "lab",
+"occurrence": "o-sampling-1",
+"perspective": "system",
+"flags": [],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 83.76
+},
+{
+"world": "lab",
+"occurrence": "o-sampling-1",
+"perspective": "tom",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 88.77
+},
+{
+"world": "lab",
+"occurrence": "o-split-b",
+"perspective": "ana",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 82.39
+},
+{
+"world": "lab",
+"occurrence": "o-split-b",
+"perspective": "bo",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 128.81
+},
+{
+"world": "lab",
+"occurrence": "o-split-b",
+"perspective": "cal-lab",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 110.16
+},
+{
+"world": "lab",
+"occurrence": "o-split-b",
+"perspective": "lab-2",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 66.95
+},
+{
+"world": "lab",
+"occurrence": "o-split-b",
+"perspective": "qa",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 69.36
+},
+{
+"world": "lab",
+"occurrence": "o-split-b",
+"perspective": "system",
+"flags": [
+"earlier"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 76.35
+},
+{
+"world": "lab",
+"occurrence": "o-split-b",
+"perspective": "system",
+"flags": [],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 409.44
+},
+{
+"world": "lab",
+"occurrence": "o-split-b",
+"perspective": "tom",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 77.35
+},
+{
+"world": "lab",
+"occurrence": "o-split-c",
+"perspective": "ana",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 79.39
+},
+{
+"world": "lab",
+"occurrence": "o-split-c",
+"perspective": "bo",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 74.1
+},
+{
+"world": "lab",
+"occurrence": "o-split-c",
+"perspective": "cal-lab",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 72.92
+},
+{
+"world": "lab",
+"occurrence": "o-split-c",
+"perspective": "lab-2",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 73.97
+},
+{
+"world": "lab",
+"occurrence": "o-split-c",
+"perspective": "qa",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 76.67
+},
+{
+"world": "lab",
+"occurrence": "o-split-c",
+"perspective": "system",
+"flags": [
+"earlier"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 86.05
+},
+{
+"world": "lab",
+"occurrence": "o-split-c",
+"perspective": "system",
+"flags": [],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 84.21
+},
+{
+"world": "lab",
+"occurrence": "o-split-c",
+"perspective": "tom",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 80.34
+},
+{
+"world": "lab",
+"occurrence": "o-weigh-late",
+"perspective": "ana",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 75.02
+},
+{
+"world": "lab",
+"occurrence": "o-weigh-late",
+"perspective": "bo",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 72.21
+},
+{
+"world": "lab",
+"occurrence": "o-weigh-late",
+"perspective": "cal-lab",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 72.37
+},
+{
+"world": "lab",
+"occurrence": "o-weigh-late",
+"perspective": "lab-2",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 73.91
+},
+{
+"world": "lab",
+"occurrence": "o-weigh-late",
+"perspective": "qa",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 83.45
+},
+{
+"world": "lab",
+"occurrence": "o-weigh-late",
+"perspective": "system",
+"flags": [
+"earlier"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 79.1
+},
+{
+"world": "lab",
+"occurrence": "o-weigh-late",
+"perspective": "system",
+"flags": [],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 90.27
+},
+{
+"world": "lab",
+"occurrence": "o-weigh-late",
+"perspective": "tom",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 71.7
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-sampling-1",
+"perspective": "ana",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 295.37
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-sampling-1",
+"perspective": "bo",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 449.71
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-sampling-1",
+"perspective": "cal-lab",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 436.89
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-sampling-1",
+"perspective": "lab-2",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 256.6
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-sampling-1",
+"perspective": "qa",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 152.04
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-sampling-1",
+"perspective": "system",
+"flags": [
+"variant",
+"earlier"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 156.14
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-sampling-1",
+"perspective": "system",
+"flags": [
+"variant"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 157.34
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-sampling-1",
+"perspective": "tom",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 143.55
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-split-b",
+"perspective": "ana",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 124.0
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-split-b",
+"perspective": "bo",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 132.74
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-split-b",
+"perspective": "cal-lab",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 108.45
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-split-b",
+"perspective": "lab-2",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 108.05
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-split-b",
+"perspective": "qa",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 118.31
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-split-b",
+"perspective": "system",
+"flags": [
+"variant",
+"earlier"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 107.94
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-split-b",
+"perspective": "system",
+"flags": [
+"variant"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 105.22
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-split-b",
+"perspective": "tom",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 154.89
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-split-c",
+"perspective": "ana",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 118.38
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-split-c",
+"perspective": "bo",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 105.63
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-split-c",
+"perspective": "cal-lab",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 122.04
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-split-c",
+"perspective": "lab-2",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 122.13
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-split-c",
+"perspective": "qa",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 104.22
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-split-c",
+"perspective": "system",
+"flags": [
+"variant",
+"earlier"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 105.3
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-split-c",
+"perspective": "system",
+"flags": [
+"variant"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 103.13
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-split-c",
+"perspective": "tom",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 94.55
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-weigh-late",
+"perspective": "ana",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 143.64
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-weigh-late",
+"perspective": "bo",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 150.85
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-weigh-late",
+"perspective": "cal-lab",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 154.96
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-weigh-late",
+"perspective": "lab-2",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 168.13
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-weigh-late",
+"perspective": "qa",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 138.24
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-weigh-late",
+"perspective": "system",
+"flags": [
+"variant",
+"earlier"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 144.1
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-weigh-late",
+"perspective": "system",
+"flags": [
+"variant"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 143.37
+},
+{
+"world": "lab-plan-recal",
+"occurrence": "o-weigh-late",
+"perspective": "tom",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 123.92
+},
+{
+"world": "org",
+"occurrence": "o-signoff-9",
+"perspective": "acme",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 63.5
+},
+{
+"world": "org",
+"occurrence": "o-signoff-9",
+"perspective": "auditor",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 62.9
+},
+{
+"world": "org",
+"occurrence": "o-signoff-9",
+"perspective": "bea",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 64.45
+},
+{
+"world": "org",
+"occurrence": "o-signoff-9",
+"perspective": "cal",
+"flags": [
+"perspective"
+],
+"category": "established",
+"queries": 67,
+"median_ms": 143.29
+},
+{
+"world": "org",
+"occurrence": "o-signoff-9",
+"perspective": "hr",
+"flags": [
+"perspective"
+],
+"category": "unconstrained",
+"queries": 53,
+"median_ms": 66.33
+},
+{
+"world": "org",
+"occurrence": "o-signoff-9",
+"perspective": "system",
+"flags": [
+"earlier"
+],
+"category": "unconstrained",
+"queries": 67,
+"median_ms": 142.77
+},
+{
+"world": "org",
+"occurrence": "o-signoff-9",
+"perspective": "system",
+"flags": [],
+"category": "established",
+"queries": 67,
+"median_ms": 141.32
+},
+{
+"world": "org-plan-reorg",
+"occurrence": "o-signoff-9",
+"perspective": "acme",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 124.63
+},
+{
+"world": "org-plan-reorg",
+"occurrence": "o-signoff-9",
+"perspective": "auditor",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 136.23
+},
+{
+"world": "org-plan-reorg",
+"occurrence": "o-signoff-9",
+"perspective": "bea",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 131.73
+},
+{
+"world": "org-plan-reorg",
+"occurrence": "o-signoff-9",
+"perspective": "cal",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "established",
+"queries": 132,
+"median_ms": 304.33
+},
+{
+"world": "org-plan-reorg",
+"occurrence": "o-signoff-9",
+"perspective": "hr",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 143.26
+},
+{
+"world": "org-plan-reorg",
+"occurrence": "o-signoff-9",
+"perspective": "system",
+"flags": [
+"variant",
+"earlier"
+],
+"category": "unconstrained",
+"queries": 132,
+"median_ms": 426.39
+},
+{
+"world": "org-plan-reorg",
+"occurrence": "o-signoff-9",
+"perspective": "system",
+"flags": [
+"variant"
+],
+"category": "established",
+"queries": 132,
+"median_ms": 576.69
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-bearing-replacement",
+"perspective": "apprentice",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 121,
+"median_ms": 163.98
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-bearing-replacement",
+"perspective": "cam-2",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 121,
+"median_ms": 176.62
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-bearing-replacement",
+"perspective": "cm-1",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 121,
+"median_ms": 179.87
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-bearing-replacement",
+"perspective": "design-office",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 121,
+"median_ms": 146.5
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-bearing-replacement",
+"perspective": "inspector",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 121,
+"median_ms": 148.09
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-bearing-replacement",
+"perspective": "scale-3",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 121,
+"median_ms": 156.9
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-bearing-replacement",
+"perspective": "system",
+"flags": [
+"variant",
+"earlier"
+],
+"category": "unconstrained",
+"queries": 121,
+"median_ms": 194.71
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-bearing-replacement",
+"perspective": "system",
+"flags": [
+"variant"
+],
+"category": "unconstrained",
+"queries": 121,
+"median_ms": 220.11
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-bearing-replacement",
+"perspective": "tag-reader",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 121,
+"median_ms": 180.52
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-bearing-replacement",
+"perspective": "technician",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 121,
+"median_ms": 185.39
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-disassembly",
+"perspective": "apprentice",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 145.3
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-disassembly",
+"perspective": "cam-2",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 157.48
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-disassembly",
+"perspective": "cm-1",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 174.36
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-disassembly",
+"perspective": "design-office",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 168.58
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-disassembly",
+"perspective": "inspector",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 171.62
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-disassembly",
+"perspective": "scale-3",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 220.22
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-disassembly",
+"perspective": "system",
+"flags": [
+"variant",
+"earlier"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 190.64
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-disassembly",
+"perspective": "system",
+"flags": [
+"variant"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 215.03
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-disassembly",
+"perspective": "tag-reader",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 140.34
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-disassembly",
+"perspective": "technician",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 203.5
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-inspection",
+"perspective": "apprentice",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 178.52
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-inspection",
+"perspective": "cam-2",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 147.98
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-inspection",
+"perspective": "cm-1",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 148.29
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-inspection",
+"perspective": "design-office",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 169.84
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-inspection",
+"perspective": "inspector",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 161.54
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-inspection",
+"perspective": "scale-3",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 186.59
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-inspection",
+"perspective": "system",
+"flags": [
+"variant",
+"earlier"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 243.47
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-inspection",
+"perspective": "system",
+"flags": [
+"variant"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 176.38
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-inspection",
+"perspective": "tag-reader",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 137.44
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-inspection",
+"perspective": "technician",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 143.48
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-reassembly",
+"perspective": "apprentice",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 162.46
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-reassembly",
+"perspective": "cam-2",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 164.79
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-reassembly",
+"perspective": "cm-1",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 211.35
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-reassembly",
+"perspective": "design-office",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 149.19
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-reassembly",
+"perspective": "inspector",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 160.7
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-reassembly",
+"perspective": "scale-3",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 158.17
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-reassembly",
+"perspective": "system",
+"flags": [
+"variant",
+"earlier"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 145.92
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-reassembly",
+"perspective": "system",
+"flags": [
+"variant"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 180.5
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-reassembly",
+"perspective": "tag-reader",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 191.52
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-reassembly",
+"perspective": "technician",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 153.5
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-relubrication",
+"perspective": "apprentice",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 154.42
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-relubrication",
+"perspective": "cam-2",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 151.97
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-relubrication",
+"perspective": "cm-1",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 150.61
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-relubrication",
+"perspective": "design-office",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 142.81
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-relubrication",
+"perspective": "inspector",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 128.38
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-relubrication",
+"perspective": "scale-3",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 142.36
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-relubrication",
+"perspective": "system",
+"flags": [
+"variant",
+"earlier"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 151.64
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-relubrication",
+"perspective": "system",
+"flags": [
+"variant"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 156.17
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-relubrication",
+"perspective": "tag-reader",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 136.7
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-relubrication",
+"perspective": "technician",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 133.84
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-repair",
+"perspective": "apprentice",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 138.62
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-repair",
+"perspective": "cam-2",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 234.23
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-repair",
+"perspective": "cm-1",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 143.74
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-repair",
+"perspective": "design-office",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 132.81
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-repair",
+"perspective": "inspector",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 161.43
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-repair",
+"perspective": "scale-3",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 131.68
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-repair",
+"perspective": "system",
+"flags": [
+"variant",
+"earlier"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 131.7
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-repair",
+"perspective": "system",
+"flags": [
+"variant"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 139.61
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-repair",
+"perspective": "tag-reader",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 143.59
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-repair",
+"perspective": "technician",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 152.08
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-sign-off",
+"perspective": "apprentice",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 96,
+"median_ms": 131.02
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-sign-off",
+"perspective": "cam-2",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 96,
+"median_ms": 176.86
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-sign-off",
+"perspective": "cm-1",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 96,
+"median_ms": 134.11
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-sign-off",
+"perspective": "design-office",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 96,
+"median_ms": 149.88
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-sign-off",
+"perspective": "inspector",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 96,
+"median_ms": 148.0
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-sign-off",
+"perspective": "scale-3",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 96,
+"median_ms": 146.05
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-sign-off",
+"perspective": "system",
+"flags": [
+"variant",
+"earlier"
+],
+"category": "unconstrained",
+"queries": 96,
+"median_ms": 162.46
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-sign-off",
+"perspective": "system",
+"flags": [
+"variant"
+],
+"category": "unconstrained",
+"queries": 96,
+"median_ms": 135.43
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-sign-off",
+"perspective": "tag-reader",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 96,
+"median_ms": 142.83
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-sign-off",
+"perspective": "technician",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 96,
+"median_ms": 138.43
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-test-run",
+"perspective": "apprentice",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 161.82
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-test-run",
+"perspective": "cam-2",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 146.79
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-test-run",
+"perspective": "cm-1",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 143.46
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-test-run",
+"perspective": "design-office",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 143.12
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-test-run",
+"perspective": "inspector",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 161.02
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-test-run",
+"perspective": "scale-3",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 153.09
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-test-run",
+"perspective": "system",
+"flags": [
+"variant",
+"earlier"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 153.42
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-test-run",
+"perspective": "system",
+"flags": [
+"variant"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 141.78
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-test-run",
+"perspective": "tag-reader",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 134.34
+},
+{
+"world": "plan-apprentice",
+"occurrence": "o-test-run",
+"perspective": "technician",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 141.57
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-bearing-replacement",
+"perspective": "apprentice",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 94,
+"median_ms": 112.66
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-bearing-replacement",
+"perspective": "cm-1",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 94,
+"median_ms": 108.81
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-bearing-replacement",
+"perspective": "design-office",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 94,
+"median_ms": 117.93
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-bearing-replacement",
+"perspective": "inspector",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 94,
+"median_ms": 111.03
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-bearing-replacement",
+"perspective": "scale-3",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 94,
+"median_ms": 115.58
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-bearing-replacement",
+"perspective": "system",
+"flags": [
+"variant",
+"earlier"
+],
+"category": "unconstrained",
+"queries": 94,
+"median_ms": 127.23
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-bearing-replacement",
+"perspective": "system",
+"flags": [
+"variant"
+],
+"category": "unconstrained",
+"queries": 94,
+"median_ms": 160.35
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-bearing-replacement",
+"perspective": "technician",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 94,
+"median_ms": 130.74
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-disassembly",
+"perspective": "apprentice",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 100.07
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-disassembly",
+"perspective": "cm-1",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 95.13
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-disassembly",
+"perspective": "design-office",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 169.75
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-disassembly",
+"perspective": "inspector",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 158.16
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-disassembly",
+"perspective": "scale-3",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 634.59
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-disassembly",
+"perspective": "system",
+"flags": [
+"variant",
+"earlier"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 165.61
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-disassembly",
+"perspective": "system",
+"flags": [
+"variant"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 115.05
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-disassembly",
+"perspective": "technician",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 126.82
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-inspection",
+"perspective": "apprentice",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 146.93
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-inspection",
+"perspective": "cm-1",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 166.5
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-inspection",
+"perspective": "design-office",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 295.24
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-inspection",
+"perspective": "inspector",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 176.62
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-inspection",
+"perspective": "scale-3",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 147.73
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-inspection",
+"perspective": "system",
+"flags": [
+"variant",
+"earlier"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 140.3
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-inspection",
+"perspective": "system",
+"flags": [
+"variant"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 155.15
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-inspection",
+"perspective": "technician",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 205.08
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-reassembly",
+"perspective": "apprentice",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 139.38
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-reassembly",
+"perspective": "cm-1",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 106.97
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-reassembly",
+"perspective": "design-office",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 106.14
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-reassembly",
+"perspective": "inspector",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 100.54
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-reassembly",
+"perspective": "scale-3",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 111.71
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-reassembly",
+"perspective": "system",
+"flags": [
+"variant",
+"earlier"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 104.92
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-reassembly",
+"perspective": "system",
+"flags": [
+"variant"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 98.72
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-reassembly",
+"perspective": "technician",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 98.73
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-relubrication",
+"perspective": "apprentice",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 94.37
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-relubrication",
+"perspective": "cm-1",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 95.95
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-relubrication",
+"perspective": "design-office",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 101.62
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-relubrication",
+"perspective": "inspector",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 118.82
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-relubrication",
+"perspective": "scale-3",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 101.89
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-relubrication",
+"perspective": "system",
+"flags": [
+"variant",
+"earlier"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 105.39
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-relubrication",
+"perspective": "system",
+"flags": [
+"variant"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 105.11
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-relubrication",
+"perspective": "technician",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 100.06
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-repair",
+"perspective": "apprentice",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 105.85
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-repair",
+"perspective": "cm-1",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 173.52
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-repair",
+"perspective": "design-office",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 113.97
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-repair",
+"perspective": "inspector",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 103.67
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-repair",
+"perspective": "scale-3",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 90.01
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-repair",
+"perspective": "system",
+"flags": [
+"variant",
+"earlier"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 103.78
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-repair",
+"perspective": "system",
+"flags": [
+"variant"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 113.95
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-repair",
+"perspective": "technician",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 77,
+"median_ms": 112.35
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-sign-off",
+"perspective": "apprentice",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 69,
+"median_ms": 92.27
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-sign-off",
+"perspective": "cm-1",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 69,
+"median_ms": 87.83
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-sign-off",
+"perspective": "design-office",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 69,
+"median_ms": 86.27
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-sign-off",
+"perspective": "inspector",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 69,
+"median_ms": 210.0
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-sign-off",
+"perspective": "scale-3",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 69,
+"median_ms": 208.86
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-sign-off",
+"perspective": "system",
+"flags": [
+"variant",
+"earlier"
+],
+"category": "unconstrained",
+"queries": 69,
+"median_ms": 117.75
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-sign-off",
+"perspective": "system",
+"flags": [
+"variant"
+],
+"category": "unconstrained",
+"queries": 69,
+"median_ms": 225.54
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-sign-off",
+"perspective": "technician",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 69,
+"median_ms": 476.07
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-test-run",
+"perspective": "apprentice",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 85,
+"median_ms": 203.03
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-test-run",
+"perspective": "cm-1",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 85,
+"median_ms": 121.12
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-test-run",
+"perspective": "design-office",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 85,
+"median_ms": 172.24
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-test-run",
+"perspective": "inspector",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 85,
+"median_ms": 118.85
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-test-run",
+"perspective": "scale-3",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 85,
+"median_ms": 120.96
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-test-run",
+"perspective": "system",
+"flags": [
+"variant",
+"earlier"
+],
+"category": "unconstrained",
+"queries": 85,
+"median_ms": 195.25
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-test-run",
+"perspective": "system",
+"flags": [
+"variant"
+],
+"category": "unconstrained",
+"queries": 85,
+"median_ms": 133.2
+},
+{
+"world": "plan-relubricate-only",
+"occurrence": "o-test-run",
+"perspective": "technician",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 85,
+"median_ms": 106.43
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-bearing-replacement",
+"perspective": "apprentice",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 131,
+"median_ms": 191.88
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-bearing-replacement",
+"perspective": "cam-2",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 131,
+"median_ms": 190.71
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-bearing-replacement",
+"perspective": "cm-1",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 131,
+"median_ms": 182.39
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-bearing-replacement",
+"perspective": "cmms",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "inapplicable",
+"queries": 187,
+"median_ms": 636.31
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-bearing-replacement",
+"perspective": "design-office",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 131,
+"median_ms": 170.98
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-bearing-replacement",
+"perspective": "inspector",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "inapplicable",
+"queries": 187,
+"median_ms": 970.98
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-bearing-replacement",
+"perspective": "scale-3",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 131,
+"median_ms": 219.59
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-bearing-replacement",
+"perspective": "system",
+"flags": [
+"variant",
+"earlier"
+],
+"category": "unconstrained",
+"queries": 187,
+"median_ms": 699.38
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-bearing-replacement",
+"perspective": "system",
+"flags": [
+"variant"
+],
+"category": "inapplicable",
+"queries": 187,
+"median_ms": 585.14
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-bearing-replacement",
+"perspective": "tag-reader",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 131,
+"median_ms": 193.78
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-bearing-replacement",
+"perspective": "technician",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 131,
+"median_ms": 297.64
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-disassembly",
+"perspective": "apprentice",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 335.25
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-disassembly",
+"perspective": "cam-2",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 192.1
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-disassembly",
+"perspective": "cm-1",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 182.72
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-disassembly",
+"perspective": "cmms",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 172.14
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-disassembly",
+"perspective": "design-office",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 248.44
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-disassembly",
+"perspective": "inspector",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 210.0
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-disassembly",
+"perspective": "scale-3",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 295.28
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-disassembly",
+"perspective": "system",
+"flags": [
+"variant",
+"earlier"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 214.26
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-disassembly",
+"perspective": "system",
+"flags": [
+"variant"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 187.79
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-disassembly",
+"perspective": "tag-reader",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 173.54
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-disassembly",
+"perspective": "technician",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 208.99
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-inspection",
+"perspective": "apprentice",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 618.39
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-inspection",
+"perspective": "cam-2",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 263.42
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-inspection",
+"perspective": "cm-1",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 759.39
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-inspection",
+"perspective": "cmms",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 607.39
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-inspection",
+"perspective": "design-office",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 215.58
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-inspection",
+"perspective": "inspector",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 179.08
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-inspection",
+"perspective": "scale-3",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 140.15
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-inspection",
+"perspective": "system",
+"flags": [
+"variant",
+"earlier"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 141.92
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-inspection",
+"perspective": "system",
+"flags": [
+"variant"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 143.85
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-inspection",
+"perspective": "tag-reader",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 135.51
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-inspection",
+"perspective": "technician",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 149.9
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-reassembly",
+"perspective": "apprentice",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 139.53
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-reassembly",
+"perspective": "cam-2",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 158.41
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-reassembly",
+"perspective": "cm-1",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 182.51
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-reassembly",
+"perspective": "cmms",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 160.75
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-reassembly",
+"perspective": "design-office",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 333.78
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-reassembly",
+"perspective": "inspector",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 167.61
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-reassembly",
+"perspective": "scale-3",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 157.99
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-reassembly",
+"perspective": "system",
+"flags": [
+"variant",
+"earlier"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 160.87
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-reassembly",
+"perspective": "system",
+"flags": [
+"variant"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 170.67
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-reassembly",
+"perspective": "tag-reader",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 144.88
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-reassembly",
+"perspective": "technician",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 148.71
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-relubrication",
+"perspective": "apprentice",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 155.77
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-relubrication",
+"perspective": "cam-2",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 279.44
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-relubrication",
+"perspective": "cm-1",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 176.78
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-relubrication",
+"perspective": "cmms",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 140.13
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-relubrication",
+"perspective": "design-office",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 139.33
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-relubrication",
+"perspective": "inspector",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 142.87
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-relubrication",
+"perspective": "scale-3",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 140.32
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-relubrication",
+"perspective": "system",
+"flags": [
+"variant",
+"earlier"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 189.46
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-relubrication",
+"perspective": "system",
+"flags": [
+"variant"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 146.6
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-relubrication",
+"perspective": "tag-reader",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 140.52
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-relubrication",
+"perspective": "technician",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 141.62
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-repair",
+"perspective": "apprentice",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 145.28
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-repair",
+"perspective": "cam-2",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 144.7
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-repair",
+"perspective": "cm-1",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 140.25
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-repair",
+"perspective": "cmms",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 397.17
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-repair",
+"perspective": "design-office",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 141.65
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-repair",
+"perspective": "inspector",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 160.92
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-repair",
+"perspective": "scale-3",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 127.72
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-repair",
+"perspective": "system",
+"flags": [
+"variant",
+"earlier"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 207.53
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-repair",
+"perspective": "system",
+"flags": [
+"variant"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 181.66
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-repair",
+"perspective": "tag-reader",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 184.28
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-repair",
+"perspective": "technician",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 104,
+"median_ms": 172.51
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-sign-off",
+"perspective": "apprentice",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 96,
+"median_ms": 170.8
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-sign-off",
+"perspective": "cam-2",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 96,
+"median_ms": 174.65
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-sign-off",
+"perspective": "cm-1",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 96,
+"median_ms": 171.97
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-sign-off",
+"perspective": "cmms",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 96,
+"median_ms": 174.68
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-sign-off",
+"perspective": "design-office",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 96,
+"median_ms": 328.52
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-sign-off",
+"perspective": "inspector",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 96,
+"median_ms": 163.96
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-sign-off",
+"perspective": "scale-3",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 96,
+"median_ms": 252.16
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-sign-off",
+"perspective": "system",
+"flags": [
+"variant",
+"earlier"
+],
+"category": "unconstrained",
+"queries": 96,
+"median_ms": 252.08
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-sign-off",
+"perspective": "system",
+"flags": [
+"variant"
+],
+"category": "unconstrained",
+"queries": 96,
+"median_ms": 149.52
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-sign-off",
+"perspective": "tag-reader",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 96,
+"median_ms": 136.51
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-sign-off",
+"perspective": "technician",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 96,
+"median_ms": 138.79
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-test-run",
+"perspective": "apprentice",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 169.56
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-test-run",
+"perspective": "cam-2",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 171.17
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-test-run",
+"perspective": "cm-1",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 192.52
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-test-run",
+"perspective": "cmms",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 183.59
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-test-run",
+"perspective": "design-office",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 203.05
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-test-run",
+"perspective": "inspector",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 158.21
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-test-run",
+"perspective": "scale-3",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 182.04
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-test-run",
+"perspective": "system",
+"flags": [
+"variant",
+"earlier"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 183.97
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-test-run",
+"perspective": "system",
+"flags": [
+"variant"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 160.28
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-test-run",
+"perspective": "tag-reader",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 379.69
+},
+{
+"world": "plan-rig-control",
+"occurrence": "o-test-run",
+"perspective": "technician",
+"flags": [
+"variant",
+"perspective"
+],
+"category": "unconstrained",
+"queries": 112,
+"median_ms": 204.42
+}
+]
