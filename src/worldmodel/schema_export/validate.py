@@ -10,8 +10,11 @@ import re
 from pathlib import Path
 
 FORMAT_SCHEMAS = {"wm-schema-export/1": Path(__file__).with_name("wm-schema-export-1.schema.json"),
-                  "wm-schema-export/2": Path(__file__).with_name("wm-schema-export-2.schema.json")}
-CURRENT = "wm-schema-export/2"                 # what the exporter writes (LABS-1.043); format 1 is still read
+                  "wm-schema-export/2": Path(__file__).with_name("wm-schema-export-2.schema.json"),
+                  "wm-schema-export/3": Path(__file__).with_name("wm-schema-export-3.schema.json")}
+# what the exporter writes (LABS-1.050: format 3 adds the event-role multiplicity); formats 1 and 2 are still read, each
+# against the JSON Schema file it was written for (unchanged)
+CURRENT = "wm-schema-export/3"
 FORMAT_SCHEMA = FORMAT_SCHEMAS[CURRENT]
 SUPPORTED = {"$schema", "$id", "$defs", "$ref", "title", "description", "type", "enum", "const", "properties",
              "required", "additionalProperties", "items", "minItems", "minimum", "pattern"}
@@ -75,8 +78,17 @@ def format_schema(fmt=CURRENT):
 
 
 def validate(doc):
-    """Errors of an export document against the JSON Schema of the format it declares (empty: valid): format 2, or
-    format 1 for exports written before LABS-1.043. A document declaring another format is checked against the
-    current one, which rejects its `format`."""
+    """Errors of an export document against the JSON Schema of the format it declares (empty: valid): format 3, format
+    2 for exports written from LABS-1.043 to LABS-1.049, or format 1 for exports written before LABS-1.043. A document
+    declaring another format is checked against the current one, which rejects its `format`.
+
+    Format 3 also requires every event-role-constraint record to state its multiplicity (a rule the JSON Schema subset
+    cannot say per record kind), so a record can never be read as single-valued by omission."""
     fmt = doc.get("format") if isinstance(doc, dict) else None
-    return errors(doc, format_schema(fmt if fmt in FORMAT_SCHEMAS else CURRENT))
+    out = errors(doc, format_schema(fmt if fmt in FORMAT_SCHEMAS else CURRENT))
+    if fmt == "wm-schema-export/3" and isinstance(doc.get("module_data"), dict):
+        for i, r in enumerate(doc["module_data"].get("records", [])):
+            if isinstance(r, dict) and r.get("kind") == "event-role-constraint" and "multiplicity" not in r:
+                out.append(f"$.module_data.records[{i}]: an event-role-constraint record must state its multiplicity "
+                           f"in format 3")
+    return out

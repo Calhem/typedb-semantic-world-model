@@ -1,5 +1,5 @@
 {
- "format": "wm-schema-export/2",
+ "format": "wm-schema-export/3",
  "provenance": {
   "database": "Read from the TypeDB database (schema() text, query answers, records), or computed by the exporter from those reads alone.",
   "reconstructed": "Needs this repository's code as well as the database: core and profile attribution by replaying the recorded modules into temporary databases and comparing with the database. Checked against the database, not stored in it. It shows how the schema is reproduced from the recorded modules, not how this database was actually built: TypeDB keeps no installation history.",
@@ -28,8 +28,8 @@
  },
  "export": {
   "exporter": "worldmodel.schema_export 1.0.0",
-  "exported_at": "2026-11-19T14:04:44+00:00",
-  "code_commit": "ba4ac2121dbd05e7c4f2172c4dab27c28850ada5",
+  "exported_at": "2026-11-19T23:00:02+00:00",
+  "code_commit": "7add8cdffc63a08f664f36b549e19e2b9435db2d",
   "code_dirty": true
  },
  "verification": {

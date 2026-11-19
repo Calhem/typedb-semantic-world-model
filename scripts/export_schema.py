@@ -1,12 +1,16 @@
 """Export the schema of a TypeDB database (LABS-1.024): schema.tql, schema.json, schema-explorer.html, manifest.json.
 
-    uv run python scripts/export_schema.py <database> [--out DIR] [--require-verified]
+    uv run python scripts/export_schema.py <database> [--out DIR] [--require-verified] [--format 3|2]
     uv run python scripts/export_schema.py --reference [--out docs/schema]
+
+--format (LABS-1.050): `wm-schema-export/3` by default. Format 2 is written only where it can represent the database;
+a database with a set-valued event-role constraint is refused (exit 1, nothing written), never downgraded.
 
 --reference builds a temporary database with the full core and every registered profile, in their canonical order,
 exports it, and deletes it: this is the committed reference export under docs/schema/.
 
-Exit status: 0 exported; 1 refused (the exporter could not account for the schema exactly; nothing is written);
+Exit status: 0 exported; 1 refused (the exporter could not account for the schema exactly, or the format cannot
+represent it; nothing is written);
 2 exported, but --require-verified was given and the replay did not verify the attribution.
 """
 
@@ -38,6 +42,9 @@ def main(argv=None):
     ap.add_argument("--reference", action="store_true", help="export a fresh reference database (core + profiles)")
     ap.add_argument("--out", type=Path, help="output directory (default: exports/<database>, or docs/schema)")
     ap.add_argument("--require-verified", action="store_true", help="exit 2 unless the attribution is verified")
+    ap.add_argument("--format", choices=("3", "2"), default="3",
+                    help="export format (default 3). 2 only where it can represent the database: refused, nothing "
+                         "written, if an event-role constraint is set-valued (LABS-1.050)")
     args = ap.parse_args(argv)
     if bool(args.database) == args.reference:
         ap.error("give a database name, or --reference")
@@ -52,7 +59,7 @@ def main(argv=None):
         else:
             database, out = args.database, args.out or ROOT / "exports" / args.database
         try:
-            doc, written, timings = export_to(driver, database, out)
+            doc, written, timings = export_to(driver, database, out, format=f"wm-schema-export/{args.format}")
         except SchemaExportError as e:
             print(f"export refused: {e}", file=sys.stderr)
             return 1
