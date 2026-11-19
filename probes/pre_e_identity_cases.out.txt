@@ -1,0 +1,81 @@
+== Acceptance and polarity (actual world, system perspective)
+  I1 accepted assertion                                    merged today True  design True 
+                                                             judgement today (through identity): established                by stated names: established
+  I2 unreviewed assertion (pending)                        merged today False design False
+                                                             judgement today (through identity): pending                    by stated names: pending
+  I3 accepted assertion + accepted denial (DI-16)          merged today True  design False   <-- changes
+                                                             judgement today (through identity): disputed (polarity)        by stated names: disputed (polarity)
+  I4 accepted denial only                                  merged today False design False
+                                                             judgement today (through identity): not holding (denied)       by stated names: not holding (denied)
+  I5 rejected assertion                                    merged today False design False
+                                                             judgement today (through identity): unknown (unaccepted)       by stated names: unknown (unaccepted)
+  I6 assertion superseded by its source's denial           merged today False design False
+                                                             judgement today (through identity): not holding (denied)       by stated names: not holding (denied)
+  I7 two accepted assertions, a rejected denial            merged today True  design True 
+                                                             judgement today (through identity): established                by stated names: established
+
+== Knowledge time (as_of)
+  I8 as known before the acceptance                        merged today False design False
+                                                             judgement today (through identity): pending                    by stated names: pending
+  I8 as known after the acceptance                         merged today True  design True 
+                                                             judgement today (through identity): established                by stated names: established
+  I9 as known before an accepted denial                    merged today True  design True 
+                                                             judgement today (through identity): established                by stated names: established
+  I9 as known after it (DI-16)                             merged today True  design False   <-- changes
+                                                             judgement today (through identity): disputed (polarity)        by stated names: disputed (polarity)
+
+== Valid time (a same-as attested over an interval)
+  I10 interval [10th, 20th), asked at the 5th (before the interval) merged today True  design True 
+                                                             judgement today (through identity): unknown (not_yet_effective) by stated names: unknown (not_yet_effective)
+  I10 interval [10th, 20th), asked at the 15th (inside it) merged today True  design True 
+                                                             judgement today (through identity): established                by stated names: established
+  I10 interval [10th, 20th), asked at the 25th (after its stated end) merged today True  design True 
+                                                             judgement today (through identity): not holding (ended)        by stated names: not holding (ended)
+    (identity has no valid time, today or under the design: same-as is judged timelessly, section 3.3)
+
+== Perspective
+  I11 hr's own link, perspective hr                        merged today True  design True 
+                                                             judgement today (through identity): established                by stated names: established
+  I11 hr's own link, perspective system                    merged today False design False
+                                                             judgement today (through identity): pending                    by stated names: pending
+  I11 hr's own link, perspective clerk                     merged today False design False
+                                                             judgement today (through identity): pending                    by stated names: pending
+
+== Hypothetical worlds
+  I12 base link, plan stipulates the denial: in the plan   merged today True  design False   <-- changes
+                                                             judgement today (through identity): not holding (denied)       by stated names: not holding (denied)
+  I12 the same, in the base world                          merged today True  design True 
+                                                             judgement today (through identity): established                by stated names: established
+  I13 link stipulated in a plan: in the plan               merged today True  design True 
+                                                             judgement today (through identity): established                by stated names: established
+  I13 the same, in the base world                          merged today False design False
+                                                             judgement today (through identity): unknown (no_evidence)      by stated names: no record
+  I14 plan whose base knowledge ends before the link       merged today False design False
+                                                             judgement today (through identity): unknown (no_evidence)      by stated names: no record
+
+== Transitivity and conflicting evidence
+  I15 chain r1~r2~r3: r1 and r3 (no direct record)         merged today True  design True 
+                                                             judgement today (through identity): established                by stated names: no record
+  I16 chain s1~s2~s3, s1 != s3 denied: s1 and s3           merged today True  design False   <-- changes
+                                                             judgement today (through identity): disputed (polarity)        by stated names: not holding (denied)
+  I16 the same component: s1 and s2                        merged today True  design False   <-- changes
+                                                             judgement today (through identity): disputed (polarity)        by stated names: established
+  I17 chain u1~u2 accepted, u2~u3 pending: u1 and u3       merged today False design False
+                                                             judgement today (through identity): pending                    by stated names: no record
+  I18 chain v1~v2~v3 with v2~v3 disputed: v1 and v3        merged today True  design False   <-- changes
+                                                             judgement today (through identity): disputed (polarity)        by stated names: no record
+  I18 the same: v1 and v2 (established link)               merged today True  design True 
+                                                             judgement today (through identity): disputed (polarity)        by stated names: established
+
+== Occurrence aliases (DI-15), event roles
+  occurrence(o-1): descriptions ['act-clerk', 'act-hr']; accounts [('act-clerk', None), ('act-hr', 'accepted')]; official [('established', [['bea']])]
+  occurrence(o-1-alias): descriptions ['act-clerk', 'act-hr']; accounts [('act-clerk', 'accepted'), ('act-hr', None)]; official [('established', [['b-smith']])]
+    (design: both names give one view: both accounts compared, one official under two names, established)
+
+Totals: 28 checks; identity differs from the design in 6:
+  - I3 accepted assertion + accepted denial (DI-16)
+  - I9 as known after it (DI-16)
+  - I12 base link, plan stipulates the denial: in the plan
+  - I16 chain s1~s2~s3, s1 != s3 denied: s1 and s3
+  - I16 the same component: s1 and s2
+  - I18 chain v1~v2~v3 with v2~v3 disputed: v1 and v3

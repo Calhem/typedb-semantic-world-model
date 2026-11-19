@@ -1,0 +1,5 @@
+crm-api-dev
+crm-dev-idp
+crm-postgres-dev
+crm-web-dev
+wm-typedb

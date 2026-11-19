@@ -1,0 +1,17 @@
+same-as assertion by hr and denial by clerk, both accepted by the system
+
+system, now:
+  same-as judgement: disputed ['polarity']; identity merges: True   <-- DI-16: merges on a link that is not established
+  official role of o-2: [('established', [['b-smith', 'bea']])]
+
+system, as known before the denial:
+  same-as judgement: established []; identity merges: True
+  official role of o-2: [('established', [['b-smith', 'bea']])]
+
+hr (accepts its own assertion; has not reviewed the denial):
+  same-as judgement: established []; identity merges: True
+  official role of o-2: [('established', [['bea']])]
+
+clerk (accepts its own denial; has not reviewed the assertion):
+  same-as judgement: not holding ['denied']; identity merges: False
+  official role of o-2: [('established', [['b-smith']])]

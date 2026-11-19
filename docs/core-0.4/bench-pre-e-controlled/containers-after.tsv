@@ -1,0 +1,21 @@
+apex-api	running	Up 21 seconds (healthy)
+apex-seed	exited	Exited (0) 3 weeks ago
+apex-typedb	running	Up 21 seconds (healthy)
+apex-web	running	Up 21 seconds (healthy)
+charcoal-typedb	exited	Exited (0) 3 weeks ago
+crm-api-dev	running	Up 9 minutes
+crm-dev-idp	running	Up 4 hours
+crm-postgres-dev	running	Up 31 hours (healthy)
+crm-web-dev	running	Up 31 hours
+gupi-typedb	running	Up 22 seconds
+newslens-api	running	Up 20 seconds (healthy)
+newslens-typedb	running	Up 20 seconds (healthy)
+newslens-web	running	Up 20 seconds (healthy)
+newslens-worker	running	Up 21 seconds
+noodlelab-api	running	Up 22 seconds
+noodlelab-seed	exited	Exited (0) 2 weeks ago
+noodlelab-typedb	running	Up 22 seconds (healthy)
+noodlelab-web-dev	exited	Exited (255) 2 weeks ago
+typedb	exited	Exited (0) 3 weeks ago
+wm-postgres	exited	Exited (255) 32 hours ago
+wm-typedb	running	Up 32 hours

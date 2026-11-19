@@ -1,0 +1,2 @@
+1 control: located at p1 only: move recorded
+2 located at p1 and at p2 by the same attester: refused: TypeDBDriverException: [CNT5] Constraint '@card(0..1)' has been violated: found 2 instances. Caused: [DVL11] Instance [1F00 0D00 0000 0000 0000 01] of relation type 'event' has a relates constraint violation for role type 'event:origin'. Caused: [COW5] Concept write failed due to a data validation error. Caused: [DCT3] Data commit error. Caused: [SRV19] Data commit failed. Caused: [TSV5] Data transaction commit failed.
