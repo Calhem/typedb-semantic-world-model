@@ -55,8 +55,8 @@ def connections(wm, world, part, t, as_of=None, perspective=SYSTEM):
     """The connections of `part` that hold, or are disputed, at t: the other part, joint kind, status, support."""
     out = []
     for e in wm._contents(world, part, ("connected-to",), t, as_of, perspective):
-        if part in e.stated_roles.get("endpoint", []) and e.judgement in (Judgement.ESTABLISHED, Judgement.DISPUTED):
-            others = [x for x in e.stated_roles["endpoint"] if x != part]
+        if e.about("endpoint") and e.judgement in (Judgement.ESTABLISHED, Judgement.DISPUTED):
+            others = [x for x in e.stated_roles["endpoint"] if x not in e.subject]
             out.append({"other": others[0] if others else part,
                         "joint_kind": (e.stated_roles.get("joint-kind") or [None])[0], "status": e.status,
                         "support": [a["attestation"] for a in e.claims() if a["acceptance"] == "accepted"]})

@@ -139,7 +139,7 @@ class DynamicsMixin:
         span = self.interval(world, event, as_of, perspective)
         out = []
         for entry in self._contents(world, event, ("initiates", "terminates"), t, as_of, perspective):
-            if event not in entry.stated_roles.get("event", []):
+            if not entry.about("event"):
                 continue
             pid = entry.stated_roles["outcome"][0]
             outcome = self._proposition_by_id(pid)
@@ -363,7 +363,7 @@ class DynamicsMixin:
         memo = _memo or _Memo(self, world, as_of, perspective)
         out = []
         for entry in self._contents(world, pid, (kind,), t, as_of, perspective):
-            if pid not in entry.stated_roles.get("outcome", []):
+            if not entry.about("outcome"):
                 continue
             for ev in entry.stated_roles.get("event", []):
                 span = self.interval(world, ev, as_of, perspective, _memo=memo)
@@ -422,11 +422,11 @@ class DynamicsMixin:
         if not details:
             return {"occurrence": occurrence, "status": status, "answer": answer}
         existence = [e for e in self._contents(world, occurrence, ("existence",), t, as_of, perspective)
-                     if occurrence in e.stated_roles.get("existent", [])]
+                     if e.about("existent")]
         memo = _memo or _Memo(self, world, as_of, perspective)
         descs = []
         for link in self._contents(world, occurrence, ("describes",), t, as_of, perspective):
-            if occurrence not in link.stated_roles.get("occurrence", []):
+            if not link.about("occurrence"):
                 continue
             for d in link.stated_roles.get("description", []):
                 recs = memo.events().get(d, [])
@@ -441,7 +441,7 @@ class DynamicsMixin:
                 "descriptions": sorted(descs, key=lambda x: x["description"])}
 
     # ---- event roles (LABS-1.043, DI-2: ER-1 to ER-5) -------------------------------------------------------------------
-    def _event_roles(self, world, occurrence, memo, as_of=None, perspective=SYSTEM):
+    def _event_roles(self, world, occurrence, memo, as_of=None, perspective=SYSTEM, ident=None):
         """(accounts, roles) for `occurrence()`. Every description linked to the occurrence (or to anything the
         perspective's identity makes the same occurrence) by a visible describes claim is an account, accepted or not.
         Its link is judged by the canonical record of the describes content at the start of the account (the time it
@@ -451,7 +451,7 @@ class DynamicsMixin:
         (ER-4) over the compared accounts of the nearest world, players under the perspective's identity. Roles are
         keyed by stored role label, with the core role alongside (ER-5)."""
         from . import typeql as q
-        ident = self.identity(world, as_of, perspective, ids=[occurrence])
+        ident = ident or self.identity(world, as_of, perspective, ids=[occurrence])
         members = set(ident.members(occurrence))
         links = self._load(world, as_of, types=["describes"], subjects=sorted(members), perspective=perspective)
         linked = sorted({d for a in links.values() if members & set(a.roles.get("occurrence", []))
@@ -584,7 +584,7 @@ class DynamicsMixin:
         out, seen = [], set()
         for target in [effect, *lifted]:
             for entry in self._contents(world, target, ("causes",), t, as_of, perspective):
-                if target not in entry.stated_roles.get("effect", []):
+                if not entry.about("effect"):
                     continue
                 cause = entry.stated_roles["cause"][0]
                 if (cause, target) in seen:

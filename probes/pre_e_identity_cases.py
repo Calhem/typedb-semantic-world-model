@@ -34,6 +34,18 @@ def T(day):
     return datetime(2026, 11, day, 9, tzinfo=timezone.utc)
 
 
+def legacy_interval(wm, aid, start, end):
+    """Give an existing attestation an exact stated interval in storage, as same-as attestations written before
+    LABS-1.048 can have one (the library no longer writes it)."""
+    from worldmodel import typeql as q
+    with wm._writing() as tx:
+        q.run(tx, """match $a isa attestation, has wm-id == $id, has end-basis $eb; delete has $eb of $a;""",
+              {"id": aid})
+        q.run(tx, """match $a isa attestation, has wm-id == $id;
+            insert $a has end-basis "stated", has valid-from-earliest == $s, has valid-from-latest == $s,
+            has valid-to-earliest == $e, has valid-to-latest == $e;""", {"id": aid, "s": start, "e": end})
+
+
 driver = connect()
 DB = f"wm-probe-ident-{uuid.uuid4().hex[:8]}"
 clock = Clock()
@@ -118,7 +130,12 @@ try:
     check("I9 as known after it (DI-16)", "j1", "j2", False)
 
     print("\n== Valid time (a same-as attested over an interval)")
-    wm.accept(wm.attest("w", "same-as", {"same": ["k1", "k2"]}, start=T(10), end=T(20), attester="matcher"))
+    try:
+        k = wm.attest("w", "same-as", {"same": ["k1", "k2"]}, start=T(10), end=T(20), attester="matcher")
+    except ValueError:                  # refused since LABS-1.048 (ID-3): write the interval as older data has it
+        k = wm.attest("w", "same-as", {"same": ["k1", "k2"]}, attester="matcher")
+        legacy_interval(wm, k, T(10), T(20))
+    wm.accept(k)
     for day, when in ((5, "before the interval"), (15, "inside it"), (25, "after its stated end")):
         check(f"I10 interval [10th, 20th), asked at the {day}th ({when})", "k1", "k2", True, t=T(day))
     print("    (identity has no valid time, today or under the design: same-as is judged timelessly, section 3.3)")

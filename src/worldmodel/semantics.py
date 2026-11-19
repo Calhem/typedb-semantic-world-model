@@ -141,7 +141,12 @@ def verdict(a, t):
     """What the attestation says about its content at t: True (holds), False (does not hold), None (nothing).
 
     A positive attestation says the content holds inside its interval and, with a stated end, no longer holds after it.
-    A denial says the content does not hold inside its interval and nothing outside it."""
+    A denial says the content does not hold inside its interval and nothing outside it.
+
+    Identity is timeless (ID-3, LABS-1.048): a same-as attestation says its polarity at every t; any interval stated
+    on it (written before the increment) is ignored."""
+    if a.kind == "same-as":
+        return a.polarity
     inside = in_interval(a, t)
     if a.polarity:
         return inside
@@ -165,32 +170,111 @@ def answer_status(support):
     return Status.INFERRED
 
 
+def decide(items, t):
+    """The polarity layer for one content class (increment B's first layer, shared by `_judge` and identity links):
+    `items` are (usable attestation, its verdict at t) pairs with a verdict. Returns (True / False / "disputed", the
+    deciding attestations, their world depth), or None when nothing decides.
+
+    The nearest world's deciding attestations win; an assertion and a denial at that depth are a dispute. A stated end
+    says the content stopped holding, but only until the content is attested to start again: an ended attestation's
+    "does not hold" is dropped when a usable positive attestation of the same content started after that end and by t.
+    Genuine conflicts (an account begun before the end) still dispute."""
+    restarts = [a.start for a, v in items if a.polarity and a.start is not None]
+    items = [(a, v) for a, v in items if not (
+        v is False and a.polarity and a.end is not None and a.end.latest is not None
+        and any(st.earliest >= a.end.latest and st.latest <= t for st in restarts))]
+    if not items:
+        return None
+    depth = min(a.depth for a, _ in items)
+    near = [(a, v) for a, v in items if a.depth == depth]
+    vals = {v for _, v in near}
+    return ("disputed" if len(vals) > 1 else vals.pop(), [a for a, _ in near], depth)
+
+
 class Identity:
-    """Equivalence classes from usable `same-as` attestations for one perspective. Unaccepted links never chain."""
+    """Identity classes for one context (world, knowledge time, perspective), from the visible `same-as` attestations
+    (LABS-1.048, decisions ID-1 to ID-7 of docs/core-0.4/pre-e-identity-design.md):
+    - ID-1: each identity link (one unordered pair of stated names) is judged by its stated names with the polarity
+      layer (`decide`), never through identity: world precedence, acceptance, supersession and polarity;
+    - ID-3: timelessly (valid time does not enter; see `verdict`);
+    - ID-2, ID-4: two names are one thing only through links judged ESTABLISHED: the classes are the connected
+      components of the established links; disputed, denied, pending and unknown links join nothing;
+    - ID-5: a component containing two names whose own link is DISPUTED or NOT_HOLDING is not merged at all (each name
+      is its own class) and is reported in `conflicts`;
+    - ID-6, ID-7: the nearest world decides each link; the perspective's acceptances at `as_of` apply (via `usable`).
+
+    `links`: every established link, with its support, the world depth that decided it and whether it merges (False
+    inside a conflict). `conflicts`: one entry per component in conflict. `proposed`: unreviewed links (unchanged)."""
 
     def __init__(self, same_as, perspective, as_of):
         self.parent, self.proposed = {}, []
+        by_pair = {}
         for a in same_as:
-            if a.kind != "same-as" or not a.polarity:
+            if a.kind != "same-as":
                 continue
-            x, y = a.roles["same"][:2]
-            if usable(a, perspective, as_of):
-                self._union(x, y)
-            elif acceptance_state(a, perspective, as_of) == "unreviewed" and not superseded(a, perspective, as_of):
+            names = a.roles.get("same", [])[:2]
+            if len(names) < 2:
+                continue
+            x, y = names
+            by_pair.setdefault(tuple(sorted((x, y))), []).append(a)
+            if a.polarity and acceptance_state(a, perspective, as_of) == "unreviewed" \
+                    and not superseded(a, perspective, as_of):
                 self.proposed.append((a.id, x, y))
+        self.judged = {}                  # pair -> ("established" | "disputed" | "denied", support ids, depth)
+        for pair, its in sorted(by_pair.items()):
+            d = decide([(a, a.polarity) for a in its if usable(a, perspective, as_of)], None)
+            if d is None:
+                continue                  # pending or unknown: joins nothing, not conflict evidence
+            val, support, depth = d
+            label = {True: "established", False: "denied", "disputed": "disputed"}[val]
+            self.judged[pair] = (label, tuple(sorted(a.id for a in support)), depth)
+        reach = {}
+        for (x, y), (label, _, _) in self.judged.items():
+            if label == "established":
+                self._union(reach, x, y)
+        self._reach = reach
+        comps = {}
+        for x in list(reach):
+            comps.setdefault(self._root(reach, x), set()).add(x)
+        self.conflicts = []
+        blocked = set()
+        for root, comp in sorted(comps.items()):
+            against = [(p, j) for p, j in self.judged.items() if j[0] != "established" and set(p) <= comp]
+            if not against:
+                continue
+            blocked |= comp
+            self.conflicts.append({
+                "names": sorted(comp),
+                "links": [self._link(p, j) for p, j in sorted(self.judged.items())
+                          if j[0] == "established" and set(p) <= comp],
+                "against": [self._link(p, j) for p, j in sorted(against)]})
+        for (x, y), (label, _, _) in sorted(self.judged.items()):
+            if label == "established" and x not in blocked:
+                self._union(self.parent, x, y)
+        self.links = [{**self._link(p, j), "merges": p[0] not in blocked}
+                      for p, j in sorted(self.judged.items()) if j[0] == "established"]
 
-    def _find(self, x):
-        self.parent.setdefault(x, x)
-        while self.parent[x] != x:
-            self.parent[x] = self.parent[self.parent[x]]
-            x = self.parent[x]
+    @staticmethod
+    def _link(pair, judged):
+        label, support, depth = judged
+        return {"same": list(pair), "judgement": label, "support": list(support), "depth": depth}
+
+    @staticmethod
+    def _root(parent, x):
+        parent.setdefault(x, x)
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
         return x
 
-    def _union(self, a, b):
-        ra, rb = self._find(a), self._find(b)
+    def _union(self, parent, a, b):
+        ra, rb = self._root(parent, a), self._root(parent, b)
         if ra != rb:
             keep, drop = sorted((ra, rb))
-            self.parent[drop] = keep
+            parent[drop] = keep
+
+    def _find(self, x):
+        return self._root(self.parent, x)
 
     def canonical(self, x):
         return self._find(x)
@@ -198,6 +282,19 @@ class Identity:
     def members(self, x):
         root = self._find(x)
         return sorted({y for y in list(self.parent) if self._find(y) == root} | {x})
+
+    def reach(self, x):
+        """Every name connected to x by established links, whether or not the component merges (a conflict does not
+        stop the selective path from loading the component's links: TI-4)."""
+        root = self._root(self._reach, x)
+        return sorted({y for y in list(self._reach) if self._root(self._reach, y) == root} | {x})
+
+    def report(self, x):
+        """The identity of x for a reader (ID-6, ID-9): the established links among the names connected to it, each
+        with its support and world depth, and the conflict that keeps them apart, if any."""
+        names = set(self.reach(x))
+        conflict = next((c for c in self.conflicts if x in c["names"]), None)
+        return {"links": [link for link in self.links if set(link["same"]) <= names], "conflict": conflict}
 
 
 @dataclass(frozen=True)
