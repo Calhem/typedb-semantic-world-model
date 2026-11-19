@@ -1,0 +1,8 @@
+run 1 sel1-prof0: 633 passed, 1 warning in 588.28s (0:09:48)
+run 1 sel1-prof1: 633 passed, 1 warning in 664.39s (0:11:04)
+run 1 sel0-prof0: 633 passed, 1 warning in 565.23s (0:09:25)
+run 1 sel0-prof1: 633 passed, 1 warning in 606.42s (0:10:06)
+run 2 sel1-prof0: 633 passed in 501.03s (0:08:21)
+run 2 sel1-prof1: 633 passed in 568.40s (0:09:28)
+run 2 sel0-prof0: 633 passed in 485.95s (0:08:05)
+run 2 sel0-prof1: 633 passed in 557.59s (0:09:17)

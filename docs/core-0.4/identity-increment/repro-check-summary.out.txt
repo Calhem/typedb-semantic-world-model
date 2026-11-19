@@ -1,0 +1,3 @@
+answers: frozen 106752, rebuilt 106752; same questions: True
+identical after masking: 85465; different: 21287
+Old code (bf60c1f) gives byte-identical output.
