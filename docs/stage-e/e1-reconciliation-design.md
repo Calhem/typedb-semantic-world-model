@@ -67,6 +67,14 @@ answered NOT_YET_KNOWN or UNKNOWN, now raises. The 106,752-answer baseline is ch
 **Documentation.** The organisation module notes give the stored roles: `office-holding(classified: holder, class:
 office, context)` and `classified-as(classified: holder, class: capability, context?)`.
 
+**Older documents.** Approved design documents and plans written before this reconciliation
+(`docs/core-0.4/stage-d2-design.md`, `stage-c.md`, `docs/plans/core-0.4-plan.md`) and a comment in
+`schema/core/core-0.4-c2.tql` write `office-holding(holder, office, context)` and `classified-as(holder, capability,
+context?)` as **descriptive labels** for the positions, not as role names. They are historical and are not edited;
+the stored roles are `classified`, `class` and `context`, as the corrected module notes (`organisation.py`,
+`agency.py`) and `WorldModel.role_names()` give them. The frozen benchmark reference (`benchmark/e1/spec/reader-docs.md`)
+keeps the old notation; `benchmark/e1/CLARIFICATIONS.md` supersedes it.
+
 **Tests** (`tests/test_w_role_names.py`): refused names (with the valid list); a profile's stored name pointing to
 its core name; inherited roles accepted; every reader above; answers with valid names unchanged.
 
