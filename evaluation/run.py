@@ -28,6 +28,8 @@ from evaluation.check import BENCH, fixtures, questions  # noqa: E402
 from evaluation.loader import T, drop, load  # noqa: E402
 
 PATHS = (("selective", True), ("full", False))
+NOT_SUPPORT = {"pending", "alternatives", "only_in", "not_traversed", "accounts", "descriptions", "superseded_by_source"}
+UNUSABLE = {"unreviewed", "rejected", "retracted"}
 REFUSALS = (MovementConflict, RoleCardinalityError, ValueError)
 
 
@@ -41,6 +43,35 @@ def _status(s):
 
 def _ids(xs):
     return sorted({str(x) for x in xs or ()})
+
+
+def usable_evidence(x):
+    """Evidence entries ({"attestation": id, "acceptance": ...}) the perspective can use, anywhere under x, except under
+    keys that list non-supporting material (pending, alternatives, only_in, not_traversed, accounts, descriptions)."""
+    out = set()
+
+    def walk(v, key=None):
+        if key in NOT_SUPPORT:
+            return
+        if isinstance(v, dict):
+            if isinstance(v.get("attestation"), str) and v.get("acceptance") not in UNUSABLE:
+                out.add(v["attestation"])
+            for k, w in v.items():
+                walk(w, k)
+        elif isinstance(v, (list, tuple)):
+            for w in v:
+                walk(w, key)
+    walk(x)
+    return out
+
+
+def deciding(r, entries_key):
+    """What an applicability answer (capable, authorised, calibration_status) rests on: its `support` (rule Q's
+    deciding claims) where the reader states one; otherwise (a dispute between entries, or an answer such as "not yet
+    effective" whose support the reader leaves empty) the usable evidence of the entries it reports as applicable."""
+    if r.get("support"):
+        return set(r["support"])
+    return set().union(set(), *(usable_evidence(e) for e in r.get(entries_key, [])))
 
 
 # ---- adapters: one public reader per template; each returns (normalised answer, cited attestation ids) --------------
@@ -97,7 +128,8 @@ def a_event_role(L, p):
     applying = [x for x in role["constraints"] if x["applies"]]
     if applying:
         x = applying[0]
-        cited = list(x.get("support", [])) + [a["description"] for g in x["players"] for a in g["accounts"]]
+        cited = (set(x.get("support", [])) | set((x.get("classification") or {}).get("support", [])) |
+                 {a["description"] for g in x["players"] for a in g["accounts"]})
         out = {"judgement": x["judgement"], "players": sorted(sorted(g["names"]) for g in x["players"]),
                "reason": x.get("reason"), "multiplicity": x.get("multiplicity")}
         if len(applying) > 1:
@@ -115,31 +147,35 @@ def a_event_role(L, p):
 
 def a_occurrence_status(L, p):
     r = L.wm.occurrence_status(p["world"], p["occurrence"], T(p["t"]), **_ctx(L, p))
-    return {"status": r["status"]}, r.get("support", ())
+    return {"status": r["status"]}, getattr(r.get("answer"), "support", ())
 
 
 def a_office_holders(L, p):
     r = org.office_holders(L.wm, p["world"], p["office"], p["context"], T(p["t"]), **_ctx(L, p))
-    cited = [s for a in r.get("appointments", []) for s in a.get("support", [])]
+    cited = set().union(*(usable_evidence(a) for a in r.get("appointments", []) if a.get("judgement") == "established"))
+    for a in (r["conflict"] or {}).get("appointments", []):
+        cited.update(a.get("attestations", []))
+    cited.update(((r["conflict"] or {}).get("constraint") or {}).get("support", []))
     return {"holders": _ids(r["holders"]), "conflict": r["conflict"] is not None}, cited
 
 
-def _applicability(r):
-    return {"judgement": r["judgement"]}, r.get("support", ())
+def _applicability(r, entries_key):
+    return {"judgement": r["judgement"]}, deciding(r, entries_key)
 
 
 def a_capable(L, p):
     return _applicability(L.wm.capable(p["world"], p["holder"], p["capability"], T(p["t"]), p.get("context"),
-                                       **_ctx(L, p)))
+                                       **_ctx(L, p)), "applicable")
 
 
 def a_authorised(L, p):
     return _applicability(org.authorised(L.wm, p["world"], p["holder"], p["power"], p["scope"], T(p["t"]),
-                                         **_ctx(L, p)))
+                                         **_ctx(L, p)), "grants")
 
 
 def a_calibrated(L, p):
-    return _applicability(lab.calibration_status(L.wm, p["world"], p["instrument"], T(p["t"]), **_ctx(L, p)))
+    return _applicability(lab.calibration_status(L.wm, p["world"], p["instrument"], T(p["t"]), **_ctx(L, p)),
+                          "certificates")
 
 
 def a_officials(L, p):
