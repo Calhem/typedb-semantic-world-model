@@ -114,6 +114,15 @@ where DI-5 says they must:
 Registered DI-5 case: an accepted holding from day 8 with an unreviewed denial, asked on day 5, was "unreviewed" ("not
 established" in `capable`). It becomes "not yet effective", with the denial in `pending`.
 
+**Addendum (LABS-1.052, Stage E1 reconciliation R3; the design text above is unchanged).** The table does not
+mention functional exclusivity; World Ontology v0.2 4.4 decides it, and the implementation follows v0.2. A content in
+a single-valued slot whose slot holds **another value** at t, established for the perspective (ASSERTED, STIPULATED
+or INFERRED), **does not hold**: `judgement` `not holding`, and `holds` answers false with status INFERRED, citing
+the established value's attestations (v0.2 4.4: "false, INFERRED by functional exclusivity"). This is decided before
+`PENDING`: an unreviewed attestation of the content itself does not make it pending while the slot is decided
+otherwise. A **disputed** slot decides nothing about any other value. Pinned by `tests/test_w_role_names.py`
+(exclusivity section); found by the Stage E1 benchmark (TEMP-017); see `docs/stage-e/e1-reconciliation-design.md`, R3.
+
 ### 2.5 One content versus a report about many
 The record is about **one content in one context** and carries nothing aggregated. Questions answered from several
 contents (`capable`, `authorised`, `calibration_status`, `office_holders.status`, a closure's result) are separate

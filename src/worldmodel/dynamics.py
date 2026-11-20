@@ -594,6 +594,7 @@ class DynamicsMixin:
             e["players"] = {p: sorted(ds) for p, ds in sorted(e["players"].items())}
             e["constraints"] = [{k: v for k, v in j.items() if not k.startswith("_")}
                                 for j in judged if label in j["_labels"]]
+            e["resolved"] = self._resolved_role(label, judged, accounts, pid)
         public = [{"description": x["description"], "type": x["type"], "attesters": x["attesters"],
                    "describes": x["describes"], "describes_by": x["describes_by"], "account": x["account"],
                    "depth": x["depth"],
@@ -601,6 +602,53 @@ class DynamicsMixin:
                              for lab, (c, ids) in sorted(x["_roles"].items())}}
                   for x in accounts]
         return public, dict(sorted(roles.items()))
+
+    @staticmethod
+    def _resolved_role(label, judged, accounts, pid):
+        """The resolved role-player set of one stored role label (LABS-1.052, R1 of
+        docs/stage-e/e1-reconciliation-design.md): MP-2's players, from the compared accounts only (accepted, describes
+        link established, nearest world), beside ER-5's complete listing in `players`. `judgement`: `established` (an
+        applying constraint holds), `disputed` (an applying constraint is violated: no player is resolved; the rival
+        candidates stay in `constraints`), `union` (no constraint applies: the compared accounts' players, grouped
+        under the perspective's identity; nothing is concluded beyond what those accounts state) or `none` (no
+        compared account names the role). Never resolved: a player named only by an account that is not compared, or
+        only by a farther world's account. Resolving says nothing about whether the occurrence happened
+        (occurrence_status) or whether an account's other claims hold."""
+        naming = [x for x in accounts if label in x["_roles"]]
+        compared = [x for x in naming if x["_compared"]]
+        depth = min((x["depth"] for x in compared), default=None)
+        near = [x for x in compared if x["depth"] == depth]
+        out = {"judgement": "none", "players": [], "compared": sorted(x["description"] for x in near),
+               "overridden": sorted(x["description"] for x in compared if x["depth"] != depth),
+               "not_compared": [{"description": x["description"],
+                                 "why": (f"account {x['account']}" if x["account"] != "accepted"
+                                         else f"describes {x['describes']}")}
+                                for x in sorted(naming, key=lambda x: x["description"]) if not x["_compared"]],
+               "constraint": None, "support": []}
+        applying = [j for j in judged if j["applies"] and label in j["_labels"] and j["judgement"] is not None]
+        if applying:
+            j = next((j for j in applying if j["judgement"] == "disputed"), applying[0])
+            out["constraint"] = {k: j[k] for k in ("event_type", "role", "kind", "multiplicity")}
+            if j["judgement"] == "disputed":
+                out["judgement"] = "disputed"
+            else:
+                out.update(judgement="established", players=j["players"], support=list(j["support"]))
+            return out
+        if not near:
+            return out
+        groups = {}
+        for x in near:
+            for p in x["_roles"][label][1]:
+                g = groups.setdefault(pid.canonical(p), {"names": set(), "accounts": set(), "recs": {}})
+                g["names"].add(p)
+                g["accounts"].add((x["description"], tuple(sorted({a.attester for a in x["_use"]}))))
+                g["recs"].update({a.id: a for a in x["_use"]})
+        out.update(judgement="union",
+                   players=[{"names": sorted(g["names"]),
+                             "accounts": [{"description": d, "attesters": list(w)} for d, w in sorted(g["accounts"])],
+                             "status": answer_status(g["recs"].values())} for _, g in sorted(groups.items())],
+                   support=sorted({i for g in groups.values() for i in g["recs"]}))
+        return out
 
     def causes_of(self, world, effect, t, as_of=None, perspective=SYSTEM, _memo=None):
         """Every causal claim about what caused `effect` (an occurrence or an event description), judged for the

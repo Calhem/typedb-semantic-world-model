@@ -2,8 +2,8 @@
 
 Plan 9.5 (DX-3) and World Ontology v0.2 §3.1:
 - a capability (`capability` concept: can-weigh) and a role (`social-role` concept: analyst) are held through
-  classified-as(holder, concept, context?) over an attested interval; a contextual one applies only in its context, a
-  general one (no context) everywhere;
+  classified-as(classified: holder, class: concept, context?) over an attested interval; a contextual one applies
+  only in its context, a general one (no context) everywhere;
 - agency is the category `agent`, held the same way: an entity can be an agent without a given capability, and have a
   capability (a balance can weigh) without being an agent;
 - roles occupied within a particular event are its participant roles (actor, instrument...).
