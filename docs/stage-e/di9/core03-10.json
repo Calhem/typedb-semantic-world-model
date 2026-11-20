@@ -1,0 +1,267 @@
+{
+ "dataset": {
+  "scale": 10,
+  "objects": 2000,
+  "places": 300,
+  "moves": 10000,
+  "queries": 60,
+  "seed": 11
+ },
+ "db": "wm-probe-core03-10",
+ "ingest": {
+  "seconds": 1160.0,
+  "move_ms_median": 90.8,
+  "move_ms_p95": 192.2
+ },
+ "database_bytes": 101748828,
+ "typedb_memory_before": "541.3MiB / 7.748GiB cpu 45.12%",
+ "typedb_memory_after": "541.2MiB / 7.748GiB cpu 33.82%",
+ "selective": {
+  "latency": {
+   "n": 60,
+   "min": 112.0,
+   "p10": 138.4,
+   "p50": 233.5,
+   "p90": 279.3,
+   "p95": 293.6,
+   "p99": 315.5,
+   "max": 332.2,
+   "mean": 217.2
+  },
+  "median_ms": {
+   "total": 233.52,
+   "open": 2.16,
+   "first": 13.75,
+   "stream": 215.94,
+   "python": 2.59
+  },
+  "mean_ms": {
+   "total": 217.19,
+   "open": 2.23,
+   "first": 11.99,
+   "stream": 200.33,
+   "python": 2.63
+  },
+  "queries_per_question": 17.17,
+  "transactions_per_question": 3.0,
+  "rows_per_question": 25.0,
+  "shapes": [
+   {
+    "shape": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa located-at; $subj has wm-id == $sid; $c links ($kr: $subj); { not { $a has valid-from-latest $s0; }; } or { $a has valid-from-latest $s1; $s1 <= $at; }",
+    "executions": 60,
+    "rows_per_execution": 1.7,
+    "first_ms": 0.65,
+    "stream_ms": 8.19,
+    "total_ms": 2085.3
+   },
+   {
+    "shape": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa located-at; $subj has wm-id == $sid; $c links ($kr: $subj); $rec <= $klim; { not { $a has valid-from-earliest $v0; }; } or { $a has valid-from-earliest",
+    "executions": 31,
+    "rows_per_execution": 3.3,
+    "first_ms": 0.68,
+    "stream_ms": 57.9,
+    "total_ms": 2075.5
+   },
+   {
+    "shape": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa same-as; $subj has wm-id == $sid; $c links ($kr: $subj); $who has wm-id $wid; $c isa! $t; $c has proposition-key $ck; fetch { ?: $aid, ?: $wid, ?: $t, ",
+    "executions": 60,
+    "rows_per_execution": 0.0,
+    "first_ms": 0.61,
+    "stream_ms": 22.17,
+    "total_ms": 1370.5
+   },
+   {
+    "shape": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa same-as; $subj has wm-id == $sid; $c links ($kr: $subj); try { $c links ($role: $x); $x has wm-id $xid; };",
+    "executions": 60,
+    "rows_per_execution": 0.0,
+    "first_ms": 0.69,
+    "stream_ms": 20.31,
+    "total_ms": 1265.9
+   },
+   {
+    "shape": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa same-as; $subj has wm-id == $sid; $c links ($kr: $subj); $acc isa acceptance (holder: $h, accepted: $a), has verdict $vd, has recorded-at $vrec; $h has",
+    "executions": 60,
+    "rows_per_execution": 0.0,
+    "first_ms": 0.73,
+    "stream_ms": 20.18,
+    "total_ms": 1255.4
+   },
+   {
+    "shape": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa same-as; $subj has wm-id == $sid; $c links ($kr: $subj); $su isa supersession (old: $a, new: $n), has recorded-at $srec; $n has wm-id $nid, has stance ",
+    "executions": 60,
+    "rows_per_execution": 0.0,
+    "first_ms": 0.71,
+    "stream_ms": 18.21,
+    "total_ms": 1134.8
+   },
+   {
+    "shape": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa same-as; $subj has wm-id == $sid; $c links ($kr: $subj); $rec <= $klim; { not { $a has valid-from-earliest $v0; }; } or { $a has valid-from-earliest $v",
+    "executions": 31,
+    "rows_per_execution": 0.0,
+    "first_ms": 0.76,
+    "stream_ms": 21.86,
+    "total_ms": 705.1
+   },
+   {
+    "shape": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa same-as; $subj has wm-id == $sid; $c links ($kr: $subj); $rec <= $klim; { not { $a has valid-from-earliest $v0; }; } or { $a has valid-from-earliest $v",
+    "executions": 31,
+    "rows_per_execution": 0.0,
+    "first_ms": 0.76,
+    "stream_ms": 19.95,
+    "total_ms": 644.4
+   },
+   {
+    "shape": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa same-as; $subj has wm-id == $sid; $c links ($kr: $subj); $rec <= $klim; { not { $a has valid-from-earliest $v0; }; } or { $a has valid-from-earliest $v",
+    "executions": 31,
+    "rows_per_execution": 0.0,
+    "first_ms": 0.8,
+    "stream_ms": 19.91,
+    "total_ms": 642.9
+   },
+   {
+    "shape": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa same-as; $subj has wm-id == $sid; $c links ($kr: $subj); $rec <= $klim; { not { $a has valid-from-earliest $v0; }; } or { $a has valid-from-earliest $v",
+    "executions": 31,
+    "rows_per_execution": 0.0,
+    "first_ms": 0.76,
+    "stream_ms": 18.0,
+    "total_ms": 582.3
+   },
+   {
+    "shape": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa located-at; $subj has wm-id == $sid; $c links ($kr: $subj); $rec <= $klim; { not { $a has valid-from-earliest $v0; }; } or { $a has valid-from-earliest",
+    "executions": 31,
+    "rows_per_execution": 13.1,
+    "first_ms": 0.69,
+    "stream_ms": 4.5,
+    "total_ms": 184.4
+   },
+   {
+    "shape": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa located-at; $subj has wm-id == $sid; $c links ($kr: $subj); { not { $a has valid-from-latest $s0; }; } or { $a has valid-from-latest $s1; $s1 <= $at; }",
+    "executions": 60,
+    "rows_per_execution": 7.0,
+    "first_ms": 0.63,
+    "stream_ms": 1.26,
+    "total_ms": 165.6
+   },
+   {
+    "shape": "match $v isa world, has wm-id == $world; $br isa branching (base: $b, variant: $v), has branch-at $at, has knowledge-at $kat, has recorded-at $rec; $b has wm-id $bid;",
+    "executions": 182,
+    "rows_per_execution": 0.3,
+    "first_ms": 0.62,
+    "stream_ms": 0.2,
+    "total_ms": 159.7
+   },
+   {
+    "shape": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa located-at; $subj has wm-id == $sid; $c links ($kr: $subj); { not { $a has valid-from-latest $s0; }; } or { $a has valid-from-latest $s1; $s1 <= $at; }",
+    "executions": 60,
+    "rows_per_execution": 3.5,
+    "first_ms": 0.64,
+    "stream_ms": 1.21,
+    "total_ms": 134.7
+   },
+   {
+    "shape": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa located-at; $subj has wm-id == $sid; $c links ($kr: $subj); $rec <= $klim; { not { $a has valid-from-earliest $v0; }; } or { $a has valid-from-earliest",
+    "executions": 31,
+    "rows_per_execution": 6.5,
+    "first_ms": 0.65,
+    "stream_ms": 3.25,
+    "total_ms": 132.6
+   },
+   {
+    "shape": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa located-at; $subj has wm-id == $sid; $c links ($kr: $subj); { not { $a has valid-from-latest $s0; }; } or { $a has valid-from-latest $s1; $s1 <= $at; }",
+    "executions": 60,
+    "rows_per_execution": 0.0,
+    "first_ms": 0.65,
+    "stream_ms": 0.26,
+    "total_ms": 56.4
+   },
+   {
+    "shape": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa located-at; $subj has wm-id == $sid; $c links ($kr: $subj); $rec <= $klim; { not { $a has valid-from-earliest $v0; }; } or { $a has valid-from-earliest",
+    "executions": 31,
+    "rows_per_execution": 0.0,
+    "first_ms": 0.86,
+    "stream_ms": 0.26,
+    "total_ms": 35.2
+   },
+   {
+    "shape": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa located-at; $subj has wm-id == $sid; $c links ($kr: $subj); { not { $a has valid-from-latest $s0; }; } or { $a has valid-from-latest $s1; $s1 <= $at; }",
+    "executions": 29,
+    "rows_per_execution": 0.0,
+    "first_ms": 0.81,
+    "stream_ms": 0.22,
+    "total_ms": 31.4
+   },
+   {
+    "shape": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa located-at; $subj has wm-id == $sid; $c links ($kr: $subj); $rec <= $klim; { not { $a has valid-from-earliest $v0; }; } or { $a has valid-from-earliest",
+    "executions": 31,
+    "rows_per_execution": 0.0,
+    "first_ms": 0.72,
+    "stream_ms": 0.27,
+    "total_ms": 31.3
+   },
+   {
+    "shape": "match $c isa same-as; $c links (same: $x); $x has wm-id $xid; { $x has wm-id == $i0; } or { $x has wm-id == $i1; };",
+    "executions": 14,
+    "rows_per_execution": 0.0,
+    "first_ms": 0.62,
+    "stream_ms": 0.11,
+    "total_ms": 10.4
+   },
+   {
+    "shape": "match $c isa same-as; $c links (same: $x); $x has wm-id $xid; { $x has wm-id == $i0; } or { $x has wm-id == $i1; } or { $x has wm-id == $i2; };",
+    "executions": 12,
+    "rows_per_execution": 0.0,
+    "first_ms": 0.59,
+    "stream_ms": 0.11,
+    "total_ms": 8.9
+   },
+   {
+    "shape": "match $c isa same-as; $c links (same: $x); $x has wm-id $xid; { $x has wm-id == $i0; };",
+    "executions": 11,
+    "rows_per_execution": 0.0,
+    "first_ms": 0.61,
+    "stream_ms": 0.09,
+    "total_ms": 7.9
+   },
+   {
+    "shape": "match $c isa same-as; $c links (same: $x); $x has wm-id $xid; { $x has wm-id == $i0; } or { $x has wm-id == $i1; } or { $x has wm-id == $i2; } or { $x has wm-id == $i3; } or { $x has wm-id == $i4; };",
+    "executions": 8,
+    "rows_per_execution": 0.0,
+    "first_ms": 0.64,
+    "stream_ms": 0.11,
+    "total_ms": 6.3
+   },
+   {
+    "shape": "match $c isa same-as; $c links (same: $x); $x has wm-id $xid; { $x has wm-id == $i0; } or { $x has wm-id == $i1; } or { $x has wm-id == $i2; } or { $x has wm-id == $i3; } or { $x has wm-id == $i4; } or { $x has wm-id == $i5; };",
+    "executions": 6,
+    "rows_per_execution": 0.0,
+    "first_ms": 0.59,
+    "stream_ms": 0.14,
+    "total_ms": 4.5
+   },
+   {
+    "shape": "match $c isa same-as; $c links (same: $x); $x has wm-id $xid; { $x has wm-id == $i0; } or { $x has wm-id == $i1; } or { $x has wm-id == $i2; } or { $x has wm-id == $i3; } or { $x has wm-id == $i4; } or { $x has wm-id == $i5; } or { $x has wm-id == $i6; } or { $x has wm-id == $i7; } or { $x has wm-id",
+    "executions": 3,
+    "rows_per_execution": 0.0,
+    "first_ms": 0.66,
+    "stream_ms": 0.21,
+    "total_ms": 2.9
+   },
+   {
+    "shape": "match $c isa same-as; $c links (same: $x); $x has wm-id $xid; { $x has wm-id == $i0; } or { $x has wm-id == $i1; } or { $x has wm-id == $i2; } or { $x has wm-id == $i3; } or { $x has wm-id == $i4; } or { $x has wm-id == $i5; } or { $x has wm-id == $i6; };",
+    "executions": 3,
+    "rows_per_execution": 0.0,
+    "first_ms": 0.71,
+    "stream_ms": 0.15,
+    "total_ms": 2.5
+   },
+   {
+    "shape": "match $c isa same-as; $c links (same: $x); $x has wm-id $xid; { $x has wm-id == $i0; } or { $x has wm-id == $i1; } or { $x has wm-id == $i2; } or { $x has wm-id == $i3; };",
+    "executions": 3,
+    "rows_per_execution": 0.0,
+    "first_ms": 0.67,
+    "stream_ms": 0.13,
+    "total_ms": 2.4
+   }
+  ]
+ }
+}

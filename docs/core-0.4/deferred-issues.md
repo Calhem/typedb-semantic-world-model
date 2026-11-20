@@ -289,6 +289,16 @@ approved and merged.
 Recommended: first verify the cause of the cross-world slowdown with query plans, then (b) and (a), measured against
 `bench-d3`.
 
+**Investigated (LABS-1.054, LABS-1.055; still open):** [stage-e-di9-investigation.md](../stage-e/stage-e-di9-investigation.md).
+Query plans are not available through the 3.14 driver, so the cause was established by instrumentation and replay
+instead:
+- row decoding and Python are not the cause;
+- supersession and acceptance joins are not narrowed to the world's attestations (F2);
+- subject-bound queries about an empty type cost in proportion to the data (F3);
+- `occurrence()` loads every event in the world (F4).
+
+Proposed corrections O-1 to O-3 are at the DI-9 review gate; none is implemented.
+
 **Added to the Stage E investigation (LABS-1.039): the cost of contextual office exclusivity** (increment B). Measured
 apart from the canonical judgement mechanism (`probes/pre_e_b_perf_split.out.txt`, four alternating rounds, see
 [pre-e-increment-b.md](pre-e-increment-b.md), "After the merge"):
