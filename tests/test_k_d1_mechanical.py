@@ -84,6 +84,9 @@ def test_installs_alone_and_with_the_fixtures_and_needs_the_full_core(make):
     with pytest.raises(ProfileError, match="core-0.4-event-roles"):    # 0.2 declares event-role constraints (LABS-1.043)
         stage_c.install_profile("mechanical")
     assert stage_c.upgrade_to_event_roles() is True
+    with pytest.raises(ProfileError, match="core-0.4-event-multiplicity"):   # 0.3 opens removed, fitted (LABS-1.049)
+        stage_c.install_profile("mechanical")
+    assert stage_c.upgrade_to_event_multiplicity() is True
     assert stage_c.install_profile("mechanical") == ["connected-to", "replacement"]
 
 

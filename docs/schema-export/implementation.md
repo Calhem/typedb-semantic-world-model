@@ -199,3 +199,36 @@ Reading format 1: `validate(doc)` checks a document against the schema of the fo
 before LABS-1.043 still validate, and the explorer renders them (`tests/fixtures/schema-export-1.json.gz` is the
 reference export committed at `bf8bb34`, kept as a test). Tests: `tests/test_o_schema_export.py`, section "format 2".
 
+## Format 3 (LABS-1.050, DI-13)
+The exporter writes `wm-schema-export/3` (`FORMAT` in `export.py`; JSON Schema `wm-schema-export-3.schema.json`).
+Format 3 is format 2 plus one field on every `event-role-constraint` record: `multiplicity`, the stored
+`role-multiplicity` of the `core-0.4-event-multiplicity` module, `"set"` (co-participation: established when every
+compared account names the same set of players), `"one"`, or `null` when none is stored, which means `"one"` (MP-3).
+`validate()` also requires the field on every such record in format 3, so a record can never be read as
+single-valued by omission. The explorer's module-data page shows it. Everything else is as in format 2.
+
+**Why a new format** (assessment in `docs/core-0.4/pre-e-multiplicity-increment.md`, section 8a): format 2's JSON
+Schema is closed (`additionalProperties: false`), so a validating consumer rejects any added field, and a lenient one
+would read a `set` constraint as `one`, which silently changes its meaning.
+
+**Format 2 is still read and, where it can represent the database, still written.** Exports written in format 2
+validate against `wm-schema-export-2.schema.json`, restored byte for byte to the file published at `main` `dd58b25`
+(`tests/fixtures/schema-export-2.json.gz` is the reference export committed then). `build_export(..., format=
+"wm-schema-export/2")` (and `scripts/export_schema.py --format 2`) writes format 2 only when no event-role constraint
+is set-valued; the records then simply omit `multiplicity`. Otherwise the export is **refused** with
+`SchemaExportError`, naming each set-valued constraint, and nothing is written: format 2 would downgrade
+co-participation to a single-valued constraint. The check reads the database's own records as well as the exported
+ones, so a set-valued constraint the replay does not reproduce still refuses (see the limitation below). Format 1
+cannot be written.
+
+**Replay.** Attribution replays the recorded modules from this code, so the multiplicity of each replayed constraint
+is reproduced and compared with the database's like every other attribute of the record. A fresh database and one
+upgraded with `upgrade_to_event_multiplicity()` and `upgrade_profile()` export the same document apart from its
+database name (tested).
+
+**Limitation (registered as DI-18):** `module_data` lists the records the replay reproduces. A record held by a module
+version this code cannot replay (attribution `version-mismatch`) is not listed at all; the attribution says the replay
+did not verify, but the record itself is absent from the export.
+
+Tests: `tests/test_o_schema_export.py`, section "format 3".
+

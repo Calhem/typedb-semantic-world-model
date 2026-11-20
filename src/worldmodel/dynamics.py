@@ -449,7 +449,14 @@ class DynamicsMixin:
         accepted. For each event-role constraint of a compared account's type (ER-1), with its kind's classification
         of the occurrence judged by the canonical record at the occurrence's start (ER-2), the role is judged by rule Q
         (ER-4) over the compared accounts of the nearest world, players under the perspective's identity. Roles are
-        keyed by stored role label, with the core role alongside (ER-5)."""
+        keyed by stored role label, with the core role alongside (ER-5).
+
+        Multiplicity (LABS-1.049, DI-13, MP-2/MP-3): each compared account gives a *set* of players. Under a `one`
+        declaration the role is DISPUTED when more than one player is named, with `reason` "several players in one
+        account" and/or "accounts name different players"; under `set` it is established when every compared account
+        names the same set, otherwise DISPUTED ("accounts name different sets of players", each account's set in
+        `sets`). For one event type and role, an applicable kind-scoped declaration overrides an unconditional one,
+        which is listed with applies False and why."""
         from . import typeql as q
         ident = ident or self.identity(world, as_of, perspective, ids=[occurrence])
         members = set(ident.members(occurrence))
@@ -495,15 +502,17 @@ class DynamicsMixin:
         pid = self.identity(world, as_of, perspective, ids=players) if players else ident
         scopes = {}
         for x in compared:
-            for decl, role, kind, module in self._event_constraints(x["type"]):
-                scopes.setdefault((decl, role, kind), module)
+            for decl, role, kind, module, mult in self._event_constraints(x["type"]):
+                scopes.setdefault((decl, role, kind), (module, mult))
         judged = []
-        for (decl, role, kind), module in sorted(scopes.items(), key=lambda i: (i[0][0], i[0][1], i[0][2] or "")):
+        for (decl, role, kind), (module, mult) in sorted(scopes.items(),
+                                                         key=lambda i: (i[0][0], i[0][1], i[0][2] or "")):
             group = [x for x in compared if self.is_a(x["type"], decl)
                      and any(c == role for c, _ in x["_roles"].values())]
             entry = {"event_type": decl, "role": role, "kind": kind, "declared_by": module, "applies": True,
                      "why": "declared for the event type", "classification": None, "judgement": None, "status": None,
-                     "support": [], "players": [], "overridden": [],
+                     "support": [], "players": [], "overridden": [], "multiplicity": mult, "reason": None,
+                     "sets": None, "_group": group,
                      "_labels": sorted({lab for x in group for lab, (c, _) in x["_roles"].items() if c == role})}
             if kind is not None:
                 rec = self.judgement(world, "classified-as", {"classified": occurrence, "class": kind}, at, as_of,
@@ -515,32 +524,66 @@ class DynamicsMixin:
                 else:
                     entry.update(applies=False, why=f"the occurrence is not established as {kind} at its start "
                                                     f"({rec.judgement.value}): the role is a union")
-            if entry["applies"] and group:
-                depth = min(x["depth"] for x in group)
-                near = [x for x in group if x["depth"] == depth]
-                entry["overridden"] = sorted(x["description"] for x in group if x["depth"] != depth)
-                by = {}
-                for x in near:
-                    for c, ids in x["_roles"].values():
-                        if c != role:
-                            continue
-                        for p in ids:
-                            g = by.setdefault(pid.canonical(p), {"names": set(), "accounts": set(), "recs": {}})
-                            g["names"].add(p)
-                            g["accounts"].add((x["description"], tuple(sorted({a.attester for a in x["_use"]}))))
-                            g["recs"].update({a.id: a for a in x["_use"]})
-                entry["players"] = [{"names": sorted(g["names"]),
-                                     "accounts": [{"description": d, "attesters": list(w)}
-                                                  for d, w in sorted(g["accounts"])],
-                                     "status": answer_status(g["recs"].values())}
-                                    for _, g in sorted(by.items())]
-                if len(by) > 1:
-                    entry.update(judgement="disputed", status=Status.DISPUTED, support=[])
-                else:
-                    recs = {i: a for g in by.values() for i, a in g["recs"].items()}
-                    entry.update(judgement="established", status=answer_status(recs.values()),
-                                 support=sorted(recs))
             judged.append(entry)
+        # MP-3: for one event type and role, an applicable kind-scoped declaration wins over an unconditional one
+        winning = {}
+        for e in judged:
+            if e["kind"] is not None and e["applies"]:
+                winning.setdefault((e["event_type"], e["role"]), []).append(e["kind"])
+        for e in judged:
+            kinds = winning.get((e["event_type"], e["role"]))
+            if e["kind"] is None and e["applies"] and kinds:
+                e.update(applies=False, why=f"overridden by the declaration for {', '.join(sorted(kinds))}, which "
+                                            f"applies to the occurrence (MP-3)")
+        applying = {(e["event_type"], e["role"]) for e in judged if e["applies"]}
+        for e in judged:      # a kind-scoped declaration that does not apply, while another one does: not a union
+            if e["kind"] is not None and not e["applies"] and (e["event_type"], e["role"]) in applying:
+                e["why"] = (f"the occurrence is not established as {e['kind']} at its start "
+                            f"({e['classification']['judgement']}): this declaration does not apply")
+        for entry in judged:
+            group, role = entry["_group"], entry["role"]
+            if not (entry["applies"] and group):
+                continue
+            depth = min(x["depth"] for x in group)
+            near = [x for x in group if x["depth"] == depth]
+            entry["overridden"] = sorted(x["description"] for x in group if x["depth"] != depth)
+            by, sets = {}, []
+            for x in near:
+                mine = set()
+                for c, ids in x["_roles"].values():
+                    if c != role:
+                        continue
+                    for p in ids:
+                        mine.add(pid.canonical(p))
+                        g = by.setdefault(pid.canonical(p), {"names": set(), "accounts": set(), "recs": {}})
+                        g["names"].add(p)
+                        g["accounts"].add((x["description"], tuple(sorted({a.attester for a in x["_use"]}))))
+                        g["recs"].update({a.id: a for a in x["_use"]})
+                sets.append((x, frozenset(mine)))
+            entry["players"] = [{"names": sorted(g["names"]),
+                                 "accounts": [{"description": d, "attesters": list(w)}
+                                              for d, w in sorted(g["accounts"])],
+                                 "status": answer_status(g["recs"].values())}
+                                for _, g in sorted(by.items())]
+            recs = {i: a for g in by.values() for i, a in g["recs"].items()}
+            # MP-2: each compared account gives a set of players, under the perspective's identity
+            if entry["multiplicity"] == "set":
+                entry["sets"] = [{"description": x["description"], "attesters": sorted({a.attester for a in x["_use"]}),
+                                  "players": sorted(mine)} for x, mine in sorted(sets, key=lambda i: i[0]["description"])]
+                if len({mine for _, mine in sets}) == 1:
+                    entry.update(judgement="established", status=answer_status(recs.values()), support=sorted(recs))
+                else:
+                    entry.update(judgement="disputed", status=Status.DISPUTED, support=[],
+                                 reason="accounts name different sets of players")
+            elif len(by) > 1:
+                reasons = []
+                if any(len(mine) > 1 for _, mine in sets):
+                    reasons.append("several players in one account")
+                if len({mine for _, mine in sets}) > 1:
+                    reasons.append("accounts name different players")
+                entry.update(judgement="disputed", status=Status.DISPUTED, support=[], reason="; ".join(reasons))
+            else:
+                entry.update(judgement="established", status=answer_status(recs.values()), support=sorted(recs))
         roles = {}
         for x in accounts:
             for label, (core, ids) in x["_roles"].items():

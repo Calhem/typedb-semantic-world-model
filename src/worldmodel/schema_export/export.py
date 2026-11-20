@@ -1,5 +1,5 @@
-"""Build and write the schema export (LABS-1.024): `wm-schema-export/2` since LABS-1.043 (format 1 is still read and
-validated; see validate.py).
+"""Build and write the schema export (LABS-1.024): `wm-schema-export/3` since LABS-1.050 (formats 1 and 2 are still read
+and validated, see validate.py; format 2 is still written on request where it can say everything, see `as_format`).
 
 The export is a JSON document whose top-level sections each have one source (LABS-1.032 requirement 1):
 
@@ -30,9 +30,11 @@ from .crosscheck import Lattice, cross_check, round_trip
 from .docs import documentation, module_data
 from .explorer import render_explorer
 from .introspect import snapshot
-from .parse import facts, parse_schema, render_type
+from .parse import SchemaExportError, facts, parse_schema, render_type
 
-FORMAT = "wm-schema-export/2"      # 2 (LABS-1.043): module data may hold event-role-constraint records
+FORMAT = "wm-schema-export/3"      # 3 (LABS-1.050): every event-role-constraint record states its multiplicity
+#                                   2 (LABS-1.043): module data may hold event-role-constraint records
+FORMATS = ("wm-schema-export/2", FORMAT)   # what build_export can write
 EXPORTER = "worldmodel.schema_export 1.0.0"
 PROVENANCE = {
     "database": "Read from the TypeDB database (schema() text, query answers, records), or computed by the exporter "
@@ -227,8 +229,40 @@ def _attribution_section(attr, parsed, fact_map):
     }
 
 
-def build_export(driver, database, profiles=None, prefix="wm-export-tmp-", now=None):
-    """Read, check, attribute and model the schema of `database`. Returns (document, schema text, timings)."""
+def as_format(doc, fmt, database_records=()):
+    """The export `doc` (current format) in format `fmt`, or SchemaExportError if `fmt` cannot say all of it.
+
+    Format 2 has no multiplicity: every constraint it holds means "one". So a format-3 export is written as format 2
+    only when no event-role constraint is stored as "set" (its records then lose the `multiplicity` field, which says
+    nothing format 2 does not); otherwise it is refused, naming the constraints, because format 2 would silently turn
+    co-participation into a single-valued constraint (LABS-1.050). Nothing else differs between the two formats.
+    `database_records`: the database's own module-data tuples (introspect.read_module_data), also checked, so a
+    set-valued constraint the replay does not reproduce (and module_data therefore does not list) still refuses."""
+    if fmt == FORMAT:
+        return doc
+    if fmt != "wm-schema-export/2":
+        raise SchemaExportError(f"cannot write format {fmt!r}: this exporter writes {', '.join(FORMATS)}")
+    records = doc["module_data"]["records"]
+    lost = sorted({r["id"] for r in records if r["kind"] == "event-role-constraint" and r.get("multiplicity") not in
+                   (None, "one")} |
+                  {rec[1] for rec in database_records if rec[0] == "event-role" and rec[-1] not in (None, "one")})
+    if lost:
+        raise SchemaExportError(
+            f"refused: format 2 cannot represent {len(lost)} set-valued event-role constraint(s), listed below: it has "
+            f"no multiplicity, so every constraint in it means one player, and these would be read as single-valued. "
+            f"Export in {FORMAT} instead (nothing written)", [f"{i}: multiplicity 'set'" for i in lost])
+    out = json.loads(json.dumps(doc))
+    out["format"] = "wm-schema-export/2"
+    for r in out["module_data"]["records"]:
+        r.pop("multiplicity", None)
+    return out
+
+
+def build_export(driver, database, profiles=None, prefix="wm-export-tmp-", now=None, format=FORMAT):
+    """Read, check, attribute and model the schema of `database`. Returns (document, schema text, timings). `format`:
+    FORMAT, or "wm-schema-export/2" where it can represent the database (`as_format`)."""
+    if format not in FORMATS:
+        raise SchemaExportError(f"cannot write format {format!r}: this exporter writes {', '.join(FORMATS)}")
     import time
     t0 = time.perf_counter()
     snap = snapshot(driver, database)
@@ -264,7 +298,7 @@ def build_export(driver, database, profiles=None, prefix="wm-export-tmp-", now=N
     }
     timings = {"read": t1 - t0, "parse_and_cross_check": t2 - t1, "round_trip": t3 - t2, "replay": t4 - t3,
                "model": time.perf_counter() - t4}
-    return doc, snap.text, attr, timings
+    return as_format(doc, format, snap.data), snap.text, attr, timings
 
 
 def dumps(doc):
@@ -311,9 +345,9 @@ def masked(doc):
     return out
 
 
-def export_to(driver, database, out_dir, profiles=None, prefix="wm-export-tmp-", now=None):
+def export_to(driver, database, out_dir, profiles=None, prefix="wm-export-tmp-", now=None, format=FORMAT):
     """Export `database` into `out_dir`. Returns (document, files written, timings). Nothing is written if the
-    export is refused."""
-    doc, text, _, timings = build_export(driver, database, profiles=profiles, prefix=prefix, now=now)
+    export is refused (including a format that cannot represent it)."""
+    doc, text, _, timings = build_export(driver, database, profiles=profiles, prefix=prefix, now=now, format=format)
     written = write_export(doc, text, out_dir, {"schema-explorer.html": render_explorer(doc).encode()})
     return doc, written, timings

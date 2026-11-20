@@ -15,7 +15,7 @@ from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from typedb.driver import Credentials, DriverOptions, DriverTlsConfig, TransactionType, TypeDB
+from typedb.driver import Credentials, DriverOptions, DriverTlsConfig, TransactionType, TypeDB, TypeDBDriverException
 
 from . import typeql as q
 from . import keys
@@ -27,7 +27,8 @@ from .profiles import ProfileMixin
 from .physical import PhysicalMixin
 from .judgement import JudgementMixin
 from .spatial import params_compatible
-from .operations import Operation, OperationError, atomic, atomic_schema  # noqa: F401
+from .operations import (Operation, OperationError, RoleCardinalityError, atomic, atomic_schema,  # noqa: F401
+                         cardinality_error)
 from .semantics import (Answer, AttestationRecord, Identity, Replacement, Status, Window, acceptance_state, decide,
                         answer_status, certainly_before, superseded, usable, verdict)
 
@@ -42,16 +43,24 @@ MODULES = {"core": ("0.3.0", ["core/core-0.3.tql"]),
            "core-0.4-d": ("0.4.0-d", ["core/core-0.4-d.tql"]),      # Stage D dependency kinds (LABS-1.023, D-D-2)
            # pre-Stage E increment D (LABS-1.043, DI-2): event-role constraints as data; added to existing databases
            # only by WorldModel.upgrade_to_event_roles()
-           "core-0.4-event-roles": ("0.4.0-er", ["core/core-0.4-event-roles.tql"])}
+           "core-0.4-event-roles": ("0.4.0-er", ["core/core-0.4-event-roles.tql"]),
+           # pre-Stage E multiplicity increment (LABS-1.049, DI-13): actor and patient open to several players per
+           # account, and a constraint's multiplicity; added to existing databases only by
+           # WorldModel.upgrade_to_event_multiplicity()
+           "core-0.4-event-multiplicity": ("0.4.0-mp", ["core/core-0.4-event-multiplicity.tql"])}
 DEFAULT_MODULES = ("core", "core-0.4-a0")
 PHYSICAL_MODULES = ("core", "core-0.4-a0", "core-0.4-a", "core-0.4-a2")   # opt-in (decision D-A1-3)
 DYNAMICS_MODULES = PHYSICAL_MODULES + ("core-0.4-b",)                     # opt-in, like the physical modules
 QUALITY_MODULES = DYNAMICS_MODULES + ("core-0.4-c",)                      # Stage C: qualities, measurement, agency
 EVENT_ROLES_MODULE = "core-0.4-event-roles"
+MULTIPLICITY_MODULE = "core-0.4-event-multiplicity"
 CORE_MODULES = ("core", "core-0.4-a0", "core-0.4-a", "core-0.4-a2", "core-0.4-b", "core-0.4-c",
-                "core-0.4-d", EVENT_ROLES_MODULE)                 # the core types; profiles need all of them
-# what a profile without event-role constraints needs (a database created before increment D lacks the last module)
-PROFILE_BASE_MODULES = CORE_MODULES[:-1]
+                "core-0.4-d", EVENT_ROLES_MODULE, MULTIPLICITY_MODULE)    # the core types; new databases get all of them
+# the core before increment D: what a profile needs that neither declares event-role constraints nor opens a role.
+# A database created before increment D lacks the last two modules, one created before LABS-1.049 the last one; each
+# is added by its explicit upgrade (upgrade_to_event_roles, then upgrade_to_event_multiplicity)
+PROFILE_BASE_MODULES = CORE_MODULES[:-2]
+ROLE_MULTIPLICITIES = ("one", "set")   # MP-3: a constraint without a declared multiplicity is "one"
 
 
 def _core_labels():
@@ -108,6 +117,22 @@ def _window(value):
     if isinstance(value, tuple) and len(value) == 2:
         return Window(*value)
     raise TypeError(f"expected a datetime, a (earliest, latest) tuple or a Window, got {value!r}")
+
+
+class MovementConflict(ValueError):
+    """move() refused (LABS-1.049): the movement would have several origins or destinations, which no source said.
+    Nothing is written. `thing`, `places` (the conflicting places, sorted), `records` (the attestations behind them,
+    for origins) and `role` ("origin" or "destination") say why."""
+
+    def __init__(self, thing, role, places, records=()):
+        self.thing, self.role, self.places, self.records = thing, role, list(places), list(records)
+        if role == "origin":
+            why = (f"the mover's own records place {thing!r} at several places just before the move "
+                   f"({', '.join(self.places)}; attestations {', '.join(self.records)}), so the movement has no single "
+                   f"origin. Resolve the conflicting location records (end or supersede all but one) and move again")
+        else:
+            why = f"a movement has one destination; {len(self.places)} were given ({', '.join(map(str, self.places))})"
+        super().__init__(f"move refused, nothing written: {why}")
 
 
 class PropositionIdCollision(ValueError):
@@ -176,7 +201,13 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
             yield op
             if op.failed:
                 raise OperationError("a step of this operation failed and its error was caught: nothing was written")
-            tx.commit()
+            try:
+                tx.commit()
+            except TypeDBDriverException as e:        # a role cardinality violation, as a domain error (LABS-1.049)
+                error = cardinality_error(e)
+                if error is None:
+                    raise
+                raise error from e
         except BaseException:
             self._last_recorded = mark
             self._reset_caches()
@@ -287,24 +318,58 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
         self.install_module(EVENT_ROLES_MODULE, files=files, version=version)
         return True
 
+    @atomic_schema
+    def upgrade_to_event_multiplicity(self):
+        """Add the event multiplicity module (LABS-1.049, DI-13, MP-1, MP-3, MP-5) to an existing database: event:actor
+        and event:patient accept several players per account, and event-role constraints may declare a multiplicity.
+        Explicit only: nothing is migrated when a database is opened, and no data is rewritten (every existing
+        description has at most one player per role, which the wider cardinality accepts). One schema operation: the
+        schema change and the module record are committed together or not at all. Idempotent: returns False, writing
+        nothing, if the module is recorded; True after adding it. Refused (nothing written) without the event-role
+        module (run upgrade_to_event_roles() first), or if its attribute exists without a record (a manual define).
+
+        **One-way once used:** after a description names several players of an opened role, TypeDB refuses to narrow
+        the role back, so the upgrade cannot be undone on that database (a database may stay without it)."""
+        installed = self.modules()
+        if MULTIPLICITY_MODULE in installed:
+            return False
+        if EVENT_ROLES_MODULE not in installed:
+            missing = [m for m in PROFILE_BASE_MODULES if m not in installed]
+            if missing:
+                raise ValueError(f"upgrade_to_event_multiplicity needs the rest of the core; missing modules {missing}")
+            raise ValueError(f"upgrade_to_event_multiplicity needs the {EVENT_ROLES_MODULE!r} module: run "
+                             f"wm.upgrade_to_event_roles() first, then upgrade_to_event_multiplicity() (nothing written)")
+        with self._reading() as tx:
+            present = "role-multiplicity" in {r.get("t").get_label() for r in q.rows(tx, "match attribute $t;")}
+        if present:
+            raise ValueError(f"role-multiplicity exists without the {MULTIPLICITY_MODULE} module record (a manual "
+                             f"define?): refused, nothing written")
+        version, files = MODULES[MULTIPLICITY_MODULE]
+        self.install_module(MULTIPLICITY_MODULE, files=files, version=version)
+        return True
+
     def event_role_constraints(self):
-        """{event type: [(core role, kind or None, declaring module), ...]}: the event-role constraints each event type
-        declares itself (LABS-1.043, ER-1/ER-2). Empty without the core-0.4-event-roles module. See
-        `_event_constraints` for what applies to a type."""
+        """{event type: [(core role, kind or None, declaring module, multiplicity), ...]}: the event-role constraints
+        each event type declares itself (LABS-1.043, ER-1/ER-2), with their multiplicity, "one" or "set" (LABS-1.049,
+        MP-3; "one" when none is declared, and always without the multiplicity module). Empty without the
+        core-0.4-event-roles module. See `_event_constraints` for what applies to a type."""
         if self._event_role_cache is None:
             out = {}
-            if EVENT_ROLES_MODULE in self.modules():
+            modules = self.modules()
+            if EVENT_ROLES_MODULE in modules:
+                mult = ', "u": $c.role-multiplicity' if MULTIPLICITY_MODULE in modules else ""
                 with self._reading() as tx:
-                    for d in q.documents(tx, """match $c isa event-role-constraint, has constrained-event-type $t,
+                    for d in q.documents(tx, f"""match $c isa event-role-constraint, has constrained-event-type $t,
                         has constrained-role $r, has declaring-module $m;
-                        fetch { "t": $t, "r": $r, "m": $m, "k": $c.constraint-kind };"""):
-                        out.setdefault(d["t"], []).append((d["r"], d["k"], d["m"]))
+                        fetch {{ "t": $t, "r": $r, "m": $m, "k": $c.constraint-kind{mult} }};"""):
+                        out.setdefault(d["t"], []).append((d["r"], d["k"], d["m"], d.get("u") or "one"))
             self._event_role_cache = {t: sorted(cs, key=str) for t, cs in out.items()}
         return self._event_role_cache
 
     def _event_constraints(self, label):
-        """Every event-role constraint that applies to an event type: (declaring type, core role, kind, module), its
-        ancestors' first (root first), then its own. Additive: a subtype never loses an inherited constraint."""
+        """Every event-role constraint that applies to an event type: (declaring type, core role, kind, module,
+        multiplicity), its ancestors' first (root first), then its own. Additive: a subtype never loses an inherited
+        constraint."""
         declared = self.event_role_constraints()
         return [(t, *c) for t in reversed(self.ancestors(label)) for c in declared.get(t, ())]
 
@@ -1252,15 +1317,29 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
                for e in effects]
         return eid, new
 
+    @atomic
     def move(self, world, thing, to, at, actor=None, kind=None, as_of=None, attester=SYSTEM):
         """The thing was moved to `to` at `at`: ends the attester's location attestations holding just before, and
-        records the movement (origin, destination) with the new location as its effect."""
+        records the movement (origin, destination) with the new location as its effect. One operation.
+
+        A movement has one thing, one destination and at most one origin (LABS-1.049; origin and destination stay
+        single-valued under MP-1). The origin is the place the attester's own records hold the thing at just before.
+        If they hold it at several places, the movement is refused with MovementConflict, naming the places and the
+        attestations, and nothing is written: the conflicting records are not chosen between, ended or turned into
+        several origins. `actor` may be one agent or several (a joint move, MP-1)."""
+        if not isinstance(thing, str):
+            raise ValueError(f"move refused, nothing written: a movement moves one thing; got {thing!r} (record "
+                             f"several movements, or an event naming several patients)")
+        if not isinstance(to, str):
+            raise MovementConflict(thing, "destination", list(to))
         just_before = _window(at).earliest - timedelta(microseconds=1)
         atts, ident = self._view(world, as_of, attester, "located-at", [thing], at=just_before)
         me = set(ident.members(thing))
         before = [a for a in atts.values() if a.kind == "located-at" and me & set(a.roles.get("located", []))
                   and a.attester == attester and usable(a, attester, as_of) and verdict(a, just_before) is True]
         origin = sorted({p for a in before for p in a.roles.get("place", [])})
+        if len(origin) > 1:
+            raise MovementConflict(thing, "origin", origin, sorted(a.id for a in before))
         roles = {"patient": thing, "destination": to}
         if origin:
             roles["origin"] = origin
@@ -1316,7 +1395,9 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
           player and the accounts naming it, and `constraints`: each applicable event-role constraint (ER-1, ER-2)
           with whether it applies and why, and the role's judgement by rule Q (ER-4): DISPUTED for two or more
           distinct players under the perspective's identity, established for one, with status and support. Several
-          players of a role without an applicable, established constraint are a union, never a dispute."""
+          players of a role without an applicable, established constraint are a union, never a dispute.
+          LABS-1.049 (DI-13): each constraint also gives its `multiplicity` ("one" or "set"), the `reason` for a
+          dispute, and for "set" each compared account's set (`sets`); see `_event_roles`."""
         from .dynamics import _Memo
         descs = self.descriptions(world, occurrence, as_of, perspective)
         out = {"occurrence": occurrence, "descriptions": descs, "participants": {}}

@@ -1,0 +1,7 @@
+# Profile organisation-0.3 (LABS-1.049, DI-13, MP-1): a co-signed act names several officials in one account. Widens
+# a cardinality only (no type, role, plays or owns is added): needs core-0.4-event-multiplicity, which opens
+# event:actor. The office and its context stay single. Whether several officials are co-signatories or conflicting
+# evidence is judged by the event-role constraints (MP-2, MP-4): `one` unless the act is established as
+# organisation:co-signed.
+define
+relation official-act relates official @card(0..);

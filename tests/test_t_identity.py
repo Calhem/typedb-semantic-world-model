@@ -305,8 +305,11 @@ def test_the_nearest_world_decides_a_link():
 
 # ---- ID-8, ID-9: one identity for every reader ------------------------------------------------------------------------
 def _official(view):
+    """The official judged by the unconditional declaration (organisation 0.2's; organisation 0.3 also lists a `set`
+    declaration for co-signed acts, LABS-1.049, which no act here is)."""
     role = view["roles"].get("official-act:official", {})
-    return [(c["judgement"], [p["names"] for p in c["players"]]) for c in role.get("constraints", [])]
+    return [(c["judgement"], [p["names"] for p in c["players"]]) for c in role.get("constraints", [])
+            if c["kind"] is None]
 
 
 def test_alias_views_of_an_occurrence_are_the_same(ref):

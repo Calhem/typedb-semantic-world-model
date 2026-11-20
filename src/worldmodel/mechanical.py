@@ -21,17 +21,23 @@ NAME = "mechanical"
 # ER-6); without that, several accounts naming different parts are a union, never a dispute.
 ONE_FOR_ONE = "mechanical:one-for-one"
 # 0.2 (LABS-1.043) adds data only to 0.1: the one-for-one category and the two kind-scoped event-role constraints; the
-# schema file is unchanged. upgrade_profile("mechanical") brings an installed 0.1 to 0.2.
-PROFILE = Profile(NAME, "0.2", (str(SCHEMA_DIR / "profiles" / "mechanical" / "mechanical-0.1.tql"),),
-                  vocabulary=(("category", "mechanical:assembly", "assembly"),
-                              ("category", "mechanical:component", "component"),
-                              ("category", "mechanical:bolted", "bolted joint"),
-                              ("category", "mechanical:pressed", "press fit"),
-                              ("category", "mechanical:splined", "splined joint"),
-                              ("category", ONE_FOR_ONE, "one-for-one replacement")),
-                  event_roles=(EventRole("replacement", "patient", ONE_FOR_ONE),
-                               EventRole("replacement", "fitted", ONE_FOR_ONE)),
-                  upgrades_from="0.1")
+# schema file is unchanged. 0.3 (LABS-1.049, DI-13, MP-1) opens removed and fitted to several parts per account (a
+# multi-part replacement); no new constraint (MP-4): a one-for-one replacement keeps one part each (multiplicity
+# `one`), any other replacement is a union. upgrade_profile("mechanical") brings an installed 0.1 or 0.2 to 0.3.
+_SCHEMA_01 = (str(SCHEMA_DIR / "profiles" / "mechanical" / "mechanical-0.1.tql"),)
+_VOCAB_01 = (("category", "mechanical:assembly", "assembly"),
+             ("category", "mechanical:component", "component"),
+             ("category", "mechanical:bolted", "bolted joint"),
+             ("category", "mechanical:pressed", "press fit"),
+             ("category", "mechanical:splined", "splined joint"))
+_VOCAB_02 = _VOCAB_01 + (("category", ONE_FOR_ONE, "one-for-one replacement"),)
+_ROLES_02 = (EventRole("replacement", "patient", ONE_FOR_ONE), EventRole("replacement", "fitted", ONE_FOR_ONE))
+PROFILE_01 = Profile(NAME, "0.1", _SCHEMA_01, vocabulary=_VOCAB_01)
+PROFILE_02 = Profile(NAME, "0.2", _SCHEMA_01, vocabulary=_VOCAB_02, event_roles=_ROLES_02, upgrades_from="0.1",
+                     previous=PROFILE_01)
+PROFILE = Profile(NAME, "0.3", _SCHEMA_01 + (str(SCHEMA_DIR / "profiles" / "mechanical" / "mechanical-0.3.tql"),),
+                  vocabulary=_VOCAB_02, event_roles=_ROLES_02, upgrades_from="0.2",
+                  opens=("replacement:removed", "replacement:fitted"), previous=PROFILE_02)
 PROFILES[NAME] = PROFILE
 
 
@@ -71,7 +77,9 @@ def replace_part(wm, world, assembly, removed, fitted, start, end=None, actor=No
     part-of(removed, assembly) and initiates part-of(fitted, assembly). Claims only: nothing here establishes that
     the replacement happened or that the parts changed. Returns the ids.
     One operation (DI-8): the account and its effect claims are written together or not at all; inside a caller's
-    `wm.operation()` it joins that operation (e.g. with the creation of the sample or part)."""
+    `wm.operation()` it joins that operation (e.g. with the creation of the sample or part).
+    `removed` and `fitted` may each be one part or several (a multi-part replacement, mechanical 0.3, LABS-1.049): one
+    account names them all, and one part-of effect is claimed per part (terminations first, then initiations)."""
     _require(wm)
     roles = {"removed": removed, "fitted": fitted}
     for role, who in (("actor", actor), ("instrument", instrument), ("location", location)):
@@ -79,10 +87,12 @@ def replace_part(wm, world, assembly, removed, fitted, start, end=None, actor=No
             roles[role] = who
     event = wm.account(world, roles, start, end or start, type="replacement", occurrence=occurrence,
                        attester=attester, id=id)
-    effects = [wm.claim_effect(world, event, "terminates", "part-of", {"part": removed, "whole": assembly},
-                               attester=attester),
-               wm.claim_effect(world, event, "initiates", "part-of", {"part": fitted, "whole": assembly},
-                               attester=attester)]
+    def parts(x):
+        return [x] if isinstance(x, str) else list(x)
+    effects = ([wm.claim_effect(world, event, "terminates", "part-of", {"part": p, "whole": assembly},
+                                attester=attester) for p in parts(removed)] +
+               [wm.claim_effect(world, event, "initiates", "part-of", {"part": p, "whole": assembly},
+                                attester=attester) for p in parts(fitted)])
     return {"event": event, "effects": effects}
 
 

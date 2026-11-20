@@ -83,7 +83,7 @@ def test_installs_alone_and_refuses_use_without_the_profile(make):
     with pytest.raises(ValueError, match="laboratory profile is not installed"):
         lb.calibration_status(bare, "lab", "balance-b3", T(9))
     assert bare.install_profile("laboratory") == LAB_TYPES
-    assert bare.profile_status("laboratory") == "installed" and bare.profiles() == {"laboratory": "0.1"}
+    assert bare.profile_status("laboratory") == "installed" and bare.profiles() == {"laboratory": "0.2"}
     with bare.driver.transaction(bare.database, READ) as tx:
         seeded = sorted(q.opt(r, "id") for r in q.rows(tx, """match $c isa category, has wm-id $id;
             $id like "^laboratory:";"""))

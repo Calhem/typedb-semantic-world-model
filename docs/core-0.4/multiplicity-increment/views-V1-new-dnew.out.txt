@@ -1,0 +1,14 @@
+Totals:
+  constraint not applying (kind not established): 12
+  core role merging differently named roles: 8
+  role judged: 12
+  views: 398
+  views with a judgement change (a constrained role DISPUTED): 0
+  views with a role-presentation change (`roles` keeps apart what `participants` merges): 8
+
+baseline written: 398 views
+
+compared with probes/pre_e_d_occurrence_baseline.json.gz: 398 frozen views, 398 now, same views: True
+  existing fields (descriptions, participants) different: 0
+  judgements different: 0
+  role-presentation changes different: 0

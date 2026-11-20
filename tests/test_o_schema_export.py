@@ -406,7 +406,7 @@ def exported(reference):
 def test_export_validates_against_its_json_schema(exported):
     doc, _, _ = exported
     assert validate(doc) == []
-    assert doc["format"] == "wm-schema-export/2"
+    assert doc["format"] == "wm-schema-export/3"
 
 
 def test_every_section_states_its_source(exported):
@@ -427,7 +427,7 @@ def test_every_section_states_its_source(exported):
     (lambda d: d["attribution"]["facts"]["entity sample"].pop("status"), "$.attribution.facts.entity sample: missing 'status'"),
     (lambda d: d["schema"]["types"]["sample"].update(owner="profile:laboratory"), "$.schema.types.sample: unexpected 'owner'"),
     (lambda d: d["verification"]["round_trip"].update(passed=False), "$.verification.round_trip.passed: must be True"),
-    (lambda d: d.update(format="wm-schema-export/3"), "$.format: must be 'wm-schema-export/2'"),
+    (lambda d: d.update(format="wm-schema-export/4"), "$.format: must be 'wm-schema-export/3'"),
     (lambda d: d["module_data"]["records"][0].update(kind="event-role"), "$.module_data.records[0].kind: 'event-role' is not one of"),
 ])
 def test_json_schema_rejects_an_unlabelled_or_unknown_export(exported, mutate, expected):
@@ -440,7 +440,8 @@ def test_the_checker_refuses_keywords_it_does_not_support():
     assert errors(1, {"type": "integer", "multipleOf": 2}) == ["$: the checker does not support ['multipleOf']"]
     assert errors([1, "x"], {"type": "array", "items": {"type": "integer"}}) == ["$[1]: expected integer, found str"]
     assert errors(True, {"type": "integer"}) == ["$: expected integer, found bool"]
-    assert format_schema()["title"] == "wm-schema-export/2"
+    assert format_schema()["title"] == "wm-schema-export/3"
+    assert format_schema("wm-schema-export/2")["title"] == "wm-schema-export/2"
     assert format_schema("wm-schema-export/1")["title"] == "wm-schema-export/1"
 
 
@@ -715,11 +716,14 @@ def test_event_role_constraints_are_exported_attributed_and_recreatable(exported
     from worldmodel.schema_export.introspect import read_module_data
     doc, _, snap = exported
     rows = [r for r in doc["module_data"]["records"] if r["kind"] == "event-role-constraint"]
-    assert sorted((r["event_type"], r["role"], r["event_kind"], r["declared_by"]) for r in rows) == [
-        ("official-act", "actor", None, "profile:organisation"), ("official-act", "office", None, "profile:organisation"),
-        ("official-act", "office-context", None, "profile:organisation"),
-        ("replacement", "fitted", "mechanical:one-for-one", "profile:mechanical"),
-        ("replacement", "patient", "mechanical:one-for-one", "profile:mechanical")]
+    assert sorted((r["event_type"], r["role"], r["event_kind"] or "", r["declared_by"], r["multiplicity"])
+                  for r in rows) == [
+        ("official-act", "actor", "", "profile:organisation", None),
+        ("official-act", "actor", "organisation:co-signed", "profile:organisation", "set"),   # LABS-1.049, MP-4
+        ("official-act", "office", "", "profile:organisation", None),
+        ("official-act", "office-context", "", "profile:organisation", None),
+        ("replacement", "fitted", "mechanical:one-for-one", "profile:mechanical", None),
+        ("replacement", "patient", "mechanical:one-for-one", "profile:mechanical", None)]
     assert {(r["source"], r["attribution"]["status"]) for r in rows} == {("database", "attributed")}
     assert {r["declared_by"]: r["attribution"]["modules"] for r in rows} == {
         "profile:organisation": ["profile:organisation"], "profile:mechanical": ["profile:mechanical"]}
@@ -731,10 +735,12 @@ def test_event_role_constraints_are_exported_attributed_and_recreatable(exported
         with wm.operation():
             for r in rows:
                 kind = ", has constraint-kind == $k" if r["event_kind"] else ""
+                mult = ", has role-multiplicity == $u" if r["multiplicity"] else ""
                 q.run(wm._op.tx, f"""insert $c isa event-role-constraint, has event-role-constraint-id == $id,
-                    has constrained-event-type == $t, has constrained-role == $r, has declaring-module == $m{kind};""",
+                    has constrained-event-type == $t, has constrained-role == $r, has declaring-module == $m{kind}{mult};""",
                       {"id": r["id"], "t": r["event_type"], "r": r["role"], "m": r["declared_by"],
-                       **({"k": r["event_kind"]} if r["event_kind"] else {})})
+                       **({"k": r["event_kind"]} if r["event_kind"] else {}),
+                       **({"u": r["multiplicity"]} if r["multiplicity"] else {})})
         with wm.driver.transaction(wm.database, READ) as tx:
             again = {d for d in read_module_data(tx, snap.answers["kinds"]) if d[0] == "event-role"}
         assert again == {d for d in snap.data if d[0] == "event-role"}
@@ -746,4 +752,117 @@ def test_the_export_is_deterministic(exported, reference):
     wm, _ = reference
     again = ex.build_export(wm.driver, wm.database, prefix=TMP)[0]
     assert ex.masked(again) == ex.masked(exported[0])
+
+
+# ---- format 3 (LABS-1.050): the event-role multiplicity -------------------------------------------------------------
+V2 = Path(conftest.__file__).resolve().parent / "fixtures" / "schema-export-2.json.gz"
+CO_SIGNED_ID = "official-act|actor|organisation:co-signed"
+
+
+def records(doc):
+    return {r["id"]: r for r in doc["module_data"]["records"] if r["kind"] == "event-role-constraint"}
+
+
+def test_format_3_states_every_constraint_s_multiplicity(exported):
+    doc, _, _ = exported
+    rows = records(doc)
+    assert all("multiplicity" in r for r in rows.values())
+    assert {i: r["multiplicity"] for i, r in rows.items() if r["multiplicity"] is not None} == {CO_SIGNED_ID: "set"}
+    silent = copy.deepcopy(doc)                           # a record that omits it could be read as single-valued
+    for r in silent["module_data"]["records"]:
+        if r["id"] == CO_SIGNED_ID:
+            del r["multiplicity"]
+    assert any("must state its multiplicity in format 3" in e for e in validate(silent))
+    wrong = copy.deepcopy(doc)
+    next(r for r in wrong["module_data"]["records"] if r["id"] == CO_SIGNED_ID)["multiplicity"] = "many"
+    assert any("'many' is not one of" in e for e in validate(wrong))
+
+
+def test_format_3_round_trips_through_the_explorer_and_the_json(exported):
+    doc, _, _ = exported
+    assert extract_json(render_explorer(doc)) == doc
+    assert json.loads(ex.dumps(doc)) == doc
+    assert 'r.multiplicity === "set"' in render_explorer(doc)       # the explorer shows it
+
+
+def test_format_2_exports_are_still_read_against_their_own_schema():
+    """The reference export as committed before LABS-1.050 (format 2, main dd58b25) still validates against format 2's
+    JSON Schema, which is unchanged, and still renders; format 2 cannot carry a multiplicity."""
+    import gzip
+    old = json.loads(gzip.open(V2, "rt").read())
+    assert old["format"] == "wm-schema-export/2" and validate(old) == []
+    assert records(old) and not any("multiplicity" in r for r in records(old).values())
+    assert extract_json(render_explorer(old)) == old
+    claimed = copy.deepcopy(old)
+    next(iter(records(claimed).values()))["multiplicity"] = "set"
+    assert any("unexpected 'multiplicity'" in e for e in validate(claimed))
+
+
+def test_format_2_is_written_where_it_can_represent_the_database(driver):
+    """No set-valued constraint (mechanical's constraints are `one`; no organisation 0.3): format 2 is written, valid
+    against format 2's schema, and equal to the format-3 export but for the format and the multiplicity fields."""
+    wm = make_db(driver, profiles=("mechanical", "laboratory"))
+    try:
+        v3 = ex.build_export(driver, wm.database, prefix=TMP)[0]
+        v2 = ex.build_export(driver, wm.database, prefix=TMP, format="wm-schema-export/2")[0]
+        assert v2["format"] == "wm-schema-export/2" and validate(v2) == []
+        assert records(v2) and not any("multiplicity" in r for r in records(v2).values())
+        assert {r["multiplicity"] for r in records(v3).values()} == {None}
+        assert ex.masked(ex.as_format(v3, "wm-schema-export/2")) == ex.masked(v2)
+    finally:
+        drop(wm)
+
+
+def test_format_2_refuses_set_valued_constraints_and_writes_nothing(reference, tmp_path):
+    wm, _ = reference
+    with pytest.raises(SchemaExportError, match="format 2 cannot represent 1 set-valued event-role constraint") as e:
+        ex.build_export(wm.driver, wm.database, prefix=TMP, format="wm-schema-export/2")
+    assert e.value.problems == [f"{CO_SIGNED_ID}: multiplicity 'set'"]
+    out = tmp_path / "v2"
+    with pytest.raises(SchemaExportError, match="Export in wm-schema-export/3 instead"):
+        ex.export_to(wm.driver, wm.database, out, prefix=TMP, format="wm-schema-export/2")
+    assert not out.exists()                                          # nothing written
+    with pytest.raises(SchemaExportError, match="cannot write format 'wm-schema-export/1'"):
+        ex.build_export(wm.driver, wm.database, prefix=TMP, format="wm-schema-export/1")
+    assert leftovers(wm.driver) == []
+
+
+def test_format_2_refuses_a_set_valued_constraint_the_replay_does_not_list(driver):
+    """A constraint the replay cannot reproduce (here: written by hand, as by a profile version this code does not
+    have) is not listed in module_data, but it is still in the database: format 2 is refused all the same."""
+    from worldmodel import typeql as q
+    wm = make_db(driver, profiles=("mechanical",))
+    try:
+        with wm.operation():
+            q.run(wm._op.tx, """insert $c isa event-role-constraint, has event-role-constraint-id == "replacement|actor|*",
+                has constrained-event-type == "replacement", has constrained-role == "actor",
+                has declaring-module == "profile:elsewhere", has role-multiplicity == "set";""")
+        doc = ex.build_export(driver, wm.database, prefix=TMP)[0]
+        assert "replacement|actor|*" not in records(doc)                # not reproduced, so not listed
+        with pytest.raises(SchemaExportError, match="cannot represent 1 set-valued") as e:
+            ex.build_export(driver, wm.database, prefix=TMP, format="wm-schema-export/2")
+        assert e.value.problems == ["replacement|actor|*: multiplicity 'set'"]
+    finally:
+        drop(wm)
+
+
+def test_a_fresh_and_an_upgraded_database_export_the_same_schema(driver):
+    """A database created before LABS-1.049 and upgraded explicitly exports exactly what a fresh one does: the same
+    schema text, schema section, attribution and module data (multiplicities included), apart from its name."""
+    from worldmodel import laboratory as lb, mechanical as mech, organisation as org
+    from worldmodel.model import MULTIPLICITY_MODULE
+    old = make_db(driver, modules=tuple(m for m in CORE_MODULES if m != MULTIPLICITY_MODULE),
+                  profiles=(mech.PROFILE_02, org.PROFILE_02, lb.PROFILE_01))     # the fresh database's order
+    fresh = make_db(driver)
+    try:
+        assert old.upgrade_to_event_multiplicity() is True
+        for p in PROFILES3:
+            assert old.upgrade_profile(p) is True
+        (a, text_a, _, _), (b, text_b, _, _) = (ex.build_export(driver, x.database, prefix=TMP) for x in (old, fresh))
+        assert text_a == text_b
+        assert ex.masked(a) == ex.masked(b)
+        assert a["attribution"]["verification"] == "verified" and records(a)[CO_SIGNED_ID]["multiplicity"] == "set"
+    finally:
+        drop(old)
+        drop(fresh)
 

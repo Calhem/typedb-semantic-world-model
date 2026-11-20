@@ -1,6 +1,6 @@
 # Deferred correctness issues (register)
 
-**Opened 2026-11-11 under LABS-1.025; DI-5 added under LABS-1.026, DI-6 under LABS-1.027, DI-7 under LABS-1.028, DI-8 and DI-9 under LABS-1.030, DI-10 and DI-11 under LABS-1.034, DI-12 under LABS-1.038, DI-14 under LABS-1.042, DI-13 under LABS-1.043, DI-15 and DI-16 under LABS-1.045.** The pre-Stage E consolidation ([pre-stage-e-consolidation.md](pre-stage-e-consolidation.md), LABS-1.045, at review) recommends a disposition for every open issue. These are known correctness issues (DI-1 to DI-8, DI-11), one
+**Opened 2026-11-11 under LABS-1.025; DI-5 added under LABS-1.026, DI-6 under LABS-1.027, DI-7 under LABS-1.028, DI-8 and DI-9 under LABS-1.030, DI-10 and DI-11 under LABS-1.034, DI-12 under LABS-1.038, DI-14 under LABS-1.042, DI-13 under LABS-1.043, DI-15 and DI-16 under LABS-1.045, DI-17 under LABS-1.049, DI-18 under LABS-1.050.** The pre-Stage E consolidation ([pre-stage-e-consolidation.md](pre-stage-e-consolidation.md), LABS-1.045, at review) recommends a disposition for every open issue. These are known correctness issues (DI-1 to DI-8, DI-11), one
 tracked performance concern (DI-9) and one maintenance item (DI-10), kept apart from the stage documents.
 None of them has had its semantics changed yet. The pre-Stage E correctness review
 ([pre-stage-e-correctness-review.md](pre-stage-e-correctness-review.md), LABS-1.034) reproduces DI-1 to DI-6 and DI-8,
@@ -13,6 +13,11 @@ widens the scope of DI-5 and DI-8, and found DI-11.
 - **DI-3**, **DI-4** and **DI-5** are accepted limitations until a decision says otherwise.
 - **DI-10** is non-blocking maintenance. **DI-11** (found by the review) is proposed for review before Stage E.
 - **DI-12** (found in the increment B design) is registered and deferred: no deadline, correction not scheduled.
+- **LABS-1.049:** DI-12, DI-15 and DI-16 are **closed** (identity increment merged, `main` `dd58b25`). **DI-17** (possible
+  over-restriction of conflict-group identity) is registered for **Stage E evaluation**. ID-10 and the TI-1 `derived`
+  marker stay deferred (see DI-17).
+- **LABS-1.050:** DI-13 is **closed** (multiplicity increment, with schema export format 3, approved and merged into
+  `main`). **DI-18** (module data the replay does not reproduce is absent from the export) is registered.
 
 Each entry gives a concrete case, what it affects, and the options. A resolution needs its own approved decision and
 tests.
@@ -24,17 +29,19 @@ tests.
 | DI-3 | conflicting mechanical joint kinds are not judged | D-1 | no deadline | open (limitation) |
 | DI-4 | dependency-kind vocabulary is not validated | D-1 | no deadline | open (limitation) |
 | DI-5 | a future-effective appointment (or holding) with an unreviewed counter-claim is labelled "not established" | D-2 (LABS-1.026) | no deadline | corrected in increment B, approved and merged (LABS-1.039, `main` d9d873a) |
-| DI-6 | aggregate organisational reports can return ASSERTED despite mixed constituent statuses | D-2 (LABS-1.026) | review before Stage E | corrected in increment C (LABS-1.040), awaiting review, not merged |
+| DI-6 | aggregate organisational reports can return ASSERTED despite mixed constituent statuses | D-2 (LABS-1.026) | review before Stage E | corrected in increment C, approved and merged (LABS-1.041, `main` bf8bb34) |
 | DI-7 | formal derivation provenance: no record of a named rule and named premises, yet basis "inference" gives INFERRED | D-3 (LABS-1.027 G-1, LABS-1.028) | Stage E requirement | open |
 | DI-8 | `take_sample` (and `replace_part`) write an account and its claimed effects in separate transactions | D-3 (LABS-1.028; registered LABS-1.030) | before Stage E | corrected in increment A, approved and merged (LABS-1.037, `main` 7654587) |
 | DI-9 | performance: high query counts in the D-3 reports, and questions slowing as other worlds' data grows | D-3 benchmark (LABS-1.029; registered LABS-1.030) | tracked into Stage E | open (performance) |
 | DI-10 | the schema explorer has no automated browser regression tests (search, filters, navigation were checked by hand) | LABS-1.024 gate (registered LABS-1.034) | no deadline (maintenance) | open (non-blocking) |
 | DI-11 | reports built on `_claims` (capable, the profile reports) ignore functional-slot conflicts; the mirror image of DI-1 | pre-Stage E review (LABS-1.034) | proposed: before Stage E | corrected in increment B, approved and merged (LABS-1.039, `main` d9d873a) |
-| DI-12 | the transitive traversals (`parts`, `dependencies`) judge their links without the perspective's same-as identity | increment B design (LABS-1.037, registered LABS-1.038) | before Stage E (LABS-1.046) | corrected on `feature/pre-e-identity` (LABS-1.048, ID-8), at the identity review gate; closes when merged ([report](pre-e-identity-increment.md)) |
-| DI-13 | every event role holds at most one player per account (TypeDB's default `@card(0..1)`), a universal per-account cardinality the domain does not always have | increment D design (LABS-1.041; registered LABS-1.043, ER-8) | before Stage E (LABS-1.046) | open: additive correction designed, at review ([design](pre-e-multiplicity-design.md)) |
+| DI-12 | the transitive traversals (`parts`, `dependencies`) judge their links without the perspective's same-as identity | increment B design (LABS-1.037, registered LABS-1.038) | before Stage E (LABS-1.046) | **closed**: corrected by the identity increment (ID-8), approved and merged (LABS-1.049, `main` dd58b25; [report](pre-e-identity-increment.md)) |
+| DI-13 | every event role holds at most one player per account (TypeDB's default `@card(0..1)`), a universal per-account cardinality the domain does not always have | increment D design (LABS-1.041; registered LABS-1.043, ER-8) | before Stage E (LABS-1.046) | **closed**: corrected by the multiplicity increment (MP-1 as restricted, MP-2 to MP-5, the `move()` origin defect) with the four approved additions and schema export format 3; approved and merged into `main` (LABS-1.050; [report](pre-e-multiplicity-increment.md)) |
 | DI-14 | in a variant world, descriptions whose account is not inherited are listed (their `describes` link is) without saying the world holds no account of them | increment D design (registered LABS-1.042) | no deadline (deferred) | open (reporting; no judgement affected) |
-| DI-15 | an occurrence's aliases (accepted same-as) are listed in `occurrence()` but their accounts are never compared, so two names of one occurrence give different role judgements | consolidation (LABS-1.045) | before Stage E (LABS-1.046) | corrected on `feature/pre-e-identity` (LABS-1.048, ID-9), at the identity review gate; closes when merged ([report](pre-e-identity-increment.md)) |
-| DI-16 | identity merges on a same-as whose canonical judgement is DISPUTED (accepted denials are ignored) | consolidation (LABS-1.045) | before Stage E (LABS-1.046) | corrected by option (a) on `feature/pre-e-identity` (LABS-1.048, ID-2, ID-5, ID-6), reproduction a permanent test; at the identity review gate; closes when merged ([report](pre-e-identity-increment.md)) |
+| DI-15 | an occurrence's aliases (accepted same-as) are listed in `occurrence()` but their accounts are never compared, so two names of one occurrence give different role judgements | consolidation (LABS-1.045) | before Stage E (LABS-1.046) | **closed**: corrected by the identity increment (ID-9), approved and merged (LABS-1.049, `main` dd58b25; [report](pre-e-identity-increment.md)) |
+| DI-16 | identity merges on a same-as whose canonical judgement is DISPUTED (accepted denials are ignored) | consolidation (LABS-1.045) | before Stage E (LABS-1.046) | **closed**: option (a), corrected by the identity increment (ID-2, ID-5, ID-6), reproduction a permanent test; approved and merged (LABS-1.049, `main` dd58b25; [report](pre-e-identity-increment.md)) |
+| DI-17 | a group of names joined by established same-as links that contains one disputed or denied pair is not merged at all (ID-5), so its established equivalences are set aside too: possibly over-restrictive | identity increment (LABS-1.048; registered LABS-1.049) | Stage E evaluation | open (evaluation) |
+| DI-18 | the export's `module_data` lists only the records the replay reproduces: a record held by a module version this code cannot replay is absent from the export (the attribution reports the replay as unverified) | schema export format 3 (LABS-1.050) | no deadline (export completeness) | open (non-blocking; format 2 refusal already reads the database's own records) |
 
 ## DI-1: `facts_about` omits content disputed by polarity
 **What happens.** `facts_about(world, subject, t)` lists only content whose judgement at t is "holds". Two kinds of
@@ -361,6 +368,8 @@ selection difference would be decided with it.
 
 **LABS-1.046: correction designed** with DI-15 and DI-16 as one identity increment, not implemented: [pre-e-identity-design.md](pre-e-identity-design.md) (ID-8: option (a), traversal between identity classes, and selection by class).
 
+**LABS-1.049: closed.** Corrected by the identity increment (ID-8: `parts` and `dependencies` traverse identity classes and stop at a disputed link; reports select contents by the subject's class), approved and merged at `main` `dd58b25` ([pre-e-identity-increment.md](pre-e-identity-increment.md)). Permanent tests: `tests/test_t_identity.py`. `probes/pre_e_b_di12.py` is kept unchanged as the historical record of the defect and now fails on purpose.
+
 ## DI-13: one player per event role per account
 **What happens.** In TypeDB 3.14.1 a role with no cardinality annotation is `@card(0..1)`, and no event role (core or
 profile) declares another, so one event description can name at most one actor, patient, removed part, product and
@@ -380,6 +389,20 @@ co-signed official act becomes two accounts that organisation 0.2's unconditiona
 consolidation, section 2).
 
 **LABS-1.046: additive correction designed**, not implemented: [pre-e-multiplicity-design.md](pre-e-multiplicity-design.md). Selected event roles open to several players per account (core module `core-0.4-event-multiplicity`, profile next versions), and rule Q compares each account's set of players (union without a constraint; `one`: DISPUTED for several players in one account or across accounts; new `set`: established when every account states the same set). TypeDB evidence: `probes/pre_e_di13_cardinality.out.txt` (a role opens on live data; a specialised role must be opened itself; narrowing back is refused once used); rule prototype: `probes/pre_e_di13_rule.out.txt`.
+
+**LABS-1.050: closed.** Architecturally approved under LABS-1.050, including the four implementation additions (the
+domain error at commit, version-chain profile upgrades, `official_act()`'s `officials`/`by_official`, one part-of
+effect per part) and laboratory 0.2's dependency on both upgrades; the multiplicity is exported in schema export format
+3 (format 2 is still read, and written only where it can represent the database). Merged into `main` with
+`feature/pre-e-multiplicity`. Kept open elsewhere: destination and product stay single (a later design); DI-14 and
+DI-9 unchanged; DI-18 new.
+
+**LABS-1.049: corrected on `feature/pre-e-multiplicity`, at the review gate; not closed.** Actor, patient and the
+profile roles official, sampler, removed and fitted accept several players per account; origin, destination, location,
+instrument, product and sampled stay single. Several players are judged per account set (MP-2) under a declared
+multiplicity (MP-3, MP-4); existing databases upgrade explicitly (MP-5). The `move()` defect (two origins refused with
+a raw database error, LABS-1.047) is corrected: a domain-level `MovementConflict`, nothing written. Report:
+[pre-e-multiplicity-increment.md](pre-e-multiplicity-increment.md).
 
 ## DI-14: descriptions listed in a variant without an account there
 **What happens.** `account()` writes a description's own attestation over the event's interval, and its `describes`
@@ -418,6 +441,8 @@ declared single-valued role.
 
 **LABS-1.046: correction designed**, not implemented: [pre-e-identity-design.md](pre-e-identity-design.md) (ID-9: one view from every name of an occurrence). Reproduced again in `probes/pre_e_identity_cases.out.txt`.
 
+**LABS-1.049: closed.** Corrected by the identity increment (ID-9: one view from every name, additive `aliases` and `identity` fields), approved and merged at `main` `dd58b25` ([pre-e-identity-increment.md](pre-e-identity-increment.md)); permanent tests in `tests/test_t_identity.py`.
+
 ## DI-16: identity merges on a disputed same-as
 **What happens** (`probes/pre_e_consolidation.py`). `same-as(bea, b-smith)` is asserted and accepted, then denied by
 an accepted denial. Its canonical judgement is DISPUTED, but `Identity` unions every usable same-as assertion and
@@ -431,3 +456,51 @@ report the dispute beside merged answers; (c) keep and document. **Recommended:*
 semantic change, with its own design gate).
 
 **LABS-1.046: clarified, not implemented or closed:** [pre-e-di16-clarification.md](pre-e-di16-clarification.md) (exact entry, minimal reproduction `probes/pre_e_di16_repro.py`, proposed decision: option (a)). Further forms found (`probes/pre_e_identity_cases.out.txt`): a chain merging two names whose own link is denied or disputed (I16, I18); a plan world's stipulated denial of an inherited link ignored (I12). Recorded here with them, as it has the same remedy: the same-as content is itself judged through identity, so a neighbouring link's dispute can make an established link read disputed (I18) and a link with no record read established (I15) (finding F-1 of the identity design).
+
+**LABS-1.049: closed.** Option (a), corrected by the identity increment (ID-2, ID-5, ID-6), approved and merged at
+`main` `dd58b25` ([pre-e-identity-increment.md](pre-e-identity-increment.md)). The reproduction is a permanent test
+(`tests/test_t_identity.py`): with the assertion and the denial both accepted, the official is DISPUTED and both
+accounts are cited; the other three rows are unchanged. **Approved interpretation (LABS-1.049):** the "temporal
+context" of identity is **knowledge time**. Identity is timeless in valid time (ID-3), so two names are one thing at
+every valid time or at none; it changes only with what is known, so a denial applies from its recording time on and
+views at an earlier knowledge time are reproduced unchanged.
+
+## DI-17: conflict-group identity may be over-restrictive (Stage E evaluation)
+**Registered LABS-1.049**, from the identity increment (LABS-1.048). Not a defect in the approved semantics: a
+recorded risk that they are stricter than needed.
+
+**What happens.** Under ID-5, a group of names connected by established same-as links that contains a pair whose own
+link is DISPUTED or denied is not merged at all, and the conflict is reported (`identity()`'s `conflicts`). Example
+(`tests/test_t_identity.py`, case I16 of `probes/pre_e_identity_cases.py`): s1~s2 and s2~s3 are established, s1~s3 is
+denied. None of s1, s2 and s3 is merged, so the established s1~s2 equivalence is set aside together with the chain
+that contradicts the denial. Answers about s1 and s2 are then given separately, never wrongly merged. The `y` group
+(a three-name cycle with one denied link) behaves the same way.
+
+**Why it may be too strict.** A group with one disputed pair may hold many sound equivalences; with ID-5 one dispute
+switches all of them off. Alternatives that keep more: merge every established link except those that would join
+the disputed pair (needs a rule for which link to drop when several would); merge maximal consistent subgroups; or
+merge and flag the answers that relied on the group. Each is a semantic change with its own design.
+
+**Impact today:** none on the reference worlds (no same-as content). **Disposition:** evaluate in Stage E. Count how
+often conflict groups arise in the evaluation data, and whether separating them hides answers an evaluator expects.
+Change only by a new approved design.
+
+**Related deferrals kept (LABS-1.049):**
+- **ID-10** (`descriptions()` listing by the describes link's canonical judgement) is not implemented; it needs its
+  own approval.
+- **TI-1 `derived` marker** (flag pairs joined only through a chain) is not added; `identity()`'s `links` already show
+  which links joined a group.
+
+## DI-18: module data the replay does not reproduce is absent from the export
+**Registered LABS-1.050**, found while adding schema export format 3. `module_data` is built from the records each
+replay step writes (attribution.py) and marks each as found in the database or not. A record in the database that no
+replayed module writes, for example a constraint of a profile version this code does not have (attribution
+`version-mismatch`), or one written by hand, is **not listed at all**. The export still says the replay did not
+verify, so the omission is not silent at the document level, but the record cannot be read from the export.
+
+**Impact:** none on the reference export (every record is reproduced; attribution verified). A format-2 export is
+not affected in meaning: its refusal of set-valued constraints reads the database's own records
+(`tests/test_o_schema_export.py`, `test_format_2_refuses_a_set_valued_constraint_the_replay_does_not_list`).
+**Options:** list such records with status `unresolved` and source `database` (additive in format 3's record
+shape); or keep, documented. No deadline; non-blocking.
+

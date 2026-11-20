@@ -38,13 +38,23 @@ EXCLUSIVE_OFFICE = AttestedConstraint("exclusive-office", "office-holding",
 # An official act is one official's act in one office within one context (a joint act is several acts), so for one
 # occurrence its official (actor), office and office context are single-valued, unconditionally (LABS-1.043, ER-6).
 # 0.2 (LABS-1.043) adds these three event-role constraints to 0.1 (data only; the schema file is unchanged).
-PROFILE = Profile(NAME, "0.2", (str(SCHEMA_DIR / "profiles" / "organisation" / "organisation-0.1.tql"),),
-                  vocabulary=(("category", "organisation:appointment", "appointment"),
-                              ("category", "organisation:dismissal", "dismissal")),
+# 0.3 (LABS-1.049, DI-13, MP-1, MP-4) opens the official to several players per account and adds the category
+# organisation:co-signed: an act established as co-signed at its start has a set of officials (co-participation,
+# established when every compared account names the same set); every other act keeps one official (ER-6).
+CO_SIGNED = "organisation:co-signed"
+_SCHEMA_01 = (str(SCHEMA_DIR / "profiles" / "organisation" / "organisation-0.1.tql"),)
+_VOCAB_01 = (("category", "organisation:appointment", "appointment"),
+             ("category", "organisation:dismissal", "dismissal"))
+_ROLES_02 = (EventRole("official-act", "actor"), EventRole("official-act", "office"),
+             EventRole("official-act", "office-context"))
+PROFILE_01 = Profile(NAME, "0.1", _SCHEMA_01, vocabulary=_VOCAB_01, attested_constraints=(EXCLUSIVE_OFFICE,))
+PROFILE_02 = Profile(NAME, "0.2", _SCHEMA_01, vocabulary=_VOCAB_01, attested_constraints=(EXCLUSIVE_OFFICE,),
+                     event_roles=_ROLES_02, upgrades_from="0.1", previous=PROFILE_01)
+PROFILE = Profile(NAME, "0.3", _SCHEMA_01 + (str(SCHEMA_DIR / "profiles" / "organisation" / "organisation-0.3.tql"),),
+                  vocabulary=_VOCAB_01 + (("category", CO_SIGNED, "co-signed act"),),
                   attested_constraints=(EXCLUSIVE_OFFICE,),
-                  event_roles=(EventRole("official-act", "actor"), EventRole("official-act", "office"),
-                               EventRole("official-act", "office-context")),
-                  upgrades_from="0.1")
+                  event_roles=_ROLES_02 + (EventRole("official-act", "actor", CO_SIGNED, "set"),),
+                  upgrades_from="0.2", opens=("official-act:official",), previous=PROFILE_02)
 PROFILES[NAME] = PROFILE
 NOT_ASSESSED = "not assessed"
 
@@ -211,25 +221,52 @@ def official_act(wm, world, event, power=None, as_of=None, perspective=SYSTEM):
     account (accepted or not, interval); occurrences with their own status; at the act's start: the official's office
     appointment (its judgement, and DISPUTED with the conflict if contested), and, for `power`, authority in the
     office's context (authorised) and practical capability there (capable), and agency. Without an accepted account
-    there is no time, so nothing at the act's time is judged (None)."""
+    there is no time, so nothing at the act's time is judged (None).
+
+    Several officials (a co-signed act, organisation 0.3, LABS-1.049): `officials` lists every official named and
+    `by_official` gives each one's office_held, authority, capability and agent. With exactly one official the
+    top-level fields are that official's, as before; with several, `official` and the four top-level judgement
+    fields are None (no official is chosen over another). Whether several officials are co-signatories or
+    conflicting evidence is judged by `occurrence()`, not here."""
     _require(wm)
     content = wm.content(event)
     if content is None or not wm.is_a(content["type"], "official-act"):
         raise ValueError(f"{event!r} is not an official-act description")
-    official, office = content["roles"]["official"][0], content["roles"]["office"][0]
+    officials, office = sorted(content["roles"]["official"]), content["roles"]["office"][0]
     context = content["roles"]["office-context"][0]
     span = wm.interval(world, event, as_of, perspective)
     at = span[0].earliest if span and span[0] else None
-    report = {"event": event, "official": official, "office": office, "context": context,
+    report = {"event": event, "official": officials[0] if len(officials) == 1 else None, "officials": officials,
+              "office": office, "context": context,
               "account": "accepted" if span else "not accepted", "start": span[0] if span else None,
               "end": span[1] if span else None,
               "occurrences": [{"occurrence": o, "status": wm.occurrence_status(world, o, at, as_of, perspective,
                                                                               details=False)["status"]
                                if at is not None else None}
                               for o in wm.occurrences_of(world, event, as_of, perspective)],
-              "office_held": None, "authority": None, "capability": None, "agent": None}
+              "office_held": None, "authority": None, "capability": None, "agent": None,
+              "by_official": {o: {"office_held": None, "authority": None, "capability": None, "agent": None}
+                              for o in officials}}
     if at is None:
         return report
+    for official in officials:
+        mine = report["by_official"][official]
+        held = [o for o in offices_of(wm, world, official, at, as_of, perspective)
+                if o["office"] == office and o["context"] == context]
+        mine["office_held"] = ({"judgement": held[0]["judgement"], "status": held[0]["status"],
+                                "conflict": held[0]["conflict"]} if held
+                               else {"judgement": "not established", "status": None, "conflict": None})
+        if power is not None:
+            a = authorised(wm, world, official, power, context, at, as_of, perspective)
+            c = wm.capable(world, official, power, at, context, as_of, perspective)
+            mine["authority"] = {"judgement": a["judgement"], "status": a["status"],
+                                 "grantors": [g["grantor"] for g in a["grants"] if g["judgement"] == "established"],
+                                 "grantor_entitlement": NOT_ASSESSED}
+            mine["capability"] = {"judgement": c["judgement"], "status": c["status"]}
+        mine["agent"] = wm.is_agent(world, official, at, as_of, perspective)["judgement"]
+    if len(officials) == 1:
+        report.update(report["by_official"][officials[0]])
+    return report
     held = [o for o in offices_of(wm, world, official, at, as_of, perspective)
             if o["office"] == office and o["context"] == context]
     report["office_held"] = ({"judgement": held[0]["judgement"], "status": held[0]["status"],

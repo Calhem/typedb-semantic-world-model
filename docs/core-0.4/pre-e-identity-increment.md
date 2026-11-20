@@ -1,6 +1,6 @@
 # Pre-Stage E correction: contextually established identity (DI-12, DI-15, DI-16)
 
-**Status: implemented under LABS-1.048 on `feature/pre-e-identity`, at the identity review gate. Not merged.**
+**Status: implemented under LABS-1.048 on `feature/pre-e-identity`; approved and merged under LABS-1.049 (`main` `dd58b25`; see "After the merge").**
 Approved design: [pre-e-identity-design.md](pre-e-identity-design.md), decisions ID-1 to ID-9 (ID-5 as clarified in
 [pre-e-decision-gate.md](pre-e-decision-gate.md)); DI-16 by option (a) of
 [pre-e-di16-clarification.md](pre-e-di16-clarification.md). ID-10 is **not** implemented (optional, separate, needs its
@@ -201,3 +201,11 @@ All follow from the approved decisions; none appears in the reference worlds.
 3. TI-1: add the `derived` marker (additive report field) now, later, or not at all.
 4. ID-10: still deferred (no change requested).
 5. Then proceed to the multiplicity increment (DI-13) as approved.
+
+## After the merge (LABS-1.049)
+- Approved head `36b999d` merged into `main` with `--no-ff` as `dd58b25`. The merged tree is identical to the approved
+  head's, so the merge adds nothing beyond what was validated. It also brings the LABS-1.046/1.047 designs, gate
+  reports and benchmark records to `main`.
+- DI-12, DI-15 and DI-16 are closed in the register.
+- Decisions recorded: "temporal context" means knowledge time (section 2); ID-10 and the TI-1 `derived` marker stay
+  deferred; the possible over-restriction of conflict groups (ID-5) is registered as DI-17 for Stage E evaluation.

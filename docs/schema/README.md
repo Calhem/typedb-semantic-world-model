@@ -3,7 +3,7 @@
 The schema of a reference database, exported from the live database by `worldmodel.schema_export`
 (LABS-1.024; design and decisions in [../schema-export/design.md](../schema-export/design.md)).
 
-The reference database holds the full core (seven modules) and the three domain profiles (mechanical,
+The reference database holds the full core (nine modules) and the three domain profiles (mechanical,
 organisation, laboratory), installed in their registered order. It is built, exported and deleted by:
 
     uv run python scripts/export_schema.py --reference
@@ -15,7 +15,7 @@ stale unnoticed.
 |---|---|
 | `schema-explorer.html` | **Start here.** Open it in a browser (double-click). One file; it needs no internet and makes no network requests. Search, filters, a page per type, role, function and module, and the checks |
 | `schema.tql` | The database's schema exactly as TypeDB returns it (`schema()`), byte for byte. It can be defined into an empty database to rebuild the schema |
-| `schema.json` | The full export in the versioned format `wm-schema-export/2` (its JSON Schema is `src/worldmodel/schema_export/wm-schema-export-2.schema.json`; format 1, written before LABS-1.043, is still validated against `wm-schema-export-1.schema.json`) |
+| `schema.json` | The full export in the versioned format `wm-schema-export/3` (its JSON Schema is `src/worldmodel/schema_export/wm-schema-export-3.schema.json`). Formats 1 (before LABS-1.043) and 2 (LABS-1.043 to LABS-1.049) are still validated against their own, unchanged files `wm-schema-export-1.schema.json` and `wm-schema-export-2.schema.json` |
 | `manifest.json` | What was exported and when, the results of every check, the attribution counts, every unresolved item, and a SHA-256 for each file |
 
 ## Where each piece of information comes from

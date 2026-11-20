@@ -134,8 +134,13 @@ def m(ref, request):
 
 
 def con(view, label, role=None):
-    """The constraint evaluated for a stored role label (the only one, or the one for `role`)."""
+    """The constraint evaluated for a stored role label (the only one, or the one for `role`). Since organisation 0.3
+    (LABS-1.049, MP-4) the official is also declared `set` for organisation:co-signed acts; no act here is
+    co-signed, so that declaration never applies and increment D's own (unconditional) one is returned."""
     cs = [c for c in view["roles"][label]["constraints"] if role is None or c["role"] == role]
+    if len(cs) > 1:
+        assert [(c["kind"], c["applies"]) for c in cs if c["kind"] is not None] == [("organisation:co-signed", False)]
+        cs = [c for c in cs if c["kind"] is None]
     assert len(cs) == 1, cs
     return cs[0]
 
@@ -159,6 +164,11 @@ def test_x1_conflicting_officials_are_disputed_each_cited(m):
     assert [p["status"] for p in c["players"]] == [Status.ASSERTED, Status.ASSERTED]
     assert con(v, "official-act:office")["judgement"] == "established"
     assert con(v, "official-act:office-context")["judgement"] == "established"
+    # LABS-1.049: the co-signed declaration is listed, does not apply, and says so (the role is not a union here)
+    cosigned = [x for x in v["roles"]["official-act:official"]["constraints"] if x["kind"] is not None][0]
+    assert (cosigned["multiplicity"], cosigned["judgement"]) == ("set", None)
+    assert cosigned["why"].endswith("this declaration does not apply")
+    assert (c["multiplicity"], c["reason"]) == ("one", "accounts name different players")
     # X5: a core event account's `actor` is listed apart and never compared with `official`
     assert v["roles"]["event:actor"]["players"] == {"dan": ["ev-act-generic"]}
     assert v["roles"]["event:actor"]["constraints"] == [] and v["roles"]["official-act:official"]["core_role"] == "actor"

@@ -1,0 +1,17 @@
+# Core 0.4, pre-Stage E multiplicity increment (LABS-1.049, DI-13): several participants in one role of one account.
+#
+# MP-1 (as restricted by LABS-1.048): opens two core event roles to several players per account (one description):
+# - event:actor: joint actions (a two-technician job, co-signatories, team sampling);
+# - event:patient: several things acted on in one operation (several parts removed in one replacement).
+# Every other event role stays at one player per account (TypeDB's default @card(0..1)): location, origin,
+# destination and instrument; so do the profile roles that specialise them (a profile opens its own roles only in its
+# next version). Opening widens a cardinality and never narrows one; existing descriptions read as before.
+#
+# MP-3: an event-role constraint may declare its multiplicity: "one" (several players are DISPUTED, the meaning of
+# every constraint before this module) or "set" (co-participation, judged as a whole). Absent means "one".
+# Requires core-0.4-event-roles (the constraint entity). See docs/core-0.4/pre-e-multiplicity-design.md.
+
+define
+relation event relates actor @card(0..), relates patient @card(0..);
+attribute role-multiplicity, value string @values("one", "set");
+event-role-constraint owns role-multiplicity @card(0..1);

@@ -81,10 +81,11 @@ def module_data(attr):
             _, rid, predicate, key_roles, value_role = rec
             row = {"kind": "functional-slot", "id": rid, "predicate": predicate, "key_roles": list(key_roles),
                    "value_role": value_role}
-        else:                                       # format 2: every attribute the entity owns, so it can be re-created
-            _, rid, event_type, role, event_kind, declared_by = rec
+        else:                                       # formats 2-3: every attribute the entity owns, so it can be re-created
+            _, rid, event_type, role, event_kind, declared_by, multiplicity = rec
             row = {"kind": "event-role-constraint", "id": rid, "event_type": event_type, "role": role,
-                   "event_kind": event_kind, "declared_by": declared_by}
+                   "event_kind": event_kind, "declared_by": declared_by,
+                   "multiplicity": multiplicity}           # LABS-1.049: None = none stored ("one")
         row["source"] = "database" if d["in_database"] else "reconstructed"
         row["attribution"] = {"status": d["status"], "modules": d["modules"]}
         if d["status"] == "unresolved":
