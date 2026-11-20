@@ -1,0 +1,4 @@
+sel0-prof0: 744 passed in 686.79s (0:11:26)
+sel0-prof1: 744 passed in 730.03s (0:12:10)
+sel1-prof0: 744 passed, 1 warning in 717.99s (0:11:57)
+sel1-prof1: 744 passed in 789.04s (0:13:09)
