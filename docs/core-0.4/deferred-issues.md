@@ -1,6 +1,6 @@
 # Deferred correctness issues (register)
 
-**Opened 2026-11-11 under LABS-1.025; DI-5 added under LABS-1.026, DI-6 under LABS-1.027, DI-7 under LABS-1.028, DI-8 and DI-9 under LABS-1.030, DI-10 and DI-11 under LABS-1.034, DI-12 under LABS-1.038, DI-14 under LABS-1.042, DI-13 under LABS-1.043, DI-15 and DI-16 under LABS-1.045, DI-17 under LABS-1.049.** The pre-Stage E consolidation ([pre-stage-e-consolidation.md](pre-stage-e-consolidation.md), LABS-1.045, at review) recommends a disposition for every open issue. These are known correctness issues (DI-1 to DI-8, DI-11), one
+**Opened 2026-11-11 under LABS-1.025; DI-5 added under LABS-1.026, DI-6 under LABS-1.027, DI-7 under LABS-1.028, DI-8 and DI-9 under LABS-1.030, DI-10 and DI-11 under LABS-1.034, DI-12 under LABS-1.038, DI-14 under LABS-1.042, DI-13 under LABS-1.043, DI-15 and DI-16 under LABS-1.045, DI-17 under LABS-1.049, DI-18 under LABS-1.050.** The pre-Stage E consolidation ([pre-stage-e-consolidation.md](pre-stage-e-consolidation.md), LABS-1.045, at review) recommends a disposition for every open issue. These are known correctness issues (DI-1 to DI-8, DI-11), one
 tracked performance concern (DI-9) and one maintenance item (DI-10), kept apart from the stage documents.
 None of them has had its semantics changed yet. The pre-Stage E correctness review
 ([pre-stage-e-correctness-review.md](pre-stage-e-correctness-review.md), LABS-1.034) reproduces DI-1 to DI-6 and DI-8,
@@ -16,6 +16,8 @@ widens the scope of DI-5 and DI-8, and found DI-11.
 - **LABS-1.049:** DI-12, DI-15 and DI-16 are **closed** (identity increment merged, `main` `dd58b25`). **DI-17** (possible
   over-restriction of conflict-group identity) is registered for **Stage E evaluation**. ID-10 and the TI-1 `derived`
   marker stay deferred (see DI-17).
+- **LABS-1.050:** DI-13 is **closed** (multiplicity increment, with schema export format 3, approved and merged into
+  `main`). **DI-18** (module data the replay does not reproduce is absent from the export) is registered.
 
 Each entry gives a concrete case, what it affects, and the options. A resolution needs its own approved decision and
 tests.
@@ -34,11 +36,12 @@ tests.
 | DI-10 | the schema explorer has no automated browser regression tests (search, filters, navigation were checked by hand) | LABS-1.024 gate (registered LABS-1.034) | no deadline (maintenance) | open (non-blocking) |
 | DI-11 | reports built on `_claims` (capable, the profile reports) ignore functional-slot conflicts; the mirror image of DI-1 | pre-Stage E review (LABS-1.034) | proposed: before Stage E | corrected in increment B, approved and merged (LABS-1.039, `main` d9d873a) |
 | DI-12 | the transitive traversals (`parts`, `dependencies`) judge their links without the perspective's same-as identity | increment B design (LABS-1.037, registered LABS-1.038) | before Stage E (LABS-1.046) | **closed**: corrected by the identity increment (ID-8), approved and merged (LABS-1.049, `main` dd58b25; [report](pre-e-identity-increment.md)) |
-| DI-13 | every event role holds at most one player per account (TypeDB's default `@card(0..1)`), a universal per-account cardinality the domain does not always have | increment D design (LABS-1.041; registered LABS-1.043, ER-8) | before Stage E (LABS-1.046) | corrected on `feature/pre-e-multiplicity` (LABS-1.049; MP-1 restricted, MP-2 to MP-5, and the `move()` origin defect), at the multiplicity review gate; closes when merged ([report](pre-e-multiplicity-increment.md)) |
+| DI-13 | every event role holds at most one player per account (TypeDB's default `@card(0..1)`), a universal per-account cardinality the domain does not always have | increment D design (LABS-1.041; registered LABS-1.043, ER-8) | before Stage E (LABS-1.046) | **closed**: corrected by the multiplicity increment (MP-1 as restricted, MP-2 to MP-5, the `move()` origin defect) with the four approved additions and schema export format 3; approved and merged into `main` (LABS-1.050; [report](pre-e-multiplicity-increment.md)) |
 | DI-14 | in a variant world, descriptions whose account is not inherited are listed (their `describes` link is) without saying the world holds no account of them | increment D design (registered LABS-1.042) | no deadline (deferred) | open (reporting; no judgement affected) |
 | DI-15 | an occurrence's aliases (accepted same-as) are listed in `occurrence()` but their accounts are never compared, so two names of one occurrence give different role judgements | consolidation (LABS-1.045) | before Stage E (LABS-1.046) | **closed**: corrected by the identity increment (ID-9), approved and merged (LABS-1.049, `main` dd58b25; [report](pre-e-identity-increment.md)) |
 | DI-16 | identity merges on a same-as whose canonical judgement is DISPUTED (accepted denials are ignored) | consolidation (LABS-1.045) | before Stage E (LABS-1.046) | **closed**: option (a), corrected by the identity increment (ID-2, ID-5, ID-6), reproduction a permanent test; approved and merged (LABS-1.049, `main` dd58b25; [report](pre-e-identity-increment.md)) |
 | DI-17 | a group of names joined by established same-as links that contains one disputed or denied pair is not merged at all (ID-5), so its established equivalences are set aside too: possibly over-restrictive | identity increment (LABS-1.048; registered LABS-1.049) | Stage E evaluation | open (evaluation) |
+| DI-18 | the export's `module_data` lists only the records the replay reproduces: a record held by a module version this code cannot replay is absent from the export (the attribution reports the replay as unverified) | schema export format 3 (LABS-1.050) | no deadline (export completeness) | open (non-blocking; format 2 refusal already reads the database's own records) |
 
 ## DI-1: `facts_about` omits content disputed by polarity
 **What happens.** `facts_about(world, subject, t)` lists only content whose judgement at t is "holds". Two kinds of
@@ -387,6 +390,13 @@ consolidation, section 2).
 
 **LABS-1.046: additive correction designed**, not implemented: [pre-e-multiplicity-design.md](pre-e-multiplicity-design.md). Selected event roles open to several players per account (core module `core-0.4-event-multiplicity`, profile next versions), and rule Q compares each account's set of players (union without a constraint; `one`: DISPUTED for several players in one account or across accounts; new `set`: established when every account states the same set). TypeDB evidence: `probes/pre_e_di13_cardinality.out.txt` (a role opens on live data; a specialised role must be opened itself; narrowing back is refused once used); rule prototype: `probes/pre_e_di13_rule.out.txt`.
 
+**LABS-1.050: closed.** Architecturally approved under LABS-1.050, including the four implementation additions (the
+domain error at commit, version-chain profile upgrades, `official_act()`'s `officials`/`by_official`, one part-of
+effect per part) and laboratory 0.2's dependency on both upgrades; the multiplicity is exported in schema export format
+3 (format 2 is still read, and written only where it can represent the database). Merged into `main` with
+`feature/pre-e-multiplicity`. Kept open elsewhere: destination and product stay single (a later design); DI-14 and
+DI-9 unchanged; DI-18 new.
+
 **LABS-1.049: corrected on `feature/pre-e-multiplicity`, at the review gate; not closed.** Actor, patient and the
 profile roles official, sampler, removed and fitted accept several players per account; origin, destination, location,
 instrument, product and sampled stay single. Several players are judged per account set (MP-2) under a declared
@@ -480,3 +490,17 @@ Change only by a new approved design.
   own approval.
 - **TI-1 `derived` marker** (flag pairs joined only through a chain) is not added; `identity()`'s `links` already show
   which links joined a group.
+
+## DI-18: module data the replay does not reproduce is absent from the export
+**Registered LABS-1.050**, found while adding schema export format 3. `module_data` is built from the records each
+replay step writes (attribution.py) and marks each as found in the database or not. A record in the database that no
+replayed module writes, for example a constraint of a profile version this code does not have (attribution
+`version-mismatch`), or one written by hand, is **not listed at all**. The export still says the replay did not
+verify, so the omission is not silent at the document level, but the record cannot be read from the export.
+
+**Impact:** none on the reference export (every record is reproduced; attribution verified). A format-2 export is
+not affected in meaning: its refusal of set-valued constraints reads the database's own records
+(`tests/test_o_schema_export.py`, `test_format_2_refuses_a_set_valued_constraint_the_replay_does_not_list`).
+**Options:** list such records with status `unresolved` and source `database` (additive in format 3's record
+shape); or keep, documented. No deadline; non-blocking.
+

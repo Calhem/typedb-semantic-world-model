@@ -1,7 +1,7 @@
 # Pre-Stage E correction: several participants per role in one account (DI-13)
 
-**Status: implemented under LABS-1.049 on `feature/pre-e-multiplicity`, at the multiplicity (DI-13) architectural
-review gate. Not merged.** Approved design: [pre-e-multiplicity-design.md](pre-e-multiplicity-design.md), MP-2 to MP-5,
+**Status: implemented under LABS-1.049 on `feature/pre-e-multiplicity`; approved under LABS-1.050, with schema export
+format 3 added (section 12), and merged into `main`.** Approved design: [pre-e-multiplicity-design.md](pre-e-multiplicity-design.md), MP-2 to MP-5,
 with MP-1 restricted by LABS-1.048 (section 3.2 of [pre-e-decision-gate.md](pre-e-decision-gate.md)). The `move()`
 defect found under LABS-1.047 is corrected here. ID-10 is not implemented; Stage E has not begun. The foundational
 ontology is unchanged.
@@ -261,3 +261,41 @@ regenerated; a test that a format-2 export is still read (as `test_format_1_expo
 4. Schema export: approve releasing the multiplicity field as format 3 (section 8a; recommended, to be done before
    the merge), or keep it inside format 2 accepting the compatibility break for strict consumers.
 5. Then proceed to the Stage E entry validation (LABS-1.048 item 4) as approved.
+
+## 12. After review (LABS-1.050)
+**Decisions.** DI-13 architecturally approved, including the four additions of section 10 and laboratory 0.2's
+dependency on both upgrades (decisions 1 to 3). Decision 4: the multiplicity is released as schema export format 3.
+
+**Schema export format 3** (commit `45f6712`; [implementation notes](../schema-export/implementation.md), "Format 3"):
+- `wm-schema-export/3`: every event-role-constraint record states its multiplicity (`"set"`, `"one"`, or `null` for
+  none stored, which means `"one"`); `validate()` refuses a format-3 record without it; the explorer shows it.
+- Format 2's JSON Schema file is restored byte for byte to the one published at `dd58b25`; format-2 exports (fixture:
+  the reference export committed then) still validate and render.
+- Format 2 is still written on request (`format="wm-schema-export/2"`, CLI `--format 2`) where it represents the
+  database, and **refused** otherwise, naming each set-valued constraint, nothing written. The refusal also reads the
+  database's own records, because `module_data` omits records the replay does not reproduce (registered as DI-18).
+- A fresh database and an upgraded one export the same document apart from the database name (schema text,
+  schema section, attribution, module data with multiplicities).
+- Tests: seven in `tests/test_o_schema_export.py`, section "format 3"; three existing assertions moved from format 2
+  to format 3.
+
+**Validation of the export change** (commit `45f6712`, from a separate worktree):
+
+| Check | Result |
+|---|---|
+| full suite, four configurations | **689 passed** in each (682 + 7 format-3 tests); only the known driver `SyntaxWarning`, first run |
+| 106,752 answers on the upgraded reference database, against the snapshot of `ef230d4` (S2) | **106,752 identical**, 0 extended, 0 changed |
+| 398 views against the frozen baseline | 398 views, 0 field changes, 0 judgement changes, the same 8 presentation changes |
+| full `occurrence()` answers (356 views), against `ef230d4` | 0 views differ |
+| reference export | regenerated as format 3; schema text unchanged; attribution verified (519 facts) |
+
+Records: `suite-matrix-format3.out.txt`, `snapshot-S2-new-up--S5-format3-up.out.txt` and
+`views-format3-upgraded.out.txt` in [multiplicity-increment/](multiplicity-increment/).
+
+**Remaining compatibility limitations.**
+- A consumer pinned to format 2 cannot read a database with a co-signed (`set`) constraint: such exports exist only
+  in format 3. By design: format 2 would misstate the constraint.
+- DI-18: records the replay does not reproduce are absent from `module_data` in every format.
+- Opened roles cannot be narrowed once used (section 9), and old code reads a `set` constraint as `one`
+  (conservative: DISPUTED, never wrongly established).
+
