@@ -1,5 +1,7 @@
 # Core 0.4 Stage D-2: organisational profile, design (LABS-1.025)
 
+> **Pointer (LABS-1.053):** this historical document uses positional labels such as `office-holding(holder, office, context)` or `classified-as(holder, concept, context?)` to describe the positions. The stored role names, which readers take, are `classified`, `class` and `context` (`WorldModel.role_names`; organisation and agency module notes; `docs/stage-e/e1-reconciliation-design.md`, R2). The text below is unchanged.
+
 **Status (2026-11-11): design for approval. No D-2 implementation code is written.** Branch
 `feature/core-0.4-d2-organisation` from `main` 153c2f2 (D-1 merged).
 - Evidence: the draft schema `docs/core-0.4/stage-d2/organisation-0.1.draft.tql`, and `probes/core04_d2_design.py`

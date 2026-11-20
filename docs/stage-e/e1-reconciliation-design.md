@@ -1,6 +1,7 @@
 # Stage E1 architectural reconciliation: output contract (LABS-1.052)
 
-**Status: specification, written before the code changes it describes.** Branch `feature/stage-e1-reconciliation`
+**Status: specification, written before the code changes it describes; implemented, approved under LABS-1.053 and
+merged into `main` (`33e4d09`).** Branch `feature/stage-e1-reconciliation`
 from `main` `6809e4c`. Direction approved under LABS-1.052. Sources: the Stage E1 adjudication
 ([benchmark/e1/results/adjudication.md](../../benchmark/e1/results/adjudication.md)). No foundational ontology
 semantics change: R1 adds a reported field, R2 refuses malformed questions, and R3 and R4 are documentation.

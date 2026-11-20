@@ -1,5 +1,9 @@
 # Stage E1 results
 
+**Original frozen evaluation: 267/272** (gold `d0f0aa2`, harness `4ce343e`), the reference result for Stage E1. The
+revised evaluation (`../results-revised/`, 272/272) measures reconciled development-specification conformance and
+is reported beside this one, never instead of it (LABS-1.053).
+
 Expected answers frozen at `d0f0aa2` (fixtures, questions and author notes), before any question was answered. No
 expected answer was changed afterwards. Final results: `results.json` (machine-readable, every question on both query
 paths) and `report.md` (human-readable). Adjudication of every remaining discrepancy: [adjudication.md](adjudication.md).
