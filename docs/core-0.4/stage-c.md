@@ -1,5 +1,7 @@
 # Core 0.4 Stage C: qualities, measurements and agency (LABS-1.016 to LABS-1.020)
 
+> **Pointer (LABS-1.053):** this historical document uses positional labels such as `office-holding(holder, office, context)` or `classified-as(holder, concept, context?)` to describe the positions. The stored role names, which readers take, are `classified`, `class` and `context` (`WorldModel.role_names`; organisation and agency module notes; `docs/stage-e/e1-reconciliation-design.md`, R2). The text below is unchanged.
+
 **Status (2026-11-11): Stage C ontology and API approved (LABS-1.020); full `measure()` atomicity implemented;
 merged into `main` from `feature/core-0.4-c-qualities-agency` (LABS-1.020). Stage D not started.** Base: `main` at
 8963734.
