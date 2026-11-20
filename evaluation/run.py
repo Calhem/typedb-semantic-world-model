@@ -1,6 +1,11 @@
 """Stage E1 evaluation harness (LABS-1.051): run the benchmark through the public reasoning API and score it.
 
     uv run python -m evaluation.run [--only CATEGORY ...] [--out benchmark/e1/results]
+    uv run python -m evaluation.run --revised          # the revised evaluation (LABS-1.052) -> results-revised/
+
+--revised applies benchmark/e1/revised/overlay.json to copies of the questions (the frozen files are never changed),
+scores event_role unions from the resolved role-player set (R1), and counts an attestation that ends or corrects a
+fixture claim (same attester, content and start) as that claim's evidence (C3). See benchmark/e1/CLARIFICATIONS.md.
 
 For every scenario: load its fixture into an isolated database (evaluation.loader), ask each of its questions on
 both query paths (selective and full load), normalise the reader's answer to the template's fields
@@ -79,7 +84,9 @@ def a_holds(L, p):
     wm, c = L.wm, _ctx(L, p)
     rec = wm.judgement(p["world"], p["type"], p["roles"], T(p["t"]), **c)
     ans = wm.holds(p["world"], p["type"], p["roles"], T(p["t"]), **c)
-    return {"judgement": rec.judgement.value, "status": _status(ans.status), "holds": ans.holds}, ans.support
+    # a dispute under a constraint rests on both sides: the content's own support and its rivals (`conflicts`)
+    return ({"judgement": rec.judgement.value, "status": _status(ans.status), "holds": ans.holds},
+            set(ans.support) | set(ans.conflicts))
 
 
 def a_value_at(L, p):
@@ -192,6 +199,40 @@ def a_move(L, p):
     return {"outcome": "recorded", "origin": _ids(L.wm.content(eid)["roles"].get("origin", []))}, ()
 
 
+def a_event_role_resolved(L, p):
+    """Revised evaluation (R1): as a_event_role, but a union is the resolved role-player set, from the compared
+    accounts only (`resolved`), not ER-5's listing of every linked account's players."""
+    view = L.wm.occurrence(p["world"], p["occurrence"], **_ctx(L, p))
+    role = view["roles"].get(p["role"])
+    if role is None or any(x["applies"] for x in role["constraints"]):
+        return a_event_role(L, p)
+    res = role["resolved"]
+    return ({"judgement": "union", "players": sorted(sorted(g["names"]) for g in res["players"]), "reason": None,
+             "multiplicity": None}, set(res["support"]) | set(res["compared"]))
+
+
+def restatement_names(L, fixture):
+    """Revised evaluation (C3): attestation id -> step id, also for an attestation that ends or corrects a fixture
+    claim: the same attester, content and start, written by the library (end(), move()). Read with the public
+    `visible` reader for each attester's own view."""
+    names = L.evidence_names()
+    worlds = [s["id"] for s in fixture["steps"] if s.get("op") == "world"]
+    attesters = {s.get("attester", "system") for s in fixture["steps"]} | {"system"}
+    recs = {}
+    for w in worlds:
+        for who in sorted(attesters):
+            try:
+                recs.update(L.wm.visible(w, perspective=who))
+            except Exception:                                   # a perspective with nothing to see
+                continue
+    sig = lambda a: (a.attester, a.content, a.start, a.world)
+    named = {sig(recs[a]): n for a, n in names.items() if a in recs}
+    for a, r in recs.items():
+        if a not in names and sig(r) in named:
+            names[a] = named[sig(r)]
+    return names
+
+
 ADAPTERS = {"holds": a_holds, "value_at": a_value_at, "exists": a_exists, "same_thing": a_same_thing,
             "aliases": a_aliases, "parts": a_parts, "dependencies": a_dependencies, "event_role": a_event_role,
             "occurrence_status": a_occurrence_status, "office_holders": a_office_holders, "capable": a_capable,
@@ -270,25 +311,44 @@ def score(q, runs, names):
     if not rec["paths_agree"]:
         rec["full_path"] = full.get("answer", full.get("error"))
     rec["ms"] = {k: runs[k].get("ms") for k in runs}
+    if q.get("revision"):
+        rec["revision"] = q["revision"]
     return rec
 
 
-def run(only=None, driver=None):
+OVERLAY = BENCH / "revised" / "overlay.json"
+REVISABLE = {"params", "expected", "required_evidence", "forbidden_evidence"}
+
+
+def revise(q, overlay):
+    """A copy of question q with its overlay entry applied (only the fields the overlay names)."""
+    entry = overlay.get(q["id"])
+    if not entry:
+        return q
+    out = json.loads(json.dumps(q))
+    out.update({k: v for k, v in entry.items() if k in REVISABLE})
+    out["revision"] = {k: v for k, v in entry.items() if k not in REVISABLE}
+    return out
+
+
+def run(only=None, driver=None, revised=False):
     driver = driver or connect()
     fx = fixtures()
+    overlay = json.loads(OVERLAY.read_text())["revisions"] if revised else {}
+    adapters = {**ADAPTERS, "event_role": a_event_role_resolved} if revised else ADAPTERS
     by_scenario = defaultdict(list)
     for _, _, q in questions():
         if not only or q["category"] in only:
-            by_scenario[q["scenario"]].append(q)
+            by_scenario[q["scenario"]].append(revise(q, overlay))
     results = []
     for sid, qs in sorted(by_scenario.items()):
         reads = [q for q in qs if q["template"] != "move"]
         if reads:
             L = load(fx[sid], driver)
             try:
-                names = L.evidence_names()
+                names = restatement_names(L, fx[sid]) if revised else L.evidence_names()
                 for q in reads:
-                    results.append(score(q, ask(L, q, ADAPTERS[q["template"]]), names))
+                    results.append(score(q, ask(L, q, adapters[q["template"]]), names))
             finally:
                 drop(L)
         for q in qs:
@@ -321,9 +381,17 @@ def report_md(results, meta):
     tot = Counter()
     for v in s.values():
         tot.update(v)
-    lines = [f"# Stage E1 benchmark results", "",
+    title = "Stage E1 benchmark results, revised evaluation" if meta.get("revised") else "Stage E1 benchmark results"
+    lines = [f"# {title}", "",
              f"Run {meta['started']} on commit `{meta['commit']}`; {len(results)} questions, both query paths. "
-             f"Expected answers were frozen at commit `{meta['gold_commit']}` before this run.", "",
+             f"Expected answers were frozen at commit `{meta['gold_commit']}` before this run.", ""]
+    if meta.get("revised"):
+        revised = [r for r in results if r.get("revision")]
+        lines += ["**Revised evaluation** (LABS-1.052): the frozen questions with `benchmark/e1/revised/overlay.json` "
+                  f"applied ({len(revised)} revised: {', '.join(r['id'] for r in revised)}), event_role unions scored "
+                  "from the resolved role-player set (R1), restatements counted as their claims' evidence (C3). See "
+                  "`benchmark/e1/CLARIFICATIONS.md`. The original evaluation is in `benchmark/e1/results/`.", ""]
+    lines += [
              "| Category | Questions | Correct | % | Wrong judgement | Wrong values | Missing evidence | Forbidden evidence | Error | Paths disagree |",
              "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
     for k, v in list(s.items()) + [("**all**", dict(tot))]:
@@ -347,13 +415,16 @@ def main(argv=None):
     ap.add_argument("--only", nargs="*", help="categories to run (default: all)")
     ap.add_argument("--out", type=Path, default=BENCH / "results")
     ap.add_argument("--gold-commit", default=None, help="the commit that froze the expected answers")
+    ap.add_argument("--revised", action="store_true", help="the revised evaluation (overlay, R1, C3)")
     a = ap.parse_args(argv)
+    if a.revised and a.out == BENCH / "results":
+        a.out = BENCH / "results-revised"
     commit = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "--short", "HEAD"], capture_output=True,
                             text=True).stdout.strip()
     meta = {"started": datetime.now(timezone.utc).isoformat(timespec="seconds"), "commit": commit,
-            "gold_commit": a.gold_commit or "(not given)"}
+            "gold_commit": a.gold_commit or "(not given)", "revised": a.revised}
     t0 = time.perf_counter()
-    results = run(a.only)
+    results = run(a.only, revised=a.revised)
     meta["seconds"] = round(time.perf_counter() - t0, 1)
     a.out.mkdir(parents=True, exist_ok=True)
     (a.out / "results.json").write_text(json.dumps({"meta": meta, "summary": summarise(results), "results": results},

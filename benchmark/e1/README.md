@@ -13,6 +13,10 @@ This is a **development-tier** benchmark, not the sealed, withheld set that spec
 - no two-author agreement (kappa) was measured, and nothing is sealed outside the repository.
 Results show where the implementation and its own specification agree; they are not evidence of generalisation.
 
+**Recorded under LABS-1.052:** E1 is development-tier evidence; the external sealed evaluation is deferred; all 272
+questions are kept. Clarifications and the revised evaluation, which leave this frozen benchmark unchanged, are in
+[CLARIFICATIONS.md](CLARIFICATIONS.md) (`results-revised/`).
+
 ## Layout
 | Path | What |
 |---|---|

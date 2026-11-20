@@ -1,0 +1,18 @@
+{
+ "about": "Revised evaluation of the Stage E1 benchmark (LABS-1.052). Applied only by `evaluation.run --revised`; the frozen questions (d0f0aa2) and the original results are unchanged. Each entry replaces the named fields of one question and says why, citing benchmark/e1/CLARIFICATIONS.md. Two clarifications apply to every question instead of through an entry: C3 (restatements) and R1 (event_role unions scored from `resolved`).",
+ "revisions": {
+  "LAB-010": {"expected": {"judgement": "established"},
+              "clarification": "C2",
+              "reason": "The calibration step gives no end; the documented laboratory.calibrate writer attests from start 'to end (or until superseded)', so the claim holds on T15. The original answer applied the core attest rule (a missing end is UNKNOWN), which the benchmark README wrongly stated for every writer."},
+  "TEMP-017": {"expected": {"judgement": "not holding", "status": "INFERRED"},
+               "clarification": "C5 (R3)",
+               "reason": "The system accepts the parcel at another place on T5, so by World Ontology v0.2 4.4 shelf-b is 'false, INFERRED by functional exclusivity', decided before pending (addendum to the increment B design, 2.4)."},
+  "ORG-011": {"params": {"world": "w", "type": "office-holding", "roles": {"classified": "bea", "class": "site-manager", "context": "acme"}, "t": "T10"},
+              "clarification": "C4 (R2)",
+              "reason": "Re-asked with the stored role names (classified, class, context); the names the organisation notes gave (holder, office, context) are refused since R2. The expected answer is unchanged."},
+  "X-003": {"required_evidence": ["s-dan-in"],
+            "clarification": "C1",
+            "reason": "For a list answer, required evidence supports the listed holders and any conflict. s-bea-out explains why Bea is not listed; it is explanatory, not required (kept below for the record).",
+            "explanatory_evidence": ["s-bea-out"]}
+ }
+}

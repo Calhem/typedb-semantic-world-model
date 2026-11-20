@@ -98,3 +98,25 @@ def test_malformed_fixtures_are_refused_and_leave_no_database(driver):
     with pytest.raises(FixtureError, match="unknown fields"):
         load({"id": "bad2", "steps": [{"op": "world", "id": "w", "colour": "red"}]}, driver)
     assert not [d.name for d in driver.databases.all() if d.name.startswith("wm-eval-bad")]
+
+
+# ---- the revised evaluation (LABS-1.052) ------------------------------------------------------------------------------
+def test_the_overlay_revises_copies_of_questions_only_in_the_fields_it_names():
+    q = {"id": "Q-1", "params": {"t": "T1"}, "expected": {"judgement": "pending"}, "required_evidence": ["a"],
+         "forbidden_evidence": []}
+    overlay = {"Q-1": {"expected": {"judgement": "not holding"}, "reason": "r", "clarification": "C5"}}
+    out = R.revise(q, overlay)
+    assert out["expected"] == {"judgement": "not holding"} and out["params"] == q["params"]
+    assert out["revision"] == {"reason": "r", "clarification": "C5"}
+    assert q["expected"] == {"judgement": "pending"} and "revision" not in q        # the original is untouched
+    assert R.revise(q, {}) is q
+    frozen = json.loads(R.OVERLAY.read_text())["revisions"]
+    assert all(set(e) - R.REVISABLE <= {"reason", "clarification", "explanatory_evidence"} for e in frozen.values())
+
+
+def test_the_revised_adapters_answer_on_both_paths(smoke):
+    q = {"params": PARAMS["event_role"]}
+    runs = R.ask(smoke, q, R.a_event_role_resolved)
+    assert all("error" not in r for r in runs.values()) and runs["selective"]["answer"] == runs["full"]["answer"]
+    names = R.restatement_names(smoke, SMOKE)
+    assert set(smoke.evidence_names().items()) <= set(names.items())             # it only adds names
