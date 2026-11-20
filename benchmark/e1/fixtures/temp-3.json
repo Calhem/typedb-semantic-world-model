@@ -1,0 +1,17 @@
+{"id": "temp-3", "description": "D14: a robot corrects its own historical location claim (supersedes); the system accepts the correction later, the operations lead rejects it.",
+ "profiles": [],
+ "steps": [
+  {"op": "entity", "kind": "physical-object", "id": "parcel"},
+  {"op": "entity", "kind": "physical-object", "id": "robot"},
+  {"op": "entity", "kind": "physical-object", "id": "ops-lead"},
+  {"op": "entity", "kind": "place", "id": "shelf-a"},
+  {"op": "entity", "kind": "place", "id": "shelf-b"},
+  {"op": "world", "id": "w", "kind": "actual"},
+  {"op": "attest", "id": "c-1", "world": "w", "type": "located-at", "roles": {"located": "parcel", "place": "shelf-a"}, "start": "T1", "until_superseded": true, "attester": "robot", "accepted_by": ["system", "ops-lead"]},
+  {"op": "mark", "name": "before-correction"},
+  {"op": "correct", "id": "c-2", "world": "w", "target": "c-1", "type": "located-at", "roles": {"located": "parcel", "place": "shelf-b"}, "start": "T1", "until_superseded": true, "attester": "robot"},
+  {"op": "mark", "name": "corrected"},
+  {"op": "accept", "target": "c-2", "holder": "system", "verdict": "accepted"},
+  {"op": "mark", "name": "system-accepted"},
+  {"op": "accept", "target": "c-2", "holder": "ops-lead", "verdict": "rejected"}
+ ]}

@@ -6,10 +6,14 @@ parameters: `world`, `t` (a valid time, `"T<d>"`), optional `as_of` (a knowledge
 
 ## Vocabularies
 - **Judgement** (canonical, increment B design 2.4): `established`, `disputed`, `not holding`, `pending`, `unknown`.
-  - `not holding`: what the perspective accepts says the content does not hold at t (an accepted denial covers t, or an
-    accepted claim has ended before t, or begins after t and nothing else decides).
+  - `not holding`: what the perspective accepts says the content does not hold at t: an accepted denial covers t
+    (`denied`), or an accepted holding ended before t with no denial (`ended`).
   - `pending`: nothing the perspective accepts decides t, but an unreviewed attestation would.
-  - `unknown`: nothing decides t (no records, or only records that do not cover t, or a missing end).
+  - `unknown`: nothing decides t: an accepted assertion begins after t (`not_yet_effective`), or has begun with an
+    unknown end (`end_unknown`), or there are only rejected, retracted or superseded attestations (`unaccepted`), or
+    nothing at all (`no_evidence`).
+  - (Corrected before the gold was frozen, from increment B design 2.4: an earlier draft of this file wrongly put "begins
+    after t" under `not holding`. Two authors noticed it and wrote no question that depends on the draft wording.)
 - **Status** (v0.2 5.6 with Core 0.3 D1, D4): `ASSERTED`, `STIPULATED`, `INFERRED`, `DISPUTED`, `UNKNOWN`,
   `NOT_YET_KNOWN` (nothing about the content visible at the knowledge time). Observations are reported `ASSERTED`
   (D1); mixed support is labelled STIPULATED > ASSERTED > INFERRED (D4).

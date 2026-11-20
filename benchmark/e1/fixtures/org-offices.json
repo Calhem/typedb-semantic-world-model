@@ -1,0 +1,236 @@
+{
+ "id": "org-offices",
+ "description": "Office holding at acme and depot7: an exclusive site-manager office that a second appointment later contests, a non-exclusive treasurer office with two holders, a safety-officer office whose exclusivity only the clerk asserts, a deputy appointment asserted and denied, and an unreviewed auditor appointment.",
+ "profiles": [
+  "organisation"
+ ],
+ "steps": [
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "bea"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "cal"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "dan"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "eve"
+  },
+  {
+   "op": "entity",
+   "kind": "organisation",
+   "id": "acme"
+  },
+  {
+   "op": "entity",
+   "kind": "organisation",
+   "id": "depot7"
+  },
+  {
+   "op": "entity",
+   "kind": "social-role",
+   "id": "site-manager"
+  },
+  {
+   "op": "entity",
+   "kind": "social-role",
+   "id": "treasurer"
+  },
+  {
+   "op": "entity",
+   "kind": "social-role",
+   "id": "safety-officer"
+  },
+  {
+   "op": "entity",
+   "kind": "social-role",
+   "id": "deputy"
+  },
+  {
+   "op": "entity",
+   "kind": "social-role",
+   "id": "auditor"
+  },
+  {
+   "op": "entity",
+   "kind": "social-role",
+   "id": "secretary"
+  },
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "hr"
+  },
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "clerk"
+  },
+  {
+   "op": "world",
+   "id": "w",
+   "kind": "actual"
+  },
+  {
+   "op": "appoint",
+   "id": "a-bea",
+   "world": "w",
+   "holder": "bea",
+   "office": "site-manager",
+   "context": "acme",
+   "start": "T1",
+   "attester": "hr",
+   "until_superseded": true,
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "declare_exclusive",
+   "id": "x-sm",
+   "world": "w",
+   "office": "site-manager",
+   "context": "acme",
+   "start": "T1",
+   "until_superseded": true,
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "appoint",
+   "id": "a-dan-tr",
+   "world": "w",
+   "holder": "dan",
+   "office": "treasurer",
+   "context": "acme",
+   "start": "T1",
+   "attester": "hr",
+   "until_superseded": true,
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "appoint",
+   "id": "a-eve-tr",
+   "world": "w",
+   "holder": "eve",
+   "office": "treasurer",
+   "context": "acme",
+   "start": "T1",
+   "attester": "clerk",
+   "until_superseded": true,
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "appoint",
+   "id": "a-eve-so",
+   "world": "w",
+   "holder": "eve",
+   "office": "safety-officer",
+   "context": "acme",
+   "start": "T1",
+   "attester": "hr",
+   "until_superseded": true,
+   "accepted_by": [
+    "system",
+    "clerk"
+   ]
+  },
+  {
+   "op": "declare_exclusive",
+   "id": "x-so",
+   "world": "w",
+   "office": "safety-officer",
+   "context": "acme",
+   "start": "T1",
+   "until_superseded": true,
+   "attester": "clerk"
+  },
+  {
+   "op": "appoint",
+   "id": "a-bea-so",
+   "world": "w",
+   "holder": "bea",
+   "office": "safety-officer",
+   "context": "acme",
+   "start": "T3",
+   "attester": "clerk",
+   "until_superseded": true,
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "appoint",
+   "id": "a-cal-dep",
+   "world": "w",
+   "holder": "cal",
+   "office": "deputy",
+   "context": "depot7",
+   "start": "T1",
+   "attester": "hr",
+   "until_superseded": true,
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "appoint",
+   "id": "d-cal-dep",
+   "world": "w",
+   "holder": "cal",
+   "office": "deputy",
+   "context": "depot7",
+   "start": "T1",
+   "attester": "clerk",
+   "until_superseded": true,
+   "polarity": false,
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "appoint",
+   "id": "a-dan-aud",
+   "world": "w",
+   "holder": "dan",
+   "office": "auditor",
+   "context": "acme",
+   "start": "T1",
+   "attester": "clerk",
+   "until_superseded": true
+  },
+  {
+   "op": "mark",
+   "name": "before-cal"
+  },
+  {
+   "op": "appoint",
+   "id": "a-cal",
+   "world": "w",
+   "holder": "cal",
+   "office": "site-manager",
+   "context": "acme",
+   "start": "T8",
+   "attester": "clerk",
+   "until_superseded": true,
+   "accepted_by": [
+    "system"
+   ]
+  }
+ ]
+}

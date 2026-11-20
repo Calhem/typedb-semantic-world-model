@@ -1,0 +1,13 @@
+{"id": "temp-4", "description": "D14 for an ending: a scanner ends its own accepted location claim; the system reviews the ending later.",
+ "profiles": [],
+ "steps": [
+  {"op": "entity", "kind": "physical-object", "id": "van"},
+  {"op": "entity", "kind": "physical-object", "id": "scanner"},
+  {"op": "entity", "kind": "place", "id": "depot"},
+  {"op": "world", "id": "w", "kind": "actual"},
+  {"op": "attest", "id": "e-1", "world": "w", "type": "located-at", "roles": {"located": "van", "place": "depot"}, "start": "T1", "until_superseded": true, "attester": "scanner", "accepted_by": ["system"]},
+  {"op": "mark", "name": "before-end"},
+  {"op": "end", "id": "e-1-end", "world": "w", "target": "e-1", "at": "T6"},
+  {"op": "mark", "name": "ended-unreviewed"},
+  {"op": "accept", "target": "e-1-end", "holder": "system", "verdict": "accepted"}
+ ]}

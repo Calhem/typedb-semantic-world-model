@@ -1,0 +1,22 @@
+{"id": "temp-2", "description": "Interval shapes: a missing end (UNKNOWN), until-superseded, a stated start and end, a claim that begins later, a thing with no records, and two accepted rival places.",
+ "profiles": [],
+ "steps": [
+  {"op": "entity", "kind": "physical-object", "id": "crate"},
+  {"op": "entity", "kind": "physical-object", "id": "tool"},
+  {"op": "entity", "kind": "physical-object", "id": "cart"},
+  {"op": "entity", "kind": "physical-object", "id": "lamp"},
+  {"op": "entity", "kind": "physical-object", "id": "ghost"},
+  {"op": "entity", "kind": "physical-object", "id": "barrel"},
+  {"op": "entity", "kind": "physical-object", "id": "scanner"},
+  {"op": "entity", "kind": "place", "id": "yard"},
+  {"op": "entity", "kind": "place", "id": "bench"},
+  {"op": "entity", "kind": "place", "id": "hall"},
+  {"op": "entity", "kind": "place", "id": "attic"},
+  {"op": "world", "id": "w", "kind": "actual"},
+  {"op": "attest", "id": "l-crate", "world": "w", "type": "located-at", "roles": {"located": "crate", "place": "yard"}, "start": "T2"},
+  {"op": "attest", "id": "l-tool", "world": "w", "type": "located-at", "roles": {"located": "tool", "place": "bench"}, "start": "T2", "until_superseded": true},
+  {"op": "attest", "id": "l-cart", "world": "w", "type": "located-at", "roles": {"located": "cart", "place": "hall"}, "start": "T3", "end": "T6"},
+  {"op": "attest", "id": "l-lamp", "world": "w", "type": "located-at", "roles": {"located": "lamp", "place": "attic"}, "start": "T12", "until_superseded": true},
+  {"op": "attest", "id": "l-barrel-yard", "world": "w", "type": "located-at", "roles": {"located": "barrel", "place": "yard"}, "start": "T1", "until_superseded": true},
+  {"op": "attest", "id": "l-barrel-hall", "world": "w", "type": "located-at", "roles": {"located": "barrel", "place": "hall"}, "start": "T1", "until_superseded": true, "attester": "scanner", "accepted_by": ["system"]}
+ ]}

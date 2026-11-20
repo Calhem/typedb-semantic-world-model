@@ -1,0 +1,16 @@
+{"id": "temp-1", "description": "Location over time from the system's own records: a claim ended by its attester and followed by a new place, and a system self-correction (supersedes) of a historical location.",
+ "profiles": [],
+ "steps": [
+  {"op": "entity", "kind": "physical-object", "id": "box"},
+  {"op": "entity", "kind": "physical-object", "id": "jar"},
+  {"op": "entity", "kind": "place", "id": "shelf-3"},
+  {"op": "entity", "kind": "place", "id": "shelf-4"},
+  {"op": "entity", "kind": "place", "id": "dock"},
+  {"op": "world", "id": "w", "kind": "actual"},
+  {"op": "attest", "id": "loc-1", "world": "w", "type": "located-at", "roles": {"located": "box", "place": "shelf-3"}, "start": "T1", "until_superseded": true},
+  {"op": "attest", "id": "j-1", "world": "w", "type": "located-at", "roles": {"located": "jar", "place": "shelf-3"}, "start": "T1", "until_superseded": true},
+  {"op": "mark", "name": "m1"},
+  {"op": "end", "id": "loc-1-end", "world": "w", "target": "loc-1", "at": "T5"},
+  {"op": "attest", "id": "loc-2", "world": "w", "type": "located-at", "roles": {"located": "box", "place": "dock"}, "start": "T5", "until_superseded": true},
+  {"op": "correct", "id": "j-2", "world": "w", "target": "j-1", "type": "located-at", "roles": {"located": "jar", "place": "shelf-4"}, "start": "T1", "until_superseded": true}
+ ]}

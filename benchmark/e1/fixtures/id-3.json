@@ -1,0 +1,232 @@
+{
+ "id": "id-3",
+ "description": "Identity per knowledge time and world: a link before and after its acceptance, a link before and after an accepted denial, a base link denied by a plan's stipulation (and the plan's child), a link stipulated only in a plan, and a plan whose base knowledge ends before a link was recorded.",
+ "profiles": [],
+ "steps": [
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "tracker"
+  },
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "clerk"
+  },
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "hr"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "g1"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "g2"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "h1"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "h2"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "k1"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "k2"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "l1"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "l2"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "m1"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "m2"
+  },
+  {
+   "op": "world",
+   "id": "w",
+   "kind": "actual"
+  },
+  {
+   "op": "attest",
+   "id": "sa-g",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "g1",
+     "g2"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "tracker"
+  },
+  {
+   "op": "mark",
+   "name": "before-g-accept"
+  },
+  {
+   "op": "accept",
+   "target": "sa-g",
+   "holder": "system",
+   "verdict": "accepted"
+  },
+  {
+   "op": "attest",
+   "id": "sa-h",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "h1",
+     "h2"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "mark",
+   "name": "before-h-denial"
+  },
+  {
+   "op": "deny",
+   "id": "dn-h",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "h1",
+     "h2"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "clerk",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "sa-k",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "k1",
+     "k2"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "tracker",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "mark",
+   "name": "before-m"
+  },
+  {
+   "op": "attest",
+   "id": "sa-m",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "m1",
+     "m2"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "tracker",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "world",
+   "id": "plan-deny",
+   "kind": "hypothetical",
+   "base": "w",
+   "branch_at": "T10"
+  },
+  {
+   "op": "world",
+   "id": "plan-add",
+   "kind": "hypothetical",
+   "base": "w",
+   "branch_at": "T10"
+  },
+  {
+   "op": "world",
+   "id": "plan-early",
+   "kind": "hypothetical",
+   "base": "w",
+   "branch_at": "T10",
+   "knowledge_at": "@before-m"
+  },
+  {
+   "op": "deny",
+   "id": "st-dn-k",
+   "world": "plan-deny",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "k1",
+     "k2"
+    ]
+   },
+   "until_superseded": true
+  },
+  {
+   "op": "world",
+   "id": "plan-deny-child",
+   "kind": "hypothetical",
+   "base": "plan-deny",
+   "branch_at": "T12"
+  },
+  {
+   "op": "attest",
+   "id": "st-l",
+   "world": "plan-add",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "l1",
+     "l2"
+    ]
+   },
+   "until_superseded": true
+  }
+ ]
+}

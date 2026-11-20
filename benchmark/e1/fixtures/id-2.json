@@ -1,0 +1,488 @@
+{
+ "id": "id-2",
+ "description": "Transitive chains, cycles and conflict components: a two-source chain with a look-alike name nearby, a chain whose ends are denied (conflict), a chain broken by a pending link, a chain broken by a disputed link, a closed cycle, a cycle closed by a disputed link (conflict), and a chain with only an unreviewed denial.",
+ "profiles": [],
+ "steps": [
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "tracker"
+  },
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "clerk"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "n1"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "n2"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "n3"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "n31"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "n4"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "s1"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "s2"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "s3"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "u1"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "u2"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "u3"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "v1"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "v2"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "v3"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "c1"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "c2"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "c3"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "e1"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "e2"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "e3"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "f1"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "f2"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "f3"
+  },
+  {
+   "op": "world",
+   "id": "w",
+   "kind": "actual"
+  },
+  {
+   "op": "attest",
+   "id": "sa-n12",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "n1",
+     "n2"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "tracker",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "sa-n23",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "n2",
+     "n3"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "clerk",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "sa-n31-4",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "n31",
+     "n4"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "tracker",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "sa-s12",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "s1",
+     "s2"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "tracker",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "sa-s23",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "s2",
+     "s3"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "tracker",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "deny",
+   "id": "dn-s13",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "s1",
+     "s3"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "clerk",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "sa-u12",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "u1",
+     "u2"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "tracker",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "sa-u23",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "u2",
+     "u3"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "tracker"
+  },
+  {
+   "op": "attest",
+   "id": "sa-v12",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "v1",
+     "v2"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "tracker",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "sa-v23",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "v2",
+     "v3"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "tracker",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "deny",
+   "id": "dn-v23",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "v2",
+     "v3"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "clerk",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "sa-c12",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "c1",
+     "c2"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "tracker",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "sa-c23",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "c2",
+     "c3"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "tracker",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "sa-c31",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "c3",
+     "c1"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "tracker",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "sa-e12",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "e1",
+     "e2"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "tracker",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "sa-e23",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "e2",
+     "e3"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "tracker",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "sa-e31",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "e3",
+     "e1"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "tracker",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "deny",
+   "id": "dn-e31",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "e3",
+     "e1"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "clerk",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "sa-f12",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "f1",
+     "f2"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "tracker",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "sa-f23",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "f2",
+     "f3"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "tracker",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "deny",
+   "id": "dn-f13",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "f1",
+     "f3"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "clerk"
+  }
+ ]
+}

@@ -1,0 +1,23 @@
+{"id": "x-move",
+ "description": "Whose records count for a crate's location and for a move's origin. The robot puts the crate in bay-1 (accepted by ops only); the system's own record puts it in bay-2 from T2; the clerk records it in the yard and at the dock over the same interval (unreviewed). A relocation plan branching at T3 (knowledge v1) stipulates the crate in bay-3 from T6.",
+ "profiles": [],
+ "steps": [
+  {"op": "entity", "kind": "physical-object", "id": "robot", "name": "yard robot"},
+  {"op": "entity", "kind": "physical-object", "id": "clerk", "name": "gate clerk"},
+  {"op": "entity", "kind": "social-object", "id": "ops", "name": "operations desk"},
+  {"op": "entity", "kind": "physical-object", "id": "crate", "name": "crate 9"},
+  {"op": "entity", "kind": "place", "id": "bay-1", "name": "bay 1"},
+  {"op": "entity", "kind": "place", "id": "bay-2", "name": "bay 2"},
+  {"op": "entity", "kind": "place", "id": "bay-3", "name": "bay 3"},
+  {"op": "entity", "kind": "place", "id": "yard", "name": "yard"},
+  {"op": "entity", "kind": "place", "id": "dock", "name": "dock"},
+  {"op": "entity", "kind": "place", "id": "gate", "name": "gate"},
+  {"op": "world", "id": "w", "kind": "actual"},
+  {"op": "attest", "id": "l-robot", "world": "w", "type": "located-at", "roles": {"located": "crate", "place": "bay-1"}, "start": "T1", "until_superseded": true, "attester": "robot", "accepted_by": ["ops"]},
+  {"op": "attest", "id": "l-sys", "world": "w", "type": "located-at", "roles": {"located": "crate", "place": "bay-2"}, "start": "T2", "until_superseded": true},
+  {"op": "attest", "id": "l-clerk-yard", "world": "w", "type": "located-at", "roles": {"located": "crate", "place": "yard"}, "start": "T1", "until_superseded": true, "attester": "clerk"},
+  {"op": "attest", "id": "l-clerk-dock", "world": "w", "type": "located-at", "roles": {"located": "crate", "place": "dock"}, "start": "T1", "until_superseded": true, "attester": "clerk"},
+  {"op": "mark", "name": "v1"},
+  {"op": "world", "id": "relocation", "kind": "hypothetical", "base": "w", "branch_at": "T3", "knowledge_at": "@v1"},
+  {"op": "attest", "id": "s-bay3", "world": "relocation", "type": "located-at", "roles": {"located": "crate", "place": "bay-3"}, "start": "T6", "until_superseded": true, "stance": "stipulates"}
+ ]}
