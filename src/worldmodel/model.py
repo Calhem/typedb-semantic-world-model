@@ -80,6 +80,7 @@ KINDS = ("physical-object", "social-object", "place", "information-object", "occ
 QUALITY_PARAMS = ("lower", "upper", "coverage-level")
 POSE_PARAMS = ("x-min", "x-max", "y-min", "y-max", "z-min", "z-max", "qw", "qx", "qy", "qz")
 TRANSFORM_PARAMS = ("tx", "ty", "tz", "qw", "qx", "qy", "qz")
+SUBJECT_ROLE = " $subj has wm-id == $sid; $c links ($kr: $subj);"     # the head's subject binding (see _filters)
 PARAMS = {"has-quality": QUALITY_PARAMS, "positioned-in": POSE_PARAMS, "frame-transform": TRANSFORM_PARAMS}
 # Functional slots of the core: one value at a time per slot. With the A0 module they are declared as data in TypeDB
 # (functional-slot entities, A0.3) at create or upgrade; without it (a Core 0.3 database) this constant is used.
@@ -905,7 +906,7 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
             parts.append(f"$c isa {q.label(type)};")
         if subject is not None:
             # Bound positively, so the query starts from the subject (see best practices).
-            parts.append("$subj has wm-id == $sid; $c links ($kr: $subj);")
+            parts.append(SUBJECT_ROLE.strip())
             params["sid"] = subject
         if klim is not None:
             parts.append("$rec <= $klim;")
@@ -945,6 +946,16 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
                 start=Window(sfe, sfl) if sfe is not None else None,
                 end=Window(tte, ttl) if tte is not None else None, end_basis=d["eb"],
                 recorded_at=q.parse_datetime(d["rec"]), credence=d["cr"], depth=depth)
+        if not recs:        # nothing in this world matches the head, so nothing can have roles, acceptances or successors
+            self.stats["queries"] += 1
+            return recs, []
+        # O-1 (LABS-1.056, DI-9 F2): the follow-up queries start from the attestations the filtered head returned
+        # (`_anchored`), rather than repeating the head and joining it to acceptance and supersession relations, which
+        # TypeDB 3.14 can execute in proportion to those relations in the whole database. The head's world, type,
+        # subject, valid-time and knowledge-time filters chose these ids, so the same attestations are read.
+        def follow(body, extra=None):
+            return self._anchored(tx, list(recs), head, params, body, extra or {})
+
         # Fetching `$c.lower` is rejected unless every possible type of $c can own it, so quality parameters are
         # fetched separately, only when the content can be has-quality.
         for ptype, names in PARAMS.items():        # has-quality (Core 0.3), positioned-in, frame-transform (A1)
@@ -952,17 +963,16 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
                     type is None or self.is_a(type, ptype) or self.is_a(ptype, type)):
                 continue
             fields = ", ".join(f'"{n}": $c.{n}' for n in names)
-            for d in q.documents(tx, head + f""" $c isa {ptype};
-                fetch {{ "aid": $aid, {fields} }};""", params):
+            for d in follow(f""" $c isa {ptype}; fetch {{ "aid": $aid, {fields} }};"""):
                 if d["aid"] in recs:
                     recs[d["aid"]].params = {k: d[k] for k in names if d[k] is not None}
             self.stats["queries"] += 1
         roles = {}
         if subject is None:
-            role_q = head + " $c links ($role: $x); $x has wm-id $xid;"
+            role_q = " $c links ($role: $x); $x has wm-id $xid;"
         else:   # the subject's own role comes from $kr; a second `links` cannot match it again
-            role_q = head + " try { $c links ($role: $x); $x has wm-id $xid; };"
-        for r in q.rows(tx, role_q, params):           # scoped role label -> ids
+            role_q = SUBJECT_ROLE + " try { $c links ($role: $x); $x has wm-id $xid; };"
+        for r in follow(role_q, {"sid": subject} if subject is not None else None):           # scoped role label -> ids
             mine = roles.setdefault(q.opt(r, "aid"), {})
             if subject is not None:
                 mine.setdefault(r.get("kr").get_label(), set()).add(subject)
@@ -971,23 +981,44 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
         for aid, rs in roles.items():
             if aid in recs:
                 recs[aid].roles, recs[aid].concrete_roles = self._role_maps(rs)
-        for r in q.rows(tx, head + """ $acc isa acceptance (holder: $h, accepted: $a), has verdict $vd,
-            has recorded-at $vrec; $h has wm-id == $persp;""", {**params, "persp": perspective}):
+        for r in follow(""" $acc isa acceptance (holder: $h, accepted: $a), has verdict $vd,
+            has recorded-at $vrec; $h has wm-id == $persp;""", {"persp": perspective}):
             if klim is None or q.opt(r, "vrec") <= klim:
                 recs[q.opt(r, "aid")].acceptances.append((perspective, q.opt(r, "vd"), q.opt(r, "vrec")))
         supers = [(q.opt(r, "aid"), q.opt(r, "nid"), q.opt(r, "srec"), q.opt(r, "nw"), q.opt(r, "nse"),
                    q.opt(r, "nwid"), q.opt(r, "nst"))
-                  for r in q.rows(tx, head + """ $su isa supersession (old: $a, new: $n), has recorded-at $srec;
+                  for r in follow(""" $su isa supersession (old: $a, new: $n), has recorded-at $srec;
                   $n has wm-id $nid, has stance $nst; $n isa attestation (context: $nwo, attester: $nwho);
                   $nwo has wm-id $nw; $nwho has wm-id $nwid;
-                  try { $n has valid-from-earliest $nse; };""", params)]
+                  try { $n has valid-from-earliest $nse; };""")]
         new_acc = [(q.opt(r, "nid"), q.opt(r, "vd"), q.opt(r, "vrec"))
-                   for r in q.rows(tx, head + """ $su isa supersession (old: $a, new: $n); $n has wm-id $nid;
+                   for r in follow(""" $su isa supersession (old: $a, new: $n); $n has wm-id $nid;
                    $nacc isa acceptance (holder: $nh, accepted: $n), has verdict $vd, has recorded-at $vrec;
-                   $nh has wm-id == $persp;""", {**params, "persp": perspective})] if supers else []
+                   $nh has wm-id == $persp;""", {"persp": perspective})] if supers else []
         self.stats["queries"] += 4 + (1 if supers else 0)
         supers = [(*row, [(perspective, v, rec) for nid, v, rec in new_acc if nid == row[1]]) for row in supers]
         return recs, supers
+
+    # O-1 bounds (LABS-1.056): attestation ids per anchored query (one given row each; a disjunction of ids measured
+    # superlinear in its size, given rows did not), and the most ids for which anchoring is used at all: above it the
+    # follow-up queries keep the head form, which measured about 8 % faster for a head of about 1,500 ids, while
+    # anchoring was faster up to the largest smaller head measured (198 ids). docs/stage-e/stage-e-di9-optimisation.md.
+    ANCHOR_CHUNK = 1000
+    ANCHOR_MAX = 1000
+
+    def _anchored(self, tx, aids, head, params, body, extra):
+        """Rows (or documents, for a `fetch` body) of `body` for the attestations `aids` (`$a`, its content `$c`, its
+        id `$aid`): one query per ANCHOR_CHUNK ids, each id a given row; for more than ANCHOR_MAX ids, `head` + `body`
+        with the head's own parameters (the pre-O-1 form). `extra` holds the body's own parameters."""
+        run = q.documents if "fetch" in body else q.rows
+        if len(aids) > self.ANCHOR_MAX:
+            # the head already binds the subject's role (pre-O-1 form)
+            return run(tx, head + body.replace(SUBJECT_ROLE, "", 1), {**params, **extra})
+        out = []
+        for i in range(0, len(aids), self.ANCHOR_CHUNK):
+            out.extend(run(tx, "match $a isa attestation (content: $c), has wm-id == $anchor; $a has wm-id $aid;" + body,
+                           [{"anchor": x, **extra} for x in aids[i:i + self.ANCHOR_CHUNK]]))
+        return out
 
     def _load(self, world, as_of=None, types=None, subjects=None, at=None, perspective=SYSTEM):
         """Attestations visible in `world` as known at `as_of`, with the perspective's acceptances and visible
