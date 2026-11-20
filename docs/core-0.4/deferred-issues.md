@@ -1,6 +1,6 @@
 # Deferred correctness issues (register)
 
-**Opened 2026-11-11 under LABS-1.025; DI-5 added under LABS-1.026, DI-6 under LABS-1.027, DI-7 under LABS-1.028, DI-8 and DI-9 under LABS-1.030, DI-10 and DI-11 under LABS-1.034, DI-12 under LABS-1.038, DI-14 under LABS-1.042, DI-13 under LABS-1.043, DI-15 and DI-16 under LABS-1.045, DI-17 under LABS-1.049, DI-18 under LABS-1.050.** The pre-Stage E consolidation ([pre-stage-e-consolidation.md](pre-stage-e-consolidation.md), LABS-1.045, at review) recommends a disposition for every open issue. These are known correctness issues (DI-1 to DI-8, DI-11), one
+**Opened 2026-11-11 under LABS-1.025; DI-5 added under LABS-1.026, DI-6 under LABS-1.027, DI-7 under LABS-1.028, DI-8 and DI-9 under LABS-1.030, DI-10 and DI-11 under LABS-1.034, DI-12 under LABS-1.038, DI-14 under LABS-1.042, DI-13 under LABS-1.043, DI-15 and DI-16 under LABS-1.045, DI-17 under LABS-1.049, DI-18 under LABS-1.050, DI-19 under LABS-1.053.** The pre-Stage E consolidation ([pre-stage-e-consolidation.md](pre-stage-e-consolidation.md), LABS-1.045, at review) recommends a disposition for every open issue. These are known correctness issues (DI-1 to DI-8, DI-11), one
 tracked performance concern (DI-9) and one maintenance item (DI-10), kept apart from the stage documents.
 None of them has had its semantics changed yet. The pre-Stage E correctness review
 ([pre-stage-e-correctness-review.md](pre-stage-e-correctness-review.md), LABS-1.034) reproduces DI-1 to DI-6 and DI-8,
@@ -18,6 +18,9 @@ widens the scope of DI-5 and DI-8, and found DI-11.
   marker stay deferred (see DI-17).
 - **LABS-1.050:** DI-13 is **closed** (multiplicity increment, with schema export format 3, approved and merged into
   `main`). **DI-18** (module data the replay does not reproduce is absent from the export) is registered.
+- **LABS-1.053:** the Stage E1 reconciliation (R1 to R4, including `UnknownRoleError` for invalid role names) is
+  approved and merged into `main`. **DI-19** (a constraint dispute through `holds()` does not cite the constraint's
+  attestation) is registered as a Stage E issue; its correction is not implemented.
 
 Each entry gives a concrete case, what it affects, and the options. A resolution needs its own approved decision and
 tests.
@@ -42,6 +45,7 @@ tests.
 | DI-16 | identity merges on a same-as whose canonical judgement is DISPUTED (accepted denials are ignored) | consolidation (LABS-1.045) | before Stage E (LABS-1.046) | **closed**: option (a), corrected by the identity increment (ID-2, ID-5, ID-6), reproduction a permanent test; approved and merged (LABS-1.049, `main` dd58b25; [report](pre-e-identity-increment.md)) |
 | DI-17 | a group of names joined by established same-as links that contains one disputed or denied pair is not merged at all (ID-5), so its established equivalences are set aside too: possibly over-restrictive | identity increment (LABS-1.048; registered LABS-1.049) | Stage E evaluation | open (evaluation) |
 | DI-18 | the export's `module_data` lists only the records the replay reproduces: a record held by a module version this code cannot replay is absent from the export (the attribution reports the replay as unverified) | schema export format 3 (LABS-1.050) | no deadline (export completeness) | open (non-blocking; format 2 refusal already reads the database's own records) |
+| DI-19 | `holds()` on a content disputed under an attested constraint (two holders of an exclusive office) cites the content's support and its rivals (`conflicts`), but not the attestation of the constraint it applied | Stage E1 revised evaluation, ORG-011 (LABS-1.052; registered LABS-1.053) | Stage E (provenance) | open (proposed correction: additive `constraint_support`) |
 
 ## DI-1: `facts_about` omits content disputed by polarity
 **What happens.** `facts_about(world, subject, t)` lists only content whose judgement at t is "holds". Two kinds of
@@ -503,4 +507,21 @@ not affected in meaning: its refusal of set-valued constraints reads the databas
 (`tests/test_o_schema_export.py`, `test_format_2_refuses_a_set_valued_constraint_the_replay_does_not_list`).
 **Options:** list such records with status `unresolved` and source `database` (additive in format 3's record
 shape); or keep, documented. No deadline; non-blocking.
+
+## DI-19: a constraint dispute through `holds()` does not cite the constraint
+**Registered LABS-1.053**, found by the Stage E1 revised evaluation (ORG-011, `benchmark/e1/results-revised/`).
+**What happens.** Two accepted appointments to an office whose `exclusive-office` constraint is established are
+DISPUTED under the constraint. `holds()` on one appointment answers DISPUTED and cites that appointment (`support`)
+and the rival (`conflicts`, with both in `evidence`), but not the constraint attestation that made them conflict. The
+canonical judgement keeps it (`constraints[].judgement.support`), and `organisation.office_holders` reports it
+(`conflict.constraint.support`); only the `Answer` does not surface it.
+
+**Impact.** No answer is wrong; the provenance of a constraint dispute is incomplete through `holds()`, so a reader
+cannot see from the answer alone which rule caused the dispute. None in the 106,752-answer baseline changes until a
+correction is made.
+
+**Proposed correction (not implemented; needs approval).** An additive `constraint_support` on `holds()` answers:
+the attestation ids supporting each applied constraint (for an attested constraint, its own deciding attestations;
+empty for a declared functional slot, which is schema data). Additive, so existing fields keep their values; the
+106,752-answer baseline would gain the field on constraint disputes only.
 

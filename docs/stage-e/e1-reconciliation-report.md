@@ -1,6 +1,7 @@
 # Stage E1 architectural reconciliation: report (LABS-1.052)
 
-**Status: at the reconciliation review gate. Not merged.** Branch `feature/stage-e1-reconciliation` from `main`
+**Status: approved under LABS-1.053 (R1 to R4, including `UnknownRoleError` for invalid role names) and merged into
+`main` (`33e4d09`, tree identical to the approved head `b2c8516`; see "After the merge").** Branch `feature/stage-e1-reconciliation` from `main`
 `6809e4c`, which holds the merged Stage E1 benchmark. Contract written before the code:
 [e1-reconciliation-design.md](e1-reconciliation-design.md) (R1 to R4). No foundational ontology semantics changed;
 Stage E2 has not begun.
@@ -91,3 +92,12 @@ provenance gap, not a wrong answer. It is proposed for review (an additive `cons
 3. The ORG-011 provenance gap: add the applied constraint's support to `holds()` answers (additive), defer it, or keep
    it as documented.
 4. Whether the historical documents should gain a short pointer to the stored role names (they were left unedited).
+
+## After the merge (LABS-1.053)
+- Decisions: R1 to R4 approved, including `UnknownRoleError` for invalid role names (decisions 1 and 2). The
+  ORG-011 provenance gap is registered as **DI-19**, with the proposed correction (an additive `constraint_support` on
+  `holds()` answers) not implemented (decision 3). The historical documents gain brief pointers to the stored role
+  names, with their text unchanged (decision 4).
+- Both benchmark results are kept: the original frozen evaluation (267/272) and the revised one (272/272), labelled
+  as reconciled development-specification conformance.
+
