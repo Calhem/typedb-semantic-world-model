@@ -1,11 +1,15 @@
 """Profile organisation-0.1 (Core 0.4 Stage D-2, LABS-1.026): employment, offices, authority and acts in office.
 
-Four independent things, with no implication between any of them:
-- **office-holding**: `office-holding(holder, office, context)`, a position in a context;
-- **practical capability**: `classified-as(holder, capability, context?)`, read by the core `capable()`;
+Four independent things, with no implication between any of them. Role names below are the stored ones that readers
+take (`holds`, `judgement`: core role names, LABS-1.052; other names are refused with UnknownRoleError):
+- **office-holding**: `office-holding(classified: holder, class: office, context)`, a position in a context
+  (a subtype of classified-as, whose roles it keeps);
+- **practical capability**: `classified-as(classified: holder, class: capability, context?)`, read by the core
+  `capable()`;
 - **conferred authority**: `authorisation(grantor, holder, power, scope)`; the reporting source is the attestation's
   attester, never the grantor; the grantor's own entitlement is never assessed; no delegation chains;
-- **actual action**: an `official-act` description; its occurrence is judged apart (`occurrence_status`).
+- **actual action**: an `official-act` description (`official` is stored as the core role `actor`); its occurrence is
+  judged apart (`occurrence_status`).
 
 **Single-holder offices.** An office is exclusive only where an `exclusive-office(office, context)` constraint holds
 at t (attested, over its own valid time). Then, if several accepted appointments overlap at t, the reports say

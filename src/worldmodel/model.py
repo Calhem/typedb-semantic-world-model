@@ -135,6 +135,18 @@ class MovementConflict(ValueError):
         super().__init__(f"move refused, nothing written: {why}")
 
 
+class UnknownRoleError(ValueError):
+    """A reader was asked about roles a content type does not have (LABS-1.052, R2 of
+    docs/stage-e/e1-reconciliation-design.md). Nothing is answered. `type`, `unknown` (the names given that it does
+    not have) and `valid` (its core role names) say why; a profile's stored role name points to its core name."""
+
+    def __init__(self, type, unknown, valid, hints=()):
+        self.type, self.unknown, self.valid = type, sorted(unknown), sorted(valid)
+        hint = "".join(f"; {h}" for h in hints)
+        super().__init__(f"{type!r} has no role {', '.join(map(repr, self.unknown))}: readers take its core role "
+                         f"names {self.valid}{hint} (nothing answered)")
+
+
 class PropositionIdCollision(ValueError):
     """Two different canonical keys derived the same proposition id. Raised instead of merging their content."""
 
@@ -158,6 +170,7 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
         self._slots = None
         self._scopes = None
         self._event_role_cache = None
+        self._relates = None
 
     def _reset_caches(self):
         """Forget everything read from the schema or the module records (after a schema change or a rollback)."""
@@ -167,6 +180,7 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
         self._slots = None
         self._scopes = None
         self._event_role_cache = None
+        self._relates = None
 
     # ---- operations (DI-8) ---------------------------------------------------------------------------------------------
     @contextmanager
@@ -425,6 +439,31 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
                 r = role_parents[r]
             memo[scoped] = (r if r.split(":")[0] in CORE_LABELS else scoped).split(":")[-1]
         return memo[scoped]
+
+    def role_names(self, type):
+        """{core role name: [stored role labels]} for every role `type` relates, inherited ones included (LABS-1.052,
+        R2). Readers judge content by these core names: a profile role is stored under the core role it specialises
+        (official-act:official as `actor`), a profile's own new role under its own name. Read from the schema once."""
+        if self._relates is None:
+            rel = {}
+            with self._reading() as tx:
+                for r in q.rows(tx, "match relation $t; $t relates $r;"):
+                    rel.setdefault(r.get("t").get_label(), set()).add(r.get("r").get_label())
+            self._relates = rel
+        out = {}
+        for label in sorted(self._relates.get(type, ())):
+            out.setdefault(self.core_role(label), []).append(label)
+        return out
+
+    def check_roles(self, type, names):
+        """Refuse role names `type` does not have (UnknownRoleError), naming the valid core names and, for a stored
+        profile role name, the core name to use instead. Returns None when every name is valid."""
+        valid = self.role_names(type)
+        unknown = set(names) - set(valid)
+        if unknown:
+            hints = [f"{u!r} is stored as {core!r}" for u in sorted(unknown) for core, labels in sorted(valid.items())
+                     if any(lab.split(":")[-1] == u for lab in labels)]
+            raise UnknownRoleError(type, unknown, valid, hints)
 
     # ---- functional slots (A0.3) ---------------------------------------------------------------------------------
     def _declare_core_slots(self):
@@ -1138,7 +1177,9 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
                             and not superseded(a, perspective, as_of) and verdict(a, t) is not None))
 
     def value_at(self, world, type, subject, t, as_of=None, perspective=SYSTEM, key_role=None, value_role=None):
-        """The value(s) of a relationship for `subject` at valid time t, for a perspective, as known at `as_of`."""
+        """The value(s) of a relationship for `subject` at valid time t, for a perspective, as known at `as_of`.
+        key_role and value_role, when given, are checked as in holds() (LABS-1.052)."""
+        self.check_roles(type, [r for r in (key_role, value_role) if r])
         if not key_role:
             simple = sorted({(ks, v) for _, ks, v in self._constraints(type) if len(ks) == 1})
             if len(simple) != 1:
@@ -1149,7 +1190,9 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
 
     def value_of(self, world, type, key, t, as_of=None, perspective=SYSTEM):
         """The value(s) in a functional slot at t: `key` names a player for every key role of the type's slot, e.g.
-        value_of(w, "seat-assignment", {"venue": "hall", "seat": "A1"}, t) -> the occupant (A0.3)."""
+        value_of(w, "seat-assignment", {"venue": "hall", "seat": "A1"}, t) -> the occupant (A0.3). The key's role
+        names are checked as in holds() (LABS-1.052)."""
+        self.check_roles(type, key)
         found = sorted({v for _, ks, v in self._constraints(type) if set(ks) == set(key)})
         if found == [PARAMS_VALUE]:
             raise ValueError(f"{type!r}: the constraint's value is the content's parameters; ask with where/poses")
@@ -1190,7 +1233,9 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
 
     def holds(self, world, type, roles, t, as_of=None, perspective=SYSTEM):
         """Does this content hold at t for the perspective? Evidence-backed status with polarity: the canonical
-        judgement (`judgement`) as an Answer."""
+        judgement (`judgement`) as an Answer. Role names are the type's core role names (`role_names`); any other is
+        refused with UnknownRoleError (LABS-1.052)."""
+        self.check_roles(type, roles)
         rec, about, fallback, _ = self._question(world, type, roles, t, as_of, perspective)
         alternatives = self._alternatives(about, t, perspective, as_of)
         if rec is not None:
@@ -1205,7 +1250,9 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
     def judgement(self, world, type, roles, t, as_of=None, perspective=SYSTEM, attested=True, _memo=None):
         """The canonical judgement (a ContentJudgement) of the content holds() asks about: `type` or a subtype, with
         the given players among its own. Nothing recorded at all: UNKNOWN with reason no_evidence. attested False:
-        only declared constraints apply (how an attested constraint is itself judged: never recursively)."""
+        only declared constraints apply (how an attested constraint is itself judged: never recursively). Role names
+        are checked as in holds()."""
+        self.check_roles(type, roles)
         rec, _, _, first = self._question(world, type, roles, t, as_of, perspective, attested, _memo)
         if rec is None:
             rec = first

@@ -1,11 +1,11 @@
 """A small, evidence-aware semantic world model on TypeDB 3 (Core 0.3: World Ontology v0.2)."""
 
 from .keys import proposition_id, proposition_key
-from .model import CORE_MODULES, DYNAMICS_MODULES, PHYSICAL_MODULES, QUALITY_MODULES, SYSTEM, MovementConflict, PropositionIdCollision, RoleCardinalityError, WorldModel, connect
+from .model import CORE_MODULES, DYNAMICS_MODULES, PHYSICAL_MODULES, QUALITY_MODULES, SYSTEM, MovementConflict, PropositionIdCollision, RoleCardinalityError, UnknownRoleError, WorldModel, connect
 from .profiles import PROFILES, Profile, ProfileError
 from . import mechanical  # noqa: E402,F401  (registers the mechanical profile)
 from . import organisation  # noqa: E402,F401  (registers the organisation profile)
 from . import laboratory  # noqa: E402,F401  (registers the laboratory profile)
 from .semantics import Window
 
-__all__ = ["WorldModel", "connect", "Window", "SYSTEM", "proposition_key", "proposition_id", "PropositionIdCollision", "MovementConflict", "RoleCardinalityError", "PHYSICAL_MODULES", "DYNAMICS_MODULES", "QUALITY_MODULES", "Profile", "ProfileError", "PROFILES", "CORE_MODULES", "mechanical", "organisation", "laboratory"]
+__all__ = ["WorldModel", "connect", "Window", "SYSTEM", "proposition_key", "proposition_id", "PropositionIdCollision", "MovementConflict", "RoleCardinalityError", "UnknownRoleError", "PHYSICAL_MODULES", "DYNAMICS_MODULES", "QUALITY_MODULES", "Profile", "ProfileError", "PROFILES", "CORE_MODULES", "mechanical", "organisation", "laboratory"]
