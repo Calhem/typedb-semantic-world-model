@@ -1,0 +1,137 @@
+{
+ "id": "org-capability",
+ "description": "Practical capability to drive: general and depot-only holdings, an ended general holding beside a depot denial, and a general holding beside a depot denial.",
+ "profiles": [
+  "organisation"
+ ],
+ "steps": [
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "dan"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "eve"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "fay"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "gus"
+  },
+  {
+   "op": "entity",
+   "kind": "place",
+   "id": "depot7"
+  },
+  {
+   "op": "entity",
+   "kind": "place",
+   "id": "yard"
+  },
+  {
+   "op": "entity",
+   "kind": "capability",
+   "id": "can-drive"
+  },
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "hr"
+  },
+  {
+   "op": "world",
+   "id": "w",
+   "kind": "actual"
+  },
+  {
+   "op": "grant",
+   "id": "g-dan",
+   "world": "w",
+   "holder": "dan",
+   "concept": "can-drive",
+   "start": "T1",
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ],
+   "until_superseded": true
+  },
+  {
+   "op": "grant",
+   "id": "g-eve-depot",
+   "world": "w",
+   "holder": "eve",
+   "concept": "can-drive",
+   "start": "T1",
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ],
+   "context": "depot7",
+   "until_superseded": true
+  },
+  {
+   "op": "grant",
+   "id": "g-fay",
+   "world": "w",
+   "holder": "fay",
+   "concept": "can-drive",
+   "start": "T1",
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ],
+   "end": "T4"
+  },
+  {
+   "op": "grant",
+   "id": "g-fay-depot-deny",
+   "world": "w",
+   "holder": "fay",
+   "concept": "can-drive",
+   "start": "T1",
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ],
+   "context": "depot7",
+   "until_superseded": true,
+   "polarity": false
+  },
+  {
+   "op": "grant",
+   "id": "g-gus",
+   "world": "w",
+   "holder": "gus",
+   "concept": "can-drive",
+   "start": "T1",
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ],
+   "until_superseded": true
+  },
+  {
+   "op": "grant",
+   "id": "g-gus-depot-deny",
+   "world": "w",
+   "holder": "gus",
+   "concept": "can-drive",
+   "start": "T1",
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ],
+   "context": "depot7",
+   "until_superseded": true,
+   "polarity": false
+  }
+ ]
+}

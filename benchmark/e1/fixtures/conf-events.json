@@ -1,0 +1,390 @@
+{
+ "id": "conf-events",
+ "description": "Accounts of happenings on 5 November from several sources: a pickup two sources attribute to different actors, a joint job, official acts whose accounts name different officials (accepted, rejected, or accepted by only one perspective), a co-signed act in one account and in two partial accounts, existence claims and denials for the occurrences, and two employment reports for bea.",
+ "profiles": [
+  "organisation"
+ ],
+ "steps": [
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "bob"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "carol"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "dan"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "eve"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "bea"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "cal"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "box"
+  },
+  {
+   "op": "entity",
+   "kind": "organisation",
+   "id": "acme"
+  },
+  {
+   "op": "entity",
+   "kind": "social-role",
+   "id": "director"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-pick"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-joint"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-sign"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-sign2"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-cos"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-split"
+  },
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "robot"
+  },
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "camera"
+  },
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "hr"
+  },
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "clerk"
+  },
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "audit"
+  },
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "payroll"
+  },
+  {
+   "op": "world",
+   "id": "w",
+   "kind": "actual"
+  },
+  {
+   "op": "account",
+   "id": "ev-a",
+   "world": "w",
+   "roles": {
+    "actor": "bob",
+    "patient": "box"
+   },
+   "start": "T5",
+   "occurrence": "o-pick",
+   "attester": "robot",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "account",
+   "id": "ev-b",
+   "world": "w",
+   "roles": {
+    "actor": "carol",
+    "patient": "box"
+   },
+   "start": "T5",
+   "occurrence": "o-pick",
+   "attester": "camera",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "account",
+   "id": "ev-c",
+   "world": "w",
+   "roles": {
+    "actor": [
+     "dan",
+     "eve"
+    ],
+    "patient": "box"
+   },
+   "start": "T5",
+   "occurrence": "o-joint",
+   "attester": "robot",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "act_in_office",
+   "id": "act-s1",
+   "world": "w",
+   "official": "bea",
+   "office": "director",
+   "context": "acme",
+   "start": "T5",
+   "occurrence": "o-sign",
+   "attester": "hr",
+   "accepted_by": [
+    "system",
+    "audit"
+   ]
+  },
+  {
+   "op": "act_in_office",
+   "id": "act-s2",
+   "world": "w",
+   "official": "cal",
+   "office": "director",
+   "context": "acme",
+   "start": "T5",
+   "occurrence": "o-sign",
+   "attester": "clerk",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "act_in_office",
+   "id": "act-t1",
+   "world": "w",
+   "official": "bea",
+   "office": "director",
+   "context": "acme",
+   "start": "T5",
+   "occurrence": "o-sign2",
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "act_in_office",
+   "id": "act-t2",
+   "world": "w",
+   "official": "cal",
+   "office": "director",
+   "context": "acme",
+   "start": "T5",
+   "occurrence": "o-sign2",
+   "attester": "clerk"
+  },
+  {
+   "op": "accept",
+   "target": "act-t2",
+   "holder": "system",
+   "verdict": "rejected"
+  },
+  {
+   "op": "attest",
+   "id": "cs-cos",
+   "world": "w",
+   "type": "classified-as",
+   "roles": {
+    "classified": "o-cos",
+    "class": "organisation:co-signed"
+   },
+   "start": "T1",
+   "until_superseded": true,
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "act_in_office",
+   "id": "act-c1",
+   "world": "w",
+   "official": [
+    "bea",
+    "cal"
+   ],
+   "office": "director",
+   "context": "acme",
+   "start": "T5",
+   "occurrence": "o-cos",
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "cs-split",
+   "world": "w",
+   "type": "classified-as",
+   "roles": {
+    "classified": "o-split",
+    "class": "organisation:co-signed"
+   },
+   "start": "T1",
+   "until_superseded": true,
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "act_in_office",
+   "id": "act-p1",
+   "world": "w",
+   "official": "bea",
+   "office": "director",
+   "context": "acme",
+   "start": "T5",
+   "occurrence": "o-split",
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "act_in_office",
+   "id": "act-p2",
+   "world": "w",
+   "official": "cal",
+   "office": "director",
+   "context": "acme",
+   "start": "T5",
+   "occurrence": "o-split",
+   "attester": "clerk",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "ex-sign",
+   "world": "w",
+   "type": "existence",
+   "roles": {
+    "existent": "o-sign"
+   },
+   "start": "T5",
+   "until_superseded": true,
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "deny",
+   "id": "dx-sign",
+   "world": "w",
+   "type": "existence",
+   "roles": {
+    "existent": "o-sign"
+   },
+   "start": "T5",
+   "until_superseded": true,
+   "attester": "clerk",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "deny",
+   "id": "dx-sign2",
+   "world": "w",
+   "type": "existence",
+   "roles": {
+    "existent": "o-sign2"
+   },
+   "start": "T5",
+   "until_superseded": true,
+   "attester": "audit",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "ex-cos",
+   "world": "w",
+   "type": "existence",
+   "roles": {
+    "existent": "o-cos"
+   },
+   "start": "T5",
+   "until_superseded": true,
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "employ",
+   "id": "e-hr",
+   "world": "w",
+   "employer": "acme",
+   "employee": "bea",
+   "start": "T1",
+   "end": "T10",
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "employ",
+   "id": "e-pay",
+   "world": "w",
+   "employer": "acme",
+   "employee": "bea",
+   "start": "T3",
+   "until_superseded": true,
+   "attester": "payroll",
+   "accepted_by": [
+    "system"
+   ]
+  }
+ ]
+}

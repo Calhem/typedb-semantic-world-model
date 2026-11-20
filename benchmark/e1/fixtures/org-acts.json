@@ -1,0 +1,234 @@
+{
+ "id": "org-acts",
+ "description": "Official acts at acme on 5 November: a single-official act, two-official acts with and without an established co-signed classification (one unreviewed, one beginning after the act), and an act whose two accounts agree on the official but not on the office.",
+ "profiles": [
+  "organisation"
+ ],
+ "steps": [
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "bea"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "cal"
+  },
+  {
+   "op": "entity",
+   "kind": "organisation",
+   "id": "acme"
+  },
+  {
+   "op": "entity",
+   "kind": "social-role",
+   "id": "director"
+  },
+  {
+   "op": "entity",
+   "kind": "social-role",
+   "id": "treasurer"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-1"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-3"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-4"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-6"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-8"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-9"
+  },
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "hr"
+  },
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "clerk"
+  },
+  {
+   "op": "world",
+   "id": "w",
+   "kind": "actual"
+  },
+  {
+   "op": "act_in_office",
+   "id": "act-1a",
+   "world": "w",
+   "official": "bea",
+   "office": "director",
+   "context": "acme",
+   "start": "T5",
+   "occurrence": "o-1",
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "act_in_office",
+   "id": "act-3a",
+   "world": "w",
+   "official": [
+    "bea",
+    "cal"
+   ],
+   "office": "director",
+   "context": "acme",
+   "start": "T5",
+   "occurrence": "o-3",
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "cs-4",
+   "world": "w",
+   "type": "classified-as",
+   "roles": {
+    "classified": "o-4",
+    "class": "organisation:co-signed"
+   },
+   "start": "T1",
+   "until_superseded": true,
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "act_in_office",
+   "id": "act-4a",
+   "world": "w",
+   "official": [
+    "bea",
+    "cal"
+   ],
+   "office": "director",
+   "context": "acme",
+   "start": "T5",
+   "occurrence": "o-4",
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "cs-6",
+   "world": "w",
+   "type": "classified-as",
+   "roles": {
+    "classified": "o-6",
+    "class": "organisation:co-signed"
+   },
+   "start": "T1",
+   "until_superseded": true,
+   "attester": "clerk"
+  },
+  {
+   "op": "act_in_office",
+   "id": "act-6a",
+   "world": "w",
+   "official": [
+    "bea",
+    "cal"
+   ],
+   "office": "director",
+   "context": "acme",
+   "start": "T5",
+   "occurrence": "o-6",
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "act_in_office",
+   "id": "act-8a",
+   "world": "w",
+   "official": "bea",
+   "office": "director",
+   "context": "acme",
+   "start": "T5",
+   "occurrence": "o-8",
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "act_in_office",
+   "id": "act-8b",
+   "world": "w",
+   "official": "bea",
+   "office": "treasurer",
+   "context": "acme",
+   "start": "T5",
+   "occurrence": "o-8",
+   "attester": "clerk",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "cs-9",
+   "world": "w",
+   "type": "classified-as",
+   "roles": {
+    "classified": "o-9",
+    "class": "organisation:co-signed"
+   },
+   "start": "T6",
+   "until_superseded": true,
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "act_in_office",
+   "id": "act-9a",
+   "world": "w",
+   "official": [
+    "bea",
+    "cal"
+   ],
+   "office": "director",
+   "context": "acme",
+   "start": "T5",
+   "occurrence": "o-9",
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ]
+  }
+ ]
+}

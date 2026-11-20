@@ -1,0 +1,9896 @@
+{
+ "meta": {
+  "started": "2026-11-20T01:03:54+00:00",
+  "commit": "d0f0aa2",
+  "gold_commit": "d0f0aa2",
+  "seconds": 68.6
+ },
+ "summary": {
+  "conflict-provenance": {
+   "questions": 30,
+   "correct": 30,
+   "paths_disagree": 0,
+   "missing-evidence": 3
+  },
+  "cross-domain": {
+   "questions": 33,
+   "correct": 33,
+   "paths_disagree": 0,
+   "missing-evidence": 6
+  },
+  "identity": {
+   "questions": 42,
+   "correct": 42,
+   "paths_disagree": 0
+  },
+  "laboratory": {
+   "questions": 36,
+   "correct": 33,
+   "paths_disagree": 0,
+   "missing-evidence": 3,
+   "wrong-judgement": 1,
+   "wrong-values": 2
+  },
+  "mechanical": {
+   "questions": 33,
+   "correct": 33,
+   "paths_disagree": 0,
+   "missing-evidence": 2
+  },
+  "organisation": {
+   "questions": 31,
+   "correct": 30,
+   "paths_disagree": 0,
+   "missing-evidence": 9,
+   "wrong-judgement": 1
+  },
+  "temporal": {
+   "questions": 37,
+   "correct": 36,
+   "paths_disagree": 0,
+   "wrong-judgement": 1
+  },
+  "worlds-perspectives": {
+   "questions": 30,
+   "correct": 30,
+   "paths_disagree": 0
+  }
+ },
+ "results": [
+  {
+   "id": "CONF-017",
+   "category": "conflict-provenance",
+   "template": "event_role",
+   "scenario": "conf-events",
+   "expected": {
+    "judgement": "union",
+    "players": [
+     [
+      "bob"
+     ],
+     [
+      "carol"
+     ]
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "union",
+    "players": [
+     [
+      "bob"
+     ],
+     [
+      "carol"
+     ]
+    ],
+    "reason": null,
+    "multiplicity": null
+   },
+   "evidence": {
+    "required": [
+     "ev-a",
+     "ev-b"
+    ],
+    "found": [
+     "ev-a",
+     "ev-b"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 276.7,
+    "full": 133.2
+   }
+  },
+  {
+   "id": "CONF-018",
+   "category": "conflict-provenance",
+   "template": "event_role",
+   "scenario": "conf-events",
+   "expected": {
+    "judgement": "union",
+    "players": [
+     [
+      "dan"
+     ],
+     [
+      "eve"
+     ]
+    ]
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "union",
+    "players": [
+     [
+      "dan"
+     ],
+     [
+      "eve"
+     ]
+    ],
+    "reason": null,
+    "multiplicity": null
+   },
+   "evidence": {
+    "required": [
+     "ev-c"
+    ],
+    "found": [
+     "ev-c"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 55.7,
+    "full": 58.8
+   }
+  },
+  {
+   "id": "CONF-019",
+   "category": "conflict-provenance",
+   "template": "event_role",
+   "scenario": "conf-events",
+   "expected": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "bea"
+     ],
+     [
+      "cal"
+     ]
+    ],
+    "reason": "accounts name different players",
+    "multiplicity": "one"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "bea"
+     ],
+     [
+      "cal"
+     ]
+    ],
+    "reason": "accounts name different players",
+    "multiplicity": "one"
+   },
+   "evidence": {
+    "required": [
+     "act-s1",
+     "act-s2"
+    ],
+    "found": [
+     "act-s1",
+     "act-s2"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 146.7,
+    "full": 61.4
+   }
+  },
+  {
+   "id": "CONF-020",
+   "category": "conflict-provenance",
+   "template": "event_role",
+   "scenario": "conf-events",
+   "expected": {
+    "judgement": "established",
+    "players": [
+     [
+      "bea"
+     ]
+    ],
+    "multiplicity": "one"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "players": [
+     [
+      "bea"
+     ]
+    ],
+    "reason": null,
+    "multiplicity": "one"
+   },
+   "evidence": {
+    "required": [
+     "act-s1"
+    ],
+    "found": [
+     "act-s1"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 67.6,
+    "full": 59.6
+   }
+  },
+  {
+   "id": "CONF-021",
+   "category": "conflict-provenance",
+   "template": "event_role",
+   "scenario": "conf-events",
+   "expected": {
+    "judgement": "established",
+    "players": [
+     [
+      "bea"
+     ]
+    ],
+    "multiplicity": "one"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "players": [
+     [
+      "bea"
+     ]
+    ],
+    "reason": null,
+    "multiplicity": "one"
+   },
+   "evidence": {
+    "required": [
+     "act-t1"
+    ],
+    "found": [
+     "act-t1"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 67.6,
+    "full": 58.5
+   }
+  },
+  {
+   "id": "CONF-022",
+   "category": "conflict-provenance",
+   "template": "event_role",
+   "scenario": "conf-events",
+   "expected": {
+    "judgement": "established",
+    "players": [
+     [
+      "bea"
+     ],
+     [
+      "cal"
+     ]
+    ],
+    "multiplicity": "set"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "players": [
+     [
+      "bea"
+     ],
+     [
+      "cal"
+     ]
+    ],
+    "reason": null,
+    "multiplicity": "set"
+   },
+   "evidence": {
+    "required": [
+     "act-c1"
+    ],
+    "found": [
+     "act-c1"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 63.9,
+    "full": 56.7
+   }
+  },
+  {
+   "id": "CONF-023",
+   "category": "conflict-provenance",
+   "template": "event_role",
+   "scenario": "conf-events",
+   "expected": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "bea"
+     ],
+     [
+      "cal"
+     ]
+    ],
+    "reason": "accounts name different sets of players",
+    "multiplicity": "set"
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "bea"
+     ],
+     [
+      "cal"
+     ]
+    ],
+    "reason": "accounts name different sets of players",
+    "multiplicity": "set"
+   },
+   "evidence": {
+    "required": [
+     "act-p1",
+     "act-p2"
+    ],
+    "found": [
+     "act-p1",
+     "act-p2"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 67.5,
+    "full": 58.3
+   }
+  },
+  {
+   "id": "CONF-024",
+   "category": "conflict-provenance",
+   "template": "event_role",
+   "scenario": "conf-events",
+   "expected": {
+    "judgement": "established",
+    "players": [
+     [
+      "director"
+     ]
+    ],
+    "multiplicity": "one"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "players": [
+     [
+      "director"
+     ]
+    ],
+    "reason": null,
+    "multiplicity": "one"
+   },
+   "evidence": {
+    "required": [
+     "act-s1",
+     "act-s2"
+    ],
+    "found": [
+     "act-s1",
+     "act-s2"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 69.1,
+    "full": 100.4
+   }
+  },
+  {
+   "id": "CONF-025",
+   "category": "conflict-provenance",
+   "template": "occurrence_status",
+   "scenario": "conf-events",
+   "expected": {
+    "status": "not established"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "not established"
+   },
+   "evidence": {
+    "required": [],
+    "found": [],
+    "recall": null,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 80.6,
+    "full": 64.5
+   }
+  },
+  {
+   "id": "CONF-026",
+   "category": "conflict-provenance",
+   "template": "occurrence_status",
+   "scenario": "conf-events",
+   "expected": {
+    "status": "disputed"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "disputed"
+   },
+   "evidence": {
+    "required": [
+     "dx-sign",
+     "ex-sign"
+    ],
+    "found": [],
+    "recall": 0.0,
+    "forbidden_cited": []
+   },
+   "failure": "missing-evidence",
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 72.0,
+    "full": 52.2
+   }
+  },
+  {
+   "id": "CONF-027",
+   "category": "conflict-provenance",
+   "template": "occurrence_status",
+   "scenario": "conf-events",
+   "expected": {
+    "status": "denied"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "denied"
+   },
+   "evidence": {
+    "required": [
+     "dx-sign2"
+    ],
+    "found": [],
+    "recall": 0.0,
+    "forbidden_cited": []
+   },
+   "failure": "missing-evidence",
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 47.3,
+    "full": 46.8
+   }
+  },
+  {
+   "id": "CONF-028",
+   "category": "conflict-provenance",
+   "template": "occurrence_status",
+   "scenario": "conf-events",
+   "expected": {
+    "status": "accepted"
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "accepted"
+   },
+   "evidence": {
+    "required": [
+     "ex-cos"
+    ],
+    "found": [],
+    "recall": 0.0,
+    "forbidden_cited": []
+   },
+   "failure": "missing-evidence",
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 46.4,
+    "full": 46.8
+   }
+  },
+  {
+   "id": "CONF-029",
+   "category": "conflict-provenance",
+   "template": "holds",
+   "scenario": "conf-events",
+   "expected": {
+    "judgement": "disputed",
+    "status": "DISPUTED"
+   },
+   "adversarial": false,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "disputed",
+    "status": "DISPUTED",
+    "holds": null
+   },
+   "evidence": {
+    "required": [
+     "e-hr",
+     "e-pay"
+    ],
+    "found": [
+     "e-hr",
+     "e-pay"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 79.6,
+    "full": 29.6
+   }
+  },
+  {
+   "id": "CONF-030",
+   "category": "conflict-provenance",
+   "template": "holds",
+   "scenario": "conf-events",
+   "expected": {
+    "judgement": "established",
+    "status": "ASSERTED"
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "status": "ASSERTED",
+    "holds": true
+   },
+   "evidence": {
+    "required": [
+     "e-hr",
+     "e-pay"
+    ],
+    "found": [
+     "e-hr",
+     "e-pay"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 23.5,
+    "full": 27.5
+   }
+  },
+  {
+   "id": "CONF-001",
+   "category": "conflict-provenance",
+   "template": "value_at",
+   "scenario": "conf-location",
+   "expected": {
+    "status": "DISPUTED",
+    "values": [
+     "dock",
+     "shelf-3"
+    ]
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "DISPUTED",
+    "values": [
+     "dock",
+     "shelf-3"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "l-box-camera",
+     "l-box-robot"
+    ],
+    "found": [
+     "l-box-camera",
+     "l-box-robot"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 150.1,
+    "full": 58.8
+   }
+  },
+  {
+   "id": "CONF-002",
+   "category": "conflict-provenance",
+   "template": "value_at",
+   "scenario": "conf-location",
+   "expected": {
+    "status": "ASSERTED",
+    "values": [
+     "shelf-3"
+    ]
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "ASSERTED",
+    "values": [
+     "shelf-3"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "l-box-robot"
+    ],
+    "found": [
+     "l-box-robot"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 13.2,
+    "full": 10.9
+   }
+  },
+  {
+   "id": "CONF-003",
+   "category": "conflict-provenance",
+   "template": "value_at",
+   "scenario": "conf-location",
+   "expected": {
+    "status": "ASSERTED",
+    "values": [
+     "shelf-3"
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "ASSERTED",
+    "values": [
+     "shelf-3"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "l-crate-robot"
+    ],
+    "found": [
+     "l-crate-robot"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 14.6,
+    "full": 11.2
+   }
+  },
+  {
+   "id": "CONF-004",
+   "category": "conflict-provenance",
+   "template": "value_at",
+   "scenario": "conf-location",
+   "expected": {
+    "status": "ASSERTED",
+    "values": [
+     "dock"
+    ]
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "ASSERTED",
+    "values": [
+     "dock"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "l-crate-clerk"
+    ],
+    "found": [
+     "l-crate-clerk"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 12.3,
+    "full": 9.9
+   }
+  },
+  {
+   "id": "CONF-005",
+   "category": "conflict-provenance",
+   "template": "holds",
+   "scenario": "conf-location",
+   "expected": {
+    "judgement": "disputed",
+    "status": "DISPUTED"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "disputed",
+    "status": "DISPUTED",
+    "holds": null
+   },
+   "evidence": {
+    "required": [
+     "d-pallet",
+     "l-pallet"
+    ],
+    "found": [
+     "d-pallet",
+     "l-pallet"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 69.9,
+    "full": 22.0
+   }
+  },
+  {
+   "id": "CONF-006",
+   "category": "conflict-provenance",
+   "template": "holds",
+   "scenario": "conf-location",
+   "expected": {
+    "judgement": "established",
+    "status": "ASSERTED"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "status": "ASSERTED",
+    "holds": true
+   },
+   "evidence": {
+    "required": [
+     "l-pallet"
+    ],
+    "found": [
+     "l-pallet"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 123.7,
+    "full": 76.8
+   }
+  },
+  {
+   "id": "CONF-007",
+   "category": "conflict-provenance",
+   "template": "holds",
+   "scenario": "conf-location",
+   "expected": {
+    "judgement": "not holding",
+    "status": "ASSERTED"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "not holding",
+    "status": "ASSERTED",
+    "holds": false
+   },
+   "evidence": {
+    "required": [
+     "d-pallet"
+    ],
+    "found": [
+     "d-pallet"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 24.3,
+    "full": 20.1
+   }
+  },
+  {
+   "id": "CONF-008",
+   "category": "conflict-provenance",
+   "template": "value_at",
+   "scenario": "conf-location",
+   "expected": {
+    "status": "ASSERTED",
+    "values": [
+     "dock"
+    ]
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "ASSERTED",
+    "values": [
+     "dock"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "l-drum-camera",
+     "l-drum-robot"
+    ],
+    "found": [
+     "l-drum-camera",
+     "l-drum-robot"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 13.2,
+    "full": 10.7
+   }
+  },
+  {
+   "id": "CONF-009",
+   "category": "conflict-provenance",
+   "template": "value_at",
+   "scenario": "conf-location",
+   "expected": {
+    "status": "ASSERTED",
+    "values": [
+     "shelf-3"
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "ASSERTED",
+    "values": [
+     "shelf-3"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "l-tote"
+    ],
+    "found": [
+     "l-tote"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 137.5,
+    "full": 11.4
+   }
+  },
+  {
+   "id": "CONF-010",
+   "category": "conflict-provenance",
+   "template": "value_at",
+   "scenario": "conf-location",
+   "expected": {
+    "status": "ASSERTED",
+    "values": [
+     "shelf-4"
+    ]
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "ASSERTED",
+    "values": [
+     "shelf-4"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "c-tote"
+    ],
+    "found": [
+     "c-tote"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 43.1,
+    "full": 10.8
+   }
+  },
+  {
+   "id": "CONF-011",
+   "category": "conflict-provenance",
+   "template": "holds",
+   "scenario": "conf-location",
+   "expected": {
+    "judgement": "unknown",
+    "status": "UNKNOWN"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "unknown",
+    "status": "UNKNOWN",
+    "holds": null
+   },
+   "evidence": {
+    "required": [],
+    "found": [],
+    "recall": null,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 47.9,
+    "full": 43.0
+   }
+  },
+  {
+   "id": "CONF-012",
+   "category": "conflict-provenance",
+   "template": "holds",
+   "scenario": "conf-location",
+   "expected": {
+    "judgement": "established",
+    "status": "ASSERTED"
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "status": "ASSERTED",
+    "holds": true
+   },
+   "evidence": {
+    "required": [
+     "l-bin"
+    ],
+    "found": [
+     "l-bin"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 23.4,
+    "full": 22.5
+   }
+  },
+  {
+   "id": "CONF-013",
+   "category": "conflict-provenance",
+   "template": "holds",
+   "scenario": "conf-location",
+   "expected": {
+    "judgement": "pending",
+    "status": "UNKNOWN"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "pending",
+    "status": "UNKNOWN",
+    "holds": null
+   },
+   "evidence": {
+    "required": [],
+    "found": [],
+    "recall": null,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 46.7,
+    "full": 44.2
+   }
+  },
+  {
+   "id": "CONF-014",
+   "category": "conflict-provenance",
+   "template": "value_at",
+   "scenario": "conf-location",
+   "expected": {
+    "status": "STIPULATED",
+    "values": [
+     "bay-4"
+    ]
+   },
+   "adversarial": false,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "STIPULATED",
+    "values": [
+     "bay-4"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "s-box-plan"
+    ],
+    "found": [
+     "s-box-plan"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 308.4,
+    "full": 153.6
+   }
+  },
+  {
+   "id": "CONF-015",
+   "category": "conflict-provenance",
+   "template": "value_at",
+   "scenario": "conf-location",
+   "expected": {
+    "status": "DISPUTED",
+    "values": [
+     "dock",
+     "shelf-3"
+    ]
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "DISPUTED",
+    "values": [
+     "dock",
+     "shelf-3"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "l-box-camera",
+     "l-box-robot"
+    ],
+    "found": [
+     "l-box-camera",
+     "l-box-robot"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 23.0,
+    "full": 21.7
+   }
+  },
+  {
+   "id": "CONF-016",
+   "category": "conflict-provenance",
+   "template": "holds",
+   "scenario": "conf-location",
+   "expected": {
+    "judgement": "established",
+    "status": "ASSERTED"
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "status": "ASSERTED",
+    "holds": true
+   },
+   "evidence": {
+    "required": [
+     "l-pallet"
+    ],
+    "found": [
+     "l-pallet"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 172.5,
+    "full": 44.4
+   }
+  },
+  {
+   "id": "ID-001",
+   "category": "identity",
+   "template": "same_thing",
+   "scenario": "id-1",
+   "expected": {
+    "same": true,
+    "conflict": false
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "same": true,
+    "conflict": false
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 39.1,
+    "full": 6.7
+   }
+  },
+  {
+   "id": "ID-002",
+   "category": "identity",
+   "template": "same_thing",
+   "scenario": "id-1",
+   "expected": {
+    "same": false,
+    "conflict": false
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "same": false,
+    "conflict": false
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 6.2,
+    "full": 6.0
+   }
+  },
+  {
+   "id": "ID-003",
+   "category": "identity",
+   "template": "same_thing",
+   "scenario": "id-1",
+   "expected": {
+    "same": true,
+    "conflict": false
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "same": true,
+    "conflict": false
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 5.1,
+    "full": 5.3
+   }
+  },
+  {
+   "id": "ID-004",
+   "category": "identity",
+   "template": "same_thing",
+   "scenario": "id-1",
+   "expected": {
+    "same": false,
+    "conflict": false
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "same": false,
+    "conflict": false
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 5.8,
+    "full": 6.1
+   }
+  },
+  {
+   "id": "ID-005",
+   "category": "identity",
+   "template": "same_thing",
+   "scenario": "id-1",
+   "expected": {
+    "same": false,
+    "conflict": false
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "same": false,
+    "conflict": false
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 5.6,
+    "full": 5.9
+   }
+  },
+  {
+   "id": "ID-006",
+   "category": "identity",
+   "template": "same_thing",
+   "scenario": "id-1",
+   "expected": {
+    "same": false,
+    "conflict": false
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "same": false,
+    "conflict": false
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 6.9,
+    "full": 6.0
+   }
+  },
+  {
+   "id": "ID-007",
+   "category": "identity",
+   "template": "same_thing",
+   "scenario": "id-1",
+   "expected": {
+    "same": true,
+    "conflict": false
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "same": true,
+    "conflict": false
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 5.6,
+    "full": 6.0
+   }
+  },
+  {
+   "id": "ID-008",
+   "category": "identity",
+   "template": "holds",
+   "scenario": "id-1",
+   "expected": {
+    "judgement": "disputed",
+    "status": "DISPUTED"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "disputed",
+    "status": "DISPUTED",
+    "holds": null
+   },
+   "evidence": {
+    "required": [
+     "dn-r",
+     "sa-r"
+    ],
+    "found": [
+     "dn-r",
+     "sa-r"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 88.6,
+    "full": 61.2
+   }
+  },
+  {
+   "id": "ID-009",
+   "category": "identity",
+   "template": "same_thing",
+   "scenario": "id-2",
+   "expected": {
+    "same": true,
+    "conflict": false
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "same": true,
+    "conflict": false
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 39.5,
+    "full": 8.8
+   }
+  },
+  {
+   "id": "ID-010",
+   "category": "identity",
+   "template": "aliases",
+   "scenario": "id-2",
+   "expected": {
+    "members": [
+     "n1",
+     "n2",
+     "n3"
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "members": [
+     "n1",
+     "n2",
+     "n3"
+    ]
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 8.9,
+    "full": 8.6
+   }
+  },
+  {
+   "id": "ID-011",
+   "category": "identity",
+   "template": "same_thing",
+   "scenario": "id-2",
+   "expected": {
+    "same": false,
+    "conflict": true
+   },
+   "adversarial": false,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "same": false,
+    "conflict": true
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 8.4,
+    "full": 8.2
+   }
+  },
+  {
+   "id": "ID-012",
+   "category": "identity",
+   "template": "same_thing",
+   "scenario": "id-2",
+   "expected": {
+    "same": false,
+    "conflict": true
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "same": false,
+    "conflict": true
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 8.2,
+    "full": 8.1
+   }
+  },
+  {
+   "id": "ID-013",
+   "category": "identity",
+   "template": "aliases",
+   "scenario": "id-2",
+   "expected": {
+    "members": [
+     "s2"
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "members": [
+     "s2"
+    ]
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 8.3,
+    "full": 8.1
+   }
+  },
+  {
+   "id": "ID-014",
+   "category": "identity",
+   "template": "same_thing",
+   "scenario": "id-2",
+   "expected": {
+    "same": false,
+    "conflict": false
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "same": false,
+    "conflict": false
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 8.2,
+    "full": 8.5
+   }
+  },
+  {
+   "id": "ID-015",
+   "category": "identity",
+   "template": "same_thing",
+   "scenario": "id-2",
+   "expected": {
+    "same": false,
+    "conflict": false
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "same": false,
+    "conflict": false
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 7.9,
+    "full": 8.3
+   }
+  },
+  {
+   "id": "ID-016",
+   "category": "identity",
+   "template": "same_thing",
+   "scenario": "id-2",
+   "expected": {
+    "same": true,
+    "conflict": false
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "same": true,
+    "conflict": false
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 8.0,
+    "full": 8.5
+   }
+  },
+  {
+   "id": "ID-017",
+   "category": "identity",
+   "template": "holds",
+   "scenario": "id-2",
+   "expected": {
+    "judgement": "established",
+    "status": "ASSERTED"
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "status": "ASSERTED",
+    "holds": true
+   },
+   "evidence": {
+    "required": [
+     "sa-v12"
+    ],
+    "found": [
+     "sa-v12"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 104.0,
+    "full": 64.2
+   }
+  },
+  {
+   "id": "ID-018",
+   "category": "identity",
+   "template": "aliases",
+   "scenario": "id-2",
+   "expected": {
+    "members": [
+     "c1",
+     "c2",
+     "c3"
+    ]
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "members": [
+     "c1",
+     "c2",
+     "c3"
+    ]
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 8.3,
+    "full": 10.1
+   }
+  },
+  {
+   "id": "ID-019",
+   "category": "identity",
+   "template": "same_thing",
+   "scenario": "id-2",
+   "expected": {
+    "same": false,
+    "conflict": true
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "same": false,
+    "conflict": true
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 8.6,
+    "full": 8.4
+   }
+  },
+  {
+   "id": "ID-020",
+   "category": "identity",
+   "template": "same_thing",
+   "scenario": "id-2",
+   "expected": {
+    "same": true,
+    "conflict": false
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "same": true,
+    "conflict": false
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 8.7,
+    "full": 8.4
+   }
+  },
+  {
+   "id": "ID-021",
+   "category": "identity",
+   "template": "same_thing",
+   "scenario": "id-3",
+   "expected": {
+    "same": false,
+    "conflict": false
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "same": false,
+    "conflict": false
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 39.6,
+    "full": 5.2
+   }
+  },
+  {
+   "id": "ID-022",
+   "category": "identity",
+   "template": "same_thing",
+   "scenario": "id-3",
+   "expected": {
+    "same": true,
+    "conflict": false
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "same": true,
+    "conflict": false
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 35.0,
+    "full": 5.4
+   }
+  },
+  {
+   "id": "ID-023",
+   "category": "identity",
+   "template": "same_thing",
+   "scenario": "id-3",
+   "expected": {
+    "same": true,
+    "conflict": false
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "same": true,
+    "conflict": false
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 5.3,
+    "full": 5.3
+   }
+  },
+  {
+   "id": "ID-024",
+   "category": "identity",
+   "template": "same_thing",
+   "scenario": "id-3",
+   "expected": {
+    "same": false,
+    "conflict": false
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "same": false,
+    "conflict": false
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 5.4,
+    "full": 5.4
+   }
+  },
+  {
+   "id": "ID-025",
+   "category": "identity",
+   "template": "same_thing",
+   "scenario": "id-3",
+   "expected": {
+    "same": false,
+    "conflict": false
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "same": false,
+    "conflict": false
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 82.3,
+    "full": 10.1
+   }
+  },
+  {
+   "id": "ID-026",
+   "category": "identity",
+   "template": "same_thing",
+   "scenario": "id-3",
+   "expected": {
+    "same": true,
+    "conflict": false
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "same": true,
+    "conflict": false
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 5.3,
+    "full": 5.6
+   }
+  },
+  {
+   "id": "ID-027",
+   "category": "identity",
+   "template": "same_thing",
+   "scenario": "id-3",
+   "expected": {
+    "same": false,
+    "conflict": false
+   },
+   "adversarial": false,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "same": false,
+    "conflict": false
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 12.8,
+    "full": 14.2
+   }
+  },
+  {
+   "id": "ID-028",
+   "category": "identity",
+   "template": "same_thing",
+   "scenario": "id-3",
+   "expected": {
+    "same": true,
+    "conflict": false
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "same": true,
+    "conflict": false
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 10.1,
+    "full": 9.9
+   }
+  },
+  {
+   "id": "ID-029",
+   "category": "identity",
+   "template": "same_thing",
+   "scenario": "id-3",
+   "expected": {
+    "same": false,
+    "conflict": false
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "same": false,
+    "conflict": false
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 9.1,
+    "full": 9.9
+   }
+  },
+  {
+   "id": "ID-030",
+   "category": "identity",
+   "template": "value_at",
+   "scenario": "id-4",
+   "expected": {
+    "status": "ASSERTED",
+    "values": [
+     "bay-2"
+    ]
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "ASSERTED",
+    "values": [
+     "bay-2"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "loc-crate7"
+    ],
+    "found": [
+     "loc-crate7"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 113.2,
+    "full": 51.5
+   }
+  },
+  {
+   "id": "ID-031",
+   "category": "identity",
+   "template": "value_at",
+   "scenario": "id-4",
+   "expected": {
+    "values": []
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "NOT_YET_KNOWN",
+    "values": []
+   },
+   "evidence": {
+    "required": [],
+    "found": [],
+    "recall": null,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 224.1,
+    "full": 53.2
+   }
+  },
+  {
+   "id": "ID-032",
+   "category": "identity",
+   "template": "value_at",
+   "scenario": "id-4",
+   "expected": {
+    "status": "DISPUTED"
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "DISPUTED",
+    "values": [
+     "bay-5",
+     "bay-6"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "loc-tote1",
+     "loc-tote9"
+    ],
+    "found": [
+     "loc-tote1",
+     "loc-tote9"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 21.7,
+    "full": 14.7
+   }
+  },
+  {
+   "id": "ID-033",
+   "category": "identity",
+   "template": "value_at",
+   "scenario": "id-4",
+   "expected": {
+    "status": "ASSERTED",
+    "values": [
+     "bay-5"
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "ASSERTED",
+    "values": [
+     "bay-5"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "loc-tote3"
+    ],
+    "found": [
+     "loc-tote3"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 11.3,
+    "full": 14.5
+   }
+  },
+  {
+   "id": "ID-034",
+   "category": "identity",
+   "template": "event_role",
+   "scenario": "id-4",
+   "expected": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "dee"
+     ],
+     [
+      "cal"
+     ]
+    ],
+    "reason": "accounts name different players",
+    "multiplicity": "one"
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "cal"
+     ],
+     [
+      "dee"
+     ]
+    ],
+    "reason": "accounts name different players",
+    "multiplicity": "one"
+   },
+   "evidence": {
+    "required": [
+     "act-o1-clerk",
+     "act-o1-hr"
+    ],
+    "found": [
+     "act-o1-clerk",
+     "act-o1-hr"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 203.0,
+    "full": 100.9
+   }
+  },
+  {
+   "id": "ID-035",
+   "category": "identity",
+   "template": "event_role",
+   "scenario": "id-4",
+   "expected": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "dee"
+     ],
+     [
+      "cal"
+     ]
+    ],
+    "reason": "accounts name different players",
+    "multiplicity": "one"
+   },
+   "adversarial": false,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "cal"
+     ],
+     [
+      "dee"
+     ]
+    ],
+    "reason": "accounts name different players",
+    "multiplicity": "one"
+   },
+   "evidence": {
+    "required": [
+     "act-o1-clerk",
+     "act-o1-hr"
+    ],
+    "found": [
+     "act-o1-clerk",
+     "act-o1-hr"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 98.8,
+    "full": 70.6
+   }
+  },
+  {
+   "id": "ID-036",
+   "category": "identity",
+   "template": "event_role",
+   "scenario": "id-4",
+   "expected": {
+    "judgement": "established",
+    "players": [
+     [
+      "dee"
+     ]
+    ],
+    "multiplicity": "one"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "players": [
+     [
+      "dee"
+     ]
+    ],
+    "reason": null,
+    "multiplicity": "one"
+   },
+   "evidence": {
+    "required": [
+     "act-o5-hr"
+    ],
+    "found": [
+     "act-o5-hr"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 68.6,
+    "full": 63.1
+   }
+  },
+  {
+   "id": "ID-037",
+   "category": "identity",
+   "template": "event_role",
+   "scenario": "id-4",
+   "expected": {
+    "judgement": "established",
+    "players": [
+     [
+      "bea",
+      "b-smith"
+     ]
+    ],
+    "multiplicity": "one"
+   },
+   "adversarial": false,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "players": [
+     [
+      "b-smith",
+      "bea"
+     ]
+    ],
+    "reason": null,
+    "multiplicity": "one"
+   },
+   "evidence": {
+    "required": [
+     "act-o3"
+    ],
+    "found": [
+     "act-o3"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 64.2,
+    "full": 63.5
+   }
+  },
+  {
+   "id": "ID-038",
+   "category": "identity",
+   "template": "event_role",
+   "scenario": "id-4",
+   "expected": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "gus"
+     ],
+     [
+      "g-hart"
+     ]
+    ],
+    "reason": "several players in one account",
+    "multiplicity": "one"
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "g-hart"
+     ],
+     [
+      "gus"
+     ]
+    ],
+    "reason": "several players in one account",
+    "multiplicity": "one"
+   },
+   "evidence": {
+    "required": [
+     "act-o4"
+    ],
+    "found": [
+     "act-o4"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 65.8,
+    "full": 64.6
+   }
+  },
+  {
+   "id": "ID-039",
+   "category": "identity",
+   "template": "event_role",
+   "scenario": "id-4",
+   "expected": {
+    "judgement": "established",
+    "players": [
+     [
+      "gus",
+      "g-hart"
+     ]
+    ],
+    "multiplicity": "one"
+   },
+   "adversarial": false,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "players": [
+     [
+      "g-hart",
+      "gus"
+     ]
+    ],
+    "reason": null,
+    "multiplicity": "one"
+   },
+   "evidence": {
+    "required": [
+     "act-o4"
+    ],
+    "found": [
+     "act-o4"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 62.4,
+    "full": 59.9
+   }
+  },
+  {
+   "id": "ID-040",
+   "category": "identity",
+   "template": "event_role",
+   "scenario": "id-4",
+   "expected": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "ivy"
+     ],
+     [
+      "i-lowe"
+     ]
+    ],
+    "reason": "accounts name different players",
+    "multiplicity": "one"
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "i-lowe"
+     ],
+     [
+      "ivy"
+     ]
+    ],
+    "reason": "accounts name different players",
+    "multiplicity": "one"
+   },
+   "evidence": {
+    "required": [
+     "act-o2-clerk",
+     "act-o2-hr"
+    ],
+    "found": [
+     "act-o2-clerk",
+     "act-o2-hr"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 66.7,
+    "full": 65.7
+   }
+  },
+  {
+   "id": "ID-041",
+   "category": "identity",
+   "template": "event_role",
+   "scenario": "id-4",
+   "expected": {
+    "judgement": "established",
+    "players": [
+     [
+      "ivy",
+      "i-lowe"
+     ]
+    ],
+    "multiplicity": "one"
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "players": [
+     [
+      "i-lowe",
+      "ivy"
+     ]
+    ],
+    "reason": null,
+    "multiplicity": "one"
+   },
+   "evidence": {
+    "required": [
+     "act-o2-clerk",
+     "act-o2-hr"
+    ],
+    "found": [
+     "act-o2-clerk",
+     "act-o2-hr"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 335.8,
+    "full": 108.8
+   }
+  },
+  {
+   "id": "ID-042",
+   "category": "identity",
+   "template": "same_thing",
+   "scenario": "id-4",
+   "expected": {
+    "same": false,
+    "conflict": false
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "same": false,
+    "conflict": false
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 5.8,
+    "full": 6.2
+   }
+  },
+  {
+   "id": "LAB-001",
+   "category": "laboratory",
+   "template": "calibrated",
+   "scenario": "lab-1",
+   "expected": {
+    "judgement": "established"
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established"
+   },
+   "evidence": {
+    "required": [
+     "cal-b7"
+    ],
+    "found": [
+     "cal-b7"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 128.6,
+    "full": 64.9
+   }
+  },
+  {
+   "id": "LAB-002",
+   "category": "laboratory",
+   "template": "calibrated",
+   "scenario": "lab-1",
+   "expected": {
+    "judgement": "expired"
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "expired"
+   },
+   "evidence": {
+    "required": [
+     "cal-b8"
+    ],
+    "found": [
+     "cal-b8"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 17.6,
+    "full": 16.8
+   }
+  },
+  {
+   "id": "LAB-003",
+   "category": "laboratory",
+   "template": "calibrated",
+   "scenario": "lab-1",
+   "expected": {
+    "judgement": "not yet effective"
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "not yet effective"
+   },
+   "evidence": {
+    "required": [
+     "cal-p3"
+    ],
+    "found": [],
+    "recall": 0.0,
+    "forbidden_cited": []
+   },
+   "failure": "missing-evidence",
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 16.5,
+    "full": 16.8
+   }
+  },
+  {
+   "id": "LAB-004",
+   "category": "laboratory",
+   "template": "calibrated",
+   "scenario": "lab-1",
+   "expected": {
+    "judgement": "disputed"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "disputed"
+   },
+   "evidence": {
+    "required": [
+     "cal-m1",
+     "deny-m1"
+    ],
+    "found": [],
+    "recall": 0.0,
+    "forbidden_cited": []
+   },
+   "failure": "missing-evidence",
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 17.2,
+    "full": 15.8
+   }
+  },
+  {
+   "id": "LAB-005",
+   "category": "laboratory",
+   "template": "calibrated",
+   "scenario": "lab-1",
+   "expected": {
+    "judgement": "established"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established"
+   },
+   "evidence": {
+    "required": [
+     "cal-m1"
+    ],
+    "found": [
+     "cal-m1"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 15.8,
+    "full": 14.5
+   }
+  },
+  {
+   "id": "LAB-006",
+   "category": "laboratory",
+   "template": "calibrated",
+   "scenario": "lab-1",
+   "expected": {
+    "judgement": "denied"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "denied"
+   },
+   "evidence": {
+    "required": [
+     "deny-m1"
+    ],
+    "found": [
+     "deny-m1"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 16.3,
+    "full": 14.4
+   }
+  },
+  {
+   "id": "LAB-007",
+   "category": "laboratory",
+   "template": "calibrated",
+   "scenario": "lab-1",
+   "expected": {
+    "judgement": "denied"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "denied"
+   },
+   "evidence": {
+    "required": [
+     "deny-o2"
+    ],
+    "found": [
+     "deny-o2"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 16.5,
+    "full": 15.4
+   }
+  },
+  {
+   "id": "LAB-008",
+   "category": "laboratory",
+   "template": "calibrated",
+   "scenario": "lab-1",
+   "expected": {
+    "judgement": "not established"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "not established"
+   },
+   "evidence": {
+    "required": [],
+    "found": [],
+    "recall": null,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 17.2,
+    "full": 15.9
+   }
+  },
+  {
+   "id": "LAB-009",
+   "category": "laboratory",
+   "template": "calibrated",
+   "scenario": "lab-1",
+   "expected": {
+    "judgement": "established"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established"
+   },
+   "evidence": {
+    "required": [
+     "cal-s4"
+    ],
+    "found": [
+     "cal-s4"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 13.8,
+    "full": 14.0
+   }
+  },
+  {
+   "id": "LAB-010",
+   "category": "laboratory",
+   "template": "calibrated",
+   "scenario": "lab-1",
+   "expected": {
+    "judgement": "not established"
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": false,
+   "wrong_fields": [
+    "judgement"
+   ],
+   "actual": {
+    "judgement": "established"
+   },
+   "evidence": null,
+   "failure": "wrong-judgement",
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 16.7,
+    "full": 15.9
+   }
+  },
+  {
+   "id": "LAB-011",
+   "category": "laboratory",
+   "template": "calibrated",
+   "scenario": "lab-1",
+   "expected": {
+    "judgement": "not established"
+   },
+   "adversarial": true,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "not established"
+   },
+   "evidence": {
+    "required": [],
+    "found": [],
+    "recall": null,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 12.7,
+    "full": 14.5
+   }
+  },
+  {
+   "id": "LAB-012",
+   "category": "laboratory",
+   "template": "calibrated",
+   "scenario": "lab-1",
+   "expected": {
+    "judgement": "not established"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "not established"
+   },
+   "evidence": {
+    "required": [],
+    "found": [],
+    "recall": null,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 131.0,
+    "full": 59.2
+   }
+  },
+  {
+   "id": "LAB-013",
+   "category": "laboratory",
+   "template": "calibrated",
+   "scenario": "lab-1",
+   "expected": {
+    "judgement": "established"
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established"
+   },
+   "evidence": {
+    "required": [
+     "cal-t1"
+    ],
+    "found": [
+     "cal-t1"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 18.1,
+    "full": 15.1
+   }
+  },
+  {
+   "id": "LAB-014",
+   "category": "laboratory",
+   "template": "calibrated",
+   "scenario": "lab-1",
+   "expected": {
+    "judgement": "not established"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "not established"
+   },
+   "evidence": {
+    "required": [],
+    "found": [],
+    "recall": null,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 16.0,
+    "full": 15.6
+   }
+  },
+  {
+   "id": "LAB-015",
+   "category": "laboratory",
+   "template": "calibrated",
+   "scenario": "lab-1",
+   "expected": {
+    "judgement": "established"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established"
+   },
+   "evidence": {
+    "required": [
+     "cal-g1"
+    ],
+    "found": [
+     "cal-g1"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 17.3,
+    "full": 13.6
+   }
+  },
+  {
+   "id": "LAB-016",
+   "category": "laboratory",
+   "template": "calibrated",
+   "scenario": "lab-1",
+   "expected": {
+    "judgement": "established"
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established"
+   },
+   "evidence": {
+    "required": [
+     "cal-h1"
+    ],
+    "found": [
+     "cal-h1"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 39.2,
+    "full": 28.7
+   }
+  },
+  {
+   "id": "LAB-017",
+   "category": "laboratory",
+   "template": "calibrated",
+   "scenario": "lab-1",
+   "expected": {
+    "judgement": "expired"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "expired"
+   },
+   "evidence": {
+    "required": [
+     "end-h1"
+    ],
+    "found": [
+     "end-h1"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 36.9,
+    "full": 16.1
+   }
+  },
+  {
+   "id": "LAB-018",
+   "category": "laboratory",
+   "template": "calibrated",
+   "scenario": "lab-1",
+   "expected": {
+    "judgement": "expired"
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "expired"
+   },
+   "evidence": {
+    "required": [
+     "end-h1"
+    ],
+    "found": [
+     "end-h1"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 17.7,
+    "full": 13.9
+   }
+  },
+  {
+   "id": "LAB-019",
+   "category": "laboratory",
+   "template": "calibrated",
+   "scenario": "lab-1",
+   "expected": {
+    "judgement": "established"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established"
+   },
+   "evidence": {
+    "required": [
+     "cal-b9b"
+    ],
+    "found": [
+     "cal-b9b"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 18.7,
+    "full": 16.3
+   }
+  },
+  {
+   "id": "LAB-020",
+   "category": "laboratory",
+   "template": "calibrated",
+   "scenario": "lab-1",
+   "expected": {
+    "judgement": "denied"
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "denied"
+   },
+   "evidence": {
+    "required": [
+     "plan-deny-b7"
+    ],
+    "found": [
+     "plan-deny-b7"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 251.2,
+    "full": 140.4
+   }
+  },
+  {
+   "id": "LAB-021",
+   "category": "laboratory",
+   "template": "calibrated",
+   "scenario": "lab-1",
+   "expected": {
+    "judgement": "established"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established"
+   },
+   "evidence": {
+    "required": [
+     "cal-b7"
+    ],
+    "found": [
+     "cal-b7"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 18.4,
+    "full": 18.7
+   }
+  },
+  {
+   "id": "LAB-022",
+   "category": "laboratory",
+   "template": "calibrated",
+   "scenario": "lab-1",
+   "expected": {
+    "judgement": "established"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established"
+   },
+   "evidence": {
+    "required": [
+     "plan-cal-b8b"
+    ],
+    "found": [
+     "plan-cal-b8b"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 29.6,
+    "full": 30.0
+   }
+  },
+  {
+   "id": "LAB-023",
+   "category": "laboratory",
+   "template": "value_at",
+   "scenario": "lab-1",
+   "expected": {
+    "status": "DISPUTED"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "DISPUTED",
+    "values": [
+     "lab-room-1",
+     "lab-room-2"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "loc-b7-room1",
+     "loc-b7-room2"
+    ],
+    "found": [
+     "loc-b7-room1",
+     "loc-b7-room2"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 107.9,
+    "full": 13.0
+   }
+  },
+  {
+   "id": "LAB-024",
+   "category": "laboratory",
+   "template": "value_at",
+   "scenario": "lab-1",
+   "expected": {
+    "status": "ASSERTED",
+    "values": [
+     "lab-room-1"
+    ]
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "ASSERTED",
+    "values": [
+     "lab-room-1"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "loc-b7-room1"
+    ],
+    "found": [
+     "loc-b7-room1"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 13.3,
+    "full": 11.2
+   }
+  },
+  {
+   "id": "LAB-025",
+   "category": "laboratory",
+   "template": "event_role",
+   "scenario": "lab-2",
+   "expected": {
+    "judgement": "union",
+    "players": [
+     [
+      "ana"
+     ],
+     [
+      "ben"
+     ],
+     [
+      "cy"
+     ]
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": false,
+   "wrong_fields": [
+    "players"
+   ],
+   "actual": {
+    "judgement": "union",
+    "players": [
+     [
+      "ana"
+     ],
+     [
+      "ben"
+     ],
+     [
+      "cy"
+     ],
+     [
+      "dan"
+     ]
+    ],
+    "reason": null,
+    "multiplicity": null
+   },
+   "evidence": {
+    "required": [
+     "samp-field",
+     "samp-log"
+    ],
+    "found": [
+     "samp-field",
+     "samp-log"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": [
+     "samp-intern"
+    ]
+   },
+   "failure": "wrong-values",
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 127.9,
+    "full": 136.6
+   }
+  },
+  {
+   "id": "LAB-026",
+   "category": "laboratory",
+   "template": "event_role",
+   "scenario": "lab-2",
+   "expected": {
+    "judgement": "union",
+    "players": [
+     [
+      "ana"
+     ],
+     [
+      "ben"
+     ]
+    ]
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": false,
+   "wrong_fields": [
+    "players"
+   ],
+   "actual": {
+    "judgement": "union",
+    "players": [
+     [
+      "ana"
+     ],
+     [
+      "ben"
+     ],
+     [
+      "cy"
+     ],
+     [
+      "dan"
+     ]
+    ],
+    "reason": null,
+    "multiplicity": null
+   },
+   "evidence": {
+    "required": [
+     "samp-field"
+    ],
+    "found": [
+     "samp-field"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": [
+     "samp-intern",
+     "samp-log"
+    ]
+   },
+   "failure": "wrong-values",
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 70.8,
+    "full": 49.4
+   }
+  },
+  {
+   "id": "LAB-027",
+   "category": "laboratory",
+   "template": "event_role",
+   "scenario": "lab-2",
+   "expected": {
+    "judgement": "union",
+    "players": [
+     [
+      "rock-r"
+     ]
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "union",
+    "players": [
+     [
+      "rock-r"
+     ]
+    ],
+    "reason": null,
+    "multiplicity": null
+   },
+   "evidence": {
+    "required": [
+     "samp-field",
+     "samp-log"
+    ],
+    "found": [
+     "samp-field",
+     "samp-log"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 63.9,
+    "full": 51.1
+   }
+  },
+  {
+   "id": "LAB-028",
+   "category": "laboratory",
+   "template": "event_role",
+   "scenario": "lab-2",
+   "expected": {
+    "judgement": "union",
+    "players": [
+     [
+      "rock-r"
+     ],
+     [
+      "rock-q"
+     ]
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "union",
+    "players": [
+     [
+      "rock-q"
+     ],
+     [
+      "rock-r"
+     ]
+    ],
+    "reason": null,
+    "multiplicity": null
+   },
+   "evidence": {
+    "required": [
+     "samp-2a",
+     "samp-2b"
+    ],
+    "found": [
+     "samp-2a",
+     "samp-2b"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 63.4,
+    "full": 53.6
+   }
+  },
+  {
+   "id": "LAB-029",
+   "category": "laboratory",
+   "template": "event_role",
+   "scenario": "lab-2",
+   "expected": {
+    "judgement": "union",
+    "players": [
+     [
+      "sample-13"
+     ],
+     [
+      "sample-14"
+     ]
+    ]
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "union",
+    "players": [
+     [
+      "sample-13"
+     ],
+     [
+      "sample-14"
+     ]
+    ],
+    "reason": null,
+    "multiplicity": null
+   },
+   "evidence": {
+    "required": [
+     "samp-2a",
+     "samp-2b"
+    ],
+    "found": [
+     "samp-2a",
+     "samp-2b"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 63.1,
+    "full": 50.3
+   }
+  },
+  {
+   "id": "LAB-030",
+   "category": "laboratory",
+   "template": "exists",
+   "scenario": "lab-2",
+   "expected": {
+    "status": "ASSERTED",
+    "holds": true
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "ASSERTED",
+    "holds": true
+   },
+   "evidence": {
+    "required": [
+     "exist-12"
+    ],
+    "found": [
+     "exist-12"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 37.6,
+    "full": 14.8
+   }
+  },
+  {
+   "id": "LAB-031",
+   "category": "laboratory",
+   "template": "exists",
+   "scenario": "lab-2",
+   "expected": {
+    "holds": false
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "ASSERTED",
+    "holds": false
+   },
+   "evidence": {
+    "required": [
+     "exist-12"
+    ],
+    "found": [
+     "exist-12"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 17.2,
+    "full": 14.4
+   }
+  },
+  {
+   "id": "LAB-032",
+   "category": "laboratory",
+   "template": "exists",
+   "scenario": "lab-2",
+   "expected": {
+    "status": "UNKNOWN",
+    "holds": null
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "UNKNOWN",
+    "holds": null
+   },
+   "evidence": {
+    "required": [],
+    "found": [],
+    "recall": null,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 11.2,
+    "full": 14.4
+   }
+  },
+  {
+   "id": "LAB-033",
+   "category": "laboratory",
+   "template": "value_at",
+   "scenario": "lab-2",
+   "expected": {
+    "status": "ASSERTED",
+    "values": [
+     "freezer-1"
+    ]
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "ASSERTED",
+    "values": [
+     "freezer-1"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "move-12"
+    ],
+    "found": [
+     "move-12"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 52.3,
+    "full": 14.8
+   }
+  },
+  {
+   "id": "LAB-034",
+   "category": "laboratory",
+   "template": "value_at",
+   "scenario": "lab-2",
+   "expected": {
+    "status": "ASSERTED",
+    "values": [
+     "fridge-2"
+    ]
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "ASSERTED",
+    "values": [
+     "fridge-2"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "loc-12-fridge"
+    ],
+    "found": [],
+    "recall": 0.0,
+    "forbidden_cited": []
+   },
+   "failure": "missing-evidence",
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 14.9,
+    "full": 14.4
+   }
+  },
+  {
+   "id": "LAB-035",
+   "category": "laboratory",
+   "template": "value_at",
+   "scenario": "lab-2",
+   "expected": {
+    "status": "ASSERTED",
+    "values": [
+     "freezer-1"
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "ASSERTED",
+    "values": [
+     "freezer-1"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "move-12"
+    ],
+    "found": [
+     "move-12"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 14.9,
+    "full": 14.4
+   }
+  },
+  {
+   "id": "LAB-036",
+   "category": "laboratory",
+   "template": "value_at",
+   "scenario": "lab-2",
+   "expected": {
+    "status": "ASSERTED",
+    "values": [
+     "bench-3"
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "ASSERTED",
+    "values": [
+     "bench-3"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "loc-12-bench"
+    ],
+    "found": [
+     "loc-12-bench"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 14.7,
+    "full": 13.4
+   }
+  },
+  {
+   "id": "MECH-001",
+   "category": "mechanical",
+   "template": "parts",
+   "scenario": "mech-1",
+   "expected": {
+    "parts": [
+     "engine",
+     "piston",
+     "ring",
+     "bracket"
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "parts": [
+     "bracket",
+     "engine",
+     "piston",
+     "ring"
+    ]
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 77.9,
+    "full": 11.0
+   }
+  },
+  {
+   "id": "MECH-002",
+   "category": "mechanical",
+   "template": "parts",
+   "scenario": "mech-1",
+   "expected": {
+    "parts": [
+     "engine",
+     "piston"
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "parts": [
+     "engine",
+     "piston"
+    ]
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 76.4,
+    "full": 9.8
+   }
+  },
+  {
+   "id": "MECH-003",
+   "category": "mechanical",
+   "template": "parts",
+   "scenario": "mech-1",
+   "expected": {
+    "parts": [
+     "gearbox",
+     "roof"
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "parts": [
+     "gearbox",
+     "roof"
+    ]
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 11.0,
+    "full": 10.2
+   }
+  },
+  {
+   "id": "MECH-004",
+   "category": "mechanical",
+   "template": "holds",
+   "scenario": "mech-1",
+   "expected": {
+    "judgement": "established",
+    "status": "ASSERTED"
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "status": "ASSERTED",
+    "holds": true
+   },
+   "evidence": {
+    "required": [
+     "p-engine"
+    ],
+    "found": [
+     "p-engine"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 119.6,
+    "full": 60.7
+   }
+  },
+  {
+   "id": "MECH-005",
+   "category": "mechanical",
+   "template": "holds",
+   "scenario": "mech-1",
+   "expected": {
+    "judgement": "disputed",
+    "status": "DISPUTED"
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "disputed",
+    "status": "DISPUTED",
+    "holds": null
+   },
+   "evidence": {
+    "required": [
+     "d-seat",
+     "p-seat"
+    ],
+    "found": [
+     "d-seat",
+     "p-seat"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 24.4,
+    "full": 19.0
+   }
+  },
+  {
+   "id": "MECH-006",
+   "category": "mechanical",
+   "template": "holds",
+   "scenario": "mech-1",
+   "expected": {
+    "judgement": "pending",
+    "status": "UNKNOWN"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "pending",
+    "status": "UNKNOWN",
+    "holds": null
+   },
+   "evidence": {
+    "required": [],
+    "found": [],
+    "recall": null,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 27.0,
+    "full": 18.4
+   }
+  },
+  {
+   "id": "MECH-007",
+   "category": "mechanical",
+   "template": "holds",
+   "scenario": "mech-1",
+   "expected": {
+    "judgement": "not holding"
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "not holding",
+    "status": "ASSERTED",
+    "holds": false
+   },
+   "evidence": {
+    "required": [
+     "p-wheel"
+    ],
+    "found": [
+     "p-wheel"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 23.1,
+    "full": 18.6
+   }
+  },
+  {
+   "id": "MECH-008",
+   "category": "mechanical",
+   "template": "holds",
+   "scenario": "mech-1",
+   "expected": {
+    "judgement": "unknown",
+    "status": "UNKNOWN"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "unknown",
+    "status": "UNKNOWN",
+    "holds": null
+   },
+   "evidence": {
+    "required": [],
+    "found": [],
+    "recall": null,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 23.4,
+    "full": 18.4
+   }
+  },
+  {
+   "id": "MECH-009",
+   "category": "mechanical",
+   "template": "holds",
+   "scenario": "mech-1",
+   "expected": {
+    "judgement": "unknown",
+    "status": "NOT_YET_KNOWN"
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "unknown",
+    "status": "NOT_YET_KNOWN",
+    "holds": null
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 26.1,
+    "full": 18.4
+   }
+  },
+  {
+   "id": "MECH-010",
+   "category": "mechanical",
+   "template": "holds",
+   "scenario": "mech-1",
+   "expected": {
+    "judgement": "unknown",
+    "status": "UNKNOWN"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "unknown",
+    "status": "UNKNOWN",
+    "holds": null
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 23.8,
+    "full": 18.8
+   }
+  },
+  {
+   "id": "MECH-011",
+   "category": "mechanical",
+   "template": "exists",
+   "scenario": "mech-1",
+   "expected": {
+    "status": "INFERRED",
+    "holds": true
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "INFERRED",
+    "holds": true
+   },
+   "evidence": {
+    "required": [
+     "p-ring"
+    ],
+    "found": [
+     "p-ring"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 82.3,
+    "full": 11.2
+   }
+  },
+  {
+   "id": "MECH-012",
+   "category": "mechanical",
+   "template": "exists",
+   "scenario": "mech-1",
+   "expected": {
+    "status": "INFERRED",
+    "holds": true
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "INFERRED",
+    "holds": true
+   },
+   "evidence": {
+    "required": [
+     "conn-bolt"
+    ],
+    "found": [
+     "conn-bolt"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 14.5,
+    "full": 11.0
+   }
+  },
+  {
+   "id": "MECH-013",
+   "category": "mechanical",
+   "template": "parts",
+   "scenario": "mech-2",
+   "expected": {
+    "parts": [
+     "b2"
+    ]
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "parts": [
+     "b2"
+    ]
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 70.9,
+    "full": 8.7
+   }
+  },
+  {
+   "id": "MECH-014",
+   "category": "mechanical",
+   "template": "parts",
+   "scenario": "mech-2",
+   "expected": {
+    "parts": [
+     "b2"
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "parts": [
+     "b2"
+    ]
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 8.8,
+    "full": 8.7
+   }
+  },
+  {
+   "id": "MECH-015",
+   "category": "mechanical",
+   "template": "holds",
+   "scenario": "mech-2",
+   "expected": {
+    "judgement": "established",
+    "status": "ASSERTED"
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "status": "ASSERTED",
+    "holds": true
+   },
+   "evidence": {
+    "required": [
+     "po-b2"
+    ],
+    "found": [
+     "po-b2"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 70.7,
+    "full": 59.7
+   }
+  },
+  {
+   "id": "MECH-016",
+   "category": "mechanical",
+   "template": "exists",
+   "scenario": "mech-2",
+   "expected": {
+    "status": "ASSERTED",
+    "holds": true
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "ASSERTED",
+    "holds": true
+   },
+   "evidence": {
+    "required": [
+     "ex-b1"
+    ],
+    "found": [
+     "ex-b1"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 14.6,
+    "full": 9.1
+   }
+  },
+  {
+   "id": "MECH-017",
+   "category": "mechanical",
+   "template": "exists",
+   "scenario": "mech-2",
+   "expected": {
+    "status": "ASSERTED",
+    "holds": false
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "ASSERTED",
+    "holds": false
+   },
+   "evidence": {
+    "required": [
+     "ex-b2"
+    ],
+    "found": [
+     "ex-b2"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 14.1,
+    "full": 9.1
+   }
+  },
+  {
+   "id": "MECH-018",
+   "category": "mechanical",
+   "template": "exists",
+   "scenario": "mech-2",
+   "expected": {
+    "status": "ASSERTED",
+    "holds": false
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "ASSERTED",
+    "holds": false
+   },
+   "evidence": {
+    "required": [
+     "ex-b3"
+    ],
+    "found": [
+     "ex-b3"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 14.2,
+    "full": 9.3
+   }
+  },
+  {
+   "id": "MECH-019",
+   "category": "mechanical",
+   "template": "exists",
+   "scenario": "mech-2",
+   "expected": {
+    "status": "NOT_YET_KNOWN",
+    "holds": null
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "NOT_YET_KNOWN",
+    "holds": null
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 10.3,
+    "full": 9.2
+   }
+  },
+  {
+   "id": "MECH-020",
+   "category": "mechanical",
+   "template": "event_role",
+   "scenario": "mech-2",
+   "expected": {
+    "judgement": "union",
+    "players": [
+     [
+      "b1"
+     ]
+    ]
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "union",
+    "players": [
+     [
+      "b1"
+     ]
+    ],
+    "reason": null,
+    "multiplicity": null
+   },
+   "evidence": {
+    "required": [
+     "rep-1"
+    ],
+    "found": [
+     "rep-1"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 170.9,
+    "full": 61.6
+   }
+  },
+  {
+   "id": "MECH-021",
+   "category": "mechanical",
+   "template": "event_role",
+   "scenario": "mech-3",
+   "expected": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "old-a1"
+     ],
+     [
+      "old-a2"
+     ]
+    ],
+    "reason": "several players in one account",
+    "multiplicity": "one"
+   },
+   "adversarial": false,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "old-a1"
+     ],
+     [
+      "old-a2"
+     ]
+    ],
+    "reason": "several players in one account",
+    "multiplicity": "one"
+   },
+   "evidence": {
+    "required": [
+     "acc-a1",
+     "k-a"
+    ],
+    "found": [
+     "acc-a1"
+    ],
+    "recall": 0.5,
+    "forbidden_cited": []
+   },
+   "failure": "missing-evidence",
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 201.0,
+    "full": 157.2
+   }
+  },
+  {
+   "id": "MECH-022",
+   "category": "mechanical",
+   "template": "event_role",
+   "scenario": "mech-3",
+   "expected": {
+    "judgement": "established",
+    "players": [
+     [
+      "new-a"
+     ]
+    ],
+    "multiplicity": "one"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "players": [
+     [
+      "new-a"
+     ]
+    ],
+    "reason": null,
+    "multiplicity": "one"
+   },
+   "evidence": {
+    "required": [
+     "acc-a1"
+    ],
+    "found": [
+     "acc-a1"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 78.6,
+    "full": 85.9
+   }
+  },
+  {
+   "id": "MECH-023",
+   "category": "mechanical",
+   "template": "event_role",
+   "scenario": "mech-3",
+   "expected": {
+    "judgement": "union",
+    "players": [
+     [
+      "old-b1"
+     ],
+     [
+      "old-b2"
+     ]
+    ]
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "union",
+    "players": [
+     [
+      "old-b1"
+     ],
+     [
+      "old-b2"
+     ]
+    ],
+    "reason": null,
+    "multiplicity": null
+   },
+   "evidence": {
+    "required": [
+     "acc-b1"
+    ],
+    "found": [
+     "acc-b1"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 92.9,
+    "full": 94.3
+   }
+  },
+  {
+   "id": "MECH-024",
+   "category": "mechanical",
+   "template": "event_role",
+   "scenario": "mech-3",
+   "expected": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "old-c1"
+     ],
+     [
+      "old-c2"
+     ]
+    ],
+    "reason": "accounts name different players",
+    "multiplicity": "one"
+   },
+   "adversarial": false,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "old-c1"
+     ],
+     [
+      "old-c2"
+     ]
+    ],
+    "reason": "accounts name different players",
+    "multiplicity": "one"
+   },
+   "evidence": {
+    "required": [
+     "acc-c1",
+     "acc-c2",
+     "k-c"
+    ],
+    "found": [
+     "acc-c1",
+     "acc-c2"
+    ],
+    "recall": 0.667,
+    "forbidden_cited": []
+   },
+   "failure": "missing-evidence",
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 80.4,
+    "full": 86.2
+   }
+  },
+  {
+   "id": "MECH-025",
+   "category": "mechanical",
+   "template": "event_role",
+   "scenario": "mech-3",
+   "expected": {
+    "judgement": "established",
+    "multiplicity": "one"
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "players": [
+     [
+      "old-d1"
+     ]
+    ],
+    "reason": null,
+    "multiplicity": "one"
+   },
+   "evidence": {
+    "required": [
+     "acc-d1"
+    ],
+    "found": [
+     "acc-d1"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 88.8,
+    "full": 91.2
+   }
+  },
+  {
+   "id": "MECH-026",
+   "category": "mechanical",
+   "template": "event_role",
+   "scenario": "mech-3",
+   "expected": {
+    "judgement": "union",
+    "players": [
+     [
+      "old-e1"
+     ],
+     [
+      "old-e2"
+     ]
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "union",
+    "players": [
+     [
+      "old-e1"
+     ],
+     [
+      "old-e2"
+     ]
+    ],
+    "reason": null,
+    "multiplicity": null
+   },
+   "evidence": {
+    "required": [
+     "acc-e1",
+     "acc-e2"
+    ],
+    "found": [
+     "acc-e1",
+     "acc-e2"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 86.5,
+    "full": 89.5
+   }
+  },
+  {
+   "id": "MECH-027",
+   "category": "mechanical",
+   "template": "event_role",
+   "scenario": "mech-3",
+   "expected": {
+    "judgement": "union",
+    "players": [
+     [
+      "old-f1"
+     ],
+     [
+      "old-f2"
+     ]
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "union",
+    "players": [
+     [
+      "old-f1"
+     ],
+     [
+      "old-f2"
+     ]
+    ],
+    "reason": null,
+    "multiplicity": null
+   },
+   "evidence": {
+    "required": [
+     "acc-f1",
+     "acc-f2"
+    ],
+    "found": [
+     "acc-f1",
+     "acc-f2"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 86.8,
+    "full": 88.8
+   }
+  },
+  {
+   "id": "MECH-028",
+   "category": "mechanical",
+   "template": "dependencies",
+   "scenario": "mech-4",
+   "expected": {
+    "dependees": [
+     "motor"
+    ],
+    "disputed": [
+     "controller"
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "dependees": [
+     "motor"
+    ],
+    "disputed": [
+     "controller"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "d-ctrl",
+     "dep-ctrl",
+     "dep-motor"
+    ],
+    "found": [
+     "d-ctrl",
+     "dep-ctrl",
+     "dep-motor"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 130.6,
+    "full": 45.8
+   }
+  },
+  {
+   "id": "MECH-029",
+   "category": "mechanical",
+   "template": "dependencies",
+   "scenario": "mech-4",
+   "expected": {
+    "dependees": [
+     "motor",
+     "controller"
+    ],
+    "disputed": []
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "dependees": [
+     "controller",
+     "motor"
+    ],
+    "disputed": []
+   },
+   "evidence": {
+    "required": [
+     "dep-ctrl",
+     "dep-motor"
+    ],
+    "found": [
+     "dep-ctrl",
+     "dep-motor"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 197.5,
+    "full": 57.8
+   }
+  },
+  {
+   "id": "MECH-030",
+   "category": "mechanical",
+   "template": "dependencies",
+   "scenario": "mech-4",
+   "expected": {
+    "dependees": [
+     "battery"
+    ],
+    "disputed": []
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "dependees": [
+     "battery"
+    ],
+    "disputed": []
+   },
+   "evidence": {
+    "required": [
+     "dep-battery"
+    ],
+    "found": [
+     "dep-battery"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 15.3,
+    "full": 9.0
+   }
+  },
+  {
+   "id": "MECH-031",
+   "category": "mechanical",
+   "template": "dependencies",
+   "scenario": "mech-4",
+   "expected": {
+    "dependees": [
+     "sensor",
+     "hose"
+    ],
+    "disputed": []
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "dependees": [
+     "hose",
+     "sensor"
+    ],
+    "disputed": []
+   },
+   "evidence": {
+    "required": [
+     "dep-hose",
+     "dep-sensor"
+    ],
+    "found": [
+     "dep-hose",
+     "dep-sensor"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 14.3,
+    "full": 8.1
+   }
+  },
+  {
+   "id": "MECH-032",
+   "category": "mechanical",
+   "template": "holds",
+   "scenario": "mech-4",
+   "expected": {
+    "judgement": "unknown",
+    "status": "NOT_YET_KNOWN"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "unknown",
+    "status": "NOT_YET_KNOWN",
+    "holds": null
+   },
+   "evidence": {
+    "required": [],
+    "found": [],
+    "recall": null,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 74.6,
+    "full": 17.4
+   }
+  },
+  {
+   "id": "MECH-033",
+   "category": "mechanical",
+   "template": "holds",
+   "scenario": "mech-4",
+   "expected": {
+    "judgement": "disputed",
+    "status": "DISPUTED"
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "disputed",
+    "status": "DISPUTED",
+    "holds": null
+   },
+   "evidence": {
+    "required": [
+     "d-ctrl",
+     "dep-ctrl"
+    ],
+    "found": [
+     "d-ctrl",
+     "dep-ctrl"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 24.5,
+    "full": 16.6
+   }
+  },
+  {
+   "id": "ORG-025",
+   "category": "organisation",
+   "template": "event_role",
+   "scenario": "org-acts",
+   "expected": {
+    "judgement": "established",
+    "players": [
+     [
+      "bea"
+     ]
+    ],
+    "multiplicity": "one"
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "players": [
+     [
+      "bea"
+     ]
+    ],
+    "reason": null,
+    "multiplicity": "one"
+   },
+   "evidence": {
+    "required": [
+     "act-1a"
+    ],
+    "found": [
+     "act-1a"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 162.8,
+    "full": 123.8
+   }
+  },
+  {
+   "id": "ORG-026",
+   "category": "organisation",
+   "template": "event_role",
+   "scenario": "org-acts",
+   "expected": {
+    "judgement": "established",
+    "players": [
+     [
+      "bea"
+     ],
+     [
+      "cal"
+     ]
+    ],
+    "multiplicity": "set"
+   },
+   "adversarial": false,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "players": [
+     [
+      "bea"
+     ],
+     [
+      "cal"
+     ]
+    ],
+    "reason": null,
+    "multiplicity": "set"
+   },
+   "evidence": {
+    "required": [
+     "act-4a"
+    ],
+    "found": [
+     "act-4a"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 65.2,
+    "full": 51.8
+   }
+  },
+  {
+   "id": "ORG-027",
+   "category": "organisation",
+   "template": "event_role",
+   "scenario": "org-acts",
+   "expected": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "bea"
+     ],
+     [
+      "cal"
+     ]
+    ],
+    "reason": "several players in one account",
+    "multiplicity": "one"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "bea"
+     ],
+     [
+      "cal"
+     ]
+    ],
+    "reason": "several players in one account",
+    "multiplicity": "one"
+   },
+   "evidence": {
+    "required": [
+     "act-3a"
+    ],
+    "found": [
+     "act-3a"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 62.3,
+    "full": 52.2
+   }
+  },
+  {
+   "id": "ORG-028",
+   "category": "organisation",
+   "template": "event_role",
+   "scenario": "org-acts",
+   "expected": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "bea"
+     ],
+     [
+      "cal"
+     ]
+    ],
+    "reason": "several players in one account",
+    "multiplicity": "one"
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "bea"
+     ],
+     [
+      "cal"
+     ]
+    ],
+    "reason": "several players in one account",
+    "multiplicity": "one"
+   },
+   "evidence": {
+    "required": [
+     "act-6a"
+    ],
+    "found": [
+     "act-6a"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 64.7,
+    "full": 54.0
+   }
+  },
+  {
+   "id": "ORG-029",
+   "category": "organisation",
+   "template": "event_role",
+   "scenario": "org-acts",
+   "expected": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "bea"
+     ],
+     [
+      "cal"
+     ]
+    ],
+    "reason": "several players in one account",
+    "multiplicity": "one"
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "bea"
+     ],
+     [
+      "cal"
+     ]
+    ],
+    "reason": "several players in one account",
+    "multiplicity": "one"
+   },
+   "evidence": {
+    "required": [
+     "act-9a"
+    ],
+    "found": [
+     "act-9a"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 64.6,
+    "full": 51.6
+   }
+  },
+  {
+   "id": "ORG-030",
+   "category": "organisation",
+   "template": "event_role",
+   "scenario": "org-acts",
+   "expected": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "director"
+     ],
+     [
+      "treasurer"
+     ]
+    ],
+    "reason": "accounts name different players",
+    "multiplicity": "one"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "director"
+     ],
+     [
+      "treasurer"
+     ]
+    ],
+    "reason": "accounts name different players",
+    "multiplicity": "one"
+   },
+   "evidence": {
+    "required": [
+     "act-8a",
+     "act-8b"
+    ],
+    "found": [
+     "act-8a",
+     "act-8b"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 66.0,
+    "full": 54.9
+   }
+  },
+  {
+   "id": "ORG-031",
+   "category": "organisation",
+   "template": "officials",
+   "scenario": "org-acts",
+   "expected": {
+    "officials": [
+     "bea",
+     "cal"
+    ]
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "officials": [
+     "bea",
+     "cal"
+    ]
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 93.6,
+    "full": 74.9
+   }
+  },
+  {
+   "id": "ORG-012",
+   "category": "organisation",
+   "template": "authorised",
+   "scenario": "org-authority",
+   "expected": {
+    "judgement": "established"
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established"
+   },
+   "evidence": {
+    "required": [
+     "au-bea-sign"
+    ],
+    "found": [
+     "au-bea-sign"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 142.5,
+    "full": 49.0
+   }
+  },
+  {
+   "id": "ORG-013",
+   "category": "organisation",
+   "template": "authorised",
+   "scenario": "org-authority",
+   "expected": {
+    "judgement": "not established"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "not established"
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 15.7,
+    "full": 10.1
+   }
+  },
+  {
+   "id": "ORG-014",
+   "category": "organisation",
+   "template": "authorised",
+   "scenario": "org-authority",
+   "expected": {
+    "judgement": "expired"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "expired"
+   },
+   "evidence": {
+    "required": [
+     "au-cal-hire"
+    ],
+    "found": [
+     "au-cal-hire"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 14.6,
+    "full": 11.5
+   }
+  },
+  {
+   "id": "ORG-015",
+   "category": "organisation",
+   "template": "authorised",
+   "scenario": "org-authority",
+   "expected": {
+    "judgement": "not yet effective"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "not yet effective"
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 18.3,
+    "full": 13.0
+   }
+  },
+  {
+   "id": "ORG-016",
+   "category": "organisation",
+   "template": "authorised",
+   "scenario": "org-authority",
+   "expected": {
+    "judgement": "denied"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "denied"
+   },
+   "evidence": {
+    "required": [
+     "au-dan-sign-deny"
+    ],
+    "found": [
+     "au-dan-sign-deny"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 20.3,
+    "full": 12.5
+   }
+  },
+  {
+   "id": "ORG-017",
+   "category": "organisation",
+   "template": "authorised",
+   "scenario": "org-authority",
+   "expected": {
+    "judgement": "disputed"
+   },
+   "adversarial": false,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "disputed"
+   },
+   "evidence": {
+    "required": [
+     "au-bea-hire",
+     "au-bea-hire-deny"
+    ],
+    "found": [],
+    "recall": 0.0,
+    "forbidden_cited": []
+   },
+   "failure": "missing-evidence",
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 17.7,
+    "full": 14.2
+   }
+  },
+  {
+   "id": "ORG-018",
+   "category": "organisation",
+   "template": "capable",
+   "scenario": "org-authority",
+   "expected": {
+    "judgement": "not established"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "not established"
+   },
+   "evidence": {
+    "required": [],
+    "found": [],
+    "recall": null,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 19.1,
+    "full": 9.9
+   }
+  },
+  {
+   "id": "ORG-019",
+   "category": "organisation",
+   "template": "capable",
+   "scenario": "org-capability",
+   "expected": {
+    "judgement": "established"
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established"
+   },
+   "evidence": {
+    "required": [
+     "g-dan"
+    ],
+    "found": [
+     "g-dan"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 139.0,
+    "full": 52.5
+   }
+  },
+  {
+   "id": "ORG-020",
+   "category": "organisation",
+   "template": "capable",
+   "scenario": "org-capability",
+   "expected": {
+    "judgement": "not established"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "not established"
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 20.0,
+    "full": 10.9
+   }
+  },
+  {
+   "id": "ORG-021",
+   "category": "organisation",
+   "template": "capable",
+   "scenario": "org-capability",
+   "expected": {
+    "judgement": "not established"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "not established"
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 18.2,
+    "full": 10.4
+   }
+  },
+  {
+   "id": "ORG-022",
+   "category": "organisation",
+   "template": "capable",
+   "scenario": "org-capability",
+   "expected": {
+    "judgement": "denied"
+   },
+   "adversarial": false,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "denied"
+   },
+   "evidence": {
+    "required": [
+     "g-fay",
+     "g-fay-depot-deny"
+    ],
+    "found": [
+     "g-fay",
+     "g-fay-depot-deny"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 16.0,
+    "full": 9.4
+   }
+  },
+  {
+   "id": "ORG-023",
+   "category": "organisation",
+   "template": "capable",
+   "scenario": "org-capability",
+   "expected": {
+    "judgement": "disputed"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "disputed"
+   },
+   "evidence": {
+    "required": [
+     "g-gus",
+     "g-gus-depot-deny"
+    ],
+    "found": [],
+    "recall": 0.0,
+    "forbidden_cited": []
+   },
+   "failure": "missing-evidence",
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 16.3,
+    "full": 9.7
+   }
+  },
+  {
+   "id": "ORG-024",
+   "category": "organisation",
+   "template": "capable",
+   "scenario": "org-capability",
+   "expected": {
+    "judgement": "established"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established"
+   },
+   "evidence": {
+    "required": [
+     "g-gus"
+    ],
+    "found": [
+     "g-gus"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 14.4,
+    "full": 10.6
+   }
+  },
+  {
+   "id": "ORG-001",
+   "category": "organisation",
+   "template": "office_holders",
+   "scenario": "org-offices",
+   "expected": {
+    "holders": [
+     "bea"
+    ],
+    "conflict": false
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "holders": [
+     "bea"
+    ],
+    "conflict": false
+   },
+   "evidence": {
+    "required": [
+     "a-bea"
+    ],
+    "found": [],
+    "recall": 0.0,
+    "forbidden_cited": []
+   },
+   "failure": "missing-evidence",
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 219.6,
+    "full": 79.8
+   }
+  },
+  {
+   "id": "ORG-002",
+   "category": "organisation",
+   "template": "office_holders",
+   "scenario": "org-offices",
+   "expected": {
+    "holders": [
+     "bea",
+     "cal"
+    ],
+    "conflict": true
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "holders": [
+     "bea",
+     "cal"
+    ],
+    "conflict": true
+   },
+   "evidence": {
+    "required": [
+     "a-bea",
+     "a-cal",
+     "x-sm"
+    ],
+    "found": [],
+    "recall": 0.0,
+    "forbidden_cited": []
+   },
+   "failure": "missing-evidence",
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 51.9,
+    "full": 35.8
+   }
+  },
+  {
+   "id": "ORG-003",
+   "category": "organisation",
+   "template": "office_holders",
+   "scenario": "org-offices",
+   "expected": {
+    "holders": [
+     "bea"
+    ],
+    "conflict": false
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "holders": [
+     "bea"
+    ],
+    "conflict": false
+   },
+   "evidence": {
+    "required": [
+     "a-bea"
+    ],
+    "found": [],
+    "recall": 0.0,
+    "forbidden_cited": []
+   },
+   "failure": "missing-evidence",
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 227.7,
+    "full": 78.4
+   }
+  },
+  {
+   "id": "ORG-004",
+   "category": "organisation",
+   "template": "office_holders",
+   "scenario": "org-offices",
+   "expected": {
+    "holders": [
+     "dan",
+     "eve"
+    ],
+    "conflict": false
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "holders": [
+     "dan",
+     "eve"
+    ],
+    "conflict": false
+   },
+   "evidence": {
+    "required": [
+     "a-dan-tr",
+     "a-eve-tr"
+    ],
+    "found": [],
+    "recall": 0.0,
+    "forbidden_cited": []
+   },
+   "failure": "missing-evidence",
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 48.9,
+    "full": 35.2
+   }
+  },
+  {
+   "id": "ORG-005",
+   "category": "organisation",
+   "template": "office_holders",
+   "scenario": "org-offices",
+   "expected": {
+    "holders": [
+     "bea",
+     "eve"
+    ],
+    "conflict": false
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "holders": [
+     "bea",
+     "eve"
+    ],
+    "conflict": false
+   },
+   "evidence": {
+    "required": [
+     "a-bea-so",
+     "a-eve-so"
+    ],
+    "found": [],
+    "recall": 0.0,
+    "forbidden_cited": []
+   },
+   "failure": "missing-evidence",
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 44.2,
+    "full": 33.0
+   }
+  },
+  {
+   "id": "ORG-006",
+   "category": "organisation",
+   "template": "office_holders",
+   "scenario": "org-offices",
+   "expected": {
+    "holders": [
+     "bea",
+     "eve"
+    ],
+    "conflict": true
+   },
+   "adversarial": false,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "holders": [
+     "bea",
+     "eve"
+    ],
+    "conflict": true
+   },
+   "evidence": {
+    "required": [
+     "a-bea-so",
+     "a-eve-so",
+     "x-so"
+    ],
+    "found": [],
+    "recall": 0.0,
+    "forbidden_cited": []
+   },
+   "failure": "missing-evidence",
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 41.9,
+    "full": 33.4
+   }
+  },
+  {
+   "id": "ORG-007",
+   "category": "organisation",
+   "template": "office_holders",
+   "scenario": "org-offices",
+   "expected": {
+    "holders": [],
+    "conflict": false
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "holders": [],
+    "conflict": false
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 28.4,
+    "full": 22.9
+   }
+  },
+  {
+   "id": "ORG-008",
+   "category": "organisation",
+   "template": "office_holders",
+   "scenario": "org-offices",
+   "expected": {
+    "holders": [
+     "cal"
+    ],
+    "conflict": false
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "holders": [
+     "cal"
+    ],
+    "conflict": false
+   },
+   "evidence": {
+    "required": [
+     "a-cal-dep"
+    ],
+    "found": [],
+    "recall": 0.0,
+    "forbidden_cited": []
+   },
+   "failure": "missing-evidence",
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 27.2,
+    "full": 21.3
+   }
+  },
+  {
+   "id": "ORG-009",
+   "category": "organisation",
+   "template": "office_holders",
+   "scenario": "org-offices",
+   "expected": {
+    "holders": [],
+    "conflict": false
+   },
+   "adversarial": true,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "holders": [],
+    "conflict": false
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 30.6,
+    "full": 24.9
+   }
+  },
+  {
+   "id": "ORG-010",
+   "category": "organisation",
+   "template": "office_holders",
+   "scenario": "org-offices",
+   "expected": {
+    "holders": [],
+    "conflict": false
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "holders": [],
+    "conflict": false
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 45.3,
+    "full": 33.3
+   }
+  },
+  {
+   "id": "ORG-011",
+   "category": "organisation",
+   "template": "holds",
+   "scenario": "org-offices",
+   "expected": {
+    "judgement": "disputed",
+    "status": "DISPUTED"
+   },
+   "adversarial": false,
+   "difficulty": "hard",
+   "correct": false,
+   "wrong_fields": [
+    "judgement",
+    "status"
+   ],
+   "actual": {
+    "judgement": "unknown",
+    "status": "NOT_YET_KNOWN",
+    "holds": null
+   },
+   "evidence": {
+    "required": [
+     "a-bea",
+     "a-cal",
+     "x-sm"
+    ],
+    "found": [],
+    "recall": 0.0,
+    "forbidden_cited": []
+   },
+   "failure": "wrong-judgement",
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 86.0,
+    "full": 20.4
+   }
+  },
+  {
+   "id": "TEMP-001",
+   "category": "temporal",
+   "template": "value_at",
+   "scenario": "temp-1",
+   "expected": {
+    "status": "ASSERTED",
+    "values": [
+     "shelf-3"
+    ]
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "ASSERTED",
+    "values": [
+     "shelf-3"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "loc-1-end"
+    ],
+    "found": [
+     "loc-1-end"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 186.7,
+    "full": 65.2
+   }
+  },
+  {
+   "id": "TEMP-002",
+   "category": "temporal",
+   "template": "value_at",
+   "scenario": "temp-1",
+   "expected": {
+    "status": "ASSERTED",
+    "values": [
+     "dock"
+    ]
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "ASSERTED",
+    "values": [
+     "dock"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "loc-2"
+    ],
+    "found": [
+     "loc-2"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 15.1,
+    "full": 9.3
+   }
+  },
+  {
+   "id": "TEMP-003",
+   "category": "temporal",
+   "template": "value_at",
+   "scenario": "temp-1",
+   "expected": {
+    "status": "ASSERTED",
+    "values": [
+     "shelf-3"
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "ASSERTED",
+    "values": [
+     "shelf-3"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "loc-1"
+    ],
+    "found": [
+     "loc-1"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 199.5,
+    "full": 68.2
+   }
+  },
+  {
+   "id": "TEMP-004",
+   "category": "temporal",
+   "template": "holds",
+   "scenario": "temp-1",
+   "expected": {
+    "judgement": "not holding"
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "not holding",
+    "status": "ASSERTED",
+    "holds": false
+   },
+   "evidence": {
+    "required": [
+     "loc-1-end"
+    ],
+    "found": [
+     "loc-1-end"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 99.1,
+    "full": 19.4
+   }
+  },
+  {
+   "id": "TEMP-005",
+   "category": "temporal",
+   "template": "holds",
+   "scenario": "temp-1",
+   "expected": {
+    "judgement": "established",
+    "status": "ASSERTED"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "status": "ASSERTED",
+    "holds": true
+   },
+   "evidence": {
+    "required": [
+     "loc-1"
+    ],
+    "found": [
+     "loc-1"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 103.8,
+    "full": 16.5
+   }
+  },
+  {
+   "id": "TEMP-006",
+   "category": "temporal",
+   "template": "value_at",
+   "scenario": "temp-1",
+   "expected": {
+    "status": "ASSERTED",
+    "values": [
+     "shelf-4"
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "ASSERTED",
+    "values": [
+     "shelf-4"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "j-2"
+    ],
+    "found": [
+     "j-2"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 13.2,
+    "full": 8.7
+   }
+  },
+  {
+   "id": "TEMP-007",
+   "category": "temporal",
+   "template": "value_at",
+   "scenario": "temp-2",
+   "expected": {
+    "status": "UNKNOWN",
+    "values": []
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "UNKNOWN",
+    "values": []
+   },
+   "evidence": {
+    "required": [],
+    "found": [],
+    "recall": null,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 168.2,
+    "full": 51.4
+   }
+  },
+  {
+   "id": "TEMP-008",
+   "category": "temporal",
+   "template": "value_at",
+   "scenario": "temp-2",
+   "expected": {
+    "status": "ASSERTED",
+    "values": [
+     "bench"
+    ]
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "ASSERTED",
+    "values": [
+     "bench"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "l-tool"
+    ],
+    "found": [
+     "l-tool"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 13.9,
+    "full": 8.3
+   }
+  },
+  {
+   "id": "TEMP-009",
+   "category": "temporal",
+   "template": "holds",
+   "scenario": "temp-2",
+   "expected": {
+    "judgement": "not holding"
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "not holding",
+    "status": "ASSERTED",
+    "holds": false
+   },
+   "evidence": {
+    "required": [
+     "l-cart"
+    ],
+    "found": [
+     "l-cart"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 76.1,
+    "full": 16.0
+   }
+  },
+  {
+   "id": "TEMP-010",
+   "category": "temporal",
+   "template": "value_at",
+   "scenario": "temp-2",
+   "expected": {
+    "status": "UNKNOWN",
+    "values": []
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "UNKNOWN",
+    "values": []
+   },
+   "evidence": {
+    "required": [],
+    "found": [],
+    "recall": null,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 25.6,
+    "full": 7.6
+   }
+  },
+  {
+   "id": "TEMP-011",
+   "category": "temporal",
+   "template": "value_at",
+   "scenario": "temp-2",
+   "expected": {
+    "status": "NOT_YET_KNOWN",
+    "values": []
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "NOT_YET_KNOWN",
+    "values": []
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 17.4,
+    "full": 7.7
+   }
+  },
+  {
+   "id": "TEMP-012",
+   "category": "temporal",
+   "template": "value_at",
+   "scenario": "temp-2",
+   "expected": {
+    "status": "DISPUTED"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "DISPUTED",
+    "values": [
+     "hall",
+     "yard"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "l-barrel-hall",
+     "l-barrel-yard"
+    ],
+    "found": [
+     "l-barrel-hall",
+     "l-barrel-yard"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 14.1,
+    "full": 8.0
+   }
+  },
+  {
+   "id": "TEMP-013",
+   "category": "temporal",
+   "template": "value_at",
+   "scenario": "temp-3",
+   "expected": {
+    "status": "ASSERTED",
+    "values": [
+     "shelf-a"
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "ASSERTED",
+    "values": [
+     "shelf-a"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "c-1"
+    ],
+    "found": [
+     "c-1"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 213.3,
+    "full": 71.9
+   }
+  },
+  {
+   "id": "TEMP-014",
+   "category": "temporal",
+   "template": "value_at",
+   "scenario": "temp-3",
+   "expected": {
+    "status": "ASSERTED",
+    "values": [
+     "shelf-b"
+    ]
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "ASSERTED",
+    "values": [
+     "shelf-b"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "c-2"
+    ],
+    "found": [
+     "c-2"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 15.4,
+    "full": 8.2
+   }
+  },
+  {
+   "id": "TEMP-015",
+   "category": "temporal",
+   "template": "value_at",
+   "scenario": "temp-3",
+   "expected": {
+    "status": "ASSERTED",
+    "values": [
+     "shelf-b"
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "ASSERTED",
+    "values": [
+     "shelf-b"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "c-2"
+    ],
+    "found": [
+     "c-2"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 185.9,
+    "full": 65.0
+   }
+  },
+  {
+   "id": "TEMP-016",
+   "category": "temporal",
+   "template": "value_at",
+   "scenario": "temp-3",
+   "expected": {
+    "status": "ASSERTED",
+    "values": [
+     "shelf-a"
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "ASSERTED",
+    "values": [
+     "shelf-a"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "c-1"
+    ],
+    "found": [
+     "c-1"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 17.5,
+    "full": 8.8
+   }
+  },
+  {
+   "id": "TEMP-017",
+   "category": "temporal",
+   "template": "holds",
+   "scenario": "temp-3",
+   "expected": {
+    "judgement": "pending",
+    "status": "UNKNOWN"
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": false,
+   "wrong_fields": [
+    "judgement",
+    "status"
+   ],
+   "actual": {
+    "judgement": "not holding",
+    "status": "INFERRED",
+    "holds": false
+   },
+   "evidence": {
+    "required": [],
+    "found": [],
+    "recall": null,
+    "forbidden_cited": []
+   },
+   "failure": "wrong-judgement",
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 142.7,
+    "full": 37.2
+   }
+  },
+  {
+   "id": "TEMP-018",
+   "category": "temporal",
+   "template": "holds",
+   "scenario": "temp-4",
+   "expected": {
+    "judgement": "established",
+    "status": "ASSERTED"
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "status": "ASSERTED",
+    "holds": true
+   },
+   "evidence": {
+    "required": [
+     "e-1"
+    ],
+    "found": [
+     "e-1"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 163.4,
+    "full": 87.6
+   }
+  },
+  {
+   "id": "TEMP-019",
+   "category": "temporal",
+   "template": "holds",
+   "scenario": "temp-4",
+   "expected": {
+    "judgement": "not holding"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "not holding",
+    "status": "ASSERTED",
+    "holds": false
+   },
+   "evidence": {
+    "required": [
+     "e-1-end"
+    ],
+    "found": [
+     "e-1-end"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 157.1,
+    "full": 68.6
+   }
+  },
+  {
+   "id": "TEMP-020",
+   "category": "temporal",
+   "template": "holds",
+   "scenario": "temp-4",
+   "expected": {
+    "judgement": "not holding"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "not holding",
+    "status": "ASSERTED",
+    "holds": false
+   },
+   "evidence": {
+    "required": [
+     "e-1-end"
+    ],
+    "found": [
+     "e-1-end"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 25.9,
+    "full": 15.3
+   }
+  },
+  {
+   "id": "TEMP-021",
+   "category": "temporal",
+   "template": "holds",
+   "scenario": "temp-5",
+   "expected": {
+    "judgement": "pending",
+    "status": "UNKNOWN"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "pending",
+    "status": "UNKNOWN",
+    "holds": null
+   },
+   "evidence": {
+    "required": [],
+    "found": [],
+    "recall": null,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 143.8,
+    "full": 59.7
+   }
+  },
+  {
+   "id": "TEMP-022",
+   "category": "temporal",
+   "template": "holds",
+   "scenario": "temp-5",
+   "expected": {
+    "judgement": "established",
+    "status": "ASSERTED"
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "status": "ASSERTED",
+    "holds": true
+   },
+   "evidence": {
+    "required": [
+     "k-1"
+    ],
+    "found": [
+     "k-1"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 27.7,
+    "full": 13.6
+   }
+  },
+  {
+   "id": "TEMP-023",
+   "category": "temporal",
+   "template": "holds",
+   "scenario": "temp-5",
+   "expected": {
+    "judgement": "disputed",
+    "status": "DISPUTED"
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "disputed",
+    "status": "DISPUTED",
+    "holds": null
+   },
+   "evidence": {
+    "required": [
+     "k-1",
+     "k-2"
+    ],
+    "found": [
+     "k-1",
+     "k-2"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 123.2,
+    "full": 54.6
+   }
+  },
+  {
+   "id": "TEMP-024",
+   "category": "temporal",
+   "template": "holds",
+   "scenario": "temp-5",
+   "expected": {
+    "judgement": "established",
+    "status": "ASSERTED"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "status": "ASSERTED",
+    "holds": true
+   },
+   "evidence": {
+    "required": [
+     "k-1"
+    ],
+    "found": [
+     "k-1"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 29.7,
+    "full": 14.7
+   }
+  },
+  {
+   "id": "TEMP-025",
+   "category": "temporal",
+   "template": "holds",
+   "scenario": "temp-5",
+   "expected": {
+    "judgement": "unknown",
+    "status": "NOT_YET_KNOWN"
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "unknown",
+    "status": "NOT_YET_KNOWN",
+    "holds": null
+   },
+   "evidence": {
+    "required": [],
+    "found": [],
+    "recall": null,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 22.9,
+    "full": 12.1
+   }
+  },
+  {
+   "id": "TEMP-026",
+   "category": "temporal",
+   "template": "holds",
+   "scenario": "temp-5",
+   "expected": {
+    "judgement": "not holding",
+    "status": "ASSERTED"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "not holding",
+    "status": "ASSERTED",
+    "holds": false
+   },
+   "evidence": {
+    "required": [
+     "k-2"
+    ],
+    "found": [
+     "k-2"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 27.9,
+    "full": 14.5
+   }
+  },
+  {
+   "id": "TEMP-027",
+   "category": "temporal",
+   "template": "holds",
+   "scenario": "temp-5",
+   "expected": {
+    "judgement": "not holding",
+    "status": "ASSERTED"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "not holding",
+    "status": "ASSERTED",
+    "holds": false
+   },
+   "evidence": {
+    "required": [
+     "k-3"
+    ],
+    "found": [
+     "k-3"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 29.9,
+    "full": 14.3
+   }
+  },
+  {
+   "id": "TEMP-028",
+   "category": "temporal",
+   "template": "move",
+   "scenario": "temp-6",
+   "expected": {
+    "outcome": "recorded",
+    "origin": [
+     "bay-1"
+    ]
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "outcome": "recorded",
+    "origin": [
+     "bay-1"
+    ]
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 179.3,
+    "full": 91.8
+   }
+  },
+  {
+   "id": "TEMP-029",
+   "category": "temporal",
+   "template": "move",
+   "scenario": "temp-6",
+   "expected": {
+    "outcome": "refused"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "outcome": "refused",
+    "origin": []
+   },
+   "evidence": null,
+   "failure": null,
+   "note": "MovementConflict: move refused, nothing written: the mover's own records place 'pallet-2' at several places just before the move (bay-1, bay-2; attestations m-p2a, m-p2b), so the movement has no single origin. Resolve the conflicting location records (end or supersede all but one) and move again",
+   "paths_agree": true,
+   "ms": {
+    "selective": 159.9,
+    "full": 60.4
+   }
+  },
+  {
+   "id": "TEMP-030",
+   "category": "temporal",
+   "template": "move",
+   "scenario": "temp-6",
+   "expected": {
+    "outcome": "recorded",
+    "origin": []
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "outcome": "recorded",
+    "origin": []
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 176.6,
+    "full": 83.8
+   }
+  },
+  {
+   "id": "TEMP-031",
+   "category": "temporal",
+   "template": "move",
+   "scenario": "temp-6",
+   "expected": {
+    "outcome": "recorded",
+    "origin": []
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "outcome": "recorded",
+    "origin": []
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 170.6,
+    "full": 79.2
+   }
+  },
+  {
+   "id": "TEMP-032",
+   "category": "temporal",
+   "template": "move",
+   "scenario": "temp-6",
+   "expected": {
+    "outcome": "refused"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "outcome": "refused",
+    "origin": []
+   },
+   "evidence": null,
+   "failure": null,
+   "note": "MovementConflict: move refused, nothing written: the mover's own records place 'pallet-5' at several places just before the move (bay-1, bay-2; attestations m-p5a, m-p5b), so the movement has no single origin. Resolve the conflicting location records (end or supersede all but one) and move again",
+   "paths_agree": true,
+   "ms": {
+    "selective": 152.1,
+    "full": 72.0
+   }
+  },
+  {
+   "id": "TEMP-033",
+   "category": "temporal",
+   "template": "move",
+   "scenario": "temp-6",
+   "expected": {
+    "outcome": "recorded",
+    "origin": []
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "outcome": "recorded",
+    "origin": []
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 173.6,
+    "full": 98.3
+   }
+  },
+  {
+   "id": "TEMP-034",
+   "category": "temporal",
+   "template": "move",
+   "scenario": "temp-6",
+   "expected": {
+    "outcome": "recorded",
+    "origin": [
+     "bay-2"
+    ]
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "outcome": "recorded",
+    "origin": [
+     "bay-2"
+    ]
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 198.4,
+    "full": 95.3
+   }
+  },
+  {
+   "id": "TEMP-035",
+   "category": "temporal",
+   "template": "move",
+   "scenario": "temp-6",
+   "expected": {
+    "outcome": "recorded",
+    "origin": [
+     "bay-1"
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "outcome": "recorded",
+    "origin": [
+     "bay-1"
+    ]
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 179.2,
+    "full": 170.3
+   }
+  },
+  {
+   "id": "TEMP-036",
+   "category": "temporal",
+   "template": "move",
+   "scenario": "temp-6",
+   "expected": {
+    "outcome": "recorded",
+    "origin": [
+     "bay-2"
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "outcome": "recorded",
+    "origin": [
+     "bay-2"
+    ]
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 222.0,
+    "full": 103.2
+   }
+  },
+  {
+   "id": "TEMP-037",
+   "category": "temporal",
+   "template": "move",
+   "scenario": "temp-6",
+   "expected": {
+    "outcome": "recorded",
+    "origin": [
+     "bay-1"
+    ]
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "outcome": "recorded",
+    "origin": [
+     "bay-1"
+    ]
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 180.9,
+    "full": 110.7
+   }
+  },
+  {
+   "id": "WORLD-021",
+   "category": "worlds-perspectives",
+   "template": "holds",
+   "scenario": "world-agents",
+   "expected": {
+    "judgement": "established",
+    "status": "ASSERTED"
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "status": "ASSERTED",
+    "holds": true
+   },
+   "evidence": {
+    "required": [
+     "a-anna"
+    ],
+    "found": [
+     "a-anna"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 134.4,
+    "full": 53.5
+   }
+  },
+  {
+   "id": "WORLD-022",
+   "category": "worlds-perspectives",
+   "template": "holds",
+   "scenario": "world-agents",
+   "expected": {
+    "judgement": "not holding",
+    "status": "ASSERTED"
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "not holding",
+    "status": "ASSERTED",
+    "holds": false
+   },
+   "evidence": {
+    "required": [
+     "d-ben"
+    ],
+    "found": [
+     "d-ben"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 29.0,
+    "full": 14.2
+   }
+  },
+  {
+   "id": "WORLD-023",
+   "category": "worlds-perspectives",
+   "template": "holds",
+   "scenario": "world-agents",
+   "expected": {
+    "judgement": "disputed",
+    "status": "DISPUTED"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "disputed",
+    "status": "DISPUTED",
+    "holds": null
+   },
+   "evidence": {
+    "required": [
+     "a-anna",
+     "d-ben"
+    ],
+    "found": [
+     "a-anna",
+     "d-ben"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 159.3,
+    "full": 307.0
+   }
+  },
+  {
+   "id": "WORLD-024",
+   "category": "worlds-perspectives",
+   "template": "holds",
+   "scenario": "world-agents",
+   "expected": {
+    "judgement": "established",
+    "status": "ASSERTED"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "status": "ASSERTED",
+    "holds": true
+   },
+   "evidence": {
+    "required": [
+     "a-anna"
+    ],
+    "found": [
+     "a-anna"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 84.3,
+    "full": 22.6
+   }
+  },
+  {
+   "id": "WORLD-025",
+   "category": "worlds-perspectives",
+   "template": "holds",
+   "scenario": "world-agents",
+   "expected": {
+    "judgement": "disputed",
+    "status": "DISPUTED"
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "disputed",
+    "status": "DISPUTED",
+    "holds": null
+   },
+   "evidence": {
+    "required": [
+     "a-anna",
+     "d-ben"
+    ],
+    "found": [
+     "a-anna",
+     "d-ben"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 258.3,
+    "full": 120.4
+   }
+  },
+  {
+   "id": "WORLD-026",
+   "category": "worlds-perspectives",
+   "template": "holds",
+   "scenario": "world-agents",
+   "expected": {
+    "judgement": "established",
+    "status": "STIPULATED"
+   },
+   "adversarial": false,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "status": "STIPULATED",
+    "holds": true
+   },
+   "evidence": {
+    "required": [
+     "s2-bea"
+    ],
+    "found": [
+     "s2-bea"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 54.3,
+    "full": 29.4
+   }
+  },
+  {
+   "id": "WORLD-027",
+   "category": "worlds-perspectives",
+   "template": "holds",
+   "scenario": "world-agents",
+   "expected": {
+    "judgement": "pending"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "pending",
+    "status": "UNKNOWN",
+    "holds": null
+   },
+   "evidence": {
+    "required": [],
+    "found": [],
+    "recall": null,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 61.0,
+    "full": 37.3
+   }
+  },
+  {
+   "id": "WORLD-028",
+   "category": "worlds-perspectives",
+   "template": "holds",
+   "scenario": "world-agents",
+   "expected": {
+    "judgement": "established",
+    "status": "ASSERTED"
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "status": "ASSERTED",
+    "holds": true
+   },
+   "evidence": {
+    "required": [
+     "h-cal"
+    ],
+    "found": [
+     "h-cal"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 53.6,
+    "full": 26.7
+   }
+  },
+  {
+   "id": "WORLD-029",
+   "category": "worlds-perspectives",
+   "template": "holds",
+   "scenario": "world-agents",
+   "expected": {
+    "judgement": "unknown",
+    "status": "UNKNOWN"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "unknown",
+    "status": "UNKNOWN",
+    "holds": null
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 53.5,
+    "full": 29.0
+   }
+  },
+  {
+   "id": "WORLD-030",
+   "category": "worlds-perspectives",
+   "template": "holds",
+   "scenario": "world-agents",
+   "expected": {
+    "judgement": "disputed",
+    "status": "DISPUTED"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "disputed",
+    "status": "DISPUTED",
+    "holds": null
+   },
+   "evidence": {
+    "required": [
+     "s3-dan-no",
+     "s3-dan-yes"
+    ],
+    "found": [
+     "s3-dan-no",
+     "s3-dan-yes"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 54.6,
+    "full": 29.9
+   }
+  },
+  {
+   "id": "WORLD-014",
+   "category": "worlds-perspectives",
+   "template": "holds",
+   "scenario": "world-nested",
+   "expected": {
+    "judgement": "established",
+    "status": "ASSERTED"
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "status": "ASSERTED",
+    "holds": true
+   },
+   "evidence": {
+    "required": [
+     "c-cal"
+    ],
+    "found": [
+     "c-cal"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 372.4,
+    "full": 146.2
+   }
+  },
+  {
+   "id": "WORLD-015",
+   "category": "worlds-perspectives",
+   "template": "holds",
+   "scenario": "world-nested",
+   "expected": {
+    "judgement": "unknown"
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "unknown",
+    "status": "NOT_YET_KNOWN",
+    "holds": null
+   },
+   "evidence": {
+    "required": [],
+    "found": [],
+    "recall": null,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 73.3,
+    "full": 64.0
+   }
+  },
+  {
+   "id": "WORLD-016",
+   "category": "worlds-perspectives",
+   "template": "holds",
+   "scenario": "world-nested",
+   "expected": {
+    "judgement": "unknown"
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "unknown",
+    "status": "NOT_YET_KNOWN",
+    "holds": null
+   },
+   "evidence": {
+    "required": [],
+    "found": [],
+    "recall": null,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 125.0,
+    "full": 73.2
+   }
+  },
+  {
+   "id": "WORLD-017",
+   "category": "worlds-perspectives",
+   "template": "holds",
+   "scenario": "world-nested",
+   "expected": {
+    "judgement": "established",
+    "status": "STIPULATED"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "status": "STIPULATED",
+    "holds": true
+   },
+   "evidence": {
+    "required": [
+     "s-a-eve"
+    ],
+    "found": [
+     "s-a-eve"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 210.5,
+    "full": 101.7
+   }
+  },
+  {
+   "id": "WORLD-018",
+   "category": "worlds-perspectives",
+   "template": "holds",
+   "scenario": "world-nested",
+   "expected": {
+    "judgement": "not holding",
+    "status": "STIPULATED"
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "not holding",
+    "status": "STIPULATED",
+    "holds": false
+   },
+   "evidence": {
+    "required": [
+     "s-a-bea"
+    ],
+    "found": [
+     "s-a-bea"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 108.6,
+    "full": 42.0
+   }
+  },
+  {
+   "id": "WORLD-019",
+   "category": "worlds-perspectives",
+   "template": "holds",
+   "scenario": "world-nested",
+   "expected": {
+    "judgement": "established",
+    "status": "STIPULATED"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "status": "STIPULATED",
+    "holds": true
+   },
+   "evidence": {
+    "required": [
+     "s-c-bea"
+    ],
+    "found": [
+     "s-c-bea"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 91.9,
+    "full": 42.7
+   }
+  },
+  {
+   "id": "WORLD-020",
+   "category": "worlds-perspectives",
+   "template": "holds",
+   "scenario": "world-nested",
+   "expected": {
+    "judgement": "unknown"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "unknown",
+    "status": "NOT_YET_KNOWN",
+    "holds": null
+   },
+   "evidence": {
+    "required": [],
+    "found": [],
+    "recall": null,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 90.8,
+    "full": 54.0
+   }
+  },
+  {
+   "id": "WORLD-001",
+   "category": "worlds-perspectives",
+   "template": "capable",
+   "scenario": "world-snapshot",
+   "expected": {
+    "judgement": "established"
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established"
+   },
+   "evidence": {
+    "required": [
+     "g-bea"
+    ],
+    "found": [
+     "g-bea"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 444.8,
+    "full": 183.7
+   }
+  },
+  {
+   "id": "WORLD-002",
+   "category": "worlds-perspectives",
+   "template": "capable",
+   "scenario": "world-snapshot",
+   "expected": {
+    "judgement": "not established"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "not established"
+   },
+   "evidence": {
+    "required": [],
+    "found": [],
+    "recall": null,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 25.6,
+    "full": 27.2
+   }
+  },
+  {
+   "id": "WORLD-003",
+   "category": "worlds-perspectives",
+   "template": "capable",
+   "scenario": "world-snapshot",
+   "expected": {
+    "judgement": "not established"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "not established"
+   },
+   "evidence": {
+    "required": [],
+    "found": [],
+    "recall": null,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 24.3,
+    "full": 19.0
+   }
+  },
+  {
+   "id": "WORLD-004",
+   "category": "worlds-perspectives",
+   "template": "capable",
+   "scenario": "world-snapshot",
+   "expected": {
+    "judgement": "established"
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established"
+   },
+   "evidence": {
+    "required": [
+     "g-eve"
+    ],
+    "found": [
+     "g-eve"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 13.3,
+    "full": 21.5
+   }
+  },
+  {
+   "id": "WORLD-005",
+   "category": "worlds-perspectives",
+   "template": "capable",
+   "scenario": "world-snapshot",
+   "expected": {
+    "judgement": "not established"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "not established"
+   },
+   "evidence": {
+    "required": [],
+    "found": [],
+    "recall": null,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 40.2,
+    "full": 19.7
+   }
+  },
+  {
+   "id": "WORLD-006",
+   "category": "worlds-perspectives",
+   "template": "capable",
+   "scenario": "world-snapshot",
+   "expected": {
+    "judgement": "established"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established"
+   },
+   "evidence": {
+    "required": [
+     "g-fay"
+    ],
+    "found": [
+     "g-fay"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 24.7,
+    "full": 19.6
+   }
+  },
+  {
+   "id": "WORLD-007",
+   "category": "worlds-perspectives",
+   "template": "value_at",
+   "scenario": "world-snapshot",
+   "expected": {
+    "status": "ASSERTED",
+    "values": [
+     "shelf-3"
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "ASSERTED",
+    "values": [
+     "shelf-3"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "loc-box"
+    ],
+    "found": [
+     "loc-box"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 388.7,
+    "full": 24.3
+   }
+  },
+  {
+   "id": "WORLD-008",
+   "category": "worlds-perspectives",
+   "template": "value_at",
+   "scenario": "world-snapshot",
+   "expected": {
+    "status": "ASSERTED",
+    "values": [
+     "shelf-4"
+    ]
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "ASSERTED",
+    "values": [
+     "shelf-4"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "corr-box"
+    ],
+    "found": [
+     "corr-box"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 56.1,
+    "full": 10.9
+   }
+  },
+  {
+   "id": "WORLD-009",
+   "category": "worlds-perspectives",
+   "template": "capable",
+   "scenario": "world-snapshot",
+   "expected": {
+    "judgement": "denied"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "denied"
+   },
+   "evidence": {
+    "required": [
+     "s-cal-deny"
+    ],
+    "found": [
+     "s-cal-deny"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 31.7,
+    "full": 18.9
+   }
+  },
+  {
+   "id": "WORLD-010",
+   "category": "worlds-perspectives",
+   "template": "capable",
+   "scenario": "world-snapshot",
+   "expected": {
+    "judgement": "denied"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "denied"
+   },
+   "evidence": {
+    "required": [
+     "s-cal-deny"
+    ],
+    "found": [
+     "s-cal-deny"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 25.4,
+    "full": 17.5
+   }
+  },
+  {
+   "id": "WORLD-011",
+   "category": "worlds-perspectives",
+   "template": "capable",
+   "scenario": "world-snapshot",
+   "expected": {
+    "judgement": "established"
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established"
+   },
+   "evidence": {
+    "required": [
+     "s-gus"
+    ],
+    "found": [
+     "s-gus"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 23.0,
+    "full": 17.1
+   }
+  },
+  {
+   "id": "WORLD-012",
+   "category": "worlds-perspectives",
+   "template": "capable",
+   "scenario": "world-snapshot",
+   "expected": {
+    "judgement": "not yet effective"
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "not yet effective"
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 22.5,
+    "full": 16.1
+   }
+  },
+  {
+   "id": "WORLD-013",
+   "category": "worlds-perspectives",
+   "template": "capable",
+   "scenario": "world-snapshot",
+   "expected": {
+    "judgement": "not established"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "not established"
+   },
+   "evidence": {
+    "required": [],
+    "found": [],
+    "recall": null,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 21.6,
+    "full": 16.9
+   }
+  },
+  {
+   "id": "X-023",
+   "category": "cross-domain",
+   "template": "same_thing",
+   "scenario": "x-identity",
+   "expected": {
+    "same": true,
+    "conflict": false
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "same": true,
+    "conflict": false
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 33.9,
+    "full": 4.9
+   }
+  },
+  {
+   "id": "X-024",
+   "category": "cross-domain",
+   "template": "event_role",
+   "scenario": "x-identity",
+   "expected": {
+    "judgement": "established",
+    "players": [
+     [
+      "bea",
+      "b-smith"
+     ]
+    ],
+    "multiplicity": "one"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "players": [
+     [
+      "b-smith",
+      "bea"
+     ]
+    ],
+    "reason": null,
+    "multiplicity": "one"
+   },
+   "evidence": {
+    "required": [
+     "act-clerk",
+     "act-hr"
+    ],
+    "found": [
+     "act-clerk",
+     "act-hr"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 170.0,
+    "full": 87.9
+   }
+  },
+  {
+   "id": "X-025",
+   "category": "cross-domain",
+   "template": "event_role",
+   "scenario": "x-identity",
+   "expected": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "bea"
+     ],
+     [
+      "b-smith"
+     ]
+    ],
+    "reason": "accounts name different players",
+    "multiplicity": "one"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "b-smith"
+     ],
+     [
+      "bea"
+     ]
+    ],
+    "reason": "accounts name different players",
+    "multiplicity": "one"
+   },
+   "evidence": {
+    "required": [
+     "act-clerk",
+     "act-hr"
+    ],
+    "found": [
+     "act-clerk",
+     "act-hr"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 118.3,
+    "full": 67.6
+   }
+  },
+  {
+   "id": "X-026",
+   "category": "cross-domain",
+   "template": "event_role",
+   "scenario": "x-identity",
+   "expected": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "bea"
+     ],
+     [
+      "b-smith"
+     ]
+    ],
+    "reason": "accounts name different players",
+    "multiplicity": "one"
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "b-smith"
+     ],
+     [
+      "bea"
+     ]
+    ],
+    "reason": "accounts name different players",
+    "multiplicity": "one"
+   },
+   "evidence": {
+    "required": [
+     "act-clerk",
+     "act-hr"
+    ],
+    "found": [
+     "act-clerk",
+     "act-hr"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 626.8,
+    "full": 247.6
+   }
+  },
+  {
+   "id": "X-027",
+   "category": "cross-domain",
+   "template": "same_thing",
+   "scenario": "x-identity",
+   "expected": {
+    "same": false,
+    "conflict": false
+   },
+   "adversarial": true,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "same": false,
+    "conflict": false
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 5.2,
+    "full": 4.9
+   }
+  },
+  {
+   "id": "X-028",
+   "category": "cross-domain",
+   "template": "aliases",
+   "scenario": "x-identity",
+   "expected": {
+    "members": [
+     "bea"
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "members": [
+     "bea"
+    ]
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 8.9,
+    "full": 8.5
+   }
+  },
+  {
+   "id": "X-031",
+   "category": "cross-domain",
+   "template": "value_at",
+   "scenario": "x-move",
+   "expected": {
+    "status": "ASSERTED",
+    "values": [
+     "bay-2"
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "ASSERTED",
+    "values": [
+     "bay-2"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "l-sys"
+    ],
+    "found": [
+     "l-sys"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 157.3,
+    "full": 45.4
+   }
+  },
+  {
+   "id": "X-032",
+   "category": "cross-domain",
+   "template": "value_at",
+   "scenario": "x-move",
+   "expected": {
+    "status": "ASSERTED",
+    "values": [
+     "bay-1"
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "ASSERTED",
+    "values": [
+     "bay-1"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "l-robot"
+    ],
+    "found": [
+     "l-robot"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 14.3,
+    "full": 7.3
+   }
+  },
+  {
+   "id": "X-033",
+   "category": "cross-domain",
+   "template": "value_at",
+   "scenario": "x-move",
+   "expected": {
+    "status": "STIPULATED",
+    "values": [
+     "bay-3"
+    ]
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "status": "STIPULATED",
+    "values": [
+     "bay-3"
+    ]
+   },
+   "evidence": {
+    "required": [
+     "s-bay3"
+    ],
+    "found": [
+     "s-bay3"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 290.4,
+    "full": 107.0
+   }
+  },
+  {
+   "id": "X-029",
+   "category": "cross-domain",
+   "template": "move",
+   "scenario": "x-move",
+   "expected": {
+    "outcome": "recorded",
+    "origin": [
+     "bay-2"
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "outcome": "recorded",
+    "origin": [
+     "bay-2"
+    ]
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 201.3,
+    "full": 92.7
+   }
+  },
+  {
+   "id": "X-030",
+   "category": "cross-domain",
+   "template": "move",
+   "scenario": "x-move",
+   "expected": {
+    "outcome": "refused"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "outcome": "refused",
+    "origin": []
+   },
+   "evidence": null,
+   "failure": null,
+   "note": "MovementConflict: move refused, nothing written: the mover's own records place 'crate' at several places just before the move (dock, yard; attestations l-clerk-dock, l-clerk-yard), so the movement has no single origin. Resolve the conflicting location records (end or supersede all but one) and move ",
+   "paths_agree": true,
+   "ms": {
+    "selective": 156.1,
+    "full": 48.6
+   }
+  },
+  {
+   "id": "X-001",
+   "category": "cross-domain",
+   "template": "office_holders",
+   "scenario": "x-reorg",
+   "expected": {
+    "holders": [
+     "bea",
+     "cal"
+    ],
+    "conflict": true
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "holders": [
+     "bea",
+     "cal"
+    ],
+    "conflict": true
+   },
+   "evidence": {
+    "required": [
+     "ap-bea",
+     "ap-cal",
+     "ex-sm"
+    ],
+    "found": [],
+    "recall": 0.0,
+    "forbidden_cited": []
+   },
+   "failure": "missing-evidence",
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 86.6,
+    "full": 63.9
+   }
+  },
+  {
+   "id": "X-002",
+   "category": "cross-domain",
+   "template": "office_holders",
+   "scenario": "x-reorg",
+   "expected": {
+    "holders": [
+     "bea",
+     "cal"
+    ],
+    "conflict": false
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "holders": [
+     "bea",
+     "cal"
+    ],
+    "conflict": false
+   },
+   "evidence": {
+    "required": [
+     "ap-bea",
+     "ap-cal"
+    ],
+    "found": [],
+    "recall": 0.0,
+    "forbidden_cited": []
+   },
+   "failure": "missing-evidence",
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 34.9,
+    "full": 27.1
+   }
+  },
+  {
+   "id": "X-003",
+   "category": "cross-domain",
+   "template": "office_holders",
+   "scenario": "x-reorg",
+   "expected": {
+    "holders": [
+     "dan"
+    ],
+    "conflict": false
+   },
+   "adversarial": false,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "holders": [
+     "dan"
+    ],
+    "conflict": false
+   },
+   "evidence": {
+    "required": [
+     "s-bea-out",
+     "s-dan-in"
+    ],
+    "found": [],
+    "recall": 0.0,
+    "forbidden_cited": []
+   },
+   "failure": "missing-evidence",
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 158.6,
+    "full": 135.4
+   }
+  },
+  {
+   "id": "X-004",
+   "category": "cross-domain",
+   "template": "authorised",
+   "scenario": "x-reorg",
+   "expected": {
+    "judgement": "denied"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "denied"
+   },
+   "evidence": {
+    "required": [
+     "s-au-bea-out"
+    ],
+    "found": [
+     "s-au-bea-out"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 30.2,
+    "full": 21.5
+   }
+  },
+  {
+   "id": "X-005",
+   "category": "cross-domain",
+   "template": "authorised",
+   "scenario": "x-reorg",
+   "expected": {
+    "judgement": "not established"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "not established"
+   },
+   "evidence": {
+    "required": [],
+    "found": [],
+    "recall": null,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 16.9,
+    "full": 10.3
+   }
+  },
+  {
+   "id": "X-006",
+   "category": "cross-domain",
+   "template": "event_role",
+   "scenario": "x-reorg",
+   "expected": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "bea"
+     ],
+     [
+      "cal"
+     ]
+    ],
+    "reason": "accounts name different players",
+    "multiplicity": "one"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "bea"
+     ],
+     [
+      "cal"
+     ]
+    ],
+    "reason": "accounts name different players",
+    "multiplicity": "one"
+   },
+   "evidence": {
+    "required": [
+     "act-clerk",
+     "act-hr"
+    ],
+    "found": [
+     "act-clerk",
+     "act-hr"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 158.6,
+    "full": 79.9
+   }
+  },
+  {
+   "id": "X-007",
+   "category": "cross-domain",
+   "template": "event_role",
+   "scenario": "x-reorg",
+   "expected": {
+    "judgement": "established",
+    "players": [
+     [
+      "bea"
+     ]
+    ],
+    "multiplicity": "one"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "players": [
+     [
+      "bea"
+     ]
+    ],
+    "reason": null,
+    "multiplicity": "one"
+   },
+   "evidence": {
+    "required": [
+     "act-hr"
+    ],
+    "found": [
+     "act-hr"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 63.2,
+    "full": 46.9
+   }
+  },
+  {
+   "id": "X-008",
+   "category": "cross-domain",
+   "template": "event_role",
+   "scenario": "x-reorg",
+   "expected": {
+    "judgement": "established",
+    "players": [
+     [
+      "dan"
+     ]
+    ],
+    "multiplicity": "one"
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "players": [
+     [
+      "dan"
+     ]
+    ],
+    "reason": null,
+    "multiplicity": "one"
+   },
+   "evidence": {
+    "required": [
+     "act-plan"
+    ],
+    "found": [
+     "act-plan"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 326.9,
+    "full": 171.4
+   }
+  },
+  {
+   "id": "X-009",
+   "category": "cross-domain",
+   "template": "capable",
+   "scenario": "x-reorg",
+   "expected": {
+    "judgement": "not established"
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "not established"
+   },
+   "evidence": {
+    "required": [],
+    "found": [],
+    "recall": null,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 15.0,
+    "full": 8.2
+   }
+  },
+  {
+   "id": "X-010",
+   "category": "cross-domain",
+   "template": "parts",
+   "scenario": "x-replace",
+   "expected": {
+    "parts": [
+     "b1",
+     "b2"
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "parts": [
+     "b1",
+     "b2"
+    ]
+   },
+   "evidence": null,
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 74.1,
+    "full": 9.5
+   }
+  },
+  {
+   "id": "X-011",
+   "category": "cross-domain",
+   "template": "event_role",
+   "scenario": "x-replace",
+   "expected": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "b1"
+     ],
+     [
+      "b2"
+     ]
+    ],
+    "reason": "accounts name different players",
+    "multiplicity": "one"
+   },
+   "adversarial": false,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "b1"
+     ],
+     [
+      "b2"
+     ]
+    ],
+    "reason": "accounts name different players",
+    "multiplicity": "one"
+   },
+   "evidence": {
+    "required": [
+     "k-swap",
+     "rp-1",
+     "rp-2"
+    ],
+    "found": [
+     "rp-1",
+     "rp-2"
+    ],
+    "recall": 0.667,
+    "forbidden_cited": []
+   },
+   "failure": "missing-evidence",
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 305.9,
+    "full": 105.7
+   }
+  },
+  {
+   "id": "X-012",
+   "category": "cross-domain",
+   "template": "event_role",
+   "scenario": "x-replace",
+   "expected": {
+    "judgement": "union",
+    "players": [
+     [
+      "b1"
+     ],
+     [
+      "b2"
+     ]
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "union",
+    "players": [
+     [
+      "b1"
+     ],
+     [
+      "b2"
+     ]
+    ],
+    "reason": null,
+    "multiplicity": null
+   },
+   "evidence": {
+    "required": [
+     "rp-1",
+     "rp-2"
+    ],
+    "found": [
+     "rp-1",
+     "rp-2"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 328.0,
+    "full": 145.4
+   }
+  },
+  {
+   "id": "X-013",
+   "category": "cross-domain",
+   "template": "event_role",
+   "scenario": "x-replace",
+   "expected": {
+    "judgement": "union",
+    "players": [
+     [
+      "b1"
+     ],
+     [
+      "b2"
+     ]
+    ]
+   },
+   "adversarial": true,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "union",
+    "players": [
+     [
+      "b1"
+     ],
+     [
+      "b2"
+     ]
+    ],
+    "reason": null,
+    "multiplicity": null
+   },
+   "evidence": {
+    "required": [
+     "rp-1",
+     "rp-2"
+    ],
+    "found": [
+     "rp-1",
+     "rp-2"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 624.3,
+    "full": 292.3
+   }
+  },
+  {
+   "id": "X-014",
+   "category": "cross-domain",
+   "template": "event_role",
+   "scenario": "x-replace",
+   "expected": {
+    "judgement": "established",
+    "players": [
+     [
+      "b3"
+     ]
+    ],
+    "multiplicity": "one"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established",
+    "players": [
+     [
+      "b3"
+     ]
+    ],
+    "reason": null,
+    "multiplicity": "one"
+   },
+   "evidence": {
+    "required": [
+     "rp-1",
+     "rp-2"
+    ],
+    "found": [
+     "rp-1",
+     "rp-2"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 76.9,
+    "full": 62.5
+   }
+  },
+  {
+   "id": "X-015",
+   "category": "cross-domain",
+   "template": "event_role",
+   "scenario": "x-replace",
+   "expected": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "b5"
+     ],
+     [
+      "b6"
+     ]
+    ],
+    "reason": "several players in one account",
+    "multiplicity": "one"
+   },
+   "adversarial": false,
+   "difficulty": "hard",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "disputed",
+    "players": [
+     [
+      "b5"
+     ],
+     [
+      "b6"
+     ]
+    ],
+    "reason": "several players in one account",
+    "multiplicity": "one"
+   },
+   "evidence": {
+    "required": [
+     "rp-3",
+     "s-k-swap2"
+    ],
+    "found": [
+     "rp-3"
+    ],
+    "recall": 0.5,
+    "forbidden_cited": []
+   },
+   "failure": "missing-evidence",
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 138.0,
+    "full": 116.2
+   }
+  },
+  {
+   "id": "X-016",
+   "category": "cross-domain",
+   "template": "event_role",
+   "scenario": "x-sample",
+   "expected": {
+    "judgement": "union",
+    "players": [
+     [
+      "ann"
+     ],
+     [
+      "ben"
+     ]
+    ]
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "union",
+    "players": [
+     [
+      "ann"
+     ],
+     [
+      "ben"
+     ]
+    ],
+    "reason": null,
+    "multiplicity": null
+   },
+   "evidence": {
+    "required": [
+     "ts-1"
+    ],
+    "found": [
+     "ts-1"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 115.0,
+    "full": 116.1
+   }
+  },
+  {
+   "id": "X-017",
+   "category": "cross-domain",
+   "template": "capable",
+   "scenario": "x-sample",
+   "expected": {
+    "judgement": "not established"
+   },
+   "adversarial": true,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "not established"
+   },
+   "evidence": {
+    "required": [],
+    "found": [],
+    "recall": null,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 18.0,
+    "full": 10.7
+   }
+  },
+  {
+   "id": "X-018",
+   "category": "cross-domain",
+   "template": "capable",
+   "scenario": "x-sample",
+   "expected": {
+    "judgement": "established"
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established"
+   },
+   "evidence": {
+    "required": [
+     "g-ben"
+    ],
+    "found": [
+     "g-ben"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 20.2,
+    "full": 8.7
+   }
+  },
+  {
+   "id": "X-019",
+   "category": "cross-domain",
+   "template": "capable",
+   "scenario": "x-sample",
+   "expected": {
+    "judgement": "disputed"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "disputed"
+   },
+   "evidence": {
+    "required": [
+     "d-ann",
+     "g-ann"
+    ],
+    "found": [],
+    "recall": 0.0,
+    "forbidden_cited": []
+   },
+   "failure": "missing-evidence",
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 13.9,
+    "full": 9.0
+   }
+  },
+  {
+   "id": "X-020",
+   "category": "cross-domain",
+   "template": "capable",
+   "scenario": "x-sample",
+   "expected": {
+    "judgement": "established"
+   },
+   "adversarial": true,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established"
+   },
+   "evidence": {
+    "required": [
+     "g-ann"
+    ],
+    "found": [
+     "g-ann"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 14.3,
+    "full": 8.6
+   }
+  },
+  {
+   "id": "X-021",
+   "category": "cross-domain",
+   "template": "calibrated",
+   "scenario": "x-sample",
+   "expected": {
+    "judgement": "expired"
+   },
+   "adversarial": false,
+   "difficulty": "easy",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "expired"
+   },
+   "evidence": {
+    "required": [
+     "cal-77"
+    ],
+    "found": [
+     "cal-77"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 16.9,
+    "full": 11.5
+   }
+  },
+  {
+   "id": "X-022",
+   "category": "cross-domain",
+   "template": "calibrated",
+   "scenario": "x-sample",
+   "expected": {
+    "judgement": "established"
+   },
+   "adversarial": false,
+   "difficulty": "medium",
+   "correct": true,
+   "wrong_fields": [],
+   "actual": {
+    "judgement": "established"
+   },
+   "evidence": {
+    "required": [
+     "s-cal-78"
+    ],
+    "found": [
+     "s-cal-78"
+    ],
+    "recall": 1.0,
+    "forbidden_cited": []
+   },
+   "failure": null,
+   "note": null,
+   "paths_agree": true,
+   "ms": {
+    "selective": 256.1,
+    "full": 105.1
+   }
+  }
+ ]
+}

@@ -1,0 +1,19 @@
+{"id": "temp-5", "description": "Valid time against knowledge time for a classification: an inspector's claim accepted later, an auditor's accepted denial from a later valid time, and a second item where only the denial is accepted and the rival assertion rejected.",
+ "profiles": [],
+ "steps": [
+  {"op": "entity", "kind": "physical-object", "id": "crane"},
+  {"op": "entity", "kind": "physical-object", "id": "hoist"},
+  {"op": "entity", "kind": "physical-object", "id": "inspector"},
+  {"op": "entity", "kind": "physical-object", "id": "auditor"},
+  {"op": "entity", "kind": "category", "id": "damaged"},
+  {"op": "world", "id": "w", "kind": "actual"},
+  {"op": "mark", "name": "m0"},
+  {"op": "attest", "id": "k-1", "world": "w", "type": "classified-as", "roles": {"classified": "crane", "class": "damaged"}, "start": "T3", "until_superseded": true, "attester": "inspector"},
+  {"op": "mark", "name": "m1"},
+  {"op": "accept", "target": "k-1", "holder": "system", "verdict": "accepted"},
+  {"op": "mark", "name": "m2"},
+  {"op": "deny", "id": "k-2", "world": "w", "type": "classified-as", "roles": {"classified": "crane", "class": "damaged"}, "start": "T6", "until_superseded": true, "attester": "auditor", "accepted_by": ["system"]},
+  {"op": "deny", "id": "k-3", "world": "w", "type": "classified-as", "roles": {"classified": "hoist", "class": "damaged"}, "start": "T1", "until_superseded": true, "attester": "auditor", "accepted_by": ["system"]},
+  {"op": "attest", "id": "k-4", "world": "w", "type": "classified-as", "roles": {"classified": "hoist", "class": "damaged"}, "start": "T1", "until_superseded": true, "attester": "inspector"},
+  {"op": "accept", "target": "k-4", "holder": "system", "verdict": "rejected"}
+ ]}

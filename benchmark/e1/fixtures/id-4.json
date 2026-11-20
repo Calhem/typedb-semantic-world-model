@@ -1,0 +1,489 @@
+{
+ "id": "id-4",
+ "description": "Readers under identity: a location read through an alias, a functional conflict appearing only under an established alias, an unreviewed alias, an occurrence known under two names (established and pending alias links), two names for one official in one account (alias established and not), and the DI-16 case (alias asserted, then denied, both accepted).",
+ "profiles": [
+  "organisation"
+ ],
+ "steps": [
+  {
+   "op": "entity",
+   "kind": "organisation",
+   "id": "tracker"
+  },
+  {
+   "op": "entity",
+   "kind": "organisation",
+   "id": "hr"
+  },
+  {
+   "op": "entity",
+   "kind": "organisation",
+   "id": "clerk"
+  },
+  {
+   "op": "entity",
+   "kind": "organisation",
+   "id": "acme"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "dee"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "cal"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "bea"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "b-smith"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "gus"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "g-hart"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "ivy"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "i-lowe"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "crate-7"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "box-a"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "tote-1"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "tote-9"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "tote-3"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "tote-4"
+  },
+  {
+   "op": "entity",
+   "kind": "place",
+   "id": "bay-2"
+  },
+  {
+   "op": "entity",
+   "kind": "place",
+   "id": "bay-5"
+  },
+  {
+   "op": "entity",
+   "kind": "place",
+   "id": "bay-6"
+  },
+  {
+   "op": "entity",
+   "kind": "social-role",
+   "id": "signatory"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-1"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-1-alias"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-5"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-5-alias"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-3"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-4"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-2"
+  },
+  {
+   "op": "world",
+   "id": "w",
+   "kind": "actual"
+  },
+  {
+   "op": "attest",
+   "id": "loc-crate7",
+   "world": "w",
+   "type": "located-at",
+   "roles": {
+    "located": "crate-7",
+    "place": "bay-2"
+   },
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "attest",
+   "id": "loc-tote1",
+   "world": "w",
+   "type": "located-at",
+   "roles": {
+    "located": "tote-1",
+    "place": "bay-5"
+   },
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "attest",
+   "id": "loc-tote9",
+   "world": "w",
+   "type": "located-at",
+   "roles": {
+    "located": "tote-9",
+    "place": "bay-6"
+   },
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "attest",
+   "id": "loc-tote3",
+   "world": "w",
+   "type": "located-at",
+   "roles": {
+    "located": "tote-3",
+    "place": "bay-5"
+   },
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "attest",
+   "id": "loc-tote4",
+   "world": "w",
+   "type": "located-at",
+   "roles": {
+    "located": "tote-4",
+    "place": "bay-6"
+   },
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "mark",
+   "name": "before-box-link"
+  },
+  {
+   "op": "attest",
+   "id": "sa-box",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "crate-7",
+     "box-a"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "tracker",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "sa-tote19",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "tote-1",
+     "tote-9"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "tracker",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "sa-tote34",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "tote-3",
+     "tote-4"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "tracker"
+  },
+  {
+   "op": "attest",
+   "id": "sa-o1",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "o-1",
+     "o-1-alias"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "tracker",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "act_in_office",
+   "id": "act-o1-hr",
+   "world": "w",
+   "official": "dee",
+   "office": "signatory",
+   "context": "acme",
+   "start": "T5",
+   "occurrence": "o-1",
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "act_in_office",
+   "id": "act-o1-clerk",
+   "world": "w",
+   "official": "cal",
+   "office": "signatory",
+   "context": "acme",
+   "start": "T5",
+   "occurrence": "o-1-alias",
+   "attester": "clerk",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "sa-o5",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "o-5",
+     "o-5-alias"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "tracker"
+  },
+  {
+   "op": "act_in_office",
+   "id": "act-o5-hr",
+   "world": "w",
+   "official": "dee",
+   "office": "signatory",
+   "context": "acme",
+   "start": "T5",
+   "occurrence": "o-5",
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "act_in_office",
+   "id": "act-o5-clerk",
+   "world": "w",
+   "official": "cal",
+   "office": "signatory",
+   "context": "acme",
+   "start": "T5",
+   "occurrence": "o-5-alias",
+   "attester": "clerk",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "sa-bea",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "bea",
+     "b-smith"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "act_in_office",
+   "id": "act-o3",
+   "world": "w",
+   "official": [
+    "bea",
+    "b-smith"
+   ],
+   "office": "signatory",
+   "context": "acme",
+   "start": "T5",
+   "occurrence": "o-3",
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "sa-gus",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "gus",
+     "g-hart"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "hr"
+  },
+  {
+   "op": "act_in_office",
+   "id": "act-o4",
+   "world": "w",
+   "official": [
+    "gus",
+    "g-hart"
+   ],
+   "office": "signatory",
+   "context": "acme",
+   "start": "T5",
+   "occurrence": "o-4",
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "act_in_office",
+   "id": "act-o2-hr",
+   "world": "w",
+   "official": "ivy",
+   "office": "signatory",
+   "context": "acme",
+   "start": "T5",
+   "occurrence": "o-2",
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "act_in_office",
+   "id": "act-o2-clerk",
+   "world": "w",
+   "official": "i-lowe",
+   "office": "signatory",
+   "context": "acme",
+   "start": "T5",
+   "occurrence": "o-2",
+   "attester": "clerk",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "sa-ivy",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "ivy",
+     "i-lowe"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "mark",
+   "name": "before-ivy-denial"
+  },
+  {
+   "op": "deny",
+   "id": "dn-ivy",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "ivy",
+     "i-lowe"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "clerk",
+   "accepted_by": [
+    "system"
+   ]
+  }
+ ]
+}

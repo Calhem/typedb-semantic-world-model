@@ -1,0 +1,20 @@
+{"id": "mech-2", "description": "A rover battery swap (v0.2 C3): part-of recorded with an end and a new start, existence of old and new batteries, a destroyed battery, and a second replacement that is only claimed (no part-of records follow it).",
+ "profiles": ["mechanical"],
+ "steps": [
+  {"op": "entity", "kind": "physical-object", "id": "rover"},
+  {"op": "entity", "kind": "physical-object", "id": "b1"},
+  {"op": "entity", "kind": "physical-object", "id": "b2"},
+  {"op": "entity", "kind": "physical-object", "id": "b3"},
+  {"op": "entity", "kind": "physical-object", "id": "b-spare"},
+  {"op": "entity", "kind": "social-object", "id": "cmms"},
+  {"op": "entity", "kind": "occurrence", "id": "o-swap"},
+  {"op": "entity", "kind": "occurrence", "id": "o-swap-2"},
+  {"op": "world", "id": "w", "kind": "actual"},
+  {"op": "attest", "id": "ex-b1", "world": "w", "type": "existence", "roles": {"existent": "b1"}, "start": "T1", "until_superseded": true},
+  {"op": "attest", "id": "ex-b2", "world": "w", "type": "existence", "roles": {"existent": "b2"}, "start": "T4", "until_superseded": true},
+  {"op": "attest", "id": "ex-b3", "world": "w", "type": "existence", "roles": {"existent": "b3"}, "start": "T1", "end": "T6"},
+  {"op": "attest", "id": "po-b1", "world": "w", "type": "part-of", "roles": {"part": "b1", "whole": "rover"}, "start": "T1", "end": "T5"},
+  {"op": "attest", "id": "po-b2", "world": "w", "type": "part-of", "roles": {"part": "b2", "whole": "rover"}, "start": "T5", "until_superseded": true},
+  {"op": "replace_part", "id": "rep-1", "world": "w", "assembly": "rover", "removed": "b1", "fitted": "b2", "start": "T5", "occurrence": "o-swap", "attester": "cmms", "accepted_by": ["system"]},
+  {"op": "replace_part", "id": "rep-2", "world": "w", "assembly": "rover", "removed": "b2", "fitted": "b3", "start": "T8", "occurrence": "o-swap-2", "attester": "cmms", "accepted_by": ["system"]}
+ ]}

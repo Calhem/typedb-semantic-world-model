@@ -1,0 +1,177 @@
+{
+ "id": "org-authority",
+ "description": "Conferred authority within acme: grants by the board (whose own entitlement is never recorded) and by acme, reported by hr; an ended grant, a future grant, an accepted denial by audit, and a grant from acme beside a denied grant from the board. depot7 is part of acme (a distractor for scope containment).",
+ "profiles": [
+  "organisation"
+ ],
+ "steps": [
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "bea"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "cal"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "dan"
+  },
+  {
+   "op": "entity",
+   "kind": "organisation",
+   "id": "acme"
+  },
+  {
+   "op": "entity",
+   "kind": "organisation",
+   "id": "board"
+  },
+  {
+   "op": "entity",
+   "kind": "organisation",
+   "id": "depot7"
+  },
+  {
+   "op": "entity",
+   "kind": "capability",
+   "id": "can-sign"
+  },
+  {
+   "op": "entity",
+   "kind": "capability",
+   "id": "can-hire"
+  },
+  {
+   "op": "entity",
+   "kind": "capability",
+   "id": "can-approve"
+  },
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "hr"
+  },
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "audit"
+  },
+  {
+   "op": "world",
+   "id": "w",
+   "kind": "actual"
+  },
+  {
+   "op": "attest",
+   "id": "p-depot",
+   "world": "w",
+   "type": "part-of",
+   "roles": {
+    "part": "depot7",
+    "whole": "acme"
+   },
+   "start": "T1",
+   "until_superseded": true,
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "authorise",
+   "id": "au-bea-sign",
+   "world": "w",
+   "grantor": "board",
+   "holder": "bea",
+   "power": "can-sign",
+   "scope": "acme",
+   "start": "T1",
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ],
+   "until_superseded": true
+  },
+  {
+   "op": "authorise",
+   "id": "au-cal-hire",
+   "world": "w",
+   "grantor": "acme",
+   "holder": "cal",
+   "power": "can-hire",
+   "scope": "acme",
+   "start": "T1",
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ],
+   "end": "T4"
+  },
+  {
+   "op": "authorise",
+   "id": "au-dan-appr",
+   "world": "w",
+   "grantor": "acme",
+   "holder": "dan",
+   "power": "can-approve",
+   "scope": "acme",
+   "start": "T9",
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ],
+   "until_superseded": true
+  },
+  {
+   "op": "authorise",
+   "id": "au-dan-sign-deny",
+   "world": "w",
+   "grantor": "board",
+   "holder": "dan",
+   "power": "can-sign",
+   "scope": "acme",
+   "start": "T1",
+   "attester": "audit",
+   "accepted_by": [
+    "system"
+   ],
+   "until_superseded": true,
+   "polarity": false
+  },
+  {
+   "op": "authorise",
+   "id": "au-bea-hire",
+   "world": "w",
+   "grantor": "acme",
+   "holder": "bea",
+   "power": "can-hire",
+   "scope": "acme",
+   "start": "T1",
+   "attester": "hr",
+   "accepted_by": [
+    "system"
+   ],
+   "until_superseded": true
+  },
+  {
+   "op": "authorise",
+   "id": "au-bea-hire-deny",
+   "world": "w",
+   "grantor": "board",
+   "holder": "bea",
+   "power": "can-hire",
+   "scope": "acme",
+   "start": "T1",
+   "attester": "audit",
+   "accepted_by": [
+    "system"
+   ],
+   "until_superseded": true,
+   "polarity": false
+  }
+ ]
+}

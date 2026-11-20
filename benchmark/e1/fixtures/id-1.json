@@ -1,0 +1,220 @@
+{
+ "id": "id-1",
+ "description": "Same-as links judged by acceptance and polarity: an accepted link, an unreviewed link, an accepted link with an accepted denial, a denial accepted only by the audit perspective, a rejected link, and a corroborated link with a rejected denial.",
+ "profiles": [],
+ "steps": [
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "tracker"
+  },
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "clerk"
+  },
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "audit"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "p1"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "p2"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "q1"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "q2"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "r1"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "r2"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "j1"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "j2"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "k1"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "k2"
+  },
+  {
+   "op": "world",
+   "id": "w",
+   "kind": "actual"
+  },
+  {
+   "op": "attest",
+   "id": "sa-p",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "p1",
+     "p2"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "tracker",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "sa-q",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "q1",
+     "q2"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "tracker"
+  },
+  {
+   "op": "attest",
+   "id": "sa-r",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "r1",
+     "r2"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "tracker",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "deny",
+   "id": "dn-r",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "r1",
+     "r2"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "clerk",
+   "accepted_by": [
+    "system",
+    "audit"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "sa-j",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "j1",
+     "j2"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "tracker",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "accept",
+   "target": "sa-j",
+   "holder": "system",
+   "verdict": "rejected"
+  },
+  {
+   "op": "attest",
+   "id": "sa-k",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "k1",
+     "k2"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "tracker",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "sa-k2",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "k1",
+     "k2"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "audit",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "deny",
+   "id": "dn-k",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "k1",
+     "k2"
+    ]
+   },
+   "until_superseded": true,
+   "attester": "clerk"
+  },
+  {
+   "op": "accept",
+   "target": "dn-k",
+   "holder": "system",
+   "verdict": "rejected"
+  }
+ ]
+}

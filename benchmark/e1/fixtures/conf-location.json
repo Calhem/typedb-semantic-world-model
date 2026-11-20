@@ -1,0 +1,346 @@
+{
+ "id": "conf-location",
+ "description": "Location reports from a robot, a camera and a clerk: rival places for one thing, unreviewed and rejected rivals, an explicit denial accepted by one perspective and later by the system, corroboration, a source's correction, a claim the system later rejects, and a plan branching before the review.",
+ "profiles": [],
+ "steps": [
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "box"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "crate"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "pallet"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "drum"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "tote"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "bin"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "kit"
+  },
+  {
+   "op": "entity",
+   "kind": "place",
+   "id": "shelf-3"
+  },
+  {
+   "op": "entity",
+   "kind": "place",
+   "id": "shelf-4"
+  },
+  {
+   "op": "entity",
+   "kind": "place",
+   "id": "dock"
+  },
+  {
+   "op": "entity",
+   "kind": "place",
+   "id": "bay-4"
+  },
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "robot"
+  },
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "camera"
+  },
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "clerk"
+  },
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "ops"
+  },
+  {
+   "op": "world",
+   "id": "w",
+   "kind": "actual"
+  },
+  {
+   "op": "attest",
+   "id": "l-box-robot",
+   "world": "w",
+   "type": "located-at",
+   "roles": {
+    "located": "box",
+    "place": "shelf-3"
+   },
+   "start": "T1",
+   "until_superseded": true,
+   "attester": "robot",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "l-box-camera",
+   "world": "w",
+   "type": "located-at",
+   "roles": {
+    "located": "box",
+    "place": "dock"
+   },
+   "start": "T3",
+   "until_superseded": true,
+   "attester": "camera",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "l-crate-robot",
+   "world": "w",
+   "type": "located-at",
+   "roles": {
+    "located": "crate",
+    "place": "shelf-3"
+   },
+   "start": "T1",
+   "until_superseded": true,
+   "attester": "robot",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "l-crate-clerk",
+   "world": "w",
+   "type": "located-at",
+   "roles": {
+    "located": "crate",
+    "place": "dock"
+   },
+   "start": "T1",
+   "until_superseded": true,
+   "attester": "clerk"
+  },
+  {
+   "op": "attest",
+   "id": "l-crate-camera",
+   "world": "w",
+   "type": "located-at",
+   "roles": {
+    "located": "crate",
+    "place": "bay-4"
+   },
+   "start": "T1",
+   "until_superseded": true,
+   "attester": "camera"
+  },
+  {
+   "op": "accept",
+   "target": "l-crate-camera",
+   "holder": "system",
+   "verdict": "rejected"
+  },
+  {
+   "op": "attest",
+   "id": "l-pallet",
+   "world": "w",
+   "type": "located-at",
+   "roles": {
+    "located": "pallet",
+    "place": "bay-4"
+   },
+   "start": "T1",
+   "until_superseded": true,
+   "attester": "robot",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "deny",
+   "id": "d-pallet",
+   "world": "w",
+   "type": "located-at",
+   "roles": {
+    "located": "pallet",
+    "place": "bay-4"
+   },
+   "start": "T1",
+   "until_superseded": true,
+   "attester": "clerk",
+   "accepted_by": [
+    "ops"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "l-drum-robot",
+   "world": "w",
+   "type": "located-at",
+   "roles": {
+    "located": "drum",
+    "place": "dock"
+   },
+   "start": "T1",
+   "until_superseded": true,
+   "attester": "robot",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "l-drum-camera",
+   "world": "w",
+   "type": "located-at",
+   "roles": {
+    "located": "drum",
+    "place": "dock"
+   },
+   "start": "T2",
+   "until_superseded": true,
+   "attester": "camera",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "l-drum-clerk",
+   "world": "w",
+   "type": "located-at",
+   "roles": {
+    "located": "drum",
+    "place": "shelf-4"
+   },
+   "start": "T1",
+   "until_superseded": true,
+   "attester": "clerk"
+  },
+  {
+   "op": "attest",
+   "id": "l-tote",
+   "world": "w",
+   "type": "located-at",
+   "roles": {
+    "located": "tote",
+    "place": "shelf-3"
+   },
+   "start": "T1",
+   "until_superseded": true,
+   "attester": "clerk",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "correct",
+   "id": "c-tote",
+   "world": "w",
+   "target": "l-tote",
+   "type": "located-at",
+   "roles": {
+    "located": "tote",
+    "place": "shelf-4"
+   },
+   "start": "T1",
+   "until_superseded": true,
+   "attester": "clerk"
+  },
+  {
+   "op": "attest",
+   "id": "l-bin",
+   "world": "w",
+   "type": "located-at",
+   "roles": {
+    "located": "bin",
+    "place": "dock"
+   },
+   "start": "T1",
+   "until_superseded": true,
+   "attester": "clerk",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "l-kit",
+   "world": "w",
+   "type": "located-at",
+   "roles": {
+    "located": "kit",
+    "place": "shelf-4"
+   },
+   "start": "T1",
+   "until_superseded": true,
+   "attester": "clerk"
+  },
+  {
+   "op": "mark",
+   "name": "before-review"
+  },
+  {
+   "op": "accept",
+   "target": "d-pallet",
+   "holder": "system",
+   "verdict": "accepted"
+  },
+  {
+   "op": "accept",
+   "target": "c-tote",
+   "holder": "system",
+   "verdict": "accepted"
+  },
+  {
+   "op": "accept",
+   "target": "l-bin",
+   "holder": "system",
+   "verdict": "rejected"
+  },
+  {
+   "op": "world",
+   "id": "plan",
+   "kind": "hypothetical",
+   "base": "w",
+   "branch_at": "T6",
+   "knowledge_at": "@before-review"
+  },
+  {
+   "op": "attest",
+   "id": "s-box-plan",
+   "world": "plan",
+   "type": "located-at",
+   "roles": {
+    "located": "box",
+    "place": "bay-4"
+   },
+   "start": "T8",
+   "until_superseded": true,
+   "attester": "system"
+  }
+ ]
+}

@@ -1,0 +1,21 @@
+{"id": "x-identity",
+ "description": "Identity across the organisation domain and a plan. HR and the clerk give accounts of one signing (o-act, T5): HR names Bea, the clerk names B. Smith (b-smith). HR states that b-smith and bea are the same person (accepted by the system, not by QA). A look-alike person b-smyth has no identity link. A plan branching at T8 (knowledge i1) stipulates that bea and b-smith are not the same person.",
+ "profiles": ["organisation"],
+ "steps": [
+  {"op": "entity", "kind": "organisation", "id": "hr", "name": "HR department"},
+  {"op": "entity", "kind": "person", "id": "clerk", "name": "registry clerk"},
+  {"op": "entity", "kind": "organisation", "id": "qa", "name": "quality office"},
+  {"op": "entity", "kind": "organisation", "id": "acme", "name": "Acme"},
+  {"op": "entity", "kind": "person", "id": "bea", "name": "Bea"},
+  {"op": "entity", "kind": "person", "id": "b-smith", "name": "B. Smith"},
+  {"op": "entity", "kind": "person", "id": "b-smyth", "name": "B. Smyth"},
+  {"op": "entity", "kind": "social-role", "id": "site-manager", "name": "site manager"},
+  {"op": "entity", "kind": "occurrence", "id": "o-act", "name": "signing of the supply contract"},
+  {"op": "world", "id": "w", "kind": "actual"},
+  {"op": "act_in_office", "id": "act-hr", "world": "w", "official": "bea", "office": "site-manager", "context": "acme", "start": "T5", "occurrence": "o-act", "attester": "hr", "accepted_by": ["system", "qa"]},
+  {"op": "act_in_office", "id": "act-clerk", "world": "w", "official": "b-smith", "office": "site-manager", "context": "acme", "start": "T5", "occurrence": "o-act", "attester": "clerk", "accepted_by": ["system", "qa"]},
+  {"op": "attest", "id": "id-bea", "world": "w", "type": "same-as", "roles": {"same": ["bea", "b-smith"]}, "attester": "hr", "accepted_by": ["system"]},
+  {"op": "mark", "name": "i1"},
+  {"op": "world", "id": "plan", "kind": "hypothetical", "base": "w", "branch_at": "T8", "knowledge_at": "@i1"},
+  {"op": "deny", "id": "s-id-deny", "world": "plan", "type": "same-as", "roles": {"same": ["bea", "b-smith"]}, "stance": "stipulates"}
+ ]}
