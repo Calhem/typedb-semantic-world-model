@@ -1,0 +1,3408 @@
+{
+ "db": "wm-probe-scale-perspectives-10",
+ "n": 5,
+ "calls": 267,
+ "all": {
+  "n": 1335,
+  "min": 21.1,
+  "p50": 105.2,
+  "p90": 393.3,
+  "p95": 568.3,
+  "p99": 1215.9,
+  "max": 1957.2,
+  "mean": 183.4,
+  "queries_per_round": 14601,
+  "transactions_per_round": 1950,
+  "seconds_per_round": 49.0
+ },
+ "by_reader": {
+  "authorised": {
+   "n": 20,
+   "min": 26.8,
+   "p50": 52.6,
+   "p90": 65.3,
+   "p95": 87.2,
+   "p99": 87.2,
+   "max": 87.2,
+   "mean": 47.8,
+   "calls": 4,
+   "queries_per_call": 21.5,
+   "transactions_per_call": 4.0
+  },
+  "calibration_status": {
+   "n": 20,
+   "min": 34.1,
+   "p50": 61.1,
+   "p90": 80.9,
+   "p95": 99.6,
+   "p99": 153.9,
+   "max": 153.9,
+   "mean": 60.7,
+   "calls": 4,
+   "queries_per_call": 22.8,
+   "transactions_per_call": 5.0
+  },
+  "capable": {
+   "n": 165,
+   "min": 23.4,
+   "p50": 50.5,
+   "p90": 84.9,
+   "p95": 124.7,
+   "p99": 172.4,
+   "max": 188.9,
+   "mean": 56.5,
+   "calls": 33,
+   "queries_per_call": 23.5,
+   "transactions_per_call": 3.0
+  },
+  "causes_of": {
+   "n": 70,
+   "min": 46.4,
+   "p50": 185.3,
+   "p90": 572.5,
+   "p95": 932.9,
+   "p99": 1048.3,
+   "max": 1300.8,
+   "mean": 287.8,
+   "calls": 14,
+   "queries_per_call": 112.2,
+   "transactions_per_call": 19.7
+  },
+  "changes": {
+   "n": 165,
+   "min": 36.7,
+   "p50": 190.7,
+   "p90": 724.5,
+   "p95": 918.0,
+   "p99": 1385.6,
+   "max": 1957.2,
+   "mean": 295.8,
+   "calls": 33,
+   "queries_per_call": 83.9,
+   "transactions_per_call": 9.1
+  },
+  "facts_about": {
+   "n": 165,
+   "min": 33.6,
+   "p50": 111.1,
+   "p90": 410.9,
+   "p95": 456.4,
+   "p99": 681.0,
+   "max": 1034.6,
+   "mean": 177.9,
+   "calls": 33,
+   "queries_per_call": 29.3,
+   "transactions_per_call": 3.5
+  },
+  "interpretations": {
+   "n": 60,
+   "min": 47.0,
+   "p50": 95.6,
+   "p90": 148.4,
+   "p95": 168.4,
+   "p99": 186.9,
+   "max": 226.4,
+   "mean": 102.4,
+   "calls": 12,
+   "queries_per_call": 31.2,
+   "transactions_per_call": 7.0
+  },
+  "occurrence": {
+   "n": 210,
+   "min": 146.7,
+   "p50": 242.8,
+   "p90": 477.2,
+   "p95": 579.5,
+   "p99": 931.0,
+   "max": 1441.0,
+   "mean": 289.3,
+   "calls": 42,
+   "queries_per_call": 87.9,
+   "transactions_per_call": 9.6
+  },
+  "occurrence_status": {
+   "n": 70,
+   "min": 79.2,
+   "p50": 189.6,
+   "p90": 284.2,
+   "p95": 305.3,
+   "p99": 329.3,
+   "max": 411.2,
+   "mean": 199.4,
+   "calls": 14,
+   "queries_per_call": 75.1,
+   "transactions_per_call": 10.8
+  },
+  "office_holders": {
+   "n": 20,
+   "min": 83.2,
+   "p50": 185.4,
+   "p90": 250.7,
+   "p95": 477.0,
+   "p99": 685.6,
+   "max": 685.6,
+   "mean": 218.3,
+   "calls": 4,
+   "queries_per_call": 54.5,
+   "transactions_per_call": 7.5
+  },
+  "offices_of": {
+   "n": 20,
+   "min": 61.2,
+   "p50": 375.3,
+   "p90": 648.2,
+   "p95": 671.1,
+   "p99": 1006.6,
+   "max": 1006.6,
+   "mean": 358.6,
+   "calls": 4,
+   "queries_per_call": 82.0,
+   "transactions_per_call": 11.2
+  },
+  "parts": {
+   "n": 165,
+   "min": 24.3,
+   "p50": 59.6,
+   "p90": 129.6,
+   "p95": 154.9,
+   "p99": 193.0,
+   "max": 215.0,
+   "mean": 73.2,
+   "calls": 33,
+   "queries_per_call": 17.8,
+   "transactions_per_call": 2.0
+  },
+  "provenance": {
+   "n": 20,
+   "min": 351.1,
+   "p50": 1115.9,
+   "p90": 1478.3,
+   "p95": 1581.7,
+   "p99": 1836.3,
+   "max": 1836.3,
+   "mean": 981.7,
+   "calls": 4,
+   "queries_per_call": 271.8,
+   "transactions_per_call": 53.5
+  },
+  "value_at": {
+   "n": 165,
+   "min": 21.1,
+   "p50": 66.5,
+   "p90": 103.8,
+   "p95": 125.4,
+   "p99": 199.1,
+   "max": 226.3,
+   "mean": 66.6,
+   "calls": 33,
+   "queries_per_call": 30.4,
+   "transactions_per_call": 3.9
+  }
+ },
+ "per_call": {
+  "facts_about actual gbx-100": {
+   "median_ms": 194.6,
+   "ms": [
+    201.17,
+    193.32,
+    194.57,
+    208.26,
+    182.55
+   ],
+   "queries": 20,
+   "transactions": 4
+  },
+  "parts actual gbx-100": {
+   "median_ms": 45.5,
+   "ms": [
+    45.45,
+    45.05,
+    46.97,
+    50.99,
+    45.47
+   ],
+   "queries": 11,
+   "transactions": 2
+  },
+  "changes actual gbx-100": {
+   "median_ms": 413.5,
+   "ms": [
+    438.43,
+    413.55,
+    385.58,
+    446.47,
+    378.17
+   ],
+   "queries": 112,
+   "transactions": 22
+  },
+  "value_at actual gbx-100": {
+   "median_ms": 22.3,
+   "ms": [
+    22.32,
+    22.92,
+    21.21,
+    23.83,
+    21.1
+   ],
+   "queries": 11,
+   "transactions": 3
+  },
+  "facts_about actual technician": {
+   "median_ms": 44.3,
+   "ms": [
+    44.31,
+    45.88,
+    42.69,
+    58.85,
+    43.65
+   ],
+   "queries": 14,
+   "transactions": 3
+  },
+  "parts actual technician": {
+   "median_ms": 47.7,
+   "ms": [
+    48.14,
+    47.73,
+    46.19,
+    65.38,
+    44.69
+   ],
+   "queries": 11,
+   "transactions": 2
+  },
+  "changes actual technician": {
+   "median_ms": 38.0,
+   "ms": [
+    39.08,
+    37.97,
+    36.71,
+    96.57,
+    38.02
+   ],
+   "queries": 14,
+   "transactions": 3
+  },
+  "value_at actual technician": {
+   "median_ms": 37.6,
+   "ms": [
+    46.94,
+    36.96,
+    37.62,
+    56.62,
+    35.91
+   ],
+   "queries": 20,
+   "transactions": 4
+  },
+  "facts_about actual bay-1": {
+   "median_ms": 58.4,
+   "ms": [
+    58.39,
+    58.58,
+    57.78,
+    105.73,
+    55.13
+   ],
+   "queries": 27,
+   "transactions": 4
+  },
+  "parts actual bay-1": {
+   "median_ms": 45.5,
+   "ms": [
+    46.76,
+    45.23,
+    45.51,
+    46.21,
+    44.81
+   ],
+   "queries": 11,
+   "transactions": 2
+  },
+  "changes actual bay-1": {
+   "median_ms": 55.2,
+   "ms": [
+    55.48,
+    51.25,
+    52.1,
+    55.16,
+    55.92
+   ],
+   "queries": 27,
+   "transactions": 4
+  },
+  "value_at actual bay-1": {
+   "median_ms": 43.2,
+   "ms": [
+    43.61,
+    43.15,
+    42.7,
+    54.71,
+    42.41
+   ],
+   "queries": 22,
+   "transactions": 6
+  },
+  "occurrence actual o-bearing-replacement": {
+   "median_ms": 374.5,
+   "ms": [
+    341.05,
+    355.64,
+    418.04,
+    379.54,
+    374.53
+   ],
+   "queries": 96,
+   "transactions": 14
+  },
+  "occurrence actual o-disassembly": {
+   "median_ms": 200.4,
+   "ms": [
+    197.97,
+    203.65,
+    200.43,
+    206.36,
+    188.43
+   ],
+   "queries": 53,
+   "transactions": 10
+  },
+  "occurrence actual o-inspection": {
+   "median_ms": 211.8,
+   "ms": [
+    258.48,
+    204.31,
+    211.79,
+    217.66,
+    196.82
+   ],
+   "queries": 57,
+   "transactions": 10
+  },
+  "occurrence actual o-reassembly": {
+   "median_ms": 193.7,
+   "ms": [
+    191.04,
+    193.71,
+    196.28,
+    214.08,
+    186.89
+   ],
+   "queries": 53,
+   "transactions": 10
+  },
+  "occurrence actual o-relubrication": {
+   "median_ms": 198.5,
+   "ms": [
+    198.55,
+    191.13,
+    200.94,
+    243.08,
+    190.07
+   ],
+   "queries": 53,
+   "transactions": 10
+  },
+  "occurrence actual o-repair": {
+   "median_ms": 199.1,
+   "ms": [
+    266.35,
+    195.66,
+    199.08,
+    226.23,
+    188.28
+   ],
+   "queries": 53,
+   "transactions": 10
+  },
+  "occurrence actual o-sign-off": {
+   "median_ms": 187.9,
+   "ms": [
+    202.59,
+    187.89,
+    183.89,
+    192.9,
+    178.57
+   ],
+   "queries": 49,
+   "transactions": 10
+  },
+  "occurrence actual o-test-run": {
+   "median_ms": 215.3,
+   "ms": [
+    245.59,
+    205.19,
+    215.27,
+    236.46,
+    206.66
+   ],
+   "queries": 57,
+   "transactions": 10
+  },
+  "occurrence_status actual o-bearing-replacement": {
+   "median_ms": 187.0,
+   "ms": [
+    202.68,
+    187.03,
+    179.72,
+    211.91,
+    180.81
+   ],
+   "queries": 48,
+   "transactions": 11
+  },
+  "causes_of actual o-bearing-replacement": {
+   "median_ms": 208.8,
+   "ms": [
+    208.76,
+    186.78,
+    298.39,
+    222.37,
+    190.09
+   ],
+   "queries": 99,
+   "transactions": 25
+  },
+  "occurrence_status actual o-test-run": {
+   "median_ms": 178.7,
+   "ms": [
+    173.87,
+    176.92,
+    182.7,
+    253.08,
+    178.73
+   ],
+   "queries": 48,
+   "transactions": 11
+  },
+  "causes_of actual o-test-run": {
+   "median_ms": 305.1,
+   "ms": [
+    313.32,
+    305.15,
+    268.28,
+    400.6,
+    244.6
+   ],
+   "queries": 129,
+   "transactions": 40
+  },
+  "capable actual alu-blank-7/aluminium": {
+   "median_ms": 31.5,
+   "ms": [
+    31.49,
+    30.43,
+    32.35,
+    38.68,
+    27.8
+   ],
+   "queries": 14,
+   "transactions": 3
+  },
+  "capable actual alu-blank-7/stock": {
+   "median_ms": 28.3,
+   "ms": [
+    32.02,
+    28.29,
+    28.29,
+    33.45,
+    26.84
+   ],
+   "queries": 14,
+   "transactions": 3
+  },
+  "capable actual aluminium/material": {
+   "median_ms": 26.8,
+   "ms": [
+    30.49,
+    26.84,
+    25.73,
+    84.87,
+    25.86
+   ],
+   "queries": 14,
+   "transactions": 3
+  },
+  "interpretations actual m-housing-scale-3-result": {
+   "median_ms": 60.2,
+   "ms": [
+    82.0,
+    58.86,
+    60.22,
+    121.82,
+    58.96
+   ],
+   "queries": 22,
+   "transactions": 7
+  },
+  "interpretations actual m-housing-scale-9-result": {
+   "median_ms": 51.3,
+   "ms": [
+    49.23,
+    47.01,
+    56.28,
+    51.3,
+    55.41
+   ],
+   "queries": 22,
+   "transactions": 7
+  },
+  "facts_about lab sample-12": {
+   "median_ms": 85.7,
+   "ms": [
+    90.67,
+    83.87,
+    85.72,
+    104.78,
+    80.41
+   ],
+   "queries": 15,
+   "transactions": 3
+  },
+  "parts lab sample-12": {
+   "median_ms": 26.2,
+   "ms": [
+    26.2,
+    26.12,
+    26.41,
+    29.6,
+    24.91
+   ],
+   "queries": 10,
+   "transactions": 2
+  },
+  "changes lab sample-12": {
+   "median_ms": 208.6,
+   "ms": [
+    208.59,
+    242.48,
+    196.19,
+    302.86,
+    192.85
+   ],
+   "queries": 65,
+   "transactions": 12
+  },
+  "value_at lab sample-12": {
+   "median_ms": 38.8,
+   "ms": [
+    36.29,
+    41.12,
+    38.83,
+    38.91,
+    35.19
+   ],
+   "queries": 20,
+   "transactions": 4
+  },
+  "facts_about lab ana": {
+   "median_ms": 34.5,
+   "ms": [
+    34.39,
+    38.45,
+    34.49,
+    34.54,
+    33.64
+   ],
+   "queries": 14,
+   "transactions": 3
+  },
+  "parts lab ana": {
+   "median_ms": 26.3,
+   "ms": [
+    26.31,
+    26.35,
+    24.58,
+    34.37,
+    25.0
+   ],
+   "queries": 10,
+   "transactions": 2
+  },
+  "changes lab ana": {
+   "median_ms": 113.6,
+   "ms": [
+    121.65,
+    113.61,
+    99.67,
+    114.39,
+    97.98
+   ],
+   "queries": 53,
+   "transactions": 9
+  },
+  "value_at lab ana": {
+   "median_ms": 37.1,
+   "ms": [
+    38.18,
+    38.39,
+    35.84,
+    37.13,
+    34.29
+   ],
+   "queries": 20,
+   "transactions": 4
+  },
+  "facts_about lab balance-b3": {
+   "median_ms": 36.2,
+   "ms": [
+    36.24,
+    38.7,
+    35.33,
+    41.31,
+    34.42
+   ],
+   "queries": 14,
+   "transactions": 3
+  },
+  "parts lab balance-b3": {
+   "median_ms": 25.3,
+   "ms": [
+    25.34,
+    27.38,
+    24.84,
+    25.94,
+    24.4
+   ],
+   "queries": 10,
+   "transactions": 2
+  },
+  "changes lab balance-b3": {
+   "median_ms": 74.3,
+   "ms": [
+    75.47,
+    78.69,
+    74.11,
+    74.35,
+    73.36
+   ],
+   "queries": 40,
+   "transactions": 7
+  },
+  "value_at lab balance-b3": {
+   "median_ms": 38.2,
+   "ms": [
+    36.35,
+    38.15,
+    40.81,
+    40.74,
+    34.82
+   ],
+   "queries": 20,
+   "transactions": 4
+  },
+  "occurrence lab o-sampling-1": {
+   "median_ms": 155.0,
+   "ms": [
+    155.01,
+    168.11,
+    154.6,
+    195.19,
+    146.73
+   ],
+   "queries": 53,
+   "transactions": 10
+  },
+  "occurrence lab o-split-b": {
+   "median_ms": 154.5,
+   "ms": [
+    155.11,
+    152.3,
+    154.53,
+    234.34,
+    147.34
+   ],
+   "queries": 53,
+   "transactions": 10
+  },
+  "occurrence lab o-split-c": {
+   "median_ms": 155.2,
+   "ms": [
+    158.92,
+    147.47,
+    148.58,
+    157.81,
+    155.25
+   ],
+   "queries": 53,
+   "transactions": 10
+  },
+  "occurrence lab o-weigh-late": {
+   "median_ms": 167.1,
+   "ms": [
+    161.4,
+    179.1,
+    171.5,
+    167.07,
+    161.54
+   ],
+   "queries": 53,
+   "transactions": 10
+  },
+  "occurrence_status lab o-exp-1": {
+   "median_ms": 84.1,
+   "ms": [
+    84.15,
+    122.96,
+    83.71,
+    85.66,
+    79.23
+   ],
+   "queries": 43,
+   "transactions": 10
+  },
+  "causes_of lab o-exp-1": {
+   "median_ms": 61.4,
+   "ms": [
+    46.65,
+    75.25,
+    67.18,
+    61.41,
+    46.35
+   ],
+   "queries": 25,
+   "transactions": 6
+  },
+  "occurrence_status lab o-split-b": {
+   "median_ms": 169.9,
+   "ms": [
+    134.67,
+    173.46,
+    169.85,
+    193.41,
+    124.48
+   ],
+   "queries": 47,
+   "transactions": 10
+  },
+  "causes_of lab o-split-b": {
+   "median_ms": 74.7,
+   "ms": [
+    73.75,
+    78.69,
+    74.71,
+    110.8,
+    72.41
+   ],
+   "queries": 39,
+   "transactions": 9
+  },
+  "capable lab ana/agent": {
+   "median_ms": 33.3,
+   "ms": [
+    33.23,
+    36.96,
+    35.62,
+    33.34,
+    32.77
+   ],
+   "queries": 14,
+   "transactions": 3
+  },
+  "capable lab ana/analyst": {
+   "median_ms": 34.1,
+   "ms": [
+    31.71,
+    41.46,
+    35.6,
+    34.13,
+    31.13
+   ],
+   "queries": 14,
+   "transactions": 3
+  },
+  "capable lab ana/can-weigh": {
+   "median_ms": 30.9,
+   "ms": [
+    28.23,
+    38.76,
+    30.92,
+    32.43,
+    30.54
+   ],
+   "queries": 14,
+   "transactions": 3
+  },
+  "provenance lab s12-a": {
+   "median_ms": 735.7,
+   "ms": [
+    1028.89,
+    707.44,
+    784.49,
+    735.67,
+    719.6
+   ],
+   "queries": 211,
+   "transactions": 50
+  },
+  "provenance lab s12-b": {
+   "median_ms": 1247.0,
+   "ms": [
+    1215.93,
+    1478.32,
+    1202.92,
+    1248.71,
+    1247.03
+   ],
+   "queries": 346,
+   "transactions": 82
+  },
+  "provenance lab s12-c": {
+   "median_ms": 367.5,
+   "ms": [
+    381.06,
+    351.1,
+    367.51,
+    361.9,
+    465.67
+   ],
+   "queries": 130,
+   "transactions": 32
+  },
+  "calibration_status lab balance-b3": {
+   "median_ms": 37.1,
+   "ms": [
+    36.61,
+    35.83,
+    39.12,
+    48.51,
+    37.07
+   ],
+   "queries": 16,
+   "transactions": 5
+  },
+  "calibration_status lab balance-b7": {
+   "median_ms": 37.5,
+   "ms": [
+    36.9,
+    34.05,
+    80.92,
+    64.78,
+    37.46
+   ],
+   "queries": 16,
+   "transactions": 5
+  },
+  "interpretations lab m-ana-b3-result": {
+   "median_ms": 123.2,
+   "ms": [
+    123.16,
+    98.45,
+    168.3,
+    138.32,
+    102.81
+   ],
+   "queries": 23,
+   "transactions": 7
+  },
+  "interpretations lab m-bo-b7-result": {
+   "median_ms": 90.6,
+   "ms": [
+    111.44,
+    72.11,
+    90.61,
+    145.73,
+    70.03
+   ],
+   "queries": 23,
+   "transactions": 7
+  },
+  "facts_about lab-plan-recal sample-12": {
+   "median_ms": 113.3,
+   "ms": [
+    113.34,
+    246.26,
+    90.23,
+    219.82,
+    93.5
+   ],
+   "queries": 28,
+   "transactions": 3
+  },
+  "parts lab-plan-recal sample-12": {
+   "median_ms": 77.8,
+   "ms": [
+    112.45,
+    58.12,
+    68.5,
+    77.81,
+    104.19
+   ],
+   "queries": 20,
+   "transactions": 2
+  },
+  "changes lab-plan-recal sample-12": {
+   "median_ms": 440.4,
+   "ms": [
+    406.25,
+    470.82,
+    403.08,
+    542.24,
+    440.43
+   ],
+   "queries": 127,
+   "transactions": 12
+  },
+  "value_at lab-plan-recal sample-12": {
+   "median_ms": 71.7,
+   "ms": [
+    70.9,
+    73.09,
+    69.05,
+    73.28,
+    71.66
+   ],
+   "queries": 40,
+   "transactions": 4
+  },
+  "facts_about lab-plan-recal balance-b3": {
+   "median_ms": 69.0,
+   "ms": [
+    96.14,
+    62.49,
+    59.86,
+    69.02,
+    69.69
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "parts lab-plan-recal balance-b3": {
+   "median_ms": 63.8,
+   "ms": [
+    186.48,
+    49.21,
+    63.83,
+    50.24,
+    107.23
+   ],
+   "queries": 20,
+   "transactions": 2
+  },
+  "changes lab-plan-recal balance-b3": {
+   "median_ms": 196.0,
+   "ms": [
+    189.97,
+    185.02,
+    195.98,
+    198.22,
+    202.43
+   ],
+   "queries": 105,
+   "transactions": 9
+  },
+  "value_at lab-plan-recal balance-b3": {
+   "median_ms": 72.6,
+   "ms": [
+    68.49,
+    73.0,
+    70.32,
+    78.13,
+    72.6
+   ],
+   "queries": 40,
+   "transactions": 4
+  },
+  "facts_about lab-plan-recal ana": {
+   "median_ms": 69.3,
+   "ms": [
+    69.46,
+    113.79,
+    63.39,
+    60.78,
+    69.29
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "parts lab-plan-recal ana": {
+   "median_ms": 94.9,
+   "ms": [
+    113.25,
+    53.02,
+    67.2,
+    100.3,
+    94.93
+   ],
+   "queries": 20,
+   "transactions": 2
+  },
+  "changes lab-plan-recal ana": {
+   "median_ms": 206.7,
+   "ms": [
+    193.97,
+    191.4,
+    229.93,
+    206.69,
+    231.33
+   ],
+   "queries": 105,
+   "transactions": 9
+  },
+  "value_at lab-plan-recal ana": {
+   "median_ms": 73.9,
+   "ms": [
+    110.31,
+    81.45,
+    73.88,
+    66.99,
+    69.32
+   ],
+   "queries": 40,
+   "transactions": 4
+  },
+  "occurrence lab-plan-recal o-sampling-1": {
+   "median_ms": 426.8,
+   "ms": [
+    534.2,
+    243.82,
+    477.2,
+    259.07,
+    426.78
+   ],
+   "queries": 104,
+   "transactions": 10
+  },
+  "occurrence lab-plan-recal o-split-b": {
+   "median_ms": 353.9,
+   "ms": [
+    353.87,
+    179.61,
+    508.12,
+    291.07,
+    462.72
+   ],
+   "queries": 77,
+   "transactions": 7
+  },
+  "occurrence lab-plan-recal o-split-c": {
+   "median_ms": 307.7,
+   "ms": [
+    380.85,
+    171.92,
+    281.86,
+    307.66,
+    368.7
+   ],
+   "queries": 77,
+   "transactions": 7
+  },
+  "occurrence lab-plan-recal o-weigh-late": {
+   "median_ms": 286.3,
+   "ms": [
+    253.23,
+    239.82,
+    330.43,
+    294.42,
+    286.28
+   ],
+   "queries": 104,
+   "transactions": 10
+  },
+  "occurrence_status lab-plan-recal o-exp-1": {
+   "median_ms": 156.6,
+   "ms": [
+    151.18,
+    149.44,
+    167.99,
+    171.96,
+    156.56
+   ],
+   "queries": 82,
+   "transactions": 10
+  },
+  "causes_of lab-plan-recal o-exp-1": {
+   "median_ms": 91.9,
+   "ms": [
+    88.27,
+    90.78,
+    98.24,
+    91.91,
+    103.16
+   ],
+   "queries": 48,
+   "transactions": 6
+  },
+  "occurrence_status lab-plan-recal o-sampling-1": {
+   "median_ms": 235.4,
+   "ms": [
+    275.9,
+    235.36,
+    225.91,
+    194.82,
+    248.69
+   ],
+   "queries": 92,
+   "transactions": 11
+  },
+  "causes_of lab-plan-recal o-sampling-1": {
+   "median_ms": 142.9,
+   "ms": [
+    159.42,
+    142.89,
+    132.76,
+    129.23,
+    152.36
+   ],
+   "queries": 75,
+   "transactions": 9
+  },
+  "capable lab-plan-recal ana/agent": {
+   "median_ms": 62.6,
+   "ms": [
+    61.39,
+    63.17,
+    61.3,
+    98.65,
+    62.61
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "capable lab-plan-recal ana/analyst": {
+   "median_ms": 60.9,
+   "ms": [
+    57.4,
+    64.58,
+    60.92,
+    124.66,
+    60.62
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "capable lab-plan-recal ana/can-weigh": {
+   "median_ms": 59.2,
+   "ms": [
+    59.01,
+    59.2,
+    58.47,
+    76.23,
+    63.52
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "provenance lab-plan-recal s12-a": {
+   "median_ms": 1434.6,
+   "ms": [
+    1434.62,
+    1270.76,
+    1215.07,
+    1581.69,
+    1836.33
+   ],
+   "queries": 400,
+   "transactions": 50
+  },
+  "calibration_status lab-plan-recal balance-b3": {
+   "median_ms": 65.2,
+   "ms": [
+    64.15,
+    65.16,
+    65.84,
+    63.21,
+    153.91
+   ],
+   "queries": 30,
+   "transactions": 5
+  },
+  "calibration_status lab-plan-recal balance-b7": {
+   "median_ms": 62.0,
+   "ms": [
+    60.22,
+    55.55,
+    62.03,
+    73.29,
+    99.6
+   ],
+   "queries": 29,
+   "transactions": 5
+  },
+  "interpretations lab-plan-recal m-ana-b3-result": {
+   "median_ms": 111.9,
+   "ms": [
+    110.86,
+    108.91,
+    111.91,
+    114.83,
+    148.36
+   ],
+   "queries": 36,
+   "transactions": 7
+  },
+  "interpretations lab-plan-recal m-bo-b7-result": {
+   "median_ms": 113.0,
+   "ms": [
+    105.04,
+    113.01,
+    97.87,
+    143.49,
+    226.39
+   ],
+   "queries": 36,
+   "transactions": 7
+  },
+  "facts_about lab-plan-tom sample-12": {
+   "median_ms": 147.1,
+   "ms": [
+    137.16,
+    134.7,
+    147.09,
+    152.18,
+    207.88
+   ],
+   "queries": 28,
+   "transactions": 3
+  },
+  "parts lab-plan-tom sample-12": {
+   "median_ms": 62.1,
+   "ms": [
+    105.73,
+    43.61,
+    62.09,
+    50.65,
+    204.79
+   ],
+   "queries": 20,
+   "transactions": 2
+  },
+  "changes lab-plan-tom sample-12": {
+   "median_ms": 85.6,
+   "ms": [
+    79.56,
+    90.42,
+    74.59,
+    85.6,
+    137.71
+   ],
+   "queries": 28,
+   "transactions": 3
+  },
+  "value_at lab-plan-tom sample-12": {
+   "median_ms": 71.0,
+   "ms": [
+    68.67,
+    84.95,
+    67.54,
+    71.02,
+    166.28
+   ],
+   "queries": 40,
+   "transactions": 4
+  },
+  "facts_about lab-plan-tom ana": {
+   "median_ms": 63.2,
+   "ms": [
+    66.24,
+    63.21,
+    60.54,
+    61.35,
+    173.13
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "parts lab-plan-tom ana": {
+   "median_ms": 59.6,
+   "ms": [
+    100.55,
+    59.56,
+    57.95,
+    42.2,
+    157.0
+   ],
+   "queries": 20,
+   "transactions": 2
+  },
+  "changes lab-plan-tom ana": {
+   "median_ms": 58.8,
+   "ms": [
+    57.76,
+    57.69,
+    58.79,
+    63.03,
+    127.86
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "value_at lab-plan-tom ana": {
+   "median_ms": 67.4,
+   "ms": [
+    66.74,
+    67.36,
+    65.31,
+    83.38,
+    199.11
+   ],
+   "queries": 40,
+   "transactions": 4
+  },
+  "facts_about lab-plan-tom lab-1": {
+   "median_ms": 58.2,
+   "ms": [
+    56.83,
+    53.29,
+    62.63,
+    58.24,
+    154.64
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "parts lab-plan-tom lab-1": {
+   "median_ms": 59.7,
+   "ms": [
+    96.64,
+    40.99,
+    59.65,
+    41.46,
+    169.69
+   ],
+   "queries": 20,
+   "transactions": 2
+  },
+  "changes lab-plan-tom lab-1": {
+   "median_ms": 146.8,
+   "ms": [
+    160.68,
+    133.3,
+    140.33,
+    146.78,
+    393.3
+   ],
+   "queries": 79,
+   "transactions": 7
+  },
+  "value_at lab-plan-tom lab-1": {
+   "median_ms": 72.2,
+   "ms": [
+    68.96,
+    65.67,
+    72.23,
+    75.87,
+    226.3
+   ],
+   "queries": 40,
+   "transactions": 4
+  },
+  "capable lab-plan-tom ana/agent": {
+   "median_ms": 65.4,
+   "ms": [
+    53.64,
+    82.24,
+    55.67,
+    65.37,
+    148.66
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "capable lab-plan-tom ana/analyst": {
+   "median_ms": 58.8,
+   "ms": [
+    54.29,
+    58.8,
+    58.64,
+    69.34,
+    182.56
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "capable lab-plan-tom ana/can-weigh": {
+   "median_ms": 60.9,
+   "ms": [
+    54.4,
+    60.9,
+    55.98,
+    67.89,
+    188.94
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "interpretations lab-plan-tom m-ana-b3-result": {
+   "median_ms": 103.0,
+   "ms": [
+    102.99,
+    101.71,
+    102.5,
+    124.65,
+    186.17
+   ],
+   "queries": 36,
+   "transactions": 7
+  },
+  "interpretations lab-plan-tom m-bo-b7-result": {
+   "median_ms": 95.6,
+   "ms": [
+    124.95,
+    85.6,
+    95.61,
+    85.64,
+    151.4
+   ],
+   "queries": 36,
+   "transactions": 7
+  },
+  "facts_about org depot-7": {
+   "median_ms": 111.1,
+   "ms": [
+    148.57,
+    111.11,
+    94.52,
+    98.89,
+    164.47
+   ],
+   "queries": 19,
+   "transactions": 4
+  },
+  "parts org depot-7": {
+   "median_ms": 43.0,
+   "ms": [
+    50.77,
+    28.64,
+    26.2,
+    43.02,
+    44.13
+   ],
+   "queries": 10,
+   "transactions": 2
+  },
+  "changes org depot-7": {
+   "median_ms": 351.0,
+   "ms": [
+    563.26,
+    344.38,
+    280.65,
+    351.0,
+    498.37
+   ],
+   "queries": 107,
+   "transactions": 17
+  },
+  "value_at org depot-7": {
+   "median_ms": 35.3,
+   "ms": [
+    43.29,
+    33.04,
+    34.17,
+    35.3,
+    62.99
+   ],
+   "queries": 20,
+   "transactions": 4
+  },
+  "facts_about org acme": {
+   "median_ms": 36.5,
+   "ms": [
+    43.11,
+    36.43,
+    36.53,
+    35.07,
+    104.27
+   ],
+   "queries": 14,
+   "transactions": 3
+  },
+  "parts org acme": {
+   "median_ms": 25.5,
+   "ms": [
+    25.47,
+    24.34,
+    24.39,
+    25.77,
+    55.24
+   ],
+   "queries": 10,
+   "transactions": 2
+  },
+  "changes org acme": {
+   "median_ms": 107.7,
+   "ms": [
+    122.8,
+    91.39,
+    93.89,
+    107.69,
+    212.13
+   ],
+   "queries": 53,
+   "transactions": 9
+  },
+  "value_at org acme": {
+   "median_ms": 36.0,
+   "ms": [
+    35.98,
+    32.85,
+    33.35,
+    38.14,
+    79.98
+   ],
+   "queries": 20,
+   "transactions": 4
+  },
+  "facts_about org bea": {
+   "median_ms": 200.9,
+   "ms": [
+    200.9,
+    190.83,
+    198.38,
+    202.53,
+    303.1
+   ],
+   "queries": 24,
+   "transactions": 5
+  },
+  "parts org bea": {
+   "median_ms": 25.7,
+   "ms": [
+    35.97,
+    24.35,
+    24.97,
+    25.67,
+    92.66
+   ],
+   "queries": 10,
+   "transactions": 2
+  },
+  "changes org bea": {
+   "median_ms": 190.7,
+   "ms": [
+    190.73,
+    188.98,
+    144.88,
+    202.46,
+    413.85
+   ],
+   "queries": 50,
+   "transactions": 9
+  },
+  "value_at org bea": {
+   "median_ms": 39.6,
+   "ms": [
+    34.05,
+    48.31,
+    36.07,
+    39.64,
+    62.54
+   ],
+   "queries": 20,
+   "transactions": 4
+  },
+  "occurrence org o-signoff-9": {
+   "median_ms": 277.0,
+   "ms": [
+    226.64,
+    223.46,
+    276.98,
+    277.03,
+    506.02
+   ],
+   "queries": 67,
+   "transactions": 12
+  },
+  "occurrence_status org o-signoff-9": {
+   "median_ms": 129.7,
+   "ms": [
+    121.27,
+    129.66,
+    121.96,
+    155.1,
+    226.81
+   ],
+   "queries": 48,
+   "transactions": 11
+  },
+  "causes_of org o-signoff-9": {
+   "median_ms": 81.2,
+   "ms": [
+    69.14,
+    102.03,
+    69.31,
+    81.23,
+    108.38
+   ],
+   "queries": 39,
+   "transactions": 9
+  },
+  "capable org acme/agent": {
+   "median_ms": 32.4,
+   "ms": [
+    29.8,
+    39.19,
+    32.43,
+    31.83,
+    68.18
+   ],
+   "queries": 14,
+   "transactions": 3
+  },
+  "capable org auditor/agent": {
+   "median_ms": 24.2,
+   "ms": [
+    24.21,
+    36.57,
+    24.14,
+    23.43,
+    48.45
+   ],
+   "queries": 14,
+   "transactions": 3
+  },
+  "capable org bea/agent": {
+   "median_ms": 31.5,
+   "ms": [
+    31.46,
+    49.07,
+    26.91,
+    28.71,
+    54.61
+   ],
+   "queries": 14,
+   "transactions": 3
+  },
+  "office_holders org safety-officer": {
+   "median_ms": 135.0,
+   "ms": [
+    129.6,
+    222.33,
+    135.01,
+    134.97,
+    217.55
+   ],
+   "queries": 35,
+   "transactions": 8
+  },
+  "office_holders org site-manager": {
+   "median_ms": 117.1,
+   "ms": [
+    95.77,
+    245.79,
+    83.23,
+    143.34,
+    117.12
+   ],
+   "queries": 34,
+   "transactions": 7
+  },
+  "offices_of org bea": {
+   "median_ms": 197.4,
+   "ms": [
+    197.41,
+    291.91,
+    184.14,
+    197.1,
+    381.88
+   ],
+   "queries": 59,
+   "transactions": 13
+  },
+  "offices_of org cal": {
+   "median_ms": 107.1,
+   "ms": [
+    109.56,
+    74.24,
+    61.15,
+    107.11,
+    199.74
+   ],
+   "queries": 25,
+   "transactions": 6
+  },
+  "authorised org bea/can-sign-off": {
+   "median_ms": 29.9,
+   "ms": [
+    29.92,
+    30.71,
+    29.83,
+    28.35,
+    65.3
+   ],
+   "queries": 15,
+   "transactions": 4
+  },
+  "authorised org dan/can-sign-off": {
+   "median_ms": 28.1,
+   "ms": [
+    29.04,
+    27.82,
+    28.15,
+    26.76,
+    54.06
+   ],
+   "queries": 15,
+   "transactions": 4
+  },
+  "facts_about org-plan-reorg depot-7": {
+   "median_ms": 222.0,
+   "ms": [
+    221.98,
+    234.0,
+    210.81,
+    212.26,
+    341.76
+   ],
+   "queries": 45,
+   "transactions": 4
+  },
+  "parts org-plan-reorg depot-7": {
+   "median_ms": 108.2,
+   "ms": [
+    109.27,
+    44.18,
+    108.16,
+    43.65,
+    189.53
+   ],
+   "queries": 20,
+   "transactions": 2
+  },
+  "changes org-plan-reorg depot-7": {
+   "median_ms": 1152.3,
+   "ms": [
+    1248.35,
+    918.0,
+    859.71,
+    1152.34,
+    1385.55
+   ],
+   "queries": 275,
+   "transactions": 22
+  },
+  "value_at org-plan-reorg depot-7": {
+   "median_ms": 71.7,
+   "ms": [
+    71.71,
+    68.13,
+    66.93,
+    83.37,
+    116.23
+   ],
+   "queries": 40,
+   "transactions": 4
+  },
+  "facts_about org-plan-reorg acme": {
+   "median_ms": 83.9,
+   "ms": [
+    83.9,
+    63.54,
+    60.28,
+    86.2,
+    96.98
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "parts org-plan-reorg acme": {
+   "median_ms": 60.5,
+   "ms": [
+    108.74,
+    51.62,
+    60.46,
+    59.63,
+    152.41
+   ],
+   "queries": 20,
+   "transactions": 2
+  },
+  "changes org-plan-reorg acme": {
+   "median_ms": 206.5,
+   "ms": [
+    187.53,
+    206.48,
+    184.31,
+    210.81,
+    321.19
+   ],
+   "queries": 105,
+   "transactions": 9
+  },
+  "value_at org-plan-reorg acme": {
+   "median_ms": 85.4,
+   "ms": [
+    114.3,
+    64.74,
+    85.41,
+    74.82,
+    218.89
+   ],
+   "queries": 40,
+   "transactions": 4
+  },
+  "facts_about org-plan-reorg cal": {
+   "median_ms": 681.0,
+   "ms": [
+    700.19,
+    455.41,
+    681.01,
+    519.53,
+    1034.58
+   ],
+   "queries": 47,
+   "transactions": 5
+  },
+  "parts org-plan-reorg cal": {
+   "median_ms": 82.9,
+   "ms": [
+    107.88,
+    51.49,
+    82.9,
+    42.97,
+    132.14
+   ],
+   "queries": 20,
+   "transactions": 2
+  },
+  "changes org-plan-reorg cal": {
+   "median_ms": 390.6,
+   "ms": [
+    350.11,
+    390.59,
+    407.93,
+    350.54,
+    665.78
+   ],
+   "queries": 99,
+   "transactions": 9
+  },
+  "value_at org-plan-reorg cal": {
+   "median_ms": 93.0,
+   "ms": [
+    77.9,
+    65.87,
+    93.04,
+    101.58,
+    133.54
+   ],
+   "queries": 40,
+   "transactions": 4
+  },
+  "occurrence org-plan-reorg o-signoff-9": {
+   "median_ms": 812.8,
+   "ms": [
+    689.47,
+    564.23,
+    812.75,
+    957.01,
+    1440.98
+   ],
+   "queries": 132,
+   "transactions": 12
+  },
+  "occurrence_status org-plan-reorg o-signoff-9": {
+   "median_ms": 289.3,
+   "ms": [
+    241.03,
+    226.34,
+    294.01,
+    305.34,
+    289.26
+   ],
+   "queries": 92,
+   "transactions": 11
+  },
+  "causes_of org-plan-reorg o-signoff-9": {
+   "median_ms": 206.5,
+   "ms": [
+    206.54,
+    130.43,
+    300.43,
+    146.61,
+    407.78
+   ],
+   "queries": 75,
+   "transactions": 9
+  },
+  "capable org-plan-reorg acme/agent": {
+   "median_ms": 63.7,
+   "ms": [
+    55.92,
+    55.74,
+    66.53,
+    63.69,
+    172.41
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "capable org-plan-reorg auditor/agent": {
+   "median_ms": 46.4,
+   "ms": [
+    46.13,
+    45.29,
+    48.25,
+    46.4,
+    117.39
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "capable org-plan-reorg bea/agent": {
+   "median_ms": 59.4,
+   "ms": [
+    67.58,
+    51.54,
+    59.44,
+    53.31,
+    125.75
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "office_holders org-plan-reorg safety-officer": {
+   "median_ms": 227.5,
+   "ms": [
+    191.75,
+    179.11,
+    227.48,
+    238.7,
+    685.65
+   ],
+   "queries": 75,
+   "transactions": 8
+  },
+  "office_holders org-plan-reorg site-manager": {
+   "median_ms": 238.5,
+   "ms": [
+    176.73,
+    176.13,
+    250.73,
+    238.48,
+    476.98
+   ],
+   "queries": 74,
+   "transactions": 7
+  },
+  "offices_of org-plan-reorg bea": {
+   "median_ms": 503.3,
+   "ms": [
+    503.27,
+    372.46,
+    420.01,
+    648.23,
+    1006.64
+   ],
+   "queries": 122,
+   "transactions": 13
+  },
+  "offices_of org-plan-reorg cal": {
+   "median_ms": 472.8,
+   "ms": [
+    418.27,
+    378.07,
+    477.58,
+    472.76,
+    671.08
+   ],
+   "queries": 122,
+   "transactions": 13
+  },
+  "authorised org-plan-reorg bea/can-sign-off": {
+   "median_ms": 54.6,
+   "ms": [
+    54.69,
+    51.86,
+    53.33,
+    54.58,
+    87.18
+   ],
+   "queries": 28,
+   "transactions": 4
+  },
+  "authorised org-plan-reorg dan/can-sign-off": {
+   "median_ms": 55.5,
+   "ms": [
+    55.5,
+    50.65,
+    56.24,
+    53.91,
+    87.21
+   ],
+   "queries": 28,
+   "transactions": 4
+  },
+  "facts_about plan-apprentice gbx-100": {
+   "median_ms": 410.9,
+   "ms": [
+    397.38,
+    410.89,
+    410.69,
+    412.1,
+    529.04
+   ],
+   "queries": 38,
+   "transactions": 4
+  },
+  "parts plan-apprentice gbx-100": {
+   "median_ms": 92.6,
+   "ms": [
+    86.67,
+    92.63,
+    88.66,
+    143.67,
+    111.42
+   ],
+   "queries": 21,
+   "transactions": 2
+  },
+  "changes plan-apprentice gbx-100": {
+   "median_ms": 809.6,
+   "ms": [
+    788.57,
+    786.81,
+    1092.17,
+    809.58,
+    1957.2
+   ],
+   "queries": 218,
+   "transactions": 22
+  },
+  "value_at plan-apprentice gbx-100": {
+   "median_ms": 40.2,
+   "ms": [
+    37.08,
+    35.97,
+    63.14,
+    40.24,
+    67.5
+   ],
+   "queries": 21,
+   "transactions": 3
+  },
+  "facts_about plan-apprentice technician": {
+   "median_ms": 107.2,
+   "ms": [
+    67.02,
+    107.18,
+    79.52,
+    133.5,
+    124.45
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "parts plan-apprentice technician": {
+   "median_ms": 86.1,
+   "ms": [
+    86.13,
+    74.95,
+    146.08,
+    82.16,
+    116.85
+   ],
+   "queries": 21,
+   "transactions": 2
+  },
+  "changes plan-apprentice technician": {
+   "median_ms": 68.5,
+   "ms": [
+    64.87,
+    63.6,
+    115.91,
+    68.55,
+    147.16
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "value_at plan-apprentice technician": {
+   "median_ms": 75.2,
+   "ms": [
+    93.14,
+    64.27,
+    75.16,
+    70.0,
+    140.81
+   ],
+   "queries": 40,
+   "transactions": 4
+  },
+  "facts_about plan-apprentice bay-1": {
+   "median_ms": 128.5,
+   "ms": [
+    100.71,
+    130.94,
+    97.1,
+    128.53,
+    224.87
+   ],
+   "queries": 53,
+   "transactions": 4
+  },
+  "parts plan-apprentice bay-1": {
+   "median_ms": 90.0,
+   "ms": [
+    90.04,
+    81.19,
+    92.82,
+    82.3,
+    129.62
+   ],
+   "queries": 21,
+   "transactions": 2
+  },
+  "changes plan-apprentice bay-1": {
+   "median_ms": 94.7,
+   "ms": [
+    94.69,
+    92.04,
+    93.28,
+    106.39,
+    185.24
+   ],
+   "queries": 53,
+   "transactions": 4
+  },
+  "value_at plan-apprentice bay-1": {
+   "median_ms": 92.0,
+   "ms": [
+    79.54,
+    92.04,
+    77.46,
+    93.96,
+    170.58
+   ],
+   "queries": 42,
+   "transactions": 6
+  },
+  "occurrence plan-apprentice o-bearing-replacement": {
+   "median_ms": 356.9,
+   "ms": [
+    342.69,
+    328.2,
+    356.93,
+    498.42,
+    702.65
+   ],
+   "queries": 121,
+   "transactions": 10
+  },
+  "occurrence plan-apprentice o-disassembly": {
+   "median_ms": 375.1,
+   "ms": [
+    289.14,
+    290.92,
+    421.79,
+    375.12,
+    853.41
+   ],
+   "queries": 104,
+   "transactions": 10
+  },
+  "occurrence plan-apprentice o-inspection": {
+   "median_ms": 284.2,
+   "ms": [
+    284.19,
+    247.36,
+    265.32,
+    322.0,
+    708.97
+   ],
+   "queries": 112,
+   "transactions": 10
+  },
+  "occurrence plan-apprentice o-reassembly": {
+   "median_ms": 244.5,
+   "ms": [
+    231.25,
+    231.09,
+    277.57,
+    244.53,
+    366.11
+   ],
+   "queries": 104,
+   "transactions": 10
+  },
+  "occurrence plan-apprentice o-relubrication": {
+   "median_ms": 276.8,
+   "ms": [
+    231.63,
+    230.48,
+    276.75,
+    282.54,
+    474.11
+   ],
+   "queries": 104,
+   "transactions": 10
+  },
+  "occurrence plan-apprentice o-repair": {
+   "median_ms": 255.9,
+   "ms": [
+    251.19,
+    237.73,
+    297.37,
+    255.94,
+    753.59
+   ],
+   "queries": 104,
+   "transactions": 10
+  },
+  "occurrence plan-apprentice o-sign-off": {
+   "median_ms": 303.5,
+   "ms": [
+    303.46,
+    212.13,
+    339.28,
+    251.64,
+    411.07
+   ],
+   "queries": 96,
+   "transactions": 10
+  },
+  "occurrence plan-apprentice o-test-run": {
+   "median_ms": 278.4,
+   "ms": [
+    267.78,
+    255.72,
+    278.44,
+    332.13,
+    480.32
+   ],
+   "queries": 112,
+   "transactions": 10
+  },
+  "occurrence_status plan-apprentice o-test-run": {
+   "median_ms": 204.8,
+   "ms": [
+    186.27,
+    189.83,
+    260.03,
+    204.75,
+    411.22
+   ],
+   "queries": 92,
+   "transactions": 11
+  },
+  "causes_of plan-apprentice o-test-run": {
+   "median_ms": 573.8,
+   "ms": [
+    598.23,
+    515.69,
+    573.8,
+    572.46,
+    793.92
+   ],
+   "queries": 235,
+   "transactions": 40
+  },
+  "occurrence_status plan-apprentice o-repair": {
+   "median_ms": 196.8,
+   "ms": [
+    190.18,
+    183.37,
+    196.79,
+    229.98,
+    237.77
+   ],
+   "queries": 92,
+   "transactions": 11
+  },
+  "causes_of plan-apprentice o-repair": {
+   "median_ms": 139.6,
+   "ms": [
+    134.34,
+    136.27,
+    207.06,
+    139.65,
+    295.48
+   ],
+   "queries": 75,
+   "transactions": 9
+  },
+  "capable plan-apprentice alu-blank-7/aluminium": {
+   "median_ms": 52.0,
+   "ms": [
+    50.49,
+    52.01,
+    117.04,
+    48.22,
+    127.01
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "capable plan-apprentice alu-blank-7/stock": {
+   "median_ms": 51.7,
+   "ms": [
+    49.64,
+    51.67,
+    130.53,
+    46.38,
+    147.7
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "capable plan-apprentice aluminium/material": {
+   "median_ms": 51.2,
+   "ms": [
+    45.83,
+    46.54,
+    105.23,
+    51.25,
+    95.2
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "interpretations plan-apprentice m-housing-scale-3-result": {
+   "median_ms": 93.8,
+   "ms": [
+    86.53,
+    93.79,
+    186.87,
+    88.75,
+    130.64
+   ],
+   "queries": 35,
+   "transactions": 7
+  },
+  "interpretations plan-apprentice m-housing-scale-9-result": {
+   "median_ms": 75.8,
+   "ms": [
+    70.21,
+    67.26,
+    89.94,
+    75.84,
+    168.36
+   ],
+   "queries": 35,
+   "transactions": 7
+  },
+  "facts_about plan-move-bench gbx-100": {
+   "median_ms": 332.1,
+   "ms": [
+    325.7,
+    332.13,
+    456.45,
+    322.07,
+    451.12
+   ],
+   "queries": 37,
+   "transactions": 4
+  },
+  "parts plan-move-bench gbx-100": {
+   "median_ms": 85.6,
+   "ms": [
+    85.6,
+    83.7,
+    97.57,
+    85.18,
+    149.88
+   ],
+   "queries": 21,
+   "transactions": 2
+  },
+  "changes plan-move-bench gbx-100": {
+   "median_ms": 361.8,
+   "ms": [
+    367.66,
+    289.38,
+    361.78,
+    299.81,
+    572.04
+   ],
+   "queries": 89,
+   "transactions": 8
+  },
+  "value_at plan-move-bench gbx-100": {
+   "median_ms": 48.9,
+   "ms": [
+    55.12,
+    37.62,
+    48.9,
+    37.97,
+    74.6
+   ],
+   "queries": 21,
+   "transactions": 3
+  },
+  "facts_about plan-move-bench shaft-asm-in": {
+   "median_ms": 120.6,
+   "ms": [
+    133.83,
+    111.75,
+    120.57,
+    107.15,
+    178.49
+   ],
+   "queries": 28,
+   "transactions": 3
+  },
+  "parts plan-move-bench shaft-asm-in": {
+   "median_ms": 83.9,
+   "ms": [
+    83.86,
+    75.9,
+    87.77,
+    82.55,
+    103.13
+   ],
+   "queries": 21,
+   "transactions": 2
+  },
+  "changes plan-move-bench shaft-asm-in": {
+   "median_ms": 179.9,
+   "ms": [
+    179.94,
+    173.82,
+    234.69,
+    168.07,
+    267.18
+   ],
+   "queries": 80,
+   "transactions": 7
+  },
+  "value_at plan-move-bench shaft-asm-in": {
+   "median_ms": 71.4,
+   "ms": [
+    67.0,
+    71.37,
+    114.79,
+    68.61,
+    125.45
+   ],
+   "queries": 40,
+   "transactions": 4
+  },
+  "facts_about plan-move-bench bearing-1": {
+   "median_ms": 137.2,
+   "ms": [
+    114.57,
+    137.15,
+    149.32,
+    117.12,
+    194.17
+   ],
+   "queries": 28,
+   "transactions": 3
+  },
+  "parts plan-move-bench bearing-1": {
+   "median_ms": 82.3,
+   "ms": [
+    75.15,
+    82.55,
+    82.26,
+    77.34,
+    148.42
+   ],
+   "queries": 21,
+   "transactions": 2
+  },
+  "changes plan-move-bench bearing-1": {
+   "median_ms": 244.5,
+   "ms": [
+    244.49,
+    225.59,
+    283.13,
+    219.32,
+    486.01
+   ],
+   "queries": 106,
+   "transactions": 9
+  },
+  "value_at plan-move-bench bearing-1": {
+   "median_ms": 38.1,
+   "ms": [
+    36.22,
+    38.12,
+    46.44,
+    35.31,
+    97.58
+   ],
+   "queries": 21,
+   "transactions": 3
+  },
+  "capable plan-move-bench alu-blank-7/aluminium": {
+   "median_ms": 49.6,
+   "ms": [
+    47.53,
+    49.6,
+    67.46,
+    48.95,
+    95.47
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "capable plan-move-bench alu-blank-7/stock": {
+   "median_ms": 49.5,
+   "ms": [
+    48.48,
+    49.45,
+    56.71,
+    49.04,
+    91.3
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "capable plan-move-bench aluminium/material": {
+   "median_ms": 48.3,
+   "ms": [
+    48.63,
+    46.94,
+    48.28,
+    45.19,
+    73.72
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "facts_about plan-relubricate-only gbx-100": {
+   "median_ms": 402.9,
+   "ms": [
+    409.3,
+    377.1,
+    402.85,
+    401.97,
+    579.52
+   ],
+   "queries": 38,
+   "transactions": 4
+  },
+  "parts plan-relubricate-only gbx-100": {
+   "median_ms": 90.8,
+   "ms": [
+    76.61,
+    81.46,
+    90.95,
+    90.83,
+    154.89
+   ],
+   "queries": 21,
+   "transactions": 2
+  },
+  "changes plan-relubricate-only gbx-100": {
+   "median_ms": 724.5,
+   "ms": [
+    819.16,
+    624.56,
+    724.47,
+    709.65,
+    1430.68
+   ],
+   "queries": 139,
+   "transactions": 15
+  },
+  "value_at plan-relubricate-only gbx-100": {
+   "median_ms": 42.9,
+   "ms": [
+    105.72,
+    40.3,
+    41.67,
+    42.89,
+    77.31
+   ],
+   "queries": 21,
+   "transactions": 3
+  },
+  "facts_about plan-relubricate-only o-test-run": {
+   "median_ms": 72.4,
+   "ms": [
+    90.12,
+    51.1,
+    51.7,
+    72.42,
+    75.72
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "parts plan-relubricate-only o-test-run": {
+   "median_ms": 87.7,
+   "ms": [
+    172.06,
+    86.96,
+    87.7,
+    86.0,
+    99.42
+   ],
+   "queries": 21,
+   "transactions": 2
+  },
+  "changes plan-relubricate-only o-test-run": {
+   "median_ms": 52.6,
+   "ms": [
+    83.33,
+    50.01,
+    52.64,
+    51.14,
+    61.05
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "value_at plan-relubricate-only o-test-run": {
+   "median_ms": 87.0,
+   "ms": [
+    103.77,
+    68.05,
+    105.35,
+    86.97,
+    81.1
+   ],
+   "queries": 40,
+   "transactions": 4
+  },
+  "facts_about plan-relubricate-only bench-1": {
+   "median_ms": 410.7,
+   "ms": [
+    433.69,
+    338.57,
+    410.67,
+    364.03,
+    532.55
+   ],
+   "queries": 38,
+   "transactions": 4
+  },
+  "parts plan-relubricate-only bench-1": {
+   "median_ms": 86.7,
+   "ms": [
+    88.51,
+    57.79,
+    86.66,
+    57.9,
+    193.01
+   ],
+   "queries": 21,
+   "transactions": 2
+  },
+  "changes plan-relubricate-only bench-1": {
+   "median_ms": 300.2,
+   "ms": [
+    278.85,
+    300.23,
+    348.21,
+    277.93,
+    802.97
+   ],
+   "queries": 64,
+   "transactions": 6
+  },
+  "value_at plan-relubricate-only bench-1": {
+   "median_ms": 39.8,
+   "ms": [
+    38.46,
+    39.85,
+    82.27,
+    35.45,
+    72.23
+   ],
+   "queries": 21,
+   "transactions": 3
+  },
+  "occurrence plan-relubricate-only o-bearing-replacement": {
+   "median_ms": 280.4,
+   "ms": [
+    222.92,
+    280.39,
+    283.02,
+    215.59,
+    395.32
+   ],
+   "queries": 94,
+   "transactions": 7
+  },
+  "occurrence plan-relubricate-only o-disassembly": {
+   "median_ms": 184.3,
+   "ms": [
+    171.38,
+    184.28,
+    250.98,
+    177.37,
+    379.38
+   ],
+   "queries": 77,
+   "transactions": 7
+  },
+  "occurrence plan-relubricate-only o-inspection": {
+   "median_ms": 241.8,
+   "ms": [
+    237.63,
+    239.93,
+    268.37,
+    241.78,
+    540.58
+   ],
+   "queries": 112,
+   "transactions": 10
+  },
+  "occurrence plan-relubricate-only o-reassembly": {
+   "median_ms": 172.9,
+   "ms": [
+    170.53,
+    172.88,
+    241.83,
+    170.5,
+    329.39
+   ],
+   "queries": 77,
+   "transactions": 7
+  },
+  "occurrence plan-relubricate-only o-relubrication": {
+   "median_ms": 192.7,
+   "ms": [
+    246.4,
+    186.3,
+    192.69,
+    175.5,
+    214.35
+   ],
+   "queries": 77,
+   "transactions": 7
+  },
+  "occurrence plan-relubricate-only o-repair": {
+   "median_ms": 203.3,
+   "ms": [
+    211.35,
+    203.28,
+    214.82,
+    182.28,
+    192.95
+   ],
+   "queries": 77,
+   "transactions": 7
+  },
+  "occurrence plan-relubricate-only o-sign-off": {
+   "median_ms": 169.8,
+   "ms": [
+    169.81,
+    164.53,
+    193.37,
+    150.91,
+    239.09
+   ],
+   "queries": 69,
+   "transactions": 7
+  },
+  "occurrence plan-relubricate-only o-test-run": {
+   "median_ms": 196.1,
+   "ms": [
+    193.14,
+    196.1,
+    229.15,
+    195.43,
+    537.93
+   ],
+   "queries": 85,
+   "transactions": 7
+  },
+  "occurrence_status plan-relubricate-only o-test-run": {
+   "median_ms": 233.4,
+   "ms": [
+    284.21,
+    186.17,
+    233.36,
+    186.61,
+    306.92
+   ],
+   "queries": 92,
+   "transactions": 11
+  },
+  "causes_of plan-relubricate-only o-test-run": {
+   "median_ms": 963.1,
+   "ms": [
+    1300.77,
+    535.7,
+    963.11,
+    520.81,
+    1048.31
+   ],
+   "queries": 235,
+   "transactions": 40
+  },
+  "occurrence_status plan-relubricate-only o-repair": {
+   "median_ms": 182.1,
+   "ms": [
+    178.21,
+    182.09,
+    329.29,
+    177.78,
+    304.57
+   ],
+   "queries": 92,
+   "transactions": 11
+  },
+  "causes_of plan-relubricate-only o-repair": {
+   "median_ms": 152.2,
+   "ms": [
+    152.21,
+    143.29,
+    175.35,
+    134.66,
+    183.83
+   ],
+   "queries": 75,
+   "transactions": 9
+  },
+  "capable plan-relubricate-only alu-blank-7/aluminium": {
+   "median_ms": 54.1,
+   "ms": [
+    53.97,
+    54.06,
+    55.87,
+    49.25,
+    71.49
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "capable plan-relubricate-only alu-blank-7/stock": {
+   "median_ms": 56.2,
+   "ms": [
+    56.86,
+    50.92,
+    57.7,
+    55.11,
+    56.15
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "capable plan-relubricate-only aluminium/material": {
+   "median_ms": 48.3,
+   "ms": [
+    76.36,
+    48.16,
+    48.33,
+    48.16,
+    51.1
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "facts_about plan-rig-control gbx-100": {
+   "median_ms": 442.4,
+   "ms": [
+    442.42,
+    453.81,
+    437.47,
+    371.83,
+    650.24
+   ],
+   "queries": 38,
+   "transactions": 4
+  },
+  "parts plan-rig-control gbx-100": {
+   "median_ms": 79.9,
+   "ms": [
+    79.95,
+    59.11,
+    129.56,
+    54.25,
+    214.96
+   ],
+   "queries": 21,
+   "transactions": 2
+  },
+  "changes plan-rig-control gbx-100": {
+   "median_ms": 744.3,
+   "ms": [
+    706.54,
+    744.35,
+    1079.89,
+    692.22,
+    1197.34
+   ],
+   "queries": 218,
+   "transactions": 22
+  },
+  "value_at plan-rig-control gbx-100": {
+   "median_ms": 39.1,
+   "ms": [
+    39.1,
+    38.79,
+    55.31,
+    38.29,
+    81.89
+   ],
+   "queries": 21,
+   "transactions": 3
+  },
+  "facts_about plan-rig-control technician": {
+   "median_ms": 76.4,
+   "ms": [
+    71.48,
+    77.48,
+    76.44,
+    73.82,
+    235.41
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "parts plan-rig-control technician": {
+   "median_ms": 54.9,
+   "ms": [
+    54.56,
+    54.93,
+    56.08,
+    54.8,
+    134.69
+   ],
+   "queries": 21,
+   "transactions": 2
+  },
+  "changes plan-rig-control technician": {
+   "median_ms": 68.8,
+   "ms": [
+    68.37,
+    69.33,
+    68.81,
+    65.69,
+    118.55
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "value_at plan-rig-control technician": {
+   "median_ms": 70.5,
+   "ms": [
+    73.95,
+    68.43,
+    70.46,
+    66.37,
+    108.15
+   ],
+   "queries": 40,
+   "transactions": 4
+  },
+  "facts_about plan-rig-control bay-1": {
+   "median_ms": 95.9,
+   "ms": [
+    95.16,
+    95.94,
+    97.8,
+    94.61,
+    122.7
+   ],
+   "queries": 53,
+   "transactions": 4
+  },
+  "parts plan-rig-control bay-1": {
+   "median_ms": 55.4,
+   "ms": [
+    55.44,
+    56.67,
+    55.14,
+    54.35,
+    69.76
+   ],
+   "queries": 21,
+   "transactions": 2
+  },
+  "changes plan-rig-control bay-1": {
+   "median_ms": 91.6,
+   "ms": [
+    88.14,
+    87.96,
+    91.55,
+    105.56,
+    161.29
+   ],
+   "queries": 53,
+   "transactions": 4
+  },
+  "value_at plan-rig-control bay-1": {
+   "median_ms": 78.1,
+   "ms": [
+    76.68,
+    78.1,
+    75.95,
+    99.21,
+    167.05
+   ],
+   "queries": 42,
+   "transactions": 6
+  },
+  "occurrence plan-rig-control o-bearing-replacement": {
+   "median_ms": 579.5,
+   "ms": [
+    662.22,
+    572.47,
+    579.5,
+    539.24,
+    930.96
+   ],
+   "queries": 187,
+   "transactions": 14
+  },
+  "occurrence plan-rig-control o-disassembly": {
+   "median_ms": 243.6,
+   "ms": [
+    228.83,
+    243.64,
+    257.99,
+    229.3,
+    249.88
+   ],
+   "queries": 104,
+   "transactions": 10
+  },
+  "occurrence plan-rig-control o-inspection": {
+   "median_ms": 259.4,
+   "ms": [
+    246.26,
+    259.39,
+    259.48,
+    247.26,
+    292.34
+   ],
+   "queries": 112,
+   "transactions": 10
+  },
+  "occurrence plan-rig-control o-reassembly": {
+   "median_ms": 233.0,
+   "ms": [
+    224.42,
+    232.99,
+    296.72,
+    227.19,
+    261.0
+   ],
+   "queries": 104,
+   "transactions": 10
+  },
+  "occurrence plan-rig-control o-relubrication": {
+   "median_ms": 245.3,
+   "ms": [
+    230.29,
+    265.85,
+    245.27,
+    242.6,
+    292.16
+   ],
+   "queries": 104,
+   "transactions": 10
+  },
+  "occurrence plan-rig-control o-repair": {
+   "median_ms": 251.4,
+   "ms": [
+    228.95,
+    251.39,
+    317.99,
+    231.27,
+    267.86
+   ],
+   "queries": 104,
+   "transactions": 10
+  },
+  "occurrence plan-rig-control o-sign-off": {
+   "median_ms": 234.4,
+   "ms": [
+    211.07,
+    234.43,
+    307.25,
+    203.1,
+    240.25
+   ],
+   "queries": 96,
+   "transactions": 10
+  },
+  "occurrence plan-rig-control o-test-run": {
+   "median_ms": 273.4,
+   "ms": [
+    247.97,
+    273.43,
+    362.77,
+    263.06,
+    278.78
+   ],
+   "queries": 112,
+   "transactions": 10
+  },
+  "occurrence_status plan-rig-control o-bearing-replacement": {
+   "median_ms": 194.3,
+   "ms": [
+    189.04,
+    194.32,
+    260.15,
+    193.06,
+    221.84
+   ],
+   "queries": 92,
+   "transactions": 11
+  },
+  "causes_of plan-rig-control o-bearing-replacement": {
+   "median_ms": 372.0,
+   "ms": [
+    335.16,
+    371.99,
+    418.36,
+    339.25,
+    386.52
+   ],
+   "queries": 187,
+   "transactions": 25
+  },
+  "occurrence_status plan-rig-control o-test-run": {
+   "median_ms": 196.4,
+   "ms": [
+    200.97,
+    189.29,
+    196.4,
+    184.84,
+    203.06
+   ],
+   "queries": 92,
+   "transactions": 11
+  },
+  "causes_of plan-rig-control o-test-run": {
+   "median_ms": 516.8,
+   "ms": [
+    516.79,
+    505.95,
+    932.86,
+    492.08,
+    568.29
+   ],
+   "queries": 235,
+   "transactions": 40
+  },
+  "capable plan-rig-control alu-blank-7/aluminium": {
+   "median_ms": 53.6,
+   "ms": [
+    53.64,
+    51.71,
+    62.1,
+    50.97,
+    59.26
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "capable plan-rig-control alu-blank-7/stock": {
+   "median_ms": 51.3,
+   "ms": [
+    51.13,
+    51.33,
+    55.14,
+    50.32,
+    53.28
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "capable plan-rig-control aluminium/material": {
+   "median_ms": 46.6,
+   "ms": [
+    46.57,
+    46.53,
+    50.17,
+    45.87,
+    51.83
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "interpretations plan-rig-control m-housing-scale-3-result": {
+   "median_ms": 92.5,
+   "ms": [
+    88.69,
+    92.52,
+    95.9,
+    88.17,
+    95.64
+   ],
+   "queries": 35,
+   "transactions": 7
+  },
+  "interpretations plan-rig-control m-housing-scale-9-result": {
+   "median_ms": 87.2,
+   "ms": [
+    91.15,
+    73.09,
+    76.66,
+    91.06,
+    87.2
+   ],
+   "queries": 35,
+   "transactions": 7
+  },
+  "facts_about plan-steel-cover gbx-100": {
+   "median_ms": 320.0,
+   "ms": [
+    311.26,
+    319.97,
+    337.6,
+    320.16,
+    311.65
+   ],
+   "queries": 37,
+   "transactions": 4
+  },
+  "parts plan-steel-cover gbx-100": {
+   "median_ms": 61.1,
+   "ms": [
+    57.5,
+    56.83,
+    79.6,
+    61.06,
+    61.51
+   ],
+   "queries": 21,
+   "transactions": 2
+  },
+  "changes plan-steel-cover gbx-100": {
+   "median_ms": 211.8,
+   "ms": [
+    211.77,
+    205.97,
+    290.79,
+    207.02,
+    218.89
+   ],
+   "queries": 37,
+   "transactions": 4
+  },
+  "value_at plan-steel-cover gbx-100": {
+   "median_ms": 39.5,
+   "ms": [
+    38.62,
+    40.57,
+    45.34,
+    38.86,
+    39.52
+   ],
+   "queries": 21,
+   "transactions": 3
+  },
+  "facts_about plan-steel-cover cover": {
+   "median_ms": 53.8,
+   "ms": [
+    52.26,
+    54.5,
+    59.99,
+    50.27,
+    53.83
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "parts plan-steel-cover cover": {
+   "median_ms": 54.1,
+   "ms": [
+    54.09,
+    54.12,
+    59.6,
+    53.16,
+    55.56
+   ],
+   "queries": 21,
+   "transactions": 2
+  },
+  "changes plan-steel-cover cover": {
+   "median_ms": 131.6,
+   "ms": [
+    127.56,
+    134.49,
+    159.91,
+    131.14,
+    131.61
+   ],
+   "queries": 79,
+   "transactions": 7
+  },
+  "value_at plan-steel-cover cover": {
+   "median_ms": 67.5,
+   "ms": [
+    66.49,
+    74.9,
+    100.29,
+    67.49,
+    65.51
+   ],
+   "queries": 40,
+   "transactions": 4
+  },
+  "facts_about plan-steel-cover shaft-asm-in": {
+   "median_ms": 117.5,
+   "ms": [
+    119.67,
+    60.0,
+    118.4,
+    53.8,
+    117.48
+   ],
+   "queries": 28,
+   "transactions": 3
+  },
+  "parts plan-steel-cover shaft-asm-in": {
+   "median_ms": 55.1,
+   "ms": [
+    54.29,
+    55.35,
+    55.15,
+    53.75,
+    55.87
+   ],
+   "queries": 21,
+   "transactions": 2
+  },
+  "changes plan-steel-cover shaft-asm-in": {
+   "median_ms": 167.6,
+   "ms": [
+    167.6,
+    135.35,
+    175.61,
+    140.32,
+    176.53
+   ],
+   "queries": 80,
+   "transactions": 7
+  },
+  "value_at plan-steel-cover shaft-asm-in": {
+   "median_ms": 65.0,
+   "ms": [
+    66.17,
+    63.01,
+    64.82,
+    65.03,
+    68.38
+   ],
+   "queries": 40,
+   "transactions": 4
+  },
+  "capable plan-steel-cover alu-blank-7/aluminium": {
+   "median_ms": 47.7,
+   "ms": [
+    47.16,
+    63.73,
+    47.28,
+    53.99,
+    47.74
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "capable plan-steel-cover alu-blank-7/stock": {
+   "median_ms": 47.8,
+   "ms": [
+    47.6,
+    78.58,
+    47.79,
+    47.24,
+    47.82
+   ],
+   "queries": 27,
+   "transactions": 3
+  },
+  "capable plan-steel-cover aluminium/material": {
+   "median_ms": 44.9,
+   "ms": [
+    44.31,
+    44.94,
+    47.29,
+    41.22,
+    46.47
+   ],
+   "queries": 27,
+   "transactions": 3
+  }
+ }
+}

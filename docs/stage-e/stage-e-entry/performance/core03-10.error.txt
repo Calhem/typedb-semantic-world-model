@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+typedb.common.exception.TypeDBDriverException: Unable to connect to TypeDB server(s).
+Initially configured addresses: [127.0.0.1:1735].
+Tried accessing addresses: [127.0.0.1:1735]. Details: '127.0.0.1:1735': '[CXN04] Connection Error: Unable to connect to TypeDB server(s), received network or protocol error: 
+transport error: transport error: connection error: stream closed because of a broken pipe'

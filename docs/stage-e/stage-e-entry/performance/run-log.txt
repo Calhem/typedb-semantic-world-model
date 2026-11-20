@@ -1,0 +1,21 @@
+14:15:39 start; containers running: 15
+14:15:47 build worlds 1 rc=0
+14:16:18 build worlds 5 rc=0
+14:17:14 build worlds 10 rc=0
+14:17:38 build perspectives 5 rc=0
+14:18:23 build perspectives 10 rc=0
+14:21:30 read1 wm-probe-scale-worlds-1 rc=0
+14:25:20 read1 wm-probe-scale-worlds-5 rc=0
+14:29:56 read1 wm-probe-scale-worlds-10 rc=0
+14:33:59 read1 wm-probe-scale-perspectives-5 rc=0
+14:38:37 read1 wm-probe-scale-perspectives-10 rc=0
+14:43:32 read2 wm-probe-scale-perspectives-10 rc=0
+14:47:00 read2 wm-probe-scale-perspectives-5 rc=0
+14:51:18 read2 wm-probe-scale-worlds-10 rc=0
+14:54:44 read2 wm-probe-scale-worlds-5 rc=0
+14:57:26 read2 wm-probe-scale-worlds-1 rc=0
+14:58:26 di9 rc=0
+15:02:25 core03 1 rc=0
+16:03:33 core03 5 rc=0
+17:02:48 core03 10 rc=1
+17:02:48 DONE

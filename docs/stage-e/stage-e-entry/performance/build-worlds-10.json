@@ -1,0 +1,19 @@
+{
+ "axis": "worlds",
+ "scale": 10,
+ "db": "wm-probe-scale-worlds-10",
+ "filler": {
+  "seconds": 50.3,
+  "writes": 1152,
+  "attestations": 2950,
+  "attestations_per_second": 58.6
+ },
+ "reference": {
+  "seconds": 4.31,
+  "attestations": 322,
+  "attestations_per_second": 74.7
+ },
+ "attestations": 3272,
+ "worlds": 92,
+ "database_bytes": 3929238
+}
