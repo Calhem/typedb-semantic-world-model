@@ -15,7 +15,9 @@ Results show where the implementation and its own specification agree; they are 
 
 **Recorded under LABS-1.052:** E1 is development-tier evidence; the external sealed evaluation is deferred; all 272
 questions are kept. Clarifications and the revised evaluation, which leave this frozen benchmark unchanged, are in
-[CLARIFICATIONS.md](CLARIFICATIONS.md) (`results-revised/`).
+[CLARIFICATIONS.md](CLARIFICATIONS.md) (`results-revised/`). Results are reported in pairs: the original frozen
+evaluation, **267/272** (`results/`), and the revised one, **272/272**, labelled reconciled development-specification
+conformance (`results-revised/`) (LABS-1.053).
 
 ## Layout
 | Path | What |
