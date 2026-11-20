@@ -1,5 +1,12 @@
 # Stage E entry report (LABS-1.054)
 
+> **Review outcome (LABS-1.055, 2026-11-20): D-1 approved for correctness.** The Stage E correctness baseline at
+> `9d459ea` is accepted: 744 tests passing in all four configurations, twice; 106,752 reference answers unchanged; 398
+> occurrence views unchanged; query counts stable across the tested scales. **The performance baseline is not fully
+> accepted:** the Core 0.3 10× benchmark (EN-6) is an outstanding performance-validation item, and DI-9 is under
+> investigation in [stage-e-di9-investigation.md](stage-e-di9-investigation.md). DI-7, DI-17 and DI-19 stay registered
+> for later review. The other decisions (D-2 to D-7, E2-D1 to E2-D7) are not yet decided.
+
 **Status: at the Stage E entry review gate.** Branch `feature/stage-e-entry-validation`, from verified `main` at
 `8663cb2`. Nothing in `src/`, the schema, the ontology, the frozen benchmark or the reference results was changed.
 Stage E2 is designed ([stage-e2-evaluation-design.md](stage-e2-evaluation-design.md)) but not implemented. Not merged.
