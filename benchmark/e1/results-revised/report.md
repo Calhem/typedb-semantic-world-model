@@ -1,0 +1,23 @@
+# Stage E1 benchmark results, revised evaluation
+
+Run 2026-11-20T09:56:59+00:00 on commit `80c3ea3`; 272 questions, both query paths. Expected answers were frozen at commit `d0f0aa2` before this run.
+
+**Revised evaluation** (LABS-1.052): the frozen questions with `benchmark/e1/revised/overlay.json` applied (4 revised: LAB-010, ORG-011, TEMP-017, X-003), event_role unions scored from the resolved role-player set (R1), restatements counted as their claims' evidence (C3). See `benchmark/e1/CLARIFICATIONS.md`. The original evaluation is in `benchmark/e1/results/`.
+
+| Category | Questions | Correct | % | Wrong judgement | Wrong values | Missing evidence | Forbidden evidence | Error | Paths disagree |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| conflict-provenance | 30 | 30 | 100 | 0 | 0 | 0 | 0 | 0 | 0 |
+| cross-domain | 33 | 33 | 100 | 0 | 0 | 0 | 0 | 0 | 0 |
+| identity | 42 | 42 | 100 | 0 | 0 | 0 | 0 | 0 | 0 |
+| laboratory | 36 | 36 | 100 | 0 | 0 | 0 | 0 | 0 | 0 |
+| mechanical | 33 | 33 | 100 | 0 | 0 | 0 | 0 | 0 | 0 |
+| organisation | 31 | 31 | 100 | 0 | 0 | 1 | 0 | 0 | 0 |
+| temporal | 37 | 37 | 100 | 0 | 0 | 0 | 0 | 0 | 0 |
+| worlds-perspectives | 30 | 30 | 100 | 0 | 0 | 0 | 0 | 0 | 0 |
+| **all** | 272 | 272 | 100 | 0 | 0 | 1 | 0 | 0 | 0 |
+
+## Incorrect items
+
+| Id | Template | Failure | Expected | Actual (selective path) |
+|---|---|---|---|---|
+| ORG-011 | holds | missing-evidence | `{"judgement": "disputed", "status": "DISPUTED"}` | `{"judgement": "disputed", "status": "DISPUTED"}` |
