@@ -38,6 +38,9 @@ ap.add_argument("--keep", action="store_true")
 ap.add_argument("--reuse", action="store_true")
 ap.add_argument("--full-sample", type=int, default=0)
 ap.add_argument("--out")
+ap.add_argument("--mixed", action="store_true",
+                help="after the build, add same-as content the questions never touch: 20 links in a new unrelated world "
+                     "and 5 in `actual` between new things (LABS-1.056, O-2's mixed-worlds case; answers unchanged)")
 a = ap.parse_args()
 sys.path.insert(0, str(Path(a.checkout).resolve() / "src"))
 from worldmodel import WorldModel, connect  # noqa: E402
@@ -134,6 +137,13 @@ if not exists:
     for _ in range(n_mv // 20):
         t += timedelta(seconds=30)
         wm.move(h, rnd.choice(objs), rnd.choice(pls), t)
+    if a.mixed:
+        e = wm.create_world("elsewhere")
+        extra = [wm.add_entity("physical-object", f"x{i}") for i in range(50)]
+        for i in range(20):
+            wm.attest(e, "same-as", {"same": [objs[i], objs[i + 20]]}, until_superseded=True)
+        for i in range(5):
+            wm.attest(w, "same-as", {"same": [extra[2 * i], extra[2 * i + 1]]}, until_superseded=True)
     out["ingest"] = {"seconds": round(time.perf_counter() - t0, 1), "move_ms_median": round(statistics.median(move_s) * 1000, 1),
                      "move_ms_p95": round(pct(move_s, .95) * 1000, 1)}
 else:   # regenerate the same ids and times without writing: replay the random sequence
@@ -142,6 +152,7 @@ else:   # regenerate the same ids and times without writing: replay the random s
         ids = {q.opt(r, "n"): q.opt(r, "i") for r in q.rows(tx, "match $x isa particular, has name $n, has wm-id $i;")}
         worlds = {q.opt(r, "n"): q.opt(r, "i") for r in q.rows(tx, "match $x isa world, has name $n, has wm-id $i;")}
     w, h = worlds["actual"], worlds["plan"]
+    out["mixed"] = "elsewhere" in worlds
     objs = [ids[f"o{i}"] for i in range(n_obj)]
     pls = [ids[f"p{i}"] for i in range(n_pl)]
     for o in objs:

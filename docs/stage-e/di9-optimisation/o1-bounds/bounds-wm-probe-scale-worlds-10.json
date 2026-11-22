@@ -1,0 +1,402 @@
+{
+ "db": "wm-probe-scale-worlds-10",
+ "n": 5,
+ "settings": {
+  "head": [
+   100,
+   -1
+  ],
+  "c10": [
+   10,
+   1000000000
+  ],
+  "c25": [
+   25,
+   1000000000
+  ],
+  "c50": [
+   50,
+   1000000000
+  ],
+  "c100": [
+   100,
+   1000000000
+  ],
+  "c200": [
+   200,
+   1000000000
+  ],
+  "c1000": [
+   1000,
+   1000000000
+  ],
+  "c100-max200": [
+   100,
+   200
+  ]
+ },
+ "totals_ms": {
+  "head": 2358.0,
+  "c10": 997.7,
+  "c25": 910.5,
+  "c50": 891.8,
+  "c100": 877.2,
+  "c200": 878.4,
+  "c1000": 870.9,
+  "c100-max200": 879.3
+ },
+ "calls": {
+  "visible actual": {
+   "head": {
+    "median_ms": 120.9,
+    "queries": 9,
+    "same": true
+   },
+   "c10": {
+    "median_ms": 169.4,
+    "queries": 142,
+    "same": true
+   },
+   "c25": {
+    "median_ms": 118.0,
+    "queries": 58,
+    "same": true
+   },
+   "c50": {
+    "median_ms": 104.0,
+    "queries": 30,
+    "same": true
+   },
+   "c100": {
+    "median_ms": 97.0,
+    "queries": 16,
+    "same": true
+   },
+   "c200": {
+    "median_ms": 89.1,
+    "queries": 9,
+    "same": true
+   },
+   "c1000": {
+    "median_ms": 90.0,
+    "queries": 9,
+    "same": true
+   },
+   "c100-max200": {
+    "median_ms": 95.2,
+    "queries": 16,
+    "same": true
+   }
+  },
+  "parts actual bay-1": {
+   "head": {
+    "median_ms": 320.3,
+    "queries": 8,
+    "same": true
+   },
+   "c10": {
+    "median_ms": 24.7,
+    "queries": 16,
+    "same": true
+   },
+   "c25": {
+    "median_ms": 20.0,
+    "queries": 8,
+    "same": true
+   },
+   "c50": {
+    "median_ms": 20.0,
+    "queries": 8,
+    "same": true
+   },
+   "c100": {
+    "median_ms": 20.2,
+    "queries": 8,
+    "same": true
+   },
+   "c200": {
+    "median_ms": 20.4,
+    "queries": 8,
+    "same": true
+   },
+   "c1000": {
+    "median_ms": 19.9,
+    "queries": 8,
+    "same": true
+   },
+   "c100-max200": {
+    "median_ms": 19.9,
+    "queries": 8,
+    "same": true
+   }
+  },
+  "parts plan-relubricate-only gbx-100": {
+   "head": {
+    "median_ms": 127.7,
+    "queries": 12,
+    "same": true
+   },
+   "c10": {
+    "median_ms": 33.1,
+    "queries": 20,
+    "same": true
+   },
+   "c25": {
+    "median_ms": 29.7,
+    "queries": 12,
+    "same": true
+   },
+   "c50": {
+    "median_ms": 28.4,
+    "queries": 12,
+    "same": true
+   },
+   "c100": {
+    "median_ms": 27.9,
+    "queries": 12,
+    "same": true
+   },
+   "c200": {
+    "median_ms": 27.8,
+    "queries": 12,
+    "same": true
+   },
+   "c1000": {
+    "median_ms": 28.1,
+    "queries": 12,
+    "same": true
+   },
+   "c100-max200": {
+    "median_ms": 28.1,
+    "queries": 12,
+    "same": true
+   }
+  },
+  "occurrence actual o-repair": {
+   "head": {
+    "median_ms": 66.5,
+    "queries": 35,
+    "same": true
+   },
+   "c10": {
+    "median_ms": 56.2,
+    "queries": 38,
+    "same": true
+   },
+   "c25": {
+    "median_ms": 54.5,
+    "queries": 35,
+    "same": true
+   },
+   "c50": {
+    "median_ms": 54.7,
+    "queries": 35,
+    "same": true
+   },
+   "c100": {
+    "median_ms": 53.9,
+    "queries": 35,
+    "same": true
+   },
+   "c200": {
+    "median_ms": 53.9,
+    "queries": 35,
+    "same": true
+   },
+   "c1000": {
+    "median_ms": 53.7,
+    "queries": 35,
+    "same": true
+   },
+   "c100-max200": {
+    "median_ms": 54.2,
+    "queries": 35,
+    "same": true
+   }
+  },
+  "where actual gbx-100 f-workshop": {
+   "head": {
+    "median_ms": 686.0,
+    "queries": 33,
+    "same": true
+   },
+   "c10": {
+    "median_ms": 80.9,
+    "queries": 54,
+    "same": true
+   },
+   "c25": {
+    "median_ms": 72.4,
+    "queries": 40,
+    "same": true
+   },
+   "c50": {
+    "median_ms": 67.2,
+    "queries": 33,
+    "same": true
+   },
+   "c100": {
+    "median_ms": 67.5,
+    "queries": 33,
+    "same": true
+   },
+   "c200": {
+    "median_ms": 68.1,
+    "queries": 33,
+    "same": true
+   },
+   "c1000": {
+    "median_ms": 67.7,
+    "queries": 33,
+    "same": true
+   },
+   "c100-max200": {
+    "median_ms": 68.2,
+    "queries": 33,
+    "same": true
+   }
+  },
+  "value_at actual gbx-100": {
+   "head": {
+    "median_ms": 67.5,
+    "queries": 8,
+    "same": true
+   },
+   "c10": {
+    "median_ms": 10.9,
+    "queries": 8,
+    "same": true
+   },
+   "c25": {
+    "median_ms": 10.6,
+    "queries": 8,
+    "same": true
+   },
+   "c50": {
+    "median_ms": 10.9,
+    "queries": 8,
+    "same": true
+   },
+   "c100": {
+    "median_ms": 10.8,
+    "queries": 8,
+    "same": true
+   },
+   "c200": {
+    "median_ms": 11.0,
+    "queries": 8,
+    "same": true
+   },
+   "c1000": {
+    "median_ms": 10.9,
+    "queries": 8,
+    "same": true
+   },
+   "c100-max200": {
+    "median_ms": 11.0,
+    "queries": 8,
+    "same": true
+   }
+  },
+  "effects_of actual ev-worklog-replacement": {
+   "head": {
+    "median_ms": 440.5,
+    "queries": 130,
+    "same": true
+   },
+   "c10": {
+    "median_ms": 230.3,
+    "queries": 133,
+    "same": true
+   },
+   "c25": {
+    "median_ms": 227.4,
+    "queries": 130,
+    "same": true
+   },
+   "c50": {
+    "median_ms": 228.5,
+    "queries": 130,
+    "same": true
+   },
+   "c100": {
+    "median_ms": 225.5,
+    "queries": 130,
+    "same": true
+   },
+   "c200": {
+    "median_ms": 228.7,
+    "queries": 130,
+    "same": true
+   },
+   "c1000": {
+    "median_ms": 228.0,
+    "queries": 130,
+    "same": true
+   },
+   "c100-max200": {
+    "median_ms": 228.2,
+    "queries": 130,
+    "same": true
+   }
+  },
+  "provenance lab s12-b": {
+   "head": {
+    "median_ms": 528.6,
+    "queries": 261,
+    "same": true
+   },
+   "c10": {
+    "median_ms": 392.2,
+    "queries": 293,
+    "same": true
+   },
+   "c25": {
+    "median_ms": 377.9,
+    "queries": 261,
+    "same": true
+   },
+   "c50": {
+    "median_ms": 378.1,
+    "queries": 261,
+    "same": true
+   },
+   "c100": {
+    "median_ms": 374.4,
+    "queries": 261,
+    "same": true
+   },
+   "c200": {
+    "median_ms": 379.4,
+    "queries": 261,
+    "same": true
+   },
+   "c1000": {
+    "median_ms": 372.6,
+    "queries": 261,
+    "same": true
+   },
+   "c100-max200": {
+    "median_ms": 374.5,
+    "queries": 261,
+    "same": true
+   }
+  }
+ },
+ "anchored_sizes": {
+  "1": 2296,
+  "2": 820,
+  "3": 1599,
+  "4": 943,
+  "5": 205,
+  "6": 861,
+  "7": 492,
+  "12": 738,
+  "14": 246,
+  "22": 451,
+  "23": 164,
+  "31": 287,
+  "82": 7,
+  "198": 287
+ }
+}

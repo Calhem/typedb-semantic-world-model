@@ -1027,9 +1027,12 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
         with self._reading() as tx:
             chain = self._world_chain(tx, world, as_of)
             levels = {w: (depth, vlim, klim) for depth, (w, vlim, klim) in enumerate(chain)}
+            absent = {}                                    # O-2: per _load call, i.e. within this one transaction
             for depth, (w, vlim, klim) in enumerate(chain):
                 for type in (types or [None]):
                     for subj in (subjects or [None]):
+                        if self._absent(tx, type, subj, absent):
+                            continue
                         recs, sup = self._level(tx, w, depth, vlim, klim, type, subj, at, perspective)
                         for aid, rec in recs.items():
                             if aid not in visible:
@@ -1051,6 +1054,26 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
                     [acc for acc in accs if klim is None or acc[2] <= klim]))
         self.stats["attestations"] += len(visible)
         return visible
+
+    # O-2 (LABS-1.056, DI-9 F3): skip a subject-bound (type, subject) whose subject plays a role in no content of the
+    # type. TypeDB 3.14 executes the subject-bound world head for a type with no content at all in proportion to the
+    # data; this check alone is flat (about 1 ms). Compared with a database-wide check of the type, it measured the
+    # same where the type is absent and better where it exists only for other subjects or in other worlds (see
+    # docs/stage-e/stage-e-di9-optimisation.md). False: never skip (the reference path the tests compare with).
+    SKIP_ABSENT = True
+
+    def _absent(self, tx, type, subject, cache):
+        """True when the subject plays a role in no stored content of `type` (in any world, at any time, for anyone),
+        so `_level` cannot return anything for (type, subject). Asked in `tx`, the load's own transaction (an
+        operation's included, so its uncommitted writes count); remembered only in `cache`, which lives for one
+        `_load`, never across transactions."""
+        if not self.SKIP_ABSENT or type is None or subject is None:
+            return False
+        key = (type, subject)
+        if key not in cache:
+            cache[key] = not q.rows(tx, f"match{SUBJECT_ROLE} $c isa {q.label(type)}; limit 1;", {"sid": subject})
+            self.stats["queries"] += 1
+        return cache[key]
 
     def visible(self, world, as_of=None, perspective=SYSTEM):
         """Every attestation visible in `world` at `as_of` (the full, unfiltered load)."""

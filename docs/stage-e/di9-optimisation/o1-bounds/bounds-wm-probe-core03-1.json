@@ -1,0 +1,306 @@
+{
+ "db": "wm-probe-core03-1",
+ "n": 5,
+ "settings": {
+  "head": [
+   100,
+   -1
+  ],
+  "c10": [
+   10,
+   1000000000
+  ],
+  "c25": [
+   25,
+   1000000000
+  ],
+  "c50": [
+   50,
+   1000000000
+  ],
+  "c100": [
+   100,
+   1000000000
+  ],
+  "c200": [
+   200,
+   1000000000
+  ],
+  "c1000": [
+   1000,
+   1000000000
+  ],
+  "c100-max200": [
+   100,
+   200
+  ]
+ },
+ "totals_ms": {
+  "head": 159.6,
+  "c10": 110.6,
+  "c25": 110.0,
+  "c50": 109.7,
+  "c100": 110.4,
+  "c200": 110.8,
+  "c1000": 112.2,
+  "c100-max200": 110.6
+ },
+ "calls": {
+  "value_at actual o0 t0.2": {
+   "head": {
+    "median_ms": 22.1,
+    "queries": 9,
+    "same": true
+   },
+   "c10": {
+    "median_ms": 14.6,
+    "queries": 9,
+    "same": true
+   },
+   "c25": {
+    "median_ms": 14.2,
+    "queries": 9,
+    "same": true
+   },
+   "c50": {
+    "median_ms": 14.0,
+    "queries": 9,
+    "same": true
+   },
+   "c100": {
+    "median_ms": 14.4,
+    "queries": 9,
+    "same": true
+   },
+   "c200": {
+    "median_ms": 14.2,
+    "queries": 9,
+    "same": true
+   },
+   "c1000": {
+    "median_ms": 14.5,
+    "queries": 9,
+    "same": true
+   },
+   "c100-max200": {
+    "median_ms": 14.4,
+    "queries": 9,
+    "same": true
+   }
+  },
+  "value_at plan o0 t0.2": {
+   "head": {
+    "median_ms": 30.2,
+    "queries": 13,
+    "same": true
+   },
+   "c10": {
+    "median_ms": 20.7,
+    "queries": 13,
+    "same": true
+   },
+   "c25": {
+    "median_ms": 20.1,
+    "queries": 13,
+    "same": true
+   },
+   "c50": {
+    "median_ms": 19.5,
+    "queries": 13,
+    "same": true
+   },
+   "c100": {
+    "median_ms": 20.5,
+    "queries": 13,
+    "same": true
+   },
+   "c200": {
+    "median_ms": 20.7,
+    "queries": 13,
+    "same": true
+   },
+   "c1000": {
+    "median_ms": 20.7,
+    "queries": 13,
+    "same": true
+   },
+   "c100-max200": {
+    "median_ms": 20.1,
+    "queries": 13,
+    "same": true
+   }
+  },
+  "value_at actual o37 t0.5": {
+   "head": {
+    "median_ms": 24.6,
+    "queries": 9,
+    "same": true
+   },
+   "c10": {
+    "median_ms": 15.9,
+    "queries": 9,
+    "same": true
+   },
+   "c25": {
+    "median_ms": 15.7,
+    "queries": 9,
+    "same": true
+   },
+   "c50": {
+    "median_ms": 16.0,
+    "queries": 9,
+    "same": true
+   },
+   "c100": {
+    "median_ms": 15.7,
+    "queries": 9,
+    "same": true
+   },
+   "c200": {
+    "median_ms": 16.0,
+    "queries": 9,
+    "same": true
+   },
+   "c1000": {
+    "median_ms": 15.9,
+    "queries": 9,
+    "same": true
+   },
+   "c100-max200": {
+    "median_ms": 16.5,
+    "queries": 9,
+    "same": true
+   }
+  },
+  "value_at plan o37 t0.5": {
+   "head": {
+    "median_ms": 33.8,
+    "queries": 13,
+    "same": true
+   },
+   "c10": {
+    "median_ms": 22.5,
+    "queries": 13,
+    "same": true
+   },
+   "c25": {
+    "median_ms": 22.6,
+    "queries": 13,
+    "same": true
+   },
+   "c50": {
+    "median_ms": 22.6,
+    "queries": 13,
+    "same": true
+   },
+   "c100": {
+    "median_ms": 22.6,
+    "queries": 13,
+    "same": true
+   },
+   "c200": {
+    "median_ms": 22.6,
+    "queries": 13,
+    "same": true
+   },
+   "c1000": {
+    "median_ms": 22.6,
+    "queries": 13,
+    "same": true
+   },
+   "c100-max200": {
+    "median_ms": 22.2,
+    "queries": 13,
+    "same": true
+   }
+  },
+  "value_at actual o74 t0.8": {
+   "head": {
+    "median_ms": 20.5,
+    "queries": 9,
+    "same": true
+   },
+   "c10": {
+    "median_ms": 15.7,
+    "queries": 9,
+    "same": true
+   },
+   "c25": {
+    "median_ms": 15.7,
+    "queries": 9,
+    "same": true
+   },
+   "c50": {
+    "median_ms": 15.8,
+    "queries": 9,
+    "same": true
+   },
+   "c100": {
+    "median_ms": 15.7,
+    "queries": 9,
+    "same": true
+   },
+   "c200": {
+    "median_ms": 15.8,
+    "queries": 9,
+    "same": true
+   },
+   "c1000": {
+    "median_ms": 16.2,
+    "queries": 9,
+    "same": true
+   },
+   "c100-max200": {
+    "median_ms": 15.8,
+    "queries": 9,
+    "same": true
+   }
+  },
+  "value_at plan o74 t0.8": {
+   "head": {
+    "median_ms": 28.4,
+    "queries": 13,
+    "same": true
+   },
+   "c10": {
+    "median_ms": 21.2,
+    "queries": 13,
+    "same": true
+   },
+   "c25": {
+    "median_ms": 21.7,
+    "queries": 13,
+    "same": true
+   },
+   "c50": {
+    "median_ms": 21.8,
+    "queries": 13,
+    "same": true
+   },
+   "c100": {
+    "median_ms": 21.5,
+    "queries": 13,
+    "same": true
+   },
+   "c200": {
+    "median_ms": 21.5,
+    "queries": 13,
+    "same": true
+   },
+   "c1000": {
+    "median_ms": 22.3,
+    "queries": 13,
+    "same": true
+   },
+   "c100-max200": {
+    "median_ms": 21.6,
+    "queries": 13,
+    "same": true
+   }
+  }
+ },
+ "anchored_sizes": {
+  "2": 328,
+  "4": 656
+ }
+}

@@ -1,9 +1,11 @@
-"""LABS-1.056: choose O-1's bounds (ANCHOR_CHUNK, ANCHOR_MAX) and compare O-2's alternatives (ABSENT_CHECK) by
+"""LABS-1.056: choose O-1's bounds (ANCHOR_CHUNK, ANCHOR_MAX) and compare O-2 off and on (SKIP_ABSENT) by
 measurement. Read-only.
 
     uv run python -I probes/stage_e_o1_bounds.py <checkout> --db NAME [--knob o1|o2] [--n 5] [--out FILE]
 
---knob o2 compares ABSENT_CHECK none / database / subject / both, with O-1 at its defaults.
+--knob o2 compares O-2 off and on (SKIP_ABSENT), with O-1 at its defaults. The comparison of O-2's two alternatives
+(a database-wide presence check and the subject-bound check) ran on an evaluation build that had both behind an
+ABSENT_CHECK switch: docs/stage-e/di9-optimisation/o2-alternatives.patch.
 
 For a fixed set of calls on the database (reference calls on a stage_e_scale database; value_at questions on a
 stage_e_core03_selective database), every call is timed under each setting of (ANCHOR_CHUNK, ANCHOR_MAX), settings
@@ -35,7 +37,7 @@ from worldmodel.examples import gearbox as gb  # noqa: E402
 SETTINGS = {"head": (100, -1), "c10": (10, 10 ** 9), "c25": (25, 10 ** 9), "c50": (50, 10 ** 9), "c100": (100, 10 ** 9),
             "c200": (200, 10 ** 9), "c1000": (1000, 10 ** 9), "c100-max200": (100, 200)}
 if a.knob == "o2":
-    SETTINGS = {m: m for m in ("none", "database", "subject", "both")}
+    SETTINGS = {"off": False, "on": True}
 count = [0]
 sizes = Counter()
 _rows, _docs = q.rows, q.documents
@@ -99,13 +101,13 @@ def apply(setting):
         wm.ANCHOR_CHUNK, wm.ANCHOR_MAX = setting
     else:
         wm.ANCHOR_CHUNK, wm.ANCHOR_MAX = WorldModel.ANCHOR_CHUNK, WorldModel.ANCHOR_MAX
-        wm.ABSENT_CHECK = setting
+        wm.SKIP_ABSENT = setting
 
 
 cs = calls()
 ref = {}
 for k, f in cs.items():
-    wm.ANCHOR_CHUNK, wm.ANCHOR_MAX = SETTINGS["head"]
+    apply(SETTINGS["head"] if a.knob == "o1" else False)
     ref[k] = canon(f())
 res = {k: {s: {"ms": [], "queries": None, "same": True} for s in SETTINGS} for k in cs}
 for _ in range(a.n):
