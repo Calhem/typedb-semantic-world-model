@@ -896,14 +896,17 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
             chain.append((current, vlim, klim))
 
     @staticmethod
-    def _filters(world, type, subject, klim, vlim, at):
+    def _filters(world, type, subject, klim, vlim, at, content=False):
         """TypeQL selecting attestations in `world` (and their content) by content type, a role player of the
-        content, transaction-time limit, inherited branch-time limit and valid time `at`."""
+        content, transaction-time limit, inherited branch-time limit and valid time `at`. With `content`, also by the
+        content's own id `$cid` (an event description; one given row per id, O-3)."""
         parts = ["$w isa world, has wm-id == $world;",
                  "$a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec;"]
         params = {"world": world}
         if type is not None:
             parts.append(f"$c isa {q.label(type)};")
+        if content:
+            parts.append("$c has wm-id == $cid;")
         if subject is not None:
             # Bound positively, so the query starts from the subject (see best practices).
             parts.append(SUBJECT_ROLE.strip())
@@ -921,8 +924,10 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
             params["at"] = at
         return "match " + " ".join(parts), params
 
-    def _level(self, tx, world, depth, vlim, klim, type, subject, at, perspective):
-        head, params = self._filters(world, type, subject, klim, vlim, at)
+    def _level(self, tx, world, depth, vlim, klim, type, subject, at, perspective, contents=None):
+        head, params = self._filters(world, type, subject, klim, vlim, at, content=contents is not None)
+        if contents is not None:        # O-3: the head runs once with one given row per content id
+            params = [{**params, "cid": c} for c in contents]
         # Type inference rejects a disjunction branch that cannot apply to a fixed type, so pick the content id pattern.
         recs = {}
         if type is not None and self.is_a(type, "event"):
@@ -1012,18 +1017,26 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
         with the head's own parameters (the pre-O-1 form). `extra` holds the body's own parameters."""
         run = q.documents if "fetch" in body else q.rows
         if len(aids) > self.ANCHOR_MAX:
-            # the head already binds the subject's role (pre-O-1 form)
-            return run(tx, head + body.replace(SUBJECT_ROLE, "", 1), {**params, **extra})
+            # the head already binds the subject's role (pre-O-1 form); a head with given rows keeps them
+            rows = [{**p, **extra} for p in params] if isinstance(params, list) else {**params, **extra}
+            return run(tx, head + body.replace(SUBJECT_ROLE, "", 1), rows)
         out = []
         for i in range(0, len(aids), self.ANCHOR_CHUNK):
             out.extend(run(tx, "match $a isa attestation (content: $c), has wm-id == $anchor; $a has wm-id $aid;" + body,
                            [{"anchor": x, **extra} for x in aids[i:i + self.ANCHOR_CHUNK]]))
         return out
 
-    def _load(self, world, as_of=None, types=None, subjects=None, at=None, perspective=SYSTEM):
+    def _load(self, world, as_of=None, types=None, subjects=None, at=None, perspective=SYSTEM, contents=None):
         """Attestations visible in `world` as known at `as_of`, with the perspective's acceptances and visible
-        supersessions. Filters (types, subjects, at) run in TypeDB; with none, everything visible is loaded."""
+        supersessions. Filters (types, subjects, at) run in TypeDB; with none, everything visible is loaded.
+        `contents` (O-3, event types only): only attestations of these event descriptions; [] loads nothing."""
         visible, supers = {}, []
+        if contents is not None:
+            if not types or not all(self.is_a(t, "event") for t in types):
+                raise ValueError("contents filters event descriptions: give event types")
+            contents = sorted(set(contents))
+            if not contents:
+                return visible
         with self._reading() as tx:
             chain = self._world_chain(tx, world, as_of)
             levels = {w: (depth, vlim, klim) for depth, (w, vlim, klim) in enumerate(chain)}
@@ -1033,7 +1046,7 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
                     for subj in (subjects or [None]):
                         if self._absent(tx, type, subj, absent):
                             continue
-                        recs, sup = self._level(tx, w, depth, vlim, klim, type, subj, at, perspective)
+                        recs, sup = self._level(tx, w, depth, vlim, klim, type, subj, at, perspective, contents)
                         for aid, rec in recs.items():
                             if aid not in visible:
                                 visible[aid] = rec
@@ -1483,6 +1496,10 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
         return sorted({d for a in links.values() if a.polarity and usable(a, perspective, as_of)
                        for d in a.roles.get("description", [])})
 
+    # O-3 (LABS-1.057): occurrence() loads only the event descriptions linked to the occurrence and its aliases.
+    # False: the pre-O-3 path (every event in the world), which the tests compare with.
+    SCOPE_OCCURRENCE = True
+
     def occurrence(self, world, occurrence, as_of=None, perspective=SYSTEM):
         """A merged view of an occurrence. Conflicts stay visible and traceable; nothing is merged in storage.
 
@@ -1500,9 +1517,23 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
           LABS-1.049 (DI-13): each constraint also gives its `multiplicity` ("one" or "set"), the `reason` for a
           dispute, and for "set" each compared account's set (`sets`); see `_event_roles`."""
         from .dynamics import _Memo
-        descs = self.descriptions(world, occurrence, as_of, perspective)
+        if self.SCOPE_OCCURRENCE:
+            # O-3 (LABS-1.057, DI-9 F4): one identity and one describes load serve both `descriptions` (as
+            # descriptions(): visible, positive and usable links) and the accounts (`_event_roles`: every visible
+            # link, accepted or not), and only the descriptions those links name are loaded, by id, instead of every
+            # event in the world. Nothing else in this view reads an event attestation.
+            ident = self.identity(world, as_of, perspective, ids=[occurrence])
+            members = ident.members(occurrence)
+            links = self._load(world, as_of, types=["describes"], subjects=sorted(members), perspective=perspective)
+            descs = sorted({d for a in links.values() if a.polarity and usable(a, perspective, as_of)
+                            for d in a.roles.get("description", [])})
+            linked = {d for a in links.values() if set(members) & set(a.roles.get("occurrence", []))
+                      for d in a.roles.get("description", [])}
+            memo = _Memo(self, world, as_of, perspective, descriptions=linked | set(descs))
+        else:
+            descs = self.descriptions(world, occurrence, as_of, perspective)
+            memo, ident, links = _Memo(self, world, as_of, perspective), None, None
         out = {"occurrence": occurrence, "descriptions": descs, "participants": {}}
-        memo = _Memo(self, world, as_of, perspective)
         if descs:
             for d, recs in memo.events().items():
                 if d in descs:
@@ -1512,8 +1543,9 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
                                 out["participants"].setdefault(role, {}).setdefault(x, set()).add((a.content,
                                                                                                     a.attester))
         out["participants"] = {r: {x: sorted(v) for x, v in m.items()} for r, m in out["participants"].items()}
-        ident = self.identity(world, as_of, perspective, ids=[occurrence])
-        out["accounts"], out["roles"] = self._event_roles(world, occurrence, memo, as_of, perspective, ident=ident)
+        ident = ident or self.identity(world, as_of, perspective, ids=[occurrence])
+        out["accounts"], out["roles"] = self._event_roles(world, occurrence, memo, as_of, perspective, ident=ident,
+                                                          links=links)
         out["aliases"] = ident.members(occurrence)        # ID-9 (LABS-1.048): the same view from every alias
         out["identity"] = ident.report(occurrence)
         return out
