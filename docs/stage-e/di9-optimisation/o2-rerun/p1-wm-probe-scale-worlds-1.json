@@ -1,0 +1,210 @@
+{
+ "db": "wm-probe-scale-worlds-1",
+ "n": 5,
+ "settings": {
+  "none": "none",
+  "database": "database",
+  "subject": "subject",
+  "both": "both"
+ },
+ "totals_ms": {
+  "none": 745.4,
+  "database": 707.7,
+  "subject": 733.0,
+  "both": 719.4
+ },
+ "calls": {
+  "visible actual": {
+   "none": {
+    "median_ms": 76.5,
+    "queries": 9,
+    "same": true
+   },
+   "database": {
+    "median_ms": 76.7,
+    "queries": 9,
+    "same": true
+   },
+   "subject": {
+    "median_ms": 77.6,
+    "queries": 9,
+    "same": true
+   },
+   "both": {
+    "median_ms": 77.0,
+    "queries": 9,
+    "same": true
+   }
+  },
+  "parts actual bay-1": {
+   "none": {
+    "median_ms": 14.6,
+    "queries": 8,
+    "same": true
+   },
+   "database": {
+    "median_ms": 14.4,
+    "queries": 9,
+    "same": true
+   },
+   "subject": {
+    "median_ms": 15.0,
+    "queries": 8,
+    "same": true
+   },
+   "both": {
+    "median_ms": 14.7,
+    "queries": 9,
+    "same": true
+   }
+  },
+  "parts plan-relubricate-only gbx-100": {
+   "none": {
+    "median_ms": 18.5,
+    "queries": 12,
+    "same": true
+   },
+   "database": {
+    "median_ms": 17.7,
+    "queries": 12,
+    "same": true
+   },
+   "subject": {
+    "median_ms": 19.1,
+    "queries": 12,
+    "same": true
+   },
+   "both": {
+    "median_ms": 17.8,
+    "queries": 12,
+    "same": true
+   }
+  },
+  "occurrence actual o-repair": {
+   "none": {
+    "median_ms": 43.7,
+    "queries": 35,
+    "same": true
+   },
+   "database": {
+    "median_ms": 42.2,
+    "queries": 36,
+    "same": true
+   },
+   "subject": {
+    "median_ms": 55.5,
+    "queries": 37,
+    "same": true
+   },
+   "both": {
+    "median_ms": 42.6,
+    "queries": 38,
+    "same": true
+   }
+  },
+  "where actual gbx-100 f-workshop": {
+   "none": {
+    "median_ms": 55.7,
+    "queries": 33,
+    "same": true
+   },
+   "database": {
+    "median_ms": 59.1,
+    "queries": 36,
+    "same": true
+   },
+   "subject": {
+    "median_ms": 60.3,
+    "queries": 35,
+    "same": true
+   },
+   "both": {
+    "median_ms": 59.6,
+    "queries": 38,
+    "same": true
+   }
+  },
+  "value_at actual gbx-100": {
+   "none": {
+    "median_ms": 9.5,
+    "queries": 8,
+    "same": true
+   },
+   "database": {
+    "median_ms": 9.8,
+    "queries": 9,
+    "same": true
+   },
+   "subject": {
+    "median_ms": 9.8,
+    "queries": 9,
+    "same": true
+   },
+   "both": {
+    "median_ms": 10.2,
+    "queries": 10,
+    "same": true
+   }
+  },
+  "effects_of actual ev-worklog-replacement": {
+   "none": {
+    "median_ms": 162.9,
+    "queries": 130,
+    "same": true
+   },
+   "database": {
+    "median_ms": 156.9,
+    "queries": 129,
+    "same": true
+   },
+   "subject": {
+    "median_ms": 163.4,
+    "queries": 142,
+    "same": true
+   },
+   "both": {
+    "median_ms": 163.7,
+    "queries": 141,
+    "same": true
+   }
+  },
+  "provenance lab s12-b": {
+   "none": {
+    "median_ms": 364.0,
+    "queries": 261,
+    "same": true
+   },
+   "database": {
+    "median_ms": 330.9,
+    "queries": 275,
+    "same": true
+   },
+   "subject": {
+    "median_ms": 332.3,
+    "queries": 273,
+    "same": true
+   },
+   "both": {
+    "median_ms": 333.8,
+    "queries": 287,
+    "same": true
+   }
+  }
+ },
+ "anchored_sizes": {
+  "1": 1176,
+  "2": 420,
+  "3": 819,
+  "4": 483,
+  "5": 105,
+  "6": 441,
+  "7": 252,
+  "12": 378,
+  "14": 126,
+  "22": 231,
+  "23": 84,
+  "31": 147,
+  "82": 7,
+  "198": 147
+ }
+}
