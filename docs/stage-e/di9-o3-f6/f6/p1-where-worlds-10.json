@@ -1,0 +1,59 @@
+{
+ "db": "wm-probe-scale-worlds-10",
+ "reader": "where actual gbx-100",
+ "lookups": 4,
+ "anchors_per_lookup": 9.5,
+ "forms": {
+  "C": {
+   "median_ms_per_lookup": 2.42,
+   "sum_of_medians_ms": 13.5,
+   "rows": 3,
+   "same_rows": true
+  },
+  "N": {
+   "median_ms_per_lookup": 2.37,
+   "sum_of_medians_ms": 12.9,
+   "rows": 3,
+   "same_rows": true
+  },
+  "L": {
+   "median_ms_per_lookup": 2.53,
+   "sum_of_medians_ms": 13.7,
+   "rows": 3,
+   "same_rows": true
+  },
+  "S": {
+   "median_ms_per_lookup": 1.17,
+   "sum_of_medians_ms": 6.2,
+   "rows": 3,
+   "same_rows": true
+  },
+  "P": {
+   "median_ms_per_lookup": 3.84,
+   "sum_of_medians_ms": 46.7,
+   "rows": 3,
+   "same_rows": true
+  },
+  "H": {
+   "median_ms_per_lookup": 4.92,
+   "sum_of_medians_ms": 21.4,
+   "rows": 3,
+   "same_rows": true
+  },
+  "M": {
+   "median_ms_per_lookup": 0.83,
+   "sum_of_medians_ms": 3.4,
+   "rows": 3,
+   "same_rows": true
+  },
+  "R": {
+   "median_ms_per_lookup": 0.72,
+   "sum_of_medians_ms": 3.1,
+   "rows": 3,
+   "same_rows": true
+  }
+ },
+ "supersessions_in_database": 897,
+ "supersessions_in_world": 7,
+ "attestations_in_database": 3272
+}

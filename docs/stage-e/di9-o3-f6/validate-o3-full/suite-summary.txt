@@ -1,0 +1,8 @@
+run1-sel1-prof0 rc=0 815 passed in 707.69s (0:11:47)
+run1-sel1-prof1 rc=0 815 passed in 711.46s (0:11:51)
+run1-sel0-prof0 rc=0 815 passed in 629.62s (0:10:29)
+run1-sel0-prof1 rc=0 815 passed in 769.94s (0:12:49)
+run2-sel1-prof0 rc=0 815 passed in 616.31s (0:10:16)
+run2-sel1-prof1 rc=0 815 passed in 702.65s (0:11:42)
+run2-sel0-prof0 rc=0 815 passed in 818.63s (0:13:38)
+run2-sel0-prof1 rc=0 815 passed in 702.32s (0:11:42)

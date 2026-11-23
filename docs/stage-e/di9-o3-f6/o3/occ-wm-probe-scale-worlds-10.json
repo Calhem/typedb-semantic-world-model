@@ -1,0 +1,655 @@
+{
+ "n": 5,
+ "dbs": {
+  "wm-probe-scale-worlds-10": {
+   "calls": 42,
+   "identical": 42,
+   "totals": {
+    "off": {
+     "median_ms": 2181.3,
+     "queries": 1834,
+     "rows": 3383,
+     "event_rows": 422
+    },
+    "on": {
+     "median_ms": 1550.2,
+     "queries": 1384,
+     "rows": 1189,
+     "event_rows": 40
+    }
+   },
+   "per_call": {
+    "actual o-bearing-replacement": {
+     "off": {
+      "median_ms": 69.38,
+      "queries": 53,
+      "rows": 141,
+      "event_rows": 14
+     },
+     "on": {
+      "median_ms": 55.63,
+      "queries": 45,
+      "rows": 75,
+      "event_rows": 4
+     },
+     "same": true
+    },
+    "actual o-disassembly": {
+     "off": {
+      "median_ms": 46.51,
+      "queries": 37,
+      "rows": 96,
+      "event_rows": 14
+     },
+     "on": {
+      "median_ms": 36.69,
+      "queries": 29,
+      "rows": 25,
+      "event_rows": 1
+     },
+     "same": true
+    },
+    "actual o-inspection": {
+     "off": {
+      "median_ms": 47.95,
+      "queries": 38,
+      "rows": 93,
+      "event_rows": 14
+     },
+     "on": {
+      "median_ms": 36.44,
+      "queries": 30,
+      "rows": 23,
+      "event_rows": 1
+     },
+     "same": true
+    },
+    "actual o-reassembly": {
+     "off": {
+      "median_ms": 46.86,
+      "queries": 37,
+      "rows": 95,
+      "event_rows": 14
+     },
+     "on": {
+      "median_ms": 31.71,
+      "queries": 29,
+      "rows": 24,
+      "event_rows": 1
+     },
+     "same": true
+    },
+    "actual o-relubrication": {
+     "off": {
+      "median_ms": 48.89,
+      "queries": 37,
+      "rows": 100,
+      "event_rows": 14
+     },
+     "on": {
+      "median_ms": 30.63,
+      "queries": 29,
+      "rows": 29,
+      "event_rows": 1
+     },
+     "same": true
+    },
+    "actual o-repair": {
+     "off": {
+      "median_ms": 48.18,
+      "queries": 37,
+      "rows": 108,
+      "event_rows": 14
+     },
+     "on": {
+      "median_ms": 35.02,
+      "queries": 29,
+      "rows": 37,
+      "event_rows": 1
+     },
+     "same": true
+    },
+    "actual o-sign-off": {
+     "off": {
+      "median_ms": 41.63,
+      "queries": 36,
+      "rows": 87,
+      "event_rows": 14
+     },
+     "on": {
+      "median_ms": 29.62,
+      "queries": 28,
+      "rows": 15,
+      "event_rows": 1
+     },
+     "same": true
+    },
+    "actual o-test-run": {
+     "off": {
+      "median_ms": 45.29,
+      "queries": 38,
+      "rows": 112,
+      "event_rows": 14
+     },
+     "on": {
+      "median_ms": 33.05,
+      "queries": 30,
+      "rows": 42,
+      "event_rows": 1
+     },
+     "same": true
+    },
+    "lab o-sampling-1": {
+     "off": {
+      "median_ms": 39.69,
+      "queries": 37,
+      "rows": 76,
+      "event_rows": 12
+     },
+     "on": {
+      "median_ms": 33.29,
+      "queries": 29,
+      "rows": 20,
+      "event_rows": 1
+     },
+     "same": true
+    },
+    "lab o-split-b": {
+     "off": {
+      "median_ms": 41.56,
+      "queries": 37,
+      "rows": 78,
+      "event_rows": 12
+     },
+     "on": {
+      "median_ms": 33.16,
+      "queries": 29,
+      "rows": 22,
+      "event_rows": 1
+     },
+     "same": true
+    },
+    "lab o-split-c": {
+     "off": {
+      "median_ms": 38.49,
+      "queries": 37,
+      "rows": 70,
+      "event_rows": 12
+     },
+     "on": {
+      "median_ms": 29.02,
+      "queries": 29,
+      "rows": 14,
+      "event_rows": 1
+     },
+     "same": true
+    },
+    "lab o-weigh-late": {
+     "off": {
+      "median_ms": 73.63,
+      "queries": 37,
+      "rows": 76,
+      "event_rows": 12
+     },
+     "on": {
+      "median_ms": 46.04,
+      "queries": 29,
+      "rows": 20,
+      "event_rows": 1
+     },
+     "same": true
+    },
+    "lab-plan-recal o-sampling-1": {
+     "off": {
+      "median_ms": 55.64,
+      "queries": 49,
+      "rows": 75,
+      "event_rows": 10
+     },
+     "on": {
+      "median_ms": 42.84,
+      "queries": 38,
+      "rows": 26,
+      "event_rows": 1
+     },
+     "same": true
+    },
+    "lab-plan-recal o-split-b": {
+     "off": {
+      "median_ms": 40.08,
+      "queries": 35,
+      "rows": 66,
+      "event_rows": 10
+     },
+     "on": {
+      "median_ms": 22.75,
+      "queries": 21,
+      "rows": 12,
+      "event_rows": 0
+     },
+     "same": true
+    },
+    "lab-plan-recal o-split-c": {
+     "off": {
+      "median_ms": 38.81,
+      "queries": 35,
+      "rows": 64,
+      "event_rows": 10
+     },
+     "on": {
+      "median_ms": 21.85,
+      "queries": 21,
+      "rows": 11,
+      "event_rows": 0
+     },
+     "same": true
+    },
+    "lab-plan-recal o-weigh-late": {
+     "off": {
+      "median_ms": 83.79,
+      "queries": 49,
+      "rows": 75,
+      "event_rows": 10
+     },
+     "on": {
+      "median_ms": 59.45,
+      "queries": 38,
+      "rows": 26,
+      "event_rows": 1
+     },
+     "same": true
+    },
+    "org o-signoff-9": {
+     "off": {
+      "median_ms": 47.25,
+      "queries": 42,
+      "rows": 31,
+      "event_rows": 3
+     },
+     "on": {
+      "median_ms": 37.27,
+      "queries": 34,
+      "rows": 17,
+      "event_rows": 1
+     },
+     "same": true
+    },
+    "org-plan-reorg o-signoff-9": {
+     "off": {
+      "median_ms": 60.08,
+      "queries": 56,
+      "rows": 41,
+      "event_rows": 3
+     },
+     "on": {
+      "median_ms": 49.55,
+      "queries": 45,
+      "rows": 25,
+      "event_rows": 1
+     },
+     "same": true
+    },
+    "plan-apprentice o-bearing-replacement": {
+     "off": {
+      "median_ms": 58.42,
+      "queries": 52,
+      "rows": 109,
+      "event_rows": 12
+     },
+     "on": {
+      "median_ms": 47.56,
+      "queries": 41,
+      "rows": 48,
+      "event_rows": 2
+     },
+     "same": true
+    },
+    "plan-apprentice o-disassembly": {
+     "off": {
+      "median_ms": 53.29,
+      "queries": 49,
+      "rows": 93,
+      "event_rows": 12
+     },
+     "on": {
+      "median_ms": 45.18,
+      "queries": 38,
+      "rows": 31,
+      "event_rows": 1
+     },
+     "same": true
+    },
+    "plan-apprentice o-inspection": {
+     "off": {
+      "median_ms": 60.65,
+      "queries": 50,
+      "rows": 90,
+      "event_rows": 12
+     },
+     "on": {
+      "median_ms": 43.11,
+      "queries": 39,
+      "rows": 29,
+      "event_rows": 1
+     },
+     "same": true
+    },
+    "plan-apprentice o-reassembly": {
+     "off": {
+      "median_ms": 55.41,
+      "queries": 49,
+      "rows": 92,
+      "event_rows": 12
+     },
+     "on": {
+      "median_ms": 44.07,
+      "queries": 38,
+      "rows": 30,
+      "event_rows": 1
+     },
+     "same": true
+    },
+    "plan-apprentice o-relubrication": {
+     "off": {
+      "median_ms": 54.9,
+      "queries": 49,
+      "rows": 97,
+      "event_rows": 12
+     },
+     "on": {
+      "median_ms": 45.59,
+      "queries": 38,
+      "rows": 35,
+      "event_rows": 1
+     },
+     "same": true
+    },
+    "plan-apprentice o-repair": {
+     "off": {
+      "median_ms": 53.6,
+      "queries": 49,
+      "rows": 105,
+      "event_rows": 12
+     },
+     "on": {
+      "median_ms": 41.85,
+      "queries": 38,
+      "rows": 43,
+      "event_rows": 1
+     },
+     "same": true
+    },
+    "plan-apprentice o-sign-off": {
+     "off": {
+      "median_ms": 54.45,
+      "queries": 48,
+      "rows": 84,
+      "event_rows": 12
+     },
+     "on": {
+      "median_ms": 38.1,
+      "queries": 37,
+      "rows": 21,
+      "event_rows": 1
+     },
+     "same": true
+    },
+    "plan-apprentice o-test-run": {
+     "off": {
+      "median_ms": 65.29,
+      "queries": 50,
+      "rows": 109,
+      "event_rows": 12
+     },
+     "on": {
+      "median_ms": 44.02,
+      "queries": 39,
+      "rows": 48,
+      "event_rows": 1
+     },
+     "same": true
+    },
+    "plan-relubricate-only o-bearing-replacement": {
+     "off": {
+      "median_ms": 43.43,
+      "queries": 38,
+      "rows": 34,
+      "event_rows": 1
+     },
+     "on": {
+      "median_ms": 26.02,
+      "queries": 24,
+      "rows": 18,
+      "event_rows": 0
+     },
+     "same": true
+    },
+    "plan-relubricate-only o-disassembly": {
+     "off": {
+      "median_ms": 36.08,
+      "queries": 35,
+      "rows": 25,
+      "event_rows": 1
+     },
+     "on": {
+      "median_ms": 20.32,
+      "queries": 21,
+      "rows": 12,
+      "event_rows": 0
+     },
+     "same": true
+    },
+    "plan-relubricate-only o-inspection": {
+     "off": {
+      "median_ms": 49.13,
+      "queries": 50,
+      "rows": 36,
+      "event_rows": 1
+     },
+     "on": {
+      "median_ms": 38.92,
+      "queries": 39,
+      "rows": 29,
+      "event_rows": 1
+     },
+     "same": true
+    },
+    "plan-relubricate-only o-reassembly": {
+     "off": {
+      "median_ms": 35.79,
+      "queries": 35,
+      "rows": 25,
+      "event_rows": 1
+     },
+     "on": {
+      "median_ms": 22.0,
+      "queries": 21,
+      "rows": 12,
+      "event_rows": 0
+     },
+     "same": true
+    },
+    "plan-relubricate-only o-relubrication": {
+     "off": {
+      "median_ms": 38.72,
+      "queries": 35,
+      "rows": 25,
+      "event_rows": 1
+     },
+     "on": {
+      "median_ms": 20.1,
+      "queries": 21,
+      "rows": 12,
+      "event_rows": 0
+     },
+     "same": true
+    },
+    "plan-relubricate-only o-repair": {
+     "off": {
+      "median_ms": 34.82,
+      "queries": 35,
+      "rows": 25,
+      "event_rows": 1
+     },
+     "on": {
+      "median_ms": 20.89,
+      "queries": 21,
+      "rows": 12,
+      "event_rows": 0
+     },
+     "same": true
+    },
+    "plan-relubricate-only o-sign-off": {
+     "off": {
+      "median_ms": 33.49,
+      "queries": 34,
+      "rows": 24,
+      "event_rows": 1
+     },
+     "on": {
+      "median_ms": 19.92,
+      "queries": 20,
+      "rows": 11,
+      "event_rows": 0
+     },
+     "same": true
+    },
+    "plan-relubricate-only o-test-run": {
+     "off": {
+      "median_ms": 35.27,
+      "queries": 36,
+      "rows": 26,
+      "event_rows": 1
+     },
+     "on": {
+      "median_ms": 21.99,
+      "queries": 22,
+      "rows": 13,
+      "event_rows": 0
+     },
+     "same": true
+    },
+    "plan-rig-control o-bearing-replacement": {
+     "off": {
+      "median_ms": 78.5,
+      "queries": 69,
+      "rows": 153,
+      "event_rows": 14
+     },
+     "on": {
+      "median_ms": 64.85,
+      "queries": 58,
+      "rows": 85,
+      "event_rows": 4
+     },
+     "same": true
+    },
+    "plan-rig-control o-disassembly": {
+     "off": {
+      "median_ms": 59.45,
+      "queries": 49,
+      "rows": 104,
+      "event_rows": 14
+     },
+     "on": {
+      "median_ms": 38.49,
+      "queries": 38,
+      "rows": 31,
+      "event_rows": 1
+     },
+     "same": true
+    },
+    "plan-rig-control o-inspection": {
+     "off": {
+      "median_ms": 63.24,
+      "queries": 50,
+      "rows": 101,
+      "event_rows": 14
+     },
+     "on": {
+      "median_ms": 39.5,
+      "queries": 39,
+      "rows": 29,
+      "event_rows": 1
+     },
+     "same": true
+    },
+    "plan-rig-control o-reassembly": {
+     "off": {
+      "median_ms": 63.44,
+      "queries": 49,
+      "rows": 103,
+      "event_rows": 14
+     },
+     "on": {
+      "median_ms": 39.51,
+      "queries": 38,
+      "rows": 30,
+      "event_rows": 1
+     },
+     "same": true
+    },
+    "plan-rig-control o-relubrication": {
+     "off": {
+      "median_ms": 65.15,
+      "queries": 49,
+      "rows": 108,
+      "event_rows": 14
+     },
+     "on": {
+      "median_ms": 42.5,
+      "queries": 38,
+      "rows": 35,
+      "event_rows": 1
+     },
+     "same": true
+    },
+    "plan-rig-control o-repair": {
+     "off": {
+      "median_ms": 59.29,
+      "queries": 49,
+      "rows": 116,
+      "event_rows": 14
+     },
+     "on": {
+      "median_ms": 42.72,
+      "queries": 38,
+      "rows": 43,
+      "event_rows": 1
+     },
+     "same": true
+    },
+    "plan-rig-control o-sign-off": {
+     "off": {
+      "median_ms": 57.06,
+      "queries": 48,
+      "rows": 95,
+      "event_rows": 14
+     },
+     "on": {
+      "median_ms": 35.49,
+      "queries": 37,
+      "rows": 21,
+      "event_rows": 1
+     },
+     "same": true
+    },
+    "plan-rig-control o-test-run": {
+     "off": {
+      "median_ms": 58.7,
+      "queries": 50,
+      "rows": 120,
+      "event_rows": 14
+     },
+     "on": {
+      "median_ms": 43.53,
+      "queries": 39,
+      "rows": 48,
+      "event_rows": 1
+     },
+     "same": true
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,9 @@
+worlds-1 {'total': [67, 58, 58, 67, 68], 'open': [6, 4, 5, 5, 6], 'first': [25, 21, 21, 23, 24], 'stream': [27, 25, 25, 29, 30], 'python': [9, 8, 8, 9, 9], 'queries': [35, 35, 35, 35, 35], 'rows': [161, 161, 161, 161, 161]}
+worlds-10 {'total': [74, 76, 70, 75, 79], 'open': [5, 5, 4, 5, 5], 'first': [23, 23, 21, 23, 23], 'stream': [39, 41, 37, 39, 41], 'python': [8, 8, 8, 8, 8], 'queries': [35, 35, 35, 35, 35], 'rows': [161, 161, 161, 161, 161]}
+acceptance                   worlds-1: 4 q, 4.4 ms | worlds-10: 4 q, 4.9 ms
+head and parameters (fetch)  worlds-1: 9 q, 21.0 ms | worlds-10: 9 q, 25.4 ms
+other                        worlds-1: 6 q, 5.8 ms | worlds-10: 6 q, 4.9 ms
+roles                        worlds-1: 4 q, 8.7 ms | worlds-10: 4 q, 7.9 ms
+superseder acceptance        worlds-1: 2 q, 2.9 ms | worlds-10: 2 q, 2.5 ms
+supersession                 worlds-1: 4 q, 5.8 ms | worlds-10: 4 q, 13.8 ms
+world chain                  worlds-1: 6 q, 4.5 ms | worlds-10: 6 q, 4.4 ms

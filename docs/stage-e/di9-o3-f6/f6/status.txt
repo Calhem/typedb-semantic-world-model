@@ -1,0 +1,11 @@
+2026-11-23 12:41:33 .. 2026-11-23 12:41:49 rc=0 sleep-events=0 'AC Power' :: p1-core03-1
+2026-11-23 12:41:51 .. 2026-11-23 12:42:58 rc=0 sleep-events=0 'AC Power' :: p1-core03-5
+2026-11-23 12:43:00 .. 2026-11-23 12:44:55 rc=0 sleep-events=0 'AC Power' :: p1-core03-10
+2026-11-23 12:44:57 .. 2026-11-23 12:44:59 rc=0 sleep-events=0 'AC Power' :: p1-where-worlds-1
+2026-11-23 12:45:01 .. 2026-11-23 12:45:02 rc=0 sleep-events=0 'AC Power' :: p1-where-worlds-10
+2026-11-23 12:45:05 .. 2026-11-23 12:45:06 rc=0 sleep-events=0 'AC Power' :: p2-where-worlds-10
+2026-11-23 12:45:09 .. 2026-11-23 12:45:09 rc=0 sleep-events=0 'AC Power' :: p2-where-worlds-1
+2026-11-23 12:45:12 .. 2026-11-23 12:47:03 rc=0 sleep-events=0 'AC Power' :: p2-core03-10
+2026-11-23 12:47:05 .. 2026-11-23 12:48:16 rc=0 sleep-events=0 'AC Power' :: p2-core03-5
+2026-11-23 12:48:19 .. 2026-11-23 12:48:36 rc=0 sleep-events=0 'AC Power' :: p2-core03-1
+DONE
