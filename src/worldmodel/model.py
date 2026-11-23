@@ -990,19 +990,52 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
             has recorded-at $vrec; $h has wm-id == $persp;""", {"persp": perspective}):
             if klim is None or q.opt(r, "vrec") <= klim:
                 recs[q.opt(r, "aid")].acceptances.append((perspective, q.opt(r, "vd"), q.opt(r, "vrec")))
-        supers = [(q.opt(r, "aid"), q.opt(r, "nid"), q.opt(r, "srec"), q.opt(r, "nw"), q.opt(r, "nse"),
-                   q.opt(r, "nwid"), q.opt(r, "nst"))
-                  for r in follow(""" $su isa supersession (old: $a, new: $n), has recorded-at $srec;
-                  $n has wm-id $nid, has stance $nst; $n isa attestation (context: $nwo, attester: $nwho);
-                  $nwo has wm-id $nw; $nwho has wm-id $nwid;
-                  try { $n has valid-from-earliest $nse; };""")]
+        supers = self._supersessions(tx, follow)
         new_acc = [(q.opt(r, "nid"), q.opt(r, "vd"), q.opt(r, "vrec"))
                    for r in follow(""" $su isa supersession (old: $a, new: $n); $n has wm-id $nid;
                    $nacc isa acceptance (holder: $nh, accepted: $n), has verdict $vd, has recorded-at $vrec;
                    $nh has wm-id == $persp;""", {"persp": perspective})] if supers else []
-        self.stats["queries"] += 4 + (1 if supers else 0)
+        self.stats["queries"] += 4 + (1 if supers else 0) + (1 if supers and self.SUPERSESSION_TWO_STEP else 0)
         supers = [(*row, [(perspective, v, rec) for nid, v, rec in new_acc if nid == row[1]]) for row in supers]
         return recs, supers
+
+    # F6 (LABS-1.058, DI9-D16): the supersessions of the anchored attestations in two queries, the pairs first and then
+    # the new attestations' own attributes by id. In one query, TypeDB 3.14.1 plans the new attestation's attributes
+    # and roles so that the lookup grows with the supersessions in the whole database (5.4 -> 53.5 ms per lookup from
+    # 1x to 10x); the two queries stay flat (docs/stage-e/stage-e-di9-o3-f6-review.md, docs/stage-e/stage-e-di9-f6-
+    # correction.md). False: the single query (the reference the tests compare with).
+    SUPERSESSION_TWO_STEP = True
+
+    def _supersessions(self, tx, follow):
+        """(old id, new id, recorded-at, new world, new valid-from-earliest, new attester, new stance) for every
+        supersession of the anchored attestations: one row per answer of the single-query form, so a pair with several
+        matching answers for the new attestation keeps every combination, and a new attestation that does not match
+        (no world, attester or stance) gives no row."""
+        if not self.SUPERSESSION_TWO_STEP:
+            return [(q.opt(r, "aid"), q.opt(r, "nid"), q.opt(r, "srec"), q.opt(r, "nw"), q.opt(r, "nse"),
+                     q.opt(r, "nwid"), q.opt(r, "nst"))
+                    for r in follow(""" $su isa supersession (old: $a, new: $n), has recorded-at $srec;
+                    $n has wm-id $nid, has stance $nst; $n isa attestation (context: $nwo, attester: $nwho);
+                    $nwo has wm-id $nw; $nwho has wm-id $nwid;
+                    try { $n has valid-from-earliest $nse; };""")]
+        # one row per (supersession, old, new, recorded-at): the same bindings the single query starts from
+        pairs = [(q.opt(r, "aid"), q.opt(r, "nid"), q.opt(r, "srec"))
+                 for r in follow(""" $su isa supersession (old: $a, new: $n), has recorded-at $srec;
+                 $n has wm-id $nid;""")]
+        if not pairs:
+            return []
+        # wm-id is a key, so each id names one attestation; one row per answer for its attributes and roles
+        attrs = {}
+        nids = sorted({nid for _, nid, _ in pairs})
+        for i in range(0, len(nids), self.ANCHOR_CHUNK):
+            for r in q.rows(tx, """match $n isa attestation (context: $nwo, attester: $nwho), has wm-id == $want;
+                    $n has wm-id $nid, has stance $nst; $nwo has wm-id $nw; $nwho has wm-id $nwid;
+                    try { $n has valid-from-earliest $nse; };""",
+                            [{"want": x} for x in nids[i:i + self.ANCHOR_CHUNK]]):
+                attrs.setdefault(q.opt(r, "nid"), []).append(
+                    (q.opt(r, "nw"), q.opt(r, "nse"), q.opt(r, "nwid"), q.opt(r, "nst")))
+        return [(aid, nid, srec, nw, nse, nwid, nst)
+                for aid, nid, srec in pairs for nw, nse, nwid, nst in attrs.get(nid, [])]
 
     # O-1 bounds (LABS-1.056): attestation ids per anchored query (one given row each; a disjunction of ids measured
     # superlinear in its size, given rows did not), and the most ids for which anchoring is used at all: above it the
