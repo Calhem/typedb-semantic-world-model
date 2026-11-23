@@ -1,0 +1,9 @@
+16:27:12 start 75dd89b
+16:28:29 views-up rc=0
+16:29:50 views-fresh rc=0
+16:31:34 e1 revised rc=0
+17:07:27 snap-fresh rc=0
+17:07:36 snap-up rc=0
+17:57:26 suite done
+17:57:31 suite: run1-sel1-prof0 rc=0 877 passed, 1 warning in 814.18s (0:13:34);run1-sel1-prof1 rc=0 877 passed in 750.18s (0:12:30);run1-sel0-prof0 rc=0 877 passed in 654.62s (0:10:54);run1-sel0-prof1 rc=0 877 passed in 651.18s (0:10:51);run2-sel1-prof0 rc=0 877 passed in 653.32s (0:10:53);run2-sel1-prof1 rc=0 877 passed in 687.49s (0:11:27);run2-sel0-prof0 rc=0 877 passed in 532.17s (0:08:52);run2-sel0-prof1 rc=0 877 passed in 638.80s (0:10:38);
+17:57:31 DONE

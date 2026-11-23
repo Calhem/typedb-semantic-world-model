@@ -1,0 +1,10 @@
+C full                               core03-1:   6.75 ms 4 rows | core03-5:  35.59 ms 4 rows | core03-10:  69.40 ms 4 rows
+pairs                                core03-1:   1.18 ms 4 rows | core03-5:   0.90 ms 4 rows | core03-10:   0.87 ms 4 rows
++stance                              core03-1:   1.19 ms 4 rows | core03-5:   0.93 ms 4 rows | core03-10:   0.89 ms 4 rows
++start (try)                         core03-1:   1.30 ms 4 rows | core03-5:   1.12 ms 4 rows | core03-10:   1.10 ms 4 rows
++context                             core03-1:   0.98 ms 4 rows | core03-5:   1.03 ms 4 rows | core03-10:   0.98 ms 4 rows
++attester                            core03-1:   0.96 ms 4 rows | core03-5:   1.04 ms 4 rows | core03-10:   0.95 ms 4 rows
++context, attester (no ids)          core03-1:   7.43 ms 4 rows | core03-5:  32.65 ms 4 rows | core03-10:  64.04 ms 4 rows
++context, attester                   core03-1:   7.18 ms 4 rows | core03-5:  33.12 ms 4 rows | core03-10:  64.53 ms 4 rows
++links context                       core03-1:   0.84 ms 4 rows | core03-5:   1.09 ms 4 rows | core03-10:   1.06 ms 4 rows
+2026-11-23 18:59:01 .. 2026-11-23 18:59:08 sleep-events=0 'AC Power'
