@@ -1,6 +1,6 @@
 # Deferred correctness issues (register)
 
-**Opened 2026-11-11 under LABS-1.025; DI-5 added under LABS-1.026, DI-6 under LABS-1.027, DI-7 under LABS-1.028, DI-8 and DI-9 under LABS-1.030, DI-10 and DI-11 under LABS-1.034, DI-12 under LABS-1.038, DI-14 under LABS-1.042, DI-13 under LABS-1.043, DI-15 and DI-16 under LABS-1.045, DI-17 under LABS-1.049, DI-18 under LABS-1.050, DI-19 under LABS-1.053.** The pre-Stage E consolidation ([pre-stage-e-consolidation.md](pre-stage-e-consolidation.md), LABS-1.045, at review) recommends a disposition for every open issue. These are known correctness issues (DI-1 to DI-8, DI-11), one
+**Opened 2026-11-11 under LABS-1.025; DI-5 added under LABS-1.026, DI-6 under LABS-1.027, DI-7 under LABS-1.028, DI-8 and DI-9 under LABS-1.030, DI-10 and DI-11 under LABS-1.034, DI-12 under LABS-1.038, DI-14 under LABS-1.042, DI-13 under LABS-1.043, DI-15 and DI-16 under LABS-1.045, DI-17 under LABS-1.049, DI-18 under LABS-1.050, DI-19 under LABS-1.053, DI-20 to DI-23 under LABS-1.059.** The pre-Stage E consolidation ([pre-stage-e-consolidation.md](pre-stage-e-consolidation.md), LABS-1.045, at review) recommends a disposition for every open issue. These are known correctness issues (DI-1 to DI-8, DI-11), one
 tracked performance concern (DI-9) and one maintenance item (DI-10), kept apart from the stage documents.
 None of them has had its semantics changed yet. The pre-Stage E correctness review
 ([pre-stage-e-correctness-review.md](pre-stage-e-correctness-review.md), LABS-1.034) reproduces DI-1 to DI-6 and DI-8,
@@ -21,6 +21,10 @@ widens the scope of DI-5 and DI-8, and found DI-11.
 - **LABS-1.053:** the Stage E1 reconciliation (R1 to R4, including `UnknownRoleError` for invalid role names) is
   approved and merged into `main`. **DI-19** (a constraint dispute through `holds()` does not cite the constraint's
   attestation) is registered as a Stage E issue; its correction is not implemented.
+- **LABS-1.059 (performance phase closure):** DI-9's corrections O-1, O-2, O-3 and F6 are approved (F6 under
+  LABS-1.059; DI9-D11, the `where` target, closed). The residual performance items are registered as **DI-20 to
+  DI-23**, deferred, with no optimisation scheduled. See
+  [stage-e-performance-closure.md](../stage-e/stage-e-performance-closure.md).
 
 Each entry gives a concrete case, what it affects, and the options. A resolution needs its own approved decision and
 tests.
@@ -35,7 +39,7 @@ tests.
 | DI-6 | aggregate organisational reports can return ASSERTED despite mixed constituent statuses | D-2 (LABS-1.026) | review before Stage E | corrected in increment C, approved and merged (LABS-1.041, `main` bf8bb34) |
 | DI-7 | formal derivation provenance: no record of a named rule and named premises, yet basis "inference" gives INFERRED | D-3 (LABS-1.027 G-1, LABS-1.028) | Stage E requirement | open |
 | DI-8 | `take_sample` (and `replace_part`) write an account and its claimed effects in separate transactions | D-3 (LABS-1.028; registered LABS-1.030) | before Stage E | corrected in increment A, approved and merged (LABS-1.037, `main` 7654587) |
-| DI-9 | performance: high query counts in the D-3 reports, and questions slowing as other worlds' data grows | D-3 benchmark (LABS-1.029; registered LABS-1.030) | tracked into Stage E | open (performance) |
+| DI-9 | performance: high query counts in the D-3 reports, and questions slowing as other worlds' data grows | D-3 benchmark (LABS-1.029; registered LABS-1.030) | tracked into Stage E | corrected (O-1, O-2, O-3, F6; LABS-1.056 to 1.059); residuals in DI-20 to DI-23 |
 | DI-10 | the schema explorer has no automated browser regression tests (search, filters, navigation were checked by hand) | LABS-1.024 gate (registered LABS-1.034) | no deadline (maintenance) | open (non-blocking) |
 | DI-11 | reports built on `_claims` (capable, the profile reports) ignore functional-slot conflicts; the mirror image of DI-1 | pre-Stage E review (LABS-1.034) | proposed: before Stage E | corrected in increment B, approved and merged (LABS-1.039, `main` d9d873a) |
 | DI-12 | the transitive traversals (`parts`, `dependencies`) judge their links without the perspective's same-as identity | increment B design (LABS-1.037, registered LABS-1.038) | before Stage E (LABS-1.046) | **closed**: corrected by the identity increment (ID-8), approved and merged (LABS-1.049, `main` dd58b25; [report](pre-e-identity-increment.md)) |
@@ -46,6 +50,10 @@ tests.
 | DI-17 | a group of names joined by established same-as links that contains one disputed or denied pair is not merged at all (ID-5), so its established equivalences are set aside too: possibly over-restrictive | identity increment (LABS-1.048; registered LABS-1.049) | Stage E evaluation | open (evaluation) |
 | DI-18 | the export's `module_data` lists only the records the replay reproduces: a record held by a module version this code cannot replay is absent from the export (the attribution reports the replay as unverified) | schema export format 3 (LABS-1.050) | no deadline (export completeness) | open (non-blocking; format 2 refusal already reads the database's own records) |
 | DI-19 | `holds()` on a content disputed under an attested constraint (two holders of an exclusive office) cites the content's support and its rivals (`conflicts`), but not the attestation of the constraint it applied | Stage E1 revised evaluation, ORG-011 (LABS-1.052; registered LABS-1.053) | Stage E (provenance) | open (proposed correction: additive `constraint_support`) |
+| DI-20 | readers that still load a whole world (`occurrence_status`, `causes_of`, `effects_of`, `provenance`) grow with perspectives | DI-9 closure (LABS-1.058; registered LABS-1.059) | no deadline (DI9-D17 deferred) | deferred (performance) |
+| DI-21 | H1: transient slow states between fresh processes, cause unknown | DI-9 optimisation (LABS-1.056; registered LABS-1.059) | no deadline | deferred (performance) |
+| DI-22 | cross-world growth in head and parameter fetches (`where` +3.2 ms from 11 to 92 worlds; `parts`, `office_holders`) | DI-9 closure (LABS-1.058; registered LABS-1.059) | no deadline | deferred (performance) |
+| DI-23 | performance depends on TypeDB 3.14.1's planner; the first query after a bulk load may not finish | F6 (LABS-1.058; registered LABS-1.059) | recheck on any TypeDB upgrade | deferred (engine; private handover at review, DI9-D18) |
 
 ## DI-1: `facts_about` omits content disputed by polarity
 **What happens.** `facts_about(world, subject, t)` lists only content whose judgement at t is "holds". Two kinds of
@@ -299,6 +307,19 @@ instead:
 
 Proposed corrections O-1 to O-3 are at the DI-9 review gate; none is implemented.
 
+**Corrected (LABS-1.056 to LABS-1.059).** O-1 (144be5b), O-2 (92da365), O-3 (4ce7933) and F6 (75dd89b) are
+implemented, each behind a switch to the earlier path, with no change to any answer:
+- 877 tests in four configurations, each run twice;
+- 106,752 reference answers unchanged, 398 views identical, E1 272/272.
+
+Results from the entry code to F6:
+- Core 0.3 selective 10×: 259 → 17.5 ms per question;
+- scale read round at 92 worlds: 44–46 → 9.3 s;
+- `where` at 92 against 11 worlds: median ×1.05, the 1.2× target met in 7 of 7 runs.
+
+[stage-e-performance-closure.md](../stage-e/stage-e-performance-closure.md) has the details. The residual items
+are DI-20 to DI-23 below.
+
 **Added to the Stage E investigation (LABS-1.039): the cost of contextual office exclusivity** (increment B). Measured
 apart from the canonical judgement mechanism (`probes/pre_e_b_perf_split.out.txt`, four alternating rounds, see
 [pre-e-increment-b.md](pre-e-increment-b.md), "After the merge"):
@@ -535,3 +556,50 @@ the attestation ids supporting each applied constraint (for an attested constrai
 empty for a declared functional slot, which is schema data). Additive, so existing fields keep their values; the
 106,752-answer baseline would gain the field on constraint disputes only.
 
+## DI-20: readers that still load a whole world (performance, deferred)
+**Registered LABS-1.059**, from the DI-9 closure. DI9-D17 is deferred. These readers still build the unscoped memo
+or load whole worlds: `occurrence_status`, `causes_of`, `effects_of` and `provenance`. They are now the readers that
+grow most with perspectives.
+
+Measured (pooled p50, F6 code, `di9-f6-correction/bench-summary.txt`), worlds-1 → perspectives-10:
+
+| Reader | worlds-1 | perspectives-10 | Growth |
+|---|---|---|---|
+| `occurrence_status` | 52 ms | 71 ms | ×1.37 |
+| `provenance` | 235 ms | 320 ms | ×1.36 |
+
+**Not a correctness issue.** **Option:** the O-3 pattern, scoping the memo to the descriptions the reader already
+knows. Do it as an isolated increment, compared against the unscoped path. Not scheduled.
+
+## DI-21: H1, transient slow states (performance, deferred)
+**Registered LABS-1.059** (DI9-D5). Identical code and databases varied widely between fresh processes in one quiet
+session. For example, base `where` at 11 worlds took 363, 354, 210, 102 and 87 ms (LABS-1.056). The corrected code
+is much steadier, and every LABS-1.058 step was steady, but the cause is not identified.
+- **Candidates (unverified):** TypeDB caches, planner statistics, Docker VM contention.
+- **Option:** fresh-server repeats with the VM otherwise idle, once that is approved. Benchmarks keep interleaving
+  passes and fresh-process repeats until then.
+
+## DI-22: cross-world growth in head and parameter fetches (performance, deferred)
+**Registered LABS-1.059.** After F6, `where`'s remaining growth from 11 to 92 worlds is in the head and parameter
+fetches: +3.2 ms, about 23 → 27 ms per call (`di9-f6-correction/bench-summary.txt`, query time by kind).
+
+The readers that still grow most from worlds-1 to worlds-10 are:
+- `parts`: 14 → 20 ms (×1.43);
+- `office_holders`: 40 → 55 ms (×1.38). It also measured 11–15 % slower with F6 than with O-3 at worlds-10 and
+  perspectives-10, within its spread and not explained.
+
+Not investigated. **Option:** instrument the head fetch per world in the chain before any change.
+
+## DI-23: performance depends on TypeDB 3.14.1's planner (engine, deferred)
+**Registered LABS-1.059**, from F6.
+
+**Planner sensitivity.** The single-query supersession lookup grows with the number of supersessions in the database
+when it matches two role players that have several possible types. A minimal schema reproduces this: 6 → 47 ms for
+×10 data, against about 2 ms in two queries or with concrete types. F6 relies on the two-query form staying flat.
+
+**First query after a bulk load (unverified).** It did not finish within 60 s in 4 of 4 fresh builds of the
+reproduction. It answered in milliseconds a few minutes later. This could affect a newly seeded deployment.
+
+**Action:**
+- Rerun `probes/stage_e_f6_ablate.py` and `probes/stage_e_f6_supersession.py` on any TypeDB upgrade.
+- The private reproduction and an engineering handover are at review (DI9-D18). Nothing has been reported to TypeDB.
