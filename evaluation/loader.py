@@ -4,6 +4,13 @@ A fixture (benchmark/e1/fixtures/<scenario>.json, format in benchmark/e1/README.
 `load(fixture)` creates a fresh database (`wm-eval-<scenario>-<random>`, deleted by `drop`), installs the core and
 the fixture's profiles, and runs its steps in order with the library's public writer functions. It never calls a
 reader. It returns a Loaded record: the model, the knowledge-time marks and the attestation ids of each step.
+
+Stage E2 harness (LABS-1.061, GAP-HARNESS-1 and -2): `attest`, `deny` and `correct` accept `params`, and the steps
+position, relate_frames, anchor_frame, define_unit, define_quality_kind, measure, claim_cause, claim_effect,
+describe_occurrence, record_event, declare_existence, create_thing, destroy and interpret call the public writers of
+the same names. A step that refers to an earlier step's attestation (`supersedes`, `ends`) names that step; an effect
+claim names its proposition by content (type, roles, params), so a fixture never needs a proposition id. E1 fixtures
+use none of these, so they load exactly as before.
 """
 
 import json
@@ -87,6 +94,18 @@ def _interval(step, need_start=False):
     return out
 
 
+def _one(loaded, step, key):
+    """The single attestation written by the step named by step[key]."""
+    old = loaded.written.get(step[key])
+    if not old or len(old) != 1:
+        raise FixtureError(f"step {step.get('id')!r}: {key} {step[key]!r} must name a step that wrote one attestation")
+    return old[0]
+
+
+def _time_or_none(step, key):
+    return T(step[key]) if key in step else None
+
+
 def _check_keys(step, allowed):
     extra = set(step) - COMMON - set(allowed)
     if extra:
@@ -162,10 +181,12 @@ def _run(loaded, s):
         return
     ids = []
     if op in ("attest", "deny"):
-        _check_keys(s, ("world", "type", "roles", "attester", "stance") + INTERVAL)
+        _check_keys(s, ("world", "type", "roles", "params", "attester", "stance") + INTERVAL)
         kw = {"attester": attester, **_interval(s)}
         if s.get("stance"):
             kw["stance"] = s["stance"]
+        if s.get("params") is not None:
+            kw["params"] = s["params"]
         if op == "deny":
             kw["polarity"] = False
         ids = [wm.attest(s["world"], s["type"], s["roles"], id=sid, **kw)]
@@ -176,11 +197,13 @@ def _run(loaded, s):
             raise FixtureError(f"end: target {s['target']!r} must name one attestation")
         ids = [wm.end(s["world"], old[0], T(s["at"]))]
     elif op == "correct":
-        _check_keys(s, ("world", "target", "type", "roles", "attester", "stance") + INTERVAL)
+        _check_keys(s, ("world", "target", "type", "roles", "params", "attester", "stance") + INTERVAL)
         old = loaded.written.get(s["target"])
         if not old or len(old) != 1:
             raise FixtureError(f"correct: target {s['target']!r} must name one attestation")
         kw = {"attester": attester, **_interval(s)}
+        if s.get("params") is not None:
+            kw["params"] = s["params"]
         ids = [wm.attest(s["world"], s["type"], s["roles"], id=sid, supersedes=old[0], **kw)]
     elif op == "account":
         _check_keys(s, ("world", "roles", "start", "end", "type", "kind", "occurrence", "attester"))
@@ -247,9 +270,124 @@ def _run(loaded, s):
         ids = [lab.calibrate(wm, s["world"], s["certificate"], s["instrument"], start=iv.pop("start", None),
                              end=iv.pop("end", None), attester=attester, polarity=s.get("polarity", True), id=sid,
                              **iv)]
+    elif op in E2_OPS:
+        ids = E2_OPS[op](loaded, s, attester)
+        if ids is None:                                  # a definition: no attestation, nothing to name
+            return
     else:
         raise FixtureError(f"unknown op {op!r} in step {sid!r}")
     if sid in loaded.written:
         raise FixtureError(f"duplicate step id {sid!r}")
     loaded.written[sid] = [a for a in ids if a]
     _accept(loaded, s, loaded.written[sid])
+
+
+# ---- Stage E2 fixture steps (LABS-1.061, GAP-HARNESS-2); each returns the attestation ids it wrote, or None --------
+def _axis(v):
+    return tuple(v) if isinstance(v, list) else v
+
+
+def _op_position(L, s, attester):
+    _check_keys(s, ("world", "thing", "frame", "x", "y", "z", "orientation", "attester") + INTERVAL)
+    o = s.get("orientation")
+    return [L.wm.position(s["world"], s["thing"], s["frame"], _axis(s["x"]), _axis(s["y"]), _axis(s["z"]),
+                          orientation=tuple(o) if o is not None else None, attester=attester, id=s["id"],
+                          **_interval(s))]
+
+
+def _op_relate_frames(L, s, attester):
+    _check_keys(s, ("world", "parent", "child", "translation", "rotation", "attester") + INTERVAL)
+    return [L.wm.relate_frames(s["world"], s["parent"], s["child"], tuple(s["translation"]),
+                               tuple(s.get("rotation", (1.0, 0.0, 0.0, 0.0))), attester=attester, id=s["id"],
+                               **_interval(s))]
+
+
+def _op_anchor_frame(L, s, attester):
+    _check_keys(s, ("world", "frame", "anchor", "attester") + INTERVAL)
+    return [L.wm.anchor_frame(s["world"], s["frame"], s["anchor"], attester=attester, id=s["id"], **_interval(s))]
+
+
+def _op_define_unit(L, s, attester):
+    _check_keys(s, ("name", "dimension", "si_factor", "si_offset"))
+    L.wm.define_unit(s.get("name", s["id"]), s["dimension"], si_factor=s.get("si_factor", 1.0),
+                     si_offset=s.get("si_offset", 0.0), id=s["id"])
+    return None
+
+
+def _op_define_quality_kind(L, s, attester):
+    _check_keys(s, ("name", "dimension"))
+    L.wm.define_quality_kind(s.get("name", s["id"]), dimension=s.get("dimension"), id=s["id"])
+    return None
+
+
+def _op_measure(L, s, attester):
+    _check_keys(s, ("world", "bearer", "quality", "value", "unit", "uncertainty", "k", "start", "end", "instrument",
+                    "operator", "conditions", "calibration", "attester", "occurrence", "persists", "supersedes"))
+    r = L.wm.measure(s["world"], s["bearer"], s["quality"], s["value"], s["unit"], s["uncertainty"], k=s.get("k", 2.0),
+                     start=T(s["start"]), end=_time_or_none(s, "end"), instrument=s.get("instrument"),
+                     operator=s.get("operator"), conditions=tuple(s.get("conditions", ())),
+                     calibration=s.get("calibration"), attester=attester, occurrence=s.get("occurrence"),
+                     persists=s.get("persists", False),
+                     supersedes=_one(L, s, "supersedes") if "supersedes" in s else None, id=s["id"])
+    # the reported content first: it is what a measurement answer cites; then the activity's account and links
+    return [r["content"]] + _account_ids(L, s["world"], r["activity"]) + [r["produced"], r["reports"]]
+
+
+def _op_claim_cause(L, s, attester):
+    _check_keys(s, ("world", "cause", "effect", "polarity", "attester") + INTERVAL)
+    return [L.wm.claim_cause(s["world"], s["cause"], s["effect"], polarity=s.get("polarity", True), attester=attester,
+                             id=s["id"], **_interval(s))]
+
+
+def _op_claim_effect(L, s, attester):
+    _check_keys(s, ("world", "event", "kind", "type", "roles", "params", "polarity", "attester") + INTERVAL)
+    return [L.wm.claim_effect(s["world"], s["event"], s["kind"], s["type"], s["roles"], params=s.get("params"),
+                              polarity=s.get("polarity", True), attester=attester, id=s["id"], **_interval(s))]
+
+
+def _op_describe_occurrence(L, s, attester):
+    _check_keys(s, ("world", "description", "occurrence", "polarity", "attester") + INTERVAL)
+    return [L.wm.describe_occurrence(s["world"], s["description"], s["occurrence"], polarity=s.get("polarity", True),
+                                     attester=attester, id=s["id"], **_interval(s))]
+
+
+def _op_record_event(L, s, attester):
+    _check_keys(s, ("world", "roles", "start", "end", "kind", "ends", "effects", "type", "attester"))
+    ends = [_one(L, {"id": s["id"], "e": e}, "e") for e in s.get("ends", [])]
+    eid, effects = L.wm.record_event(s["world"], s["roles"], T(s["start"]), _time_or_none(s, "end"), kind=s.get("kind"),
+                                     ends=ends, effects=s.get("effects", ()), attester=attester, id=s["id"],
+                                     type=s.get("type", "event"))
+    return _account_ids(L, s["world"], eid) + list(effects)
+
+
+def _op_declare_existence(L, s, attester):
+    _check_keys(s, ("world", "thing", "start", "end", "attester"))
+    return [L.wm.declare_existence(s["world"], s["thing"], start=_time_or_none(s, "start"), end=_time_or_none(s, "end"),
+                                   attester=attester, id=s["id"])]
+
+
+def _op_create_thing(L, s, attester):
+    _check_keys(s, ("world", "kind", "name", "at", "alt_names", "attester"))
+    rid = L.wm.create_thing(s["world"], s["kind"], s.get("name", s["id"]), T(s["at"]),
+                            alt_names=tuple(s.get("alt_names", ())), attester=attester, id=s["id"])
+    return [h["attestation"] for h in L.wm.history(s["world"], rid) if L.wm.is_a(h["type"], "existence")]
+
+
+def _op_destroy(L, s, attester):
+    _check_keys(s, ("world", "thing", "at", "reason"))
+    return list(L.wm.destroy(s["world"], s["thing"], T(s["at"]), reason=s.get("reason")))
+
+
+def _op_interpret(L, s, attester):
+    _check_keys(s, ("world", "record", "type", "roles", "params", "tentative", "polarity", "attester") + INTERVAL)
+    return [lab.interpret(L.wm, s["world"], s["record"], s["type"], s["roles"], attester,
+                          tentative=s.get("tentative", False), polarity=s.get("polarity", True), params=s.get("params"),
+                          id=s["id"], **_interval(s))]
+
+
+E2_OPS = {"position": _op_position, "relate_frames": _op_relate_frames, "anchor_frame": _op_anchor_frame,
+          "define_unit": _op_define_unit, "define_quality_kind": _op_define_quality_kind, "measure": _op_measure,
+          "claim_cause": _op_claim_cause, "claim_effect": _op_claim_effect,
+          "describe_occurrence": _op_describe_occurrence, "record_event": _op_record_event,
+          "declare_existence": _op_declare_existence, "create_thing": _op_create_thing, "destroy": _op_destroy,
+          "interpret": _op_interpret}
