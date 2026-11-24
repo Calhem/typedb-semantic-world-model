@@ -106,8 +106,11 @@ class Worker:
     def ask(self, question, selective, limit):
         """{"run": plan result, "wall_ms"} or {"timeout": limit} or {"harness_error": ...}."""
         if self.proc is None:
-            self.start()
             self.restarts += 1
+            try:
+                self.start()
+            except RuntimeError as e:                          # a reload after a stop failed: this question only
+                return {"harness_error": f"restarting the scenario failed: {e}", "trace": "", "wall_ms": None}
         t0 = time.perf_counter()
         self.conn.send(("ask", question, selective))
         if not self.conn.poll(limit):
