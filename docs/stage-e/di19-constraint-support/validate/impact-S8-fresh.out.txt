@@ -1,0 +1,7 @@
+answers: 106752 before, 106752 after; missing 0, extra 0
+different once constraint_support is removed: 0
+answers with a non-empty constraint_support: 4; not a constraint dispute: 0
+  ["org", "2026-11-09T09:00:00+00:00", "holds", "[\"office-holding\", {\"class\": [\"site-manager\"], \"classified\": [\"bea\"], \"context\": [\"depot-7\"]}]"]: DISPUTED, conflicts ['att:bb0ba014b5d44615'] | exclusive-office {'context': ['depot-7'], 'office': ['site-manager']} support ['att:d34e3d0d100b4d82']
+  ["org", "2026-11-09T09:00:00+00:00", "holds", "[\"office-holding\", {\"class\": [\"site-manager\"], \"classified\": [\"cal\"], \"context\": [\"depot-7\"]}]"]: DISPUTED, conflicts ['att:f6125895b7934b2d'] | exclusive-office {'context': ['depot-7'], 'office': ['site-manager']} support ['att:d34e3d0d100b4d82']
+  ["org-plan-reorg", "2026-11-10T08:59:59+00:00", "holds", "[\"office-holding\", {\"class\": [\"site-manager\"], \"classified\": [\"bea\"], \"context\": [\"depot-7\"]}]"]: DISPUTED, conflicts ['att:bb0ba014b5d44615'] | exclusive-office {'context': ['depot-7'], 'office': ['site-manager']} support ['att:d34e3d0d100b4d82']
+  ["org-plan-reorg", "2026-11-10T08:59:59+00:00", "holds", "[\"office-holding\", {\"class\": [\"site-manager\"], \"classified\": [\"cal\"], \"context\": [\"depot-7\"]}]"]: DISPUTED, conflicts ['att:f6125895b7934b2d'] | exclusive-office {'context': ['depot-7'], 'office': ['site-manager']} support ['att:d34e3d0d100b4d82']

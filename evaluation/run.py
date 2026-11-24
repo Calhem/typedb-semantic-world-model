@@ -84,9 +84,10 @@ def a_holds(L, p):
     wm, c = L.wm, _ctx(L, p)
     rec = wm.judgement(p["world"], p["type"], p["roles"], T(p["t"]), **c)
     ans = wm.holds(p["world"], p["type"], p["roles"], T(p["t"]), **c)
-    # a dispute under a constraint rests on both sides: the content's own support and its rivals (`conflicts`)
+    # a dispute under a constraint rests on both sides: the content's own support and its rivals (`conflicts`), and
+    # on the attested constraint that made them conflict (`constraint_support`, DI-19, LABS-1.060)
     return ({"judgement": rec.judgement.value, "status": _status(ans.status), "holds": ans.holds},
-            set(ans.support) | set(ans.conflicts))
+            set(ans.support) | set(ans.conflicts) | {x for c in ans.constraint_support for x in c["support"]})
 
 
 def a_value_at(L, p):

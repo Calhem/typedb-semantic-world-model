@@ -4,6 +4,10 @@
 fixture, template, harness change or gold answer has been written, and no reader or ontology change is proposed.
 Stage E2 starts only after this design is approved.
 
+**Decisions (LABS-1.060):** E2-D1 to E2-D7 are approved, with E2-D6's thresholds amended, along with DI-17
+(evaluation only, about 12 identity-conflict questions) and the DI-7 deferral. See
+[stage-e2-decisions.md](stage-e2-decisions.md); it amends section 7 and wins where the two differ. E2 has not started.
+
 **Companion:** [stage-e-entry-report.md](stage-e-entry-report.md) (the Stage E entry baseline, performance and
 correctness risks this design relies on).
 

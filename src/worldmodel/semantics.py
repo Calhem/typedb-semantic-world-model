@@ -307,3 +307,8 @@ class Answer:
     evidence: tuple = ()                      # one dict per supporting attestation (attester, stance, basis, ...)
     conflicts: tuple = ()                     # holds(), functional dispute: attestation ids of the conflicting
                                               # contents (their evidence is in `evidence` too) (LABS-1.005)
+    constraint_support: tuple = ()            # DI-19 (LABS-1.060): one dict per applied ATTESTED constraint of the
+                                              # judgement the answer projects: its type, key players, constrained value
+                                              # role, and the ids and evidence of the attestations deciding the
+                                              # constraint's own judgement. A declared functional slot is schema data,
+                                              # so it never adds an entry. Additive: no other field changes

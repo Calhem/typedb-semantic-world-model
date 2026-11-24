@@ -1302,6 +1302,8 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
         return self._value(world, type, key, found[0], t, as_of, perspective)
 
     def _value(self, world, type, key, value_role, t, as_of, perspective):
+        # value_at/value_of judge the declared functional slot they ask about (`_conflicts`); no attested constraint
+        # is applied here, so `constraint_support` (DI-19) is always empty in their answers: nothing to cite.
         subjects = [key[r] for r in sorted(key)]
         atts, ident = self._view(world, as_of, perspective, type, subjects, at=t)
         want = {r: set(ident.members(x)) for r, x in key.items()}
@@ -1363,20 +1365,39 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
         return rec
 
     @staticmethod
+    def _constraint_support(rec):
+        """DI-19 (LABS-1.060): `Answer.constraint_support` for a record: one entry per attested constraint the record
+        applied (its own judgement ESTABLISHED in the record's world, time, knowledge time and perspective), citing
+        the attestations that decide that judgement. Declared constraints (functional slots) are schema data and
+        add nothing; an evaluated attested constraint that does not apply adds nothing either."""
+        out = []
+        for c in rec.constraints:
+            if c.kind != "attested" or not c.applies or c.judgement is None:
+                continue
+            sup = sorted(c.judgement.support, key=lambda a: a.id)
+            out.append({"constraint": c.type, "key": dict(zip(c.key_roles, c.key)), "value_role": c.value_role,
+                        "support": tuple(a.id for a in sup), "evidence": tuple(a.evidence() for a in sup)})
+        return tuple(sorted(out, key=lambda e: (e["constraint"], repr(sorted(e["key"].items())))))
+
+    @staticmethod
     def _answer(rec, alternatives):
         """A decided record as holds()'s Answer."""
         from .judgement import CONSTRAINT, Judgement
         sup = list(rec.support)
         ids_ = tuple(sorted(a.id for a in sup))
+        cs = WorldModel._constraint_support(rec)
         if rec.judgement is Judgement.DISPUTED and CONSTRAINT in rec.reasons:
             rival = list(rec.conflicts)
             return Answer(Status.DISPUTED, None, support=ids_, alternatives=alternatives,
                           conflicts=tuple(a.id for a in rival),
-                          evidence=tuple(a.evidence() for a in sorted(sup + rival, key=lambda a: a.id)))
+                          evidence=tuple(a.evidence() for a in sorted(sup + rival, key=lambda a: a.id)),
+                          constraint_support=cs)
         evidence = tuple(a.evidence() for a in sorted(sup, key=lambda a: a.id))
         if rec.judgement is Judgement.DISPUTED:
-            return Answer(Status.DISPUTED, None, support=ids_, alternatives=alternatives, evidence=evidence)
-        return Answer(answer_status(sup), rec.value, support=ids_, alternatives=alternatives, evidence=evidence)
+            return Answer(Status.DISPUTED, None, support=ids_, alternatives=alternatives, evidence=evidence,
+                          constraint_support=cs)
+        return Answer(answer_status(sup), rec.value, support=ids_, alternatives=alternatives, evidence=evidence,
+                      constraint_support=cs)
 
     def _question(self, world, type, roles, t, as_of, perspective, attested=True, memo=None):
         """(record of the first matching content decided at t or None, the matching attestations, the excluding
