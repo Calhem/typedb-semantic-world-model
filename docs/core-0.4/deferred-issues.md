@@ -25,6 +25,12 @@ widens the scope of DI-5 and DI-8, and found DI-11.
   LABS-1.059; DI9-D11, the `where` target, closed). The residual performance items are registered as **DI-20 to
   DI-23**, deferred, with no optimisation scheduled. See
   [stage-e-performance-closure.md](../stage-e/stage-e-performance-closure.md).
+- **LABS-1.060:** the performance closure is approved, and DI-20 to DI-23 stay deferred.
+  - **DI-19:** implemented as the additive `Answer.constraint_support` (branch `feature/di19-constraint-support`, at
+    review).
+  - **DI-17:** evaluation only, through about 12 E2 identity-conflict questions; identity semantics unchanged.
+  - **DI-7:** deferred until after E2. Derivation questions are E2 gap probes.
+  - Decisions are recorded in [stage-e2-decisions.md](../stage-e/stage-e2-decisions.md).
 
 Each entry gives a concrete case, what it affects, and the options. A resolution needs its own approved decision and
 tests.
@@ -37,7 +43,7 @@ tests.
 | DI-4 | dependency-kind vocabulary is not validated | D-1 | no deadline | open (limitation) |
 | DI-5 | a future-effective appointment (or holding) with an unreviewed counter-claim is labelled "not established" | D-2 (LABS-1.026) | no deadline | corrected in increment B, approved and merged (LABS-1.039, `main` d9d873a) |
 | DI-6 | aggregate organisational reports can return ASSERTED despite mixed constituent statuses | D-2 (LABS-1.026) | review before Stage E | corrected in increment C, approved and merged (LABS-1.041, `main` bf8bb34) |
-| DI-7 | formal derivation provenance: no record of a named rule and named premises, yet basis "inference" gives INFERRED | D-3 (LABS-1.027 G-1, LABS-1.028) | Stage E requirement | open |
+| DI-7 | formal derivation provenance: no record of a named rule and named premises, yet basis "inference" gives INFERRED | D-3 (LABS-1.027 G-1, LABS-1.028) | Stage E requirement | open (deferred until after E2; LABS-1.060) |
 | DI-8 | `take_sample` (and `replace_part`) write an account and its claimed effects in separate transactions | D-3 (LABS-1.028; registered LABS-1.030) | before Stage E | corrected in increment A, approved and merged (LABS-1.037, `main` 7654587) |
 | DI-9 | performance: high query counts in the D-3 reports, and questions slowing as other worlds' data grows | D-3 benchmark (LABS-1.029; registered LABS-1.030) | tracked into Stage E | corrected (O-1, O-2, O-3, F6; LABS-1.056 to 1.059); residuals in DI-20 to DI-23 |
 | DI-10 | the schema explorer has no automated browser regression tests (search, filters, navigation were checked by hand) | LABS-1.024 gate (registered LABS-1.034) | no deadline (maintenance) | open (non-blocking) |
@@ -47,9 +53,9 @@ tests.
 | DI-14 | in a variant world, descriptions whose account is not inherited are listed (their `describes` link is) without saying the world holds no account of them | increment D design (registered LABS-1.042) | no deadline (deferred) | open (reporting; no judgement affected) |
 | DI-15 | an occurrence's aliases (accepted same-as) are listed in `occurrence()` but their accounts are never compared, so two names of one occurrence give different role judgements | consolidation (LABS-1.045) | before Stage E (LABS-1.046) | **closed**: corrected by the identity increment (ID-9), approved and merged (LABS-1.049, `main` dd58b25; [report](pre-e-identity-increment.md)) |
 | DI-16 | identity merges on a same-as whose canonical judgement is DISPUTED (accepted denials are ignored) | consolidation (LABS-1.045) | before Stage E (LABS-1.046) | **closed**: option (a), corrected by the identity increment (ID-2, ID-5, ID-6), reproduction a permanent test; approved and merged (LABS-1.049, `main` dd58b25; [report](pre-e-identity-increment.md)) |
-| DI-17 | a group of names joined by established same-as links that contains one disputed or denied pair is not merged at all (ID-5), so its established equivalences are set aside too: possibly over-restrictive | identity increment (LABS-1.048; registered LABS-1.049) | Stage E evaluation | open (evaluation) |
+| DI-17 | a group of names joined by established same-as links that contains one disputed or denied pair is not merged at all (ID-5), so its established equivalences are set aside too: possibly over-restrictive | identity increment (LABS-1.048; registered LABS-1.049) | Stage E evaluation | open (evaluation only in E2; LABS-1.060) |
 | DI-18 | the export's `module_data` lists only the records the replay reproduces: a record held by a module version this code cannot replay is absent from the export (the attribution reports the replay as unverified) | schema export format 3 (LABS-1.050) | no deadline (export completeness) | open (non-blocking; format 2 refusal already reads the database's own records) |
-| DI-19 | `holds()` on a content disputed under an attested constraint (two holders of an exclusive office) cites the content's support and its rivals (`conflicts`), but not the attestation of the constraint it applied | Stage E1 revised evaluation, ORG-011 (LABS-1.052; registered LABS-1.053) | Stage E (provenance) | open (proposed correction: additive `constraint_support`) |
+| DI-19 | `holds()` on a content disputed under an attested constraint (two holders of an exclusive office) cites the content's support and its rivals (`conflicts`), but not the attestation of the constraint it applied | Stage E1 revised evaluation, ORG-011 (LABS-1.052; registered LABS-1.053) | Stage E (provenance) | corrected at review (additive `constraint_support`, LABS-1.060) |
 | DI-20 | readers that still load a whole world (`occurrence_status`, `causes_of`, `effects_of`, `provenance`) grow with perspectives | DI-9 closure (LABS-1.058; registered LABS-1.059) | no deadline (DI9-D17 deferred) | deferred (performance) |
 | DI-21 | H1: transient slow states between fresh processes, cause unknown | DI-9 optimisation (LABS-1.056; registered LABS-1.059) | no deadline | deferred (performance) |
 | DI-22 | cross-world growth in head and parameter fetches (`where` +3.2 ms from 11 to 92 worlds; `parts`, `office_holders`) | DI-9 closure (LABS-1.058; registered LABS-1.059) | no deadline | deferred (performance) |
@@ -555,6 +561,18 @@ correction is made.
 the attestation ids supporting each applied constraint (for an attested constraint, its own deciding attestations;
 empty for a declared functional slot, which is schema data). Additive, so existing fields keep their values; the
 106,752-answer baseline would gain the field on constraint disputes only.
+
+**Implemented (LABS-1.060, at review).** Branch `feature/di19-constraint-support`, commit 7cb348d:
+`Answer.constraint_support`, one entry for each applied attested constraint (type, key, value role, deciding attestation
+ids, evidence); always empty for declared functional slots, and so for `value_at()` and `value_of()`.
+- 15 new tests.
+- 892 tests pass × 4 configurations × 2.
+- 106,752 reference answers: 0 changed, and only 4 non-empty entries (the office-holding disputes).
+- 398 views unchanged.
+- E1 272/272 revised, 267/272 original.
+- ORG-011 recall 0.667 → 1.0.
+
+See [stage-e-di19-constraint-support.md](../stage-e/stage-e-di19-constraint-support.md).
 
 ## DI-20: readers that still load a whole world (performance, deferred)
 **Registered LABS-1.059**, from the DI-9 closure. DI9-D17 is deferred. These readers still build the unscoped memo
