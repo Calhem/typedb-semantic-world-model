@@ -1,0 +1,155 @@
+{
+ "db": "wm-probe-core03-10",
+ "n": 5,
+ "settings": {
+  "none": "none",
+  "database": "database",
+  "subject": "subject",
+  "both": "both"
+ },
+ "totals_ms": {
+  "none": 491.9,
+  "database": 265.2,
+  "subject": 262.7,
+  "both": 266.7
+ },
+ "calls": {
+  "value_at actual o0 t0.2": {
+   "none": {
+    "median_ms": 55.3,
+    "queries": 9,
+    "same": true
+   },
+   "database": {
+    "median_ms": 30.6,
+    "queries": 10,
+    "same": true
+   },
+   "subject": {
+    "median_ms": 30.3,
+    "queries": 10,
+    "same": true
+   },
+   "both": {
+    "median_ms": 30.6,
+    "queries": 11,
+    "same": true
+   }
+  },
+  "value_at plan o0 t0.2": {
+   "none": {
+    "median_ms": 88.2,
+    "queries": 13,
+    "same": true
+   },
+   "database": {
+    "median_ms": 35.0,
+    "queries": 13,
+    "same": true
+   },
+   "subject": {
+    "median_ms": 35.4,
+    "queries": 13,
+    "same": true
+   },
+   "both": {
+    "median_ms": 36.7,
+    "queries": 14,
+    "same": true
+   }
+  },
+  "value_at actual o37 t0.5": {
+   "none": {
+    "median_ms": 72.3,
+    "queries": 9,
+    "same": true
+   },
+   "database": {
+    "median_ms": 46.8,
+    "queries": 10,
+    "same": true
+   },
+   "subject": {
+    "median_ms": 47.7,
+    "queries": 10,
+    "same": true
+   },
+   "both": {
+    "median_ms": 47.5,
+    "queries": 11,
+    "same": true
+   }
+  },
+  "value_at plan o37 t0.5": {
+   "none": {
+    "median_ms": 101.9,
+    "queries": 13,
+    "same": true
+   },
+   "database": {
+    "median_ms": 51.6,
+    "queries": 13,
+    "same": true
+   },
+   "subject": {
+    "median_ms": 51.6,
+    "queries": 13,
+    "same": true
+   },
+   "both": {
+    "median_ms": 51.8,
+    "queries": 14,
+    "same": true
+   }
+  },
+  "value_at actual o74 t0.8": {
+   "none": {
+    "median_ms": 72.6,
+    "queries": 9,
+    "same": true
+   },
+   "database": {
+    "median_ms": 49.9,
+    "queries": 10,
+    "same": true
+   },
+   "subject": {
+    "median_ms": 46.8,
+    "queries": 10,
+    "same": true
+   },
+   "both": {
+    "median_ms": 48.3,
+    "queries": 11,
+    "same": true
+   }
+  },
+  "value_at plan o74 t0.8": {
+   "none": {
+    "median_ms": 101.6,
+    "queries": 13,
+    "same": true
+   },
+   "database": {
+    "median_ms": 51.3,
+    "queries": 13,
+    "same": true
+   },
+   "subject": {
+    "median_ms": 50.9,
+    "queries": 13,
+    "same": true
+   },
+   "both": {
+    "median_ms": 51.8,
+    "queries": 14,
+    "same": true
+   }
+  }
+ },
+ "anchored_sizes": {
+  "2": 168,
+  "4": 168,
+  "5": 168
+ }
+}

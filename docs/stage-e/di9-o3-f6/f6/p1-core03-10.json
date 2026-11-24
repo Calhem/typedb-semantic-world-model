@@ -1,0 +1,59 @@
+{
+ "db": "wm-probe-core03-10",
+ "reader": "core03-10 value_at x60",
+ "lookups": 63,
+ "anchors_per_lookup": 6.5396825396825395,
+ "forms": {
+  "C": {
+   "median_ms_per_lookup": 53.67,
+   "sum_of_medians_ms": 3711.6,
+   "rows": 202,
+   "same_rows": true
+  },
+  "N": {
+   "median_ms_per_lookup": 51.87,
+   "sum_of_medians_ms": 3575.2,
+   "rows": 202,
+   "same_rows": true
+  },
+  "L": {
+   "median_ms_per_lookup": 53.32,
+   "sum_of_medians_ms": 3669.3,
+   "rows": 202,
+   "same_rows": true
+  },
+  "S": {
+   "median_ms_per_lookup": 2.27,
+   "sum_of_medians_ms": 154.3,
+   "rows": 202,
+   "same_rows": true
+  },
+  "P": {
+   "median_ms_per_lookup": 57.61,
+   "sum_of_medians_ms": 4026.3,
+   "rows": 202,
+   "same_rows": true
+  },
+  "H": {
+   "median_ms_per_lookup": 71.93,
+   "sum_of_medians_ms": 4965.2,
+   "rows": 202,
+   "same_rows": true
+  },
+  "M": {
+   "median_ms_per_lookup": 1.02,
+   "sum_of_medians_ms": 68.7,
+   "rows": 202,
+   "same_rows": true
+  },
+  "R": {
+   "median_ms_per_lookup": 1.08,
+   "sum_of_medians_ms": 70.3,
+   "rows": 202,
+   "same_rows": true
+  }
+ },
+ "supersessions_in_database": 10499,
+ "supersessions_in_world": 10445,
+ "attestations_in_database": 33499
+}

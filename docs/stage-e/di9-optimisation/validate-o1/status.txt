@@ -1,0 +1,9 @@
+22:47:48 start 144be5b
+22:49:05 views-up rc=0
+22:50:22 views-fresh rc=0
+22:51:47 e1 revised rc=0
+06:26:45 snap-fresh rc=0
+07:00:47 snap-up rc=0
+10:41:08 suite done
+10:41:15 suite: run1-sel1-prof0 rc=0 764 passed in 667.01s (0:11:07);run1-sel1-prof1 rc=0 764 passed in 826.98s (0:13:46);run1-sel0-prof0 rc=0 764 passed in 1071.14s (0:17:51);run1-sel0-prof1 rc=0 764 passed in 1160.37s (0:19:20);
+10:41:15 DONE

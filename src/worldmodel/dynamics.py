@@ -28,17 +28,26 @@ class _Memo:
     """World-wide loads reused within one question (LABS-1.012): the event attestations (for intervals and accounts)
     and the describes links (for occurrences_of), each loaded at most once for one world, knowledge time and
     perspective. Created by a read operation and passed down; it never outlives the question, so nothing is cached
-    across writes."""
+    across writes.
 
-    def __init__(self, wm, world, as_of, perspective):
+    `descriptions` (O-3, LABS-1.057) scopes `events()` to those event descriptions: their attestations are loaded by
+    content id (with the same world, knowledge-time and perspective rules) instead of every event in the world. A
+    scoped memo answers only for those descriptions, so it is created only by a reader that knows its descriptions
+    beforehand (`occurrence()`)."""
+
+    def __init__(self, wm, world, as_of, perspective, descriptions=None):
         self.wm, self.world, self.as_of, self.perspective = wm, world, as_of, perspective
         self._events = self._occurrences = None
+        self._scope = None if descriptions is None else sorted(set(descriptions))
 
     def events(self):
-        """{description id: [attestation records of it]} for every event description visible in the world."""
+        """{description id: [attestation records of it]} for every event description visible in the world (or, when
+        scoped, for each of the memo's descriptions that is visible)."""
         if self._events is None:
             self._events = {}
-            for a in self.wm._load(self.world, self.as_of, types=["event"], perspective=self.perspective).values():
+            scope = {} if self._scope is None else {"contents": self._scope}    # unscoped: the call as before O-3
+            for a in self.wm._load(self.world, self.as_of, types=["event"], perspective=self.perspective,
+                                   **scope).values():
                 self._events.setdefault(a.content, []).append(a)
         return self._events
 
@@ -441,7 +450,7 @@ class DynamicsMixin:
                 "descriptions": sorted(descs, key=lambda x: x["description"])}
 
     # ---- event roles (LABS-1.043, DI-2: ER-1 to ER-5) -------------------------------------------------------------------
-    def _event_roles(self, world, occurrence, memo, as_of=None, perspective=SYSTEM, ident=None):
+    def _event_roles(self, world, occurrence, memo, as_of=None, perspective=SYSTEM, ident=None, links=None):
         """(accounts, roles) for `occurrence()`. Every description linked to the occurrence (or to anything the
         perspective's identity makes the same occurrence) by a visible describes claim is an account, accepted or not.
         Its link is judged by the canonical record of the describes content at the start of the account (the time it
@@ -460,7 +469,8 @@ class DynamicsMixin:
         from . import typeql as q
         ident = ident or self.identity(world, as_of, perspective, ids=[occurrence])
         members = set(ident.members(occurrence))
-        links = self._load(world, as_of, types=["describes"], subjects=sorted(members), perspective=perspective)
+        if links is None:   # occurrence() passes the same load (O-3)
+            links = self._load(world, as_of, types=["describes"], subjects=sorted(members), perspective=perspective)
         linked = sorted({d for a in links.values() if members & set(a.roles.get("occurrence", []))
                          for d in a.roles.get("description", [])})
         events = memo.events()

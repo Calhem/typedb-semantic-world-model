@@ -1,0 +1,65 @@
+<projects>/wm-o2-wt/.venv/lib/python3.13/site-packages/typedb/common/promise.py:32: SyntaxWarning: invalid escape sequence '\ '
+  once the ``Promise`` is ``resolve``\ d.
+Declarations evaluated: official-act.actor, official-act.office, official-act.office-context, replacement.patient (only as mechanical:one-for-one), replacement.fitted (only as mechanical:one-for-one)
+
+actual: 8 occurrences, 11 contexts (system, 9 attesters, system at an earlier knowledge time)
+  o-bearing-replacement [system]: current `patient` merges roles ['event:patient', 'replacement:removed']
+  o-bearing-replacement [cmms]: current `patient` merges roles ['event:patient', 'replacement:removed']
+  o-bearing-replacement [inspector]: current `patient` merges roles ['event:patient', 'replacement:removed']
+  o-bearing-replacement [technician]: current `patient` merges roles ['event:patient', 'replacement:removed']
+
+lab: 4 occurrences, 8 contexts (system, 6 attesters, system at an earlier knowledge time)
+
+lab-plan-recal: 4 occurrences, 8 contexts (system, 6 attesters, system at an earlier knowledge time)
+  o-split-b [system]: current descriptions list ev-split-b (no account in lab-plan-recal)
+  o-split-b [bo]: current descriptions list ev-split-b (no account in lab-plan-recal)
+  o-split-c [bo]: current descriptions list ev-split-c (no account in lab-plan-recal)
+
+lab-plan-tom: 0 occurrences, 7 contexts (system, 5 attesters, system at an earlier knowledge time)
+
+org: 1 occurrences, 7 contexts (system, 5 attesters, system at an earlier knowledge time)
+
+org-plan-reorg: 1 occurrences, 7 contexts (system, 5 attesters, system at an earlier knowledge time)
+
+plan-apprentice: 8 occurrences, 10 contexts (system, 8 attesters, system at an earlier knowledge time)
+
+plan-move-bench: 0 occurrences, 7 contexts (system, 5 attesters, system at an earlier knowledge time)
+
+plan-relubricate-only: 8 occurrences, 8 contexts (system, 6 attesters, system at an earlier knowledge time)
+  o-bearing-replacement [system]: current descriptions list ev-maintenance-record (no account in plan-relubricate-only)
+  o-bearing-replacement [system]: current descriptions list ev-worklog-replacement (no account in plan-relubricate-only)
+  o-bearing-replacement [technician]: current descriptions list ev-worklog-replacement (no account in plan-relubricate-only)
+  o-disassembly [system]: current descriptions list ev-disassembly (no account in plan-relubricate-only)
+  o-disassembly [technician]: current descriptions list ev-disassembly (no account in plan-relubricate-only)
+  o-reassembly [system]: current descriptions list ev-reassembly (no account in plan-relubricate-only)
+  o-reassembly [technician]: current descriptions list ev-reassembly (no account in plan-relubricate-only)
+  o-relubrication [system]: current descriptions list ev-relubrication (no account in plan-relubricate-only)
+  o-relubrication [technician]: current descriptions list ev-relubrication (no account in plan-relubricate-only)
+  o-repair [system]: current descriptions list ev-repair (no account in plan-relubricate-only)
+  o-repair [technician]: current descriptions list ev-repair (no account in plan-relubricate-only)
+  o-sign-off [system]: current descriptions list ev-sign-off (no account in plan-relubricate-only)
+  o-sign-off [inspector]: current descriptions list ev-sign-off (no account in plan-relubricate-only)
+  o-test-run [system]: current descriptions list ev-test-run (no account in plan-relubricate-only)
+  o-test-run [technician]: current descriptions list ev-test-run (no account in plan-relubricate-only)
+
+plan-rig-control: 8 occurrences, 11 contexts (system, 9 attesters, system at an earlier knowledge time)
+  o-bearing-replacement [system]: current `patient` merges roles ['event:patient', 'replacement:removed']
+  o-bearing-replacement [cmms]: current `patient` merges roles ['event:patient', 'replacement:removed']
+  o-bearing-replacement [inspector]: current `patient` merges roles ['event:patient', 'replacement:removed']
+  o-bearing-replacement [technician]: current `patient` merges roles ['event:patient', 'replacement:removed']
+
+plan-steel-cover: 0 occurrences, 5 contexts (system, 3 attesters, system at an earlier knowledge time)
+
+Totals:
+  constraint not applying (kind not established): 12
+  core role merging differently named roles: 8
+  description listed without an account in the world: 18
+  role judged: 12
+  views: 398
+  views with a judgement change (a constrained role DISPUTED): 0
+  views with a role-presentation change (`roles` keeps apart what `participants` merges): 8
+
+compared with probes/pre_e_d_occurrence_baseline.json.gz: 398 frozen views, 398 now, same views: True
+  existing fields (descriptions, participants) different: 0
+  judgements different: 0
+  role-presentation changes different: 0

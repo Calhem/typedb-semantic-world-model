@@ -1,0 +1,322 @@
+{
+ "db": "wm-probe-core03-1",
+ "call": "core03-value-at",
+ "reps": 9,
+ "queries": [
+  {
+   "rows": 3,
+   "median_ms": 8.61,
+   "min_ms": 8.08,
+   "max_ms": 11.25,
+   "spread": 1.4,
+   "i": 9,
+   "query": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa located-at; $subj has wm-id == $sid; $c links ($kr: $subj); { not { $a has valid-from-latest $s0; }; } or { $a has valid-from-latest $s1; $s1 <= $at; }; $su isa supersession (old: $a, new: $n), has recorded-at $srec; $n has wm-id $nid, has stance $nst",
+   "params": {
+    "world": "world:6807476be7744d70",
+    "sid": "physical-object:78fb20bc890e4879",
+    "at": "2026-11-09 11:48:06+00:00"
+   }
+  },
+  {
+   "rows": 12,
+   "median_ms": 3.86,
+   "min_ms": 3.52,
+   "max_ms": 8.59,
+   "spread": 2.4,
+   "i": 7,
+   "query": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa located-at; $subj has wm-id == $sid; $c links ($kr: $subj); { not { $a has valid-from-latest $s0; }; } or { $a has valid-from-latest $s1; $s1 <= $at; }; try { $c links ($role: $x); $x has wm-id $xid; };",
+   "params": {
+    "world": "world:6807476be7744d70",
+    "sid": "physical-object:78fb20bc890e4879",
+    "at": "2026-11-09 11:48:06+00:00"
+   }
+  },
+  {
+   "rows": 0,
+   "median_ms": 2.82,
+   "min_ms": 2.67,
+   "max_ms": 3.0,
+   "spread": 1.1,
+   "i": 1,
+   "query": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa same-as; $subj has wm-id == $sid; $c links ($kr: $subj); $who has wm-id $wid; $c isa! $t; $c has proposition-key $ck; fetch { \"aid\": $aid, \"wid\": $wid, \"t\": $t, \"ck\": $ck, \"rec\": $rec, \"st\": $a.stance, \"pol\": $a.polarity, \"bs\": $a.basis, \"eb\": $a.end-",
+   "params": {
+    "world": "world:6807476be7744d70",
+    "sid": "physical-object:78fb20bc890e4879"
+   }
+  },
+  {
+   "rows": 0,
+   "median_ms": 2.68,
+   "min_ms": 2.47,
+   "max_ms": 2.8,
+   "spread": 1.1,
+   "i": 2,
+   "query": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa same-as; $subj has wm-id == $sid; $c links ($kr: $subj); try { $c links ($role: $x); $x has wm-id $xid; };",
+   "params": {
+    "world": "world:6807476be7744d70",
+    "sid": "physical-object:78fb20bc890e4879"
+   }
+  },
+  {
+   "rows": 0,
+   "median_ms": 2.55,
+   "min_ms": 2.42,
+   "max_ms": 2.67,
+   "spread": 1.1,
+   "i": 4,
+   "query": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa same-as; $subj has wm-id == $sid; $c links ($kr: $subj); $su isa supersession (old: $a, new: $n), has recorded-at $srec; $n has wm-id $nid, has stance $nst; $n isa attestation (context: $nwo, attester: $nwho); $nwo has wm-id $nw; $nwho has wm-id $nwid",
+   "params": {
+    "world": "world:6807476be7744d70",
+    "sid": "physical-object:78fb20bc890e4879"
+   }
+  },
+  {
+   "rows": 6,
+   "median_ms": 2.19,
+   "min_ms": 2.07,
+   "max_ms": 2.35,
+   "spread": 1.1,
+   "i": 6,
+   "query": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa located-at; $subj has wm-id == $sid; $c links ($kr: $subj); { not { $a has valid-from-latest $s0; }; } or { $a has valid-from-latest $s1; $s1 <= $at; }; $who has wm-id $wid; $c isa! $t; $c has proposition-key $ck; fetch { \"aid\": $aid, \"wid\": $wid, \"t\"",
+   "params": {
+    "world": "world:6807476be7744d70",
+    "sid": "physical-object:78fb20bc890e4879",
+    "at": "2026-11-09 11:48:06+00:00"
+   }
+  },
+  {
+   "rows": 0,
+   "median_ms": 0.92,
+   "min_ms": 0.65,
+   "max_ms": 1.64,
+   "spread": 2.5,
+   "i": 8,
+   "query": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa located-at; $subj has wm-id == $sid; $c links ($kr: $subj); { not { $a has valid-from-latest $s0; }; } or { $a has valid-from-latest $s1; $s1 <= $at; }; $acc isa acceptance (holder: $h, accepted: $a), has verdict $vd, has recorded-at $vrec; $h has wm-",
+   "params": {
+    "world": "world:6807476be7744d70",
+    "sid": "physical-object:78fb20bc890e4879",
+    "at": "2026-11-09 11:48:06+00:00",
+    "persp": "system"
+   }
+  },
+  {
+   "rows": 0,
+   "median_ms": 0.79,
+   "min_ms": 0.66,
+   "max_ms": 1.72,
+   "spread": 2.6,
+   "i": 10,
+   "query": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa located-at; $subj has wm-id == $sid; $c links ($kr: $subj); { not { $a has valid-from-latest $s0; }; } or { $a has valid-from-latest $s1; $s1 <= $at; }; $su isa supersession (old: $a, new: $n); $n has wm-id $nid; $nacc isa acceptance (holder: $nh, acc",
+   "params": {
+    "world": "world:6807476be7744d70",
+    "sid": "physical-object:78fb20bc890e4879",
+    "at": "2026-11-09 11:48:06+00:00",
+    "persp": "system"
+   }
+  },
+  {
+   "rows": 0,
+   "median_ms": 0.72,
+   "min_ms": 0.57,
+   "max_ms": 2.81,
+   "spread": 4.9,
+   "i": 11,
+   "query": "match $c isa same-as; $c links (same: $x); $x has wm-id $xid; { $x has wm-id == $i0; } or { $x has wm-id == $i1; } or { $x has wm-id == $i2; };",
+   "params": {
+    "i0": "place:21989d867e3d4bdf",
+    "i1": "place:b5bfb031d4dc4567",
+    "i2": "place:be107b7768454330"
+   }
+  },
+  {
+   "rows": 0,
+   "median_ms": 0.65,
+   "min_ms": 0.59,
+   "max_ms": 0.71,
+   "spread": 1.2,
+   "i": 3,
+   "query": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa same-as; $subj has wm-id == $sid; $c links ($kr: $subj); $acc isa acceptance (holder: $h, accepted: $a), has verdict $vd, has recorded-at $vrec; $h has wm-id == $persp;",
+   "params": {
+    "world": "world:6807476be7744d70",
+    "sid": "physical-object:78fb20bc890e4879",
+    "persp": "system"
+   }
+  },
+  {
+   "rows": 0,
+   "median_ms": 0.64,
+   "min_ms": 0.61,
+   "max_ms": 0.73,
+   "spread": 1.2,
+   "i": 0,
+   "query": "match $v isa world, has wm-id == $world; $br isa branching (base: $b, variant: $v), has branch-at $at, has knowledge-at $kat, has recorded-at $rec; $b has wm-id $bid;",
+   "params": {
+    "world": "world:6807476be7744d70"
+   }
+  },
+  {
+   "rows": 0,
+   "median_ms": 0.61,
+   "min_ms": 0.56,
+   "max_ms": 0.7,
+   "spread": 1.3,
+   "i": 5,
+   "query": "match $v isa world, has wm-id == $world; $br isa branching (base: $b, variant: $v), has branch-at $at, has knowledge-at $kat, has recorded-at $rec; $b has wm-id $bid;",
+   "params": {
+    "world": "world:6807476be7744d70"
+   }
+  }
+ ],
+ "variants": [
+  {
+   "rows": 0,
+   "median_ms": 3.06,
+   "min_ms": 2.81,
+   "max_ms": 3.63,
+   "spread": 1.3,
+   "variant": "same-as for the subject: as captured",
+   "query": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa same-as; $subj has wm-id == $sid; $c links ($kr: $subj); $who has wm-id $wid; $c isa! $t; $c has proposition-key $ck; fetch { \"aid\": $aid, \"wid\": $wid, \"t\": $t, \"ck\": $ck, \"rec\": $rec, \"st\": $a.stance, \"pol\": $a.polarity, \"bs\": $a.basis, \"eb\": $a.end-"
+  },
+  {
+   "rows": 0,
+   "median_ms": 3.38,
+   "min_ms": 2.82,
+   "max_ms": 7.99,
+   "spread": 2.8,
+   "variant": "same-as for the subject: subject first, no world join",
+   "query": "match $subj has wm-id == $sid; $c links ($kr: $subj); $c isa same-as; $a isa attestation (content: $c); select $a;"
+  },
+  {
+   "rows": 9,
+   "median_ms": 0.73,
+   "min_ms": 0.68,
+   "max_ms": 0.96,
+   "spread": 1.4,
+   "variant": "every content the subject plays a role in (any world)",
+   "query": "match $subj has wm-id == $sid; $c links ($kr: $subj); select $c;"
+  },
+  {
+   "rows": 0,
+   "median_ms": 0.78,
+   "min_ms": 0.68,
+   "max_ms": 1.56,
+   "spread": 2.3,
+   "variant": "the subject's contents of the type only (no attestation join)",
+   "query": "match $subj has wm-id == $sid; $c links ($kr: $subj); $c isa same-as; select $c;"
+  },
+  {
+   "rows": 13,
+   "median_ms": 0.9,
+   "min_ms": 0.81,
+   "max_ms": 1.46,
+   "spread": 1.8,
+   "variant": "the subject's contents and their attestations (no type)",
+   "query": "match $subj has wm-id == $sid; $c links ($kr: $subj); $a isa attestation (content: $c); select $a;"
+  },
+  {
+   "rows": 5,
+   "median_ms": 1.73,
+   "min_ms": 0.88,
+   "max_ms": 6.36,
+   "spread": 7.3,
+   "variant": "the subject's located-at contents only",
+   "query": "match $subj has wm-id == $sid; $c links ($kr: $subj); $c isa located-at; $c has proposition-key $ck; select $ck;"
+  },
+  {
+   "rows": 9,
+   "median_ms": 1.36,
+   "min_ms": 1.18,
+   "max_ms": 1.57,
+   "spread": 1.3,
+   "variant": "step 2: the world's attestations of those 5 contents, by key",
+   "query": "match $w isa world, has wm-id == $world; { $c has proposition-key \"located-at|located=physical-object:78fb20bc890e4879|place=place:21989d867e3d4bdf\"; } or { $c has proposition-key \"located-at|located=physical-object:78fb20bc890e4879|place=place:2d5e498e871b4980\"; } or { $c has proposition-key \"located-at|located=physical-object:78fb20bc890e4879|place=place:b5bfb031d4dc4567\"; } or { $c has proposit"
+  },
+  {
+   "rows": 9,
+   "median_ms": 1.02,
+   "min_ms": 0.97,
+   "max_ms": 1.45,
+   "spread": 1.5,
+   "variant": "the same attestations as one subject-bound query (head form)",
+   "query": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa located-at; $subj has wm-id == $sid; $c links ($kr: $subj); select $aid;",
+   "same_values_as_captured": true
+  },
+  {
+   "rows": 0,
+   "median_ms": 2.78,
+   "min_ms": 2.45,
+   "max_ms": 3.04,
+   "spread": 1.2,
+   "variant": "supersession: as captured",
+   "query": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa same-as; $subj has wm-id == $sid; $c links ($kr: $subj); $su isa supersession (old: $a, new: $n), has recorded-at $srec; $n has wm-id $nid, has stance $nst; $n isa attestation (context: $nwo, attester: $nwho); $nwo has wm-id $nw; $nwho has wm-id $nwid"
+  },
+  {
+   "variant": "supersession: head returns no attestation, so the query is not needed",
+   "rows": 0,
+   "median_ms": 0.0
+  },
+  {
+   "rows": 3,
+   "median_ms": 8.06,
+   "min_ms": 7.8,
+   "max_ms": 8.69,
+   "spread": 1.1,
+   "variant": "supersession: as captured",
+   "query": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa located-at; $subj has wm-id == $sid; $c links ($kr: $subj); { not { $a has valid-from-latest $s0; }; } or { $a has valid-from-latest $s1; $s1 <= $at; }; $su isa supersession (old: $a, new: $n), has recorded-at $srec; $n has wm-id $nid, has stance $nst"
+  },
+  {
+   "rows": 3,
+   "median_ms": 5.1,
+   "min_ms": 4.59,
+   "max_ms": 5.99,
+   "spread": 1.3,
+   "variant": "supersession: anchored on the 6 head ids",
+   "query": "match $a isa attestation, has wm-id $aid; { $a has wm-id \"att:0c44c543916942ee\"; } or { $a has wm-id \"att:1cc60e903ac74531\"; } or { $a has wm-id \"att:4af7c9a6b6d3434f\"; } or { $a has wm-id \"att:63d88625827748c4\"; } or { $a has wm-id \"att:7fc4b64985ef46d6\"; } or { $a has wm-id \"att:b7f039cf3ff24cc9\"; }; $su isa supersession (old: $a, new: $n), has recorded-at $srec; $n has wm-id $nid, has stance $n",
+   "same_values_as_captured": true
+  },
+  {
+   "rows": 0,
+   "median_ms": 0.75,
+   "min_ms": 0.62,
+   "max_ms": 0.79,
+   "spread": 1.3,
+   "variant": "supersession + new acceptances: as captured",
+   "query": "match $w isa world, has wm-id == $world; $a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec; $c isa located-at; $subj has wm-id == $sid; $c links ($kr: $subj); { not { $a has valid-from-latest $s0; }; } or { $a has valid-from-latest $s1; $s1 <= $at; }; $su isa supersession (old: $a, new: $n); $n has wm-id $nid; $nacc isa acceptance (holder: $nh, acc"
+  },
+  {
+   "rows": 0,
+   "median_ms": 0.69,
+   "min_ms": 0.64,
+   "max_ms": 0.76,
+   "spread": 1.2,
+   "variant": "supersession + new acceptances: anchored on the 6 head ids",
+   "query": "match $a isa attestation, has wm-id $aid; { $a has wm-id \"att:0c44c543916942ee\"; } or { $a has wm-id \"att:1cc60e903ac74531\"; } or { $a has wm-id \"att:4af7c9a6b6d3434f\"; } or { $a has wm-id \"att:63d88625827748c4\"; } or { $a has wm-id \"att:7fc4b64985ef46d6\"; } or { $a has wm-id \"att:b7f039cf3ff24cc9\"; }; $su isa supersession (old: $a, new: $n); $n has wm-id $nid; $nacc isa acceptance (holder: $nh, a",
+   "same_values_as_captured": true
+  },
+  {
+   "rows": 1050,
+   "median_ms": 15.08,
+   "min_ms": 14.55,
+   "max_ms": 15.53,
+   "spread": 1.1,
+   "variant": "supersessions in the database"
+  },
+  {
+   "rows": 0,
+   "median_ms": 0.5,
+   "min_ms": 0.48,
+   "max_ms": 0.55,
+   "spread": 1.1,
+   "variant": "acceptances in the database"
+  },
+  {
+   "rows": 3350,
+   "median_ms": 48.84,
+   "min_ms": 46.53,
+   "max_ms": 49.15,
+   "spread": 1.1,
+   "variant": "attestations in the database"
+  }
+ ],
+ "captured_total_median_ms": 27.0
+}

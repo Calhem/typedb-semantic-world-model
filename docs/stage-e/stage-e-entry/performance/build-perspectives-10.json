@@ -1,0 +1,19 @@
+{
+ "axis": "perspectives",
+ "scale": 10,
+ "db": "wm-probe-scale-perspectives-10",
+ "reference": {
+  "seconds": 5.07,
+  "attestations": 322,
+  "attestations_per_second": 63.5
+ },
+ "filler": {
+  "seconds": 38.35,
+  "writes": 1044,
+  "attestations": 2700,
+  "attestations_per_second": 70.4
+ },
+ "attestations": 3022,
+ "worlds": 11,
+ "database_bytes": 3727880
+}

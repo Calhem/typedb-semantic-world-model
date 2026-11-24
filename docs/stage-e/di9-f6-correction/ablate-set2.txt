@@ -1,0 +1,10 @@
+pairs                                core03-1:   0.75 ms 4 rows | core03-5:   0.91 ms 4 rows | core03-10:   0.98 ms 4 rows
+isa (context, attester)              core03-1:   7.17 ms 4 rows | core03-5:  32.65 ms 4 rows | core03-10:  64.26 ms 4 rows
+links (context), links (attester)    core03-1:   7.00 ms 4 rows | core03-5:  32.77 ms 4 rows | core03-10:  64.64 ms 4 rows
+links (context); links (attester)    core03-1:   7.04 ms 4 rows | core03-5:  32.57 ms 4 rows | core03-10:  65.12 ms 4 rows
+isa (context, attester), typed       core03-1:   0.94 ms 4 rows | core03-5:   0.94 ms 4 rows | core03-10:   1.08 ms 4 rows
+isa (content, context)               core03-1:   7.01 ms 4 rows | core03-5:  32.58 ms 4 rows | core03-10:  64.62 ms 4 rows
+isa (content, attester)              core03-1:   7.29 ms 4 rows | core03-5:  32.50 ms 4 rows | core03-10:  64.98 ms 4 rows
+isa (context bound to $a's world)    core03-1:   6.85 ms 4 rows | core03-5:  31.31 ms 4 rows | core03-10:  61.61 ms 4 rows
+old side (context, attester)         core03-1:   0.91 ms 4 rows | core03-5:   0.99 ms 4 rows | core03-10:   1.06 ms 4 rows
+2026-11-23 18:59:10 .. 2026-11-23 18:59:22 sleep-events=0 'AC Power'

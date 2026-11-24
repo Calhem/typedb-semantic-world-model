@@ -51,12 +51,18 @@ def from_driver(value):
 
 
 def run(tx, body, params=None):
-    params = {k: v for k, v in (params or {}).items()}
-    for name in params:
+    """Run `body` with `params` as its given row. `params` may also be a list of dicts with the same names and value
+    types: the query then runs once for each given row, in one call, and its answers are those of every row together
+    (LABS-1.056, O-1: a bounded batch without a disjunction of ids)."""
+    batch = [dict(p) for p in params] if isinstance(params, list) else [dict(params or {})]
+    first = batch[0] if batch else {}
+    for name in first:
         if not VARIABLE.match(name):
             raise ValueError(f"not a valid parameter name: {name!r}")
-    header = ("given " + ", ".join(f"${k}: {_value_type(v)}" for k, v in params.items()) + ";\n") if params else ""
-    rows = [{k: to_driver(v) for k, v in params.items()}] if params else None
+    if any(p.keys() != first.keys() for p in batch):
+        raise ValueError("every given row must bind the same parameters")
+    header = ("given " + ", ".join(f"${k}: {_value_type(v)}" for k, v in first.items()) + ";\n") if first else ""
+    rows = [{k: to_driver(v) for k, v in p.items()} for p in batch] if first else None
     return tx.query(header + body, given_rows=rows).resolve()
 
 

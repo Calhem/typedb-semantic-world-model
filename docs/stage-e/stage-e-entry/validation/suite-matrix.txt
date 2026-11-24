@@ -1,0 +1,10 @@
+run1-sel1-prof0 rc=0 744 passed, 1 warning in 949.33s (0:15:49)
+run1-sel1-prof1 rc=0 744 passed in 836.49s (0:13:56)
+run1-sel0-prof0 rc=0 744 passed in 683.46s (0:11:23)
+run1-sel0-prof1 rc=0 744 passed in 864.14s (0:14:24)
+run2-sel1-prof0 rc=0 744 passed in 811.06s (0:13:31)
+run2-sel1-prof1 rc=0 744 passed in 1114.78s (0:18:34)
+run2-sel0-prof0 rc=0 744 passed in 825.45s (0:13:45)
+run2-sel0-prof1 rc=0 744 passed in 765.10s (0:12:45)
+leftover test dbs: 0
+DONE

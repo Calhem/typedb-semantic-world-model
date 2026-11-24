@@ -80,6 +80,7 @@ KINDS = ("physical-object", "social-object", "place", "information-object", "occ
 QUALITY_PARAMS = ("lower", "upper", "coverage-level")
 POSE_PARAMS = ("x-min", "x-max", "y-min", "y-max", "z-min", "z-max", "qw", "qx", "qy", "qz")
 TRANSFORM_PARAMS = ("tx", "ty", "tz", "qw", "qx", "qy", "qz")
+SUBJECT_ROLE = " $subj has wm-id == $sid; $c links ($kr: $subj);"     # the head's subject binding (see _filters)
 PARAMS = {"has-quality": QUALITY_PARAMS, "positioned-in": POSE_PARAMS, "frame-transform": TRANSFORM_PARAMS}
 # Functional slots of the core: one value at a time per slot. With the A0 module they are declared as data in TypeDB
 # (functional-slot entities, A0.3) at create or upgrade; without it (a Core 0.3 database) this constant is used.
@@ -895,17 +896,20 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
             chain.append((current, vlim, klim))
 
     @staticmethod
-    def _filters(world, type, subject, klim, vlim, at):
+    def _filters(world, type, subject, klim, vlim, at, content=False):
         """TypeQL selecting attestations in `world` (and their content) by content type, a role player of the
-        content, transaction-time limit, inherited branch-time limit and valid time `at`."""
+        content, transaction-time limit, inherited branch-time limit and valid time `at`. With `content`, also by the
+        content's own id `$cid` (an event description; one given row per id, O-3)."""
         parts = ["$w isa world, has wm-id == $world;",
                  "$a isa attestation (content: $c, context: $w, attester: $who), has wm-id $aid, has recorded-at $rec;"]
         params = {"world": world}
         if type is not None:
             parts.append(f"$c isa {q.label(type)};")
+        if content:
+            parts.append("$c has wm-id == $cid;")
         if subject is not None:
             # Bound positively, so the query starts from the subject (see best practices).
-            parts.append("$subj has wm-id == $sid; $c links ($kr: $subj);")
+            parts.append(SUBJECT_ROLE.strip())
             params["sid"] = subject
         if klim is not None:
             parts.append("$rec <= $klim;")
@@ -920,8 +924,10 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
             params["at"] = at
         return "match " + " ".join(parts), params
 
-    def _level(self, tx, world, depth, vlim, klim, type, subject, at, perspective):
-        head, params = self._filters(world, type, subject, klim, vlim, at)
+    def _level(self, tx, world, depth, vlim, klim, type, subject, at, perspective, contents=None):
+        head, params = self._filters(world, type, subject, klim, vlim, at, content=contents is not None)
+        if contents is not None:        # O-3: the head runs once with one given row per content id
+            params = [{**params, "cid": c} for c in contents]
         # Type inference rejects a disjunction branch that cannot apply to a fixed type, so pick the content id pattern.
         recs = {}
         if type is not None and self.is_a(type, "event"):
@@ -945,6 +951,16 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
                 start=Window(sfe, sfl) if sfe is not None else None,
                 end=Window(tte, ttl) if tte is not None else None, end_basis=d["eb"],
                 recorded_at=q.parse_datetime(d["rec"]), credence=d["cr"], depth=depth)
+        if not recs:        # nothing in this world matches the head, so nothing can have roles, acceptances or successors
+            self.stats["queries"] += 1
+            return recs, []
+        # O-1 (LABS-1.056, DI-9 F2): the follow-up queries start from the attestations the filtered head returned
+        # (`_anchored`), rather than repeating the head and joining it to acceptance and supersession relations, which
+        # TypeDB 3.14 can execute in proportion to those relations in the whole database. The head's world, type,
+        # subject, valid-time and knowledge-time filters chose these ids, so the same attestations are read.
+        def follow(body, extra=None):
+            return self._anchored(tx, list(recs), head, params, body, extra or {})
+
         # Fetching `$c.lower` is rejected unless every possible type of $c can own it, so quality parameters are
         # fetched separately, only when the content can be has-quality.
         for ptype, names in PARAMS.items():        # has-quality (Core 0.3), positioned-in, frame-transform (A1)
@@ -952,17 +968,16 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
                     type is None or self.is_a(type, ptype) or self.is_a(ptype, type)):
                 continue
             fields = ", ".join(f'"{n}": $c.{n}' for n in names)
-            for d in q.documents(tx, head + f""" $c isa {ptype};
-                fetch {{ "aid": $aid, {fields} }};""", params):
+            for d in follow(f""" $c isa {ptype}; fetch {{ "aid": $aid, {fields} }};"""):
                 if d["aid"] in recs:
                     recs[d["aid"]].params = {k: d[k] for k in names if d[k] is not None}
             self.stats["queries"] += 1
         roles = {}
         if subject is None:
-            role_q = head + " $c links ($role: $x); $x has wm-id $xid;"
+            role_q = " $c links ($role: $x); $x has wm-id $xid;"
         else:   # the subject's own role comes from $kr; a second `links` cannot match it again
-            role_q = head + " try { $c links ($role: $x); $x has wm-id $xid; };"
-        for r in q.rows(tx, role_q, params):           # scoped role label -> ids
+            role_q = SUBJECT_ROLE + " try { $c links ($role: $x); $x has wm-id $xid; };"
+        for r in follow(role_q, {"sid": subject} if subject is not None else None):           # scoped role label -> ids
             mine = roles.setdefault(q.opt(r, "aid"), {})
             if subject is not None:
                 mine.setdefault(r.get("kr").get_label(), set()).add(subject)
@@ -971,35 +986,100 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
         for aid, rs in roles.items():
             if aid in recs:
                 recs[aid].roles, recs[aid].concrete_roles = self._role_maps(rs)
-        for r in q.rows(tx, head + """ $acc isa acceptance (holder: $h, accepted: $a), has verdict $vd,
-            has recorded-at $vrec; $h has wm-id == $persp;""", {**params, "persp": perspective}):
+        for r in follow(""" $acc isa acceptance (holder: $h, accepted: $a), has verdict $vd,
+            has recorded-at $vrec; $h has wm-id == $persp;""", {"persp": perspective}):
             if klim is None or q.opt(r, "vrec") <= klim:
                 recs[q.opt(r, "aid")].acceptances.append((perspective, q.opt(r, "vd"), q.opt(r, "vrec")))
-        supers = [(q.opt(r, "aid"), q.opt(r, "nid"), q.opt(r, "srec"), q.opt(r, "nw"), q.opt(r, "nse"),
-                   q.opt(r, "nwid"), q.opt(r, "nst"))
-                  for r in q.rows(tx, head + """ $su isa supersession (old: $a, new: $n), has recorded-at $srec;
-                  $n has wm-id $nid, has stance $nst; $n isa attestation (context: $nwo, attester: $nwho);
-                  $nwo has wm-id $nw; $nwho has wm-id $nwid;
-                  try { $n has valid-from-earliest $nse; };""", params)]
+        supers = self._supersessions(tx, follow)
         new_acc = [(q.opt(r, "nid"), q.opt(r, "vd"), q.opt(r, "vrec"))
-                   for r in q.rows(tx, head + """ $su isa supersession (old: $a, new: $n); $n has wm-id $nid;
+                   for r in follow(""" $su isa supersession (old: $a, new: $n); $n has wm-id $nid;
                    $nacc isa acceptance (holder: $nh, accepted: $n), has verdict $vd, has recorded-at $vrec;
-                   $nh has wm-id == $persp;""", {**params, "persp": perspective})] if supers else []
-        self.stats["queries"] += 4 + (1 if supers else 0)
+                   $nh has wm-id == $persp;""", {"persp": perspective})] if supers else []
+        self.stats["queries"] += 4 + (1 if supers else 0) + (1 if supers and self.SUPERSESSION_TWO_STEP else 0)
         supers = [(*row, [(perspective, v, rec) for nid, v, rec in new_acc if nid == row[1]]) for row in supers]
         return recs, supers
 
-    def _load(self, world, as_of=None, types=None, subjects=None, at=None, perspective=SYSTEM):
+    # F6 (LABS-1.058, DI9-D16): the supersessions of the anchored attestations in two queries, the pairs first and then
+    # the new attestations' own attributes by id. In one query, TypeDB 3.14.1 plans the new attestation's attributes
+    # and roles so that the lookup grows with the supersessions in the whole database (5.4 -> 53.5 ms per lookup from
+    # 1x to 10x); the two queries stay flat (docs/stage-e/stage-e-di9-o3-f6-review.md, docs/stage-e/stage-e-di9-f6-
+    # correction.md). False: the single query (the reference the tests compare with).
+    SUPERSESSION_TWO_STEP = True
+
+    def _supersessions(self, tx, follow):
+        """(old id, new id, recorded-at, new world, new valid-from-earliest, new attester, new stance) for every
+        supersession of the anchored attestations: one row per answer of the single-query form, so a pair with several
+        matching answers for the new attestation keeps every combination, and a new attestation that does not match
+        (no world, attester or stance) gives no row."""
+        if not self.SUPERSESSION_TWO_STEP:
+            return [(q.opt(r, "aid"), q.opt(r, "nid"), q.opt(r, "srec"), q.opt(r, "nw"), q.opt(r, "nse"),
+                     q.opt(r, "nwid"), q.opt(r, "nst"))
+                    for r in follow(""" $su isa supersession (old: $a, new: $n), has recorded-at $srec;
+                    $n has wm-id $nid, has stance $nst; $n isa attestation (context: $nwo, attester: $nwho);
+                    $nwo has wm-id $nw; $nwho has wm-id $nwid;
+                    try { $n has valid-from-earliest $nse; };""")]
+        # one row per (supersession, old, new, recorded-at): the same bindings the single query starts from
+        pairs = [(q.opt(r, "aid"), q.opt(r, "nid"), q.opt(r, "srec"))
+                 for r in follow(""" $su isa supersession (old: $a, new: $n), has recorded-at $srec;
+                 $n has wm-id $nid;""")]
+        if not pairs:
+            return []
+        # wm-id is a key, so each id names one attestation; one row per answer for its attributes and roles
+        attrs = {}
+        nids = sorted({nid for _, nid, _ in pairs})
+        for i in range(0, len(nids), self.ANCHOR_CHUNK):
+            for r in q.rows(tx, """match $n isa attestation (context: $nwo, attester: $nwho), has wm-id == $want;
+                    $n has wm-id $nid, has stance $nst; $nwo has wm-id $nw; $nwho has wm-id $nwid;
+                    try { $n has valid-from-earliest $nse; };""",
+                            [{"want": x} for x in nids[i:i + self.ANCHOR_CHUNK]]):
+                attrs.setdefault(q.opt(r, "nid"), []).append(
+                    (q.opt(r, "nw"), q.opt(r, "nse"), q.opt(r, "nwid"), q.opt(r, "nst")))
+        return [(aid, nid, srec, nw, nse, nwid, nst)
+                for aid, nid, srec in pairs for nw, nse, nwid, nst in attrs.get(nid, [])]
+
+    # O-1 bounds (LABS-1.056): attestation ids per anchored query (one given row each; a disjunction of ids measured
+    # superlinear in its size, given rows did not), and the most ids for which anchoring is used at all: above it the
+    # follow-up queries keep the head form, which measured about 8 % faster for a head of about 1,500 ids, while
+    # anchoring was faster up to the largest smaller head measured (198 ids). docs/stage-e/stage-e-di9-optimisation.md.
+    ANCHOR_CHUNK = 1000
+    ANCHOR_MAX = 1000
+
+    def _anchored(self, tx, aids, head, params, body, extra):
+        """Rows (or documents, for a `fetch` body) of `body` for the attestations `aids` (`$a`, its content `$c`, its
+        id `$aid`): one query per ANCHOR_CHUNK ids, each id a given row; for more than ANCHOR_MAX ids, `head` + `body`
+        with the head's own parameters (the pre-O-1 form). `extra` holds the body's own parameters."""
+        run = q.documents if "fetch" in body else q.rows
+        if len(aids) > self.ANCHOR_MAX:
+            # the head already binds the subject's role (pre-O-1 form); a head with given rows keeps them
+            rows = [{**p, **extra} for p in params] if isinstance(params, list) else {**params, **extra}
+            return run(tx, head + body.replace(SUBJECT_ROLE, "", 1), rows)
+        out = []
+        for i in range(0, len(aids), self.ANCHOR_CHUNK):
+            out.extend(run(tx, "match $a isa attestation (content: $c), has wm-id == $anchor; $a has wm-id $aid;" + body,
+                           [{"anchor": x, **extra} for x in aids[i:i + self.ANCHOR_CHUNK]]))
+        return out
+
+    def _load(self, world, as_of=None, types=None, subjects=None, at=None, perspective=SYSTEM, contents=None):
         """Attestations visible in `world` as known at `as_of`, with the perspective's acceptances and visible
-        supersessions. Filters (types, subjects, at) run in TypeDB; with none, everything visible is loaded."""
+        supersessions. Filters (types, subjects, at) run in TypeDB; with none, everything visible is loaded.
+        `contents` (O-3, event types only): only attestations of these event descriptions; [] loads nothing."""
         visible, supers = {}, []
+        if contents is not None:
+            if not types or not all(self.is_a(t, "event") for t in types):
+                raise ValueError("contents filters event descriptions: give event types")
+            contents = sorted(set(contents))
+            if not contents:
+                return visible
         with self._reading() as tx:
             chain = self._world_chain(tx, world, as_of)
             levels = {w: (depth, vlim, klim) for depth, (w, vlim, klim) in enumerate(chain)}
+            absent = {}                                    # O-2: per _load call, i.e. within this one transaction
             for depth, (w, vlim, klim) in enumerate(chain):
                 for type in (types or [None]):
                     for subj in (subjects or [None]):
-                        recs, sup = self._level(tx, w, depth, vlim, klim, type, subj, at, perspective)
+                        if self._absent(tx, type, subj, absent):
+                            continue
+                        recs, sup = self._level(tx, w, depth, vlim, klim, type, subj, at, perspective, contents)
                         for aid, rec in recs.items():
                             if aid not in visible:
                                 visible[aid] = rec
@@ -1020,6 +1100,26 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
                     [acc for acc in accs if klim is None or acc[2] <= klim]))
         self.stats["attestations"] += len(visible)
         return visible
+
+    # O-2 (LABS-1.056, DI-9 F3): skip a subject-bound (type, subject) whose subject plays a role in no content of the
+    # type. TypeDB 3.14 executes the subject-bound world head for a type with no content at all in proportion to the
+    # data; this check alone is flat (about 1 ms). Compared with a database-wide check of the type, it measured the
+    # same where the type is absent and better where it exists only for other subjects or in other worlds (see
+    # docs/stage-e/stage-e-di9-optimisation.md). False: never skip (the reference path the tests compare with).
+    SKIP_ABSENT = True
+
+    def _absent(self, tx, type, subject, cache):
+        """True when the subject plays a role in no stored content of `type` (in any world, at any time, for anyone),
+        so `_level` cannot return anything for (type, subject). Asked in `tx`, the load's own transaction (an
+        operation's included, so its uncommitted writes count); remembered only in `cache`, which lives for one
+        `_load`, never across transactions."""
+        if not self.SKIP_ABSENT or type is None or subject is None:
+            return False
+        key = (type, subject)
+        if key not in cache:
+            cache[key] = not q.rows(tx, f"match{SUBJECT_ROLE} $c isa {q.label(type)}; limit 1;", {"sid": subject})
+            self.stats["queries"] += 1
+        return cache[key]
 
     def visible(self, world, as_of=None, perspective=SYSTEM):
         """Every attestation visible in `world` at `as_of` (the full, unfiltered load)."""
@@ -1429,6 +1529,10 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
         return sorted({d for a in links.values() if a.polarity and usable(a, perspective, as_of)
                        for d in a.roles.get("description", [])})
 
+    # O-3 (LABS-1.057): occurrence() loads only the event descriptions linked to the occurrence and its aliases.
+    # False: the pre-O-3 path (every event in the world), which the tests compare with.
+    SCOPE_OCCURRENCE = True
+
     def occurrence(self, world, occurrence, as_of=None, perspective=SYSTEM):
         """A merged view of an occurrence. Conflicts stay visible and traceable; nothing is merged in storage.
 
@@ -1446,9 +1550,23 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
           LABS-1.049 (DI-13): each constraint also gives its `multiplicity` ("one" or "set"), the `reason` for a
           dispute, and for "set" each compared account's set (`sets`); see `_event_roles`."""
         from .dynamics import _Memo
-        descs = self.descriptions(world, occurrence, as_of, perspective)
+        if self.SCOPE_OCCURRENCE:
+            # O-3 (LABS-1.057, DI-9 F4): one identity and one describes load serve both `descriptions` (as
+            # descriptions(): visible, positive and usable links) and the accounts (`_event_roles`: every visible
+            # link, accepted or not), and only the descriptions those links name are loaded, by id, instead of every
+            # event in the world. Nothing else in this view reads an event attestation.
+            ident = self.identity(world, as_of, perspective, ids=[occurrence])
+            members = ident.members(occurrence)
+            links = self._load(world, as_of, types=["describes"], subjects=sorted(members), perspective=perspective)
+            descs = sorted({d for a in links.values() if a.polarity and usable(a, perspective, as_of)
+                            for d in a.roles.get("description", [])})
+            linked = {d for a in links.values() if set(members) & set(a.roles.get("occurrence", []))
+                      for d in a.roles.get("description", [])}
+            memo = _Memo(self, world, as_of, perspective, descriptions=linked | set(descs))
+        else:
+            descs = self.descriptions(world, occurrence, as_of, perspective)
+            memo, ident, links = _Memo(self, world, as_of, perspective), None, None
         out = {"occurrence": occurrence, "descriptions": descs, "participants": {}}
-        memo = _Memo(self, world, as_of, perspective)
         if descs:
             for d, recs in memo.events().items():
                 if d in descs:
@@ -1458,8 +1576,9 @@ class WorldModel(JudgementMixin, PhysicalMixin, DynamicsMixin, QualitiesMixin, A
                                 out["participants"].setdefault(role, {}).setdefault(x, set()).add((a.content,
                                                                                                     a.attester))
         out["participants"] = {r: {x: sorted(v) for x, v in m.items()} for r, m in out["participants"].items()}
-        ident = self.identity(world, as_of, perspective, ids=[occurrence])
-        out["accounts"], out["roles"] = self._event_roles(world, occurrence, memo, as_of, perspective, ident=ident)
+        ident = ident or self.identity(world, as_of, perspective, ids=[occurrence])
+        out["accounts"], out["roles"] = self._event_roles(world, occurrence, memo, as_of, perspective, ident=ident,
+                                                          links=links)
         out["aliases"] = ident.members(occurrence)        # ID-9 (LABS-1.048): the same view from every alias
         out["identity"] = ident.report(occurrence)
         return out

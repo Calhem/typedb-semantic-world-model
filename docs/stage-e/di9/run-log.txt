@@ -1,0 +1,7 @@
+17:12:46 start; containers running: 15; wm-typedb 118.5MiB / 7.748GiB
+17:15:21 pass1 rc=0 wm-typedb 260.4MiB / 7.748GiB
+17:17:13 pass2 rc=0 wm-typedb 271.9MiB / 7.748GiB
+17:18:16 core03 1 rc=0 wm-typedb 297MiB / 7.748GiB
+17:26:57 core03 5 rc=0 wm-typedb 393.6MiB / 7.748GiB
+17:46:35 core03 10 rc=0 wm-typedb 540.3MiB / 7.748GiB
+17:46:35 DONE

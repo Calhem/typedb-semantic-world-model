@@ -1,0 +1,68 @@
+2026-11-23 17:58:26 start; containers 11
+2026-11-23 17:58:26 .. 2026-11-23 17:58:30 rc=0 sleep-events=0 'AC Power' :: A o3 core03-1
+2026-11-23 17:58:32 .. 2026-11-23 17:58:39 rc=0 sleep-events=0 'AC Power' :: A o3 core03-5
+2026-11-23 17:58:41 .. 2026-11-23 17:58:49 rc=0 sleep-events=0 'AC Power' :: A o3 core03-10
+2026-11-23 17:58:51 .. 2026-11-23 17:59:49 rc=0 sleep-events=0 'AC Power' :: A o3 read wm-probe-scale-worlds-1
+2026-11-23 17:59:51 .. 2026-11-23 18:01:08 rc=0 sleep-events=0 'AC Power' :: A o3 read wm-probe-scale-worlds-5
+2026-11-23 18:01:11 .. 2026-11-23 18:02:23 rc=0 sleep-events=0 'AC Power' :: A o3 read wm-probe-scale-worlds-10
+2026-11-23 18:02:26 .. 2026-11-23 18:03:47 rc=0 sleep-events=0 'AC Power' :: A o3 read wm-probe-scale-perspectives-5
+2026-11-23 18:03:50 .. 2026-11-23 18:05:01 rc=0 sleep-events=0 'AC Power' :: A o3 read wm-probe-scale-perspectives-10
+2026-11-23 18:05:03 .. 2026-11-23 18:05:44 rc=0 sleep-events=0 'AC Power' :: A o3 instrumented
+2026-11-23 18:05:46 .. 2026-11-23 18:05:50 rc=0 sleep-events=0 'AC Power' :: A f6 core03-1
+2026-11-23 18:05:52 .. 2026-11-23 18:05:56 rc=0 sleep-events=0 'AC Power' :: A f6 core03-5
+2026-11-23 18:05:59 .. 2026-11-23 18:06:03 rc=0 sleep-events=0 'AC Power' :: A f6 core03-10
+2026-11-23 18:06:05 .. 2026-11-23 18:07:00 rc=0 sleep-events=0 'AC Power' :: A f6 read wm-probe-scale-worlds-1
+2026-11-23 18:07:02 .. 2026-11-23 18:07:59 rc=0 sleep-events=0 'AC Power' :: A f6 read wm-probe-scale-worlds-5
+2026-11-23 18:08:01 .. 2026-11-23 18:08:59 rc=0 sleep-events=0 'AC Power' :: A f6 read wm-probe-scale-worlds-10
+2026-11-23 18:09:01 .. 2026-11-23 18:10:00 rc=0 sleep-events=0 'AC Power' :: A f6 read wm-probe-scale-perspectives-5
+2026-11-23 18:10:03 .. 2026-11-23 18:11:08 rc=0 sleep-events=0 'AC Power' :: A f6 read wm-probe-scale-perspectives-10
+2026-11-23 18:11:10 .. 2026-11-23 18:11:48 rc=0 sleep-events=0 'AC Power' :: A f6 instrumented
+2026-11-23 18:11:50 .. 2026-11-23 18:11:55 rc=0 sleep-events=0 'AC Power' :: B f6 core03-1
+2026-11-23 18:11:57 .. 2026-11-23 18:12:01 rc=0 sleep-events=0 'AC Power' :: B f6 core03-5
+2026-11-23 18:12:03 .. 2026-11-23 18:12:07 rc=0 sleep-events=0 'AC Power' :: B f6 core03-10
+2026-11-23 18:12:09 .. 2026-11-23 18:13:04 rc=0 sleep-events=0 'AC Power' :: B f6 read wm-probe-scale-worlds-1
+2026-11-23 18:13:06 .. 2026-11-23 18:14:02 rc=0 sleep-events=0 'AC Power' :: B f6 read wm-probe-scale-worlds-5
+2026-11-23 18:14:05 .. 2026-11-23 18:15:03 rc=0 sleep-events=0 'AC Power' :: B f6 read wm-probe-scale-worlds-10
+2026-11-23 18:15:05 .. 2026-11-23 18:16:05 rc=0 sleep-events=0 'AC Power' :: B f6 read wm-probe-scale-perspectives-5
+2026-11-23 18:16:07 .. 2026-11-23 18:17:13 rc=0 sleep-events=0 'AC Power' :: B f6 read wm-probe-scale-perspectives-10
+2026-11-23 18:17:15 .. 2026-11-23 18:17:53 rc=0 sleep-events=0 'AC Power' :: B f6 instrumented
+2026-11-23 18:17:55 .. 2026-11-23 18:17:59 rc=0 sleep-events=0 'AC Power' :: B o3 core03-1
+2026-11-23 18:18:01 .. 2026-11-23 18:18:07 rc=0 sleep-events=0 'AC Power' :: B o3 core03-5
+2026-11-23 18:18:10 .. 2026-11-23 18:18:16 rc=0 sleep-events=0 'AC Power' :: B o3 core03-10
+2026-11-23 18:18:19 .. 2026-11-23 18:19:14 rc=0 sleep-events=0 'AC Power' :: B o3 read wm-probe-scale-worlds-1
+2026-11-23 18:19:17 .. 2026-11-23 18:20:13 rc=0 sleep-events=0 'AC Power' :: B o3 read wm-probe-scale-worlds-5
+2026-11-23 18:20:16 .. 2026-11-23 18:21:16 rc=0 sleep-events=0 'AC Power' :: B o3 read wm-probe-scale-worlds-10
+2026-11-23 18:21:18 .. 2026-11-23 18:22:19 rc=0 sleep-events=0 'AC Power' :: B o3 read wm-probe-scale-perspectives-5
+2026-11-23 18:22:22 .. 2026-11-23 18:23:29 rc=0 sleep-events=0 'AC Power' :: B o3 read wm-probe-scale-perspectives-10
+2026-11-23 18:23:32 .. 2026-11-23 18:24:12 rc=0 sleep-events=0 'AC Power' :: B o3 instrumented
+2026-11-23 18:24:14 .. 2026-11-23 18:24:22 rc=0 sleep-events=0 'AC Power' :: R1 o3 repeat
+2026-11-23 18:24:24 .. 2026-11-23 18:24:28 rc=0 sleep-events=0 'AC Power' :: R1 o3 core03-1
+2026-11-23 18:24:30 .. 2026-11-23 18:24:37 rc=0 sleep-events=0 'AC Power' :: R1 o3 core03-10
+2026-11-23 18:24:40 .. 2026-11-23 18:24:46 rc=0 sleep-events=0 'AC Power' :: R1 f6 repeat
+2026-11-23 18:24:48 .. 2026-11-23 18:24:51 rc=0 sleep-events=0 'AC Power' :: R1 f6 core03-1
+2026-11-23 18:24:54 .. 2026-11-23 18:24:57 rc=0 sleep-events=0 'AC Power' :: R1 f6 core03-10
+2026-11-23 18:24:59 .. 2026-11-23 18:25:05 rc=0 sleep-events=0 'AC Power' :: R2 f6 repeat
+2026-11-23 18:25:07 .. 2026-11-23 18:25:11 rc=0 sleep-events=0 'AC Power' :: R2 f6 core03-1
+2026-11-23 18:25:13 .. 2026-11-23 18:25:17 rc=0 sleep-events=0 'AC Power' :: R2 f6 core03-10
+2026-11-23 18:25:19 .. 2026-11-23 18:25:27 rc=0 sleep-events=0 'AC Power' :: R2 o3 repeat
+2026-11-23 18:25:29 .. 2026-11-23 18:25:34 rc=0 sleep-events=0 'AC Power' :: R2 o3 core03-1
+2026-11-23 18:25:36 .. 2026-11-23 18:25:43 rc=0 sleep-events=0 'AC Power' :: R2 o3 core03-10
+2026-11-23 18:25:45 .. 2026-11-23 18:25:53 rc=0 sleep-events=0 'AC Power' :: R3 o3 repeat
+2026-11-23 18:25:55 .. 2026-11-23 18:25:59 rc=0 sleep-events=0 'AC Power' :: R3 o3 core03-1
+2026-11-23 18:26:01 .. 2026-11-23 18:26:09 rc=0 sleep-events=0 'AC Power' :: R3 o3 core03-10
+2026-11-23 18:26:11 .. 2026-11-23 18:26:17 rc=0 sleep-events=0 'AC Power' :: R3 f6 repeat
+2026-11-23 18:26:19 .. 2026-11-23 18:26:23 rc=0 sleep-events=0 'AC Power' :: R3 f6 core03-1
+2026-11-23 18:26:26 .. 2026-11-23 18:26:29 rc=0 sleep-events=0 'AC Power' :: R3 f6 core03-10
+2026-11-23 18:26:32 .. 2026-11-23 18:26:38 rc=0 sleep-events=0 'AC Power' :: R4 f6 repeat
+2026-11-23 18:26:40 .. 2026-11-23 18:26:44 rc=0 sleep-events=0 'AC Power' :: R4 f6 core03-1
+2026-11-23 18:26:47 .. 2026-11-23 18:26:50 rc=0 sleep-events=0 'AC Power' :: R4 f6 core03-10
+2026-11-23 18:26:52 .. 2026-11-23 18:27:00 rc=0 sleep-events=0 'AC Power' :: R4 o3 repeat
+2026-11-23 18:27:02 .. 2026-11-23 18:27:06 rc=0 sleep-events=0 'AC Power' :: R4 o3 core03-1
+2026-11-23 18:27:09 .. 2026-11-23 18:27:16 rc=0 sleep-events=0 'AC Power' :: R4 o3 core03-10
+2026-11-23 18:27:18 .. 2026-11-23 18:27:26 rc=0 sleep-events=0 'AC Power' :: R5 o3 repeat
+2026-11-23 18:27:28 .. 2026-11-23 18:27:32 rc=0 sleep-events=0 'AC Power' :: R5 o3 core03-1
+2026-11-23 18:27:34 .. 2026-11-23 18:27:41 rc=0 sleep-events=0 'AC Power' :: R5 o3 core03-10
+2026-11-23 18:27:43 .. 2026-11-23 18:27:49 rc=0 sleep-events=0 'AC Power' :: R5 f6 repeat
+2026-11-23 18:27:51 .. 2026-11-23 18:27:55 rc=0 sleep-events=0 'AC Power' :: R5 f6 core03-1
+2026-11-23 18:27:57 .. 2026-11-23 18:28:01 rc=0 sleep-events=0 'AC Power' :: R5 f6 core03-10
+2026-11-23 18:28:03 DONE

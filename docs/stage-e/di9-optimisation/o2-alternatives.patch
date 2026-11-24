@@ -1,0 +1,49 @@
+--- a/src/worldmodel/model.py (144be5b)	2026-11-22 23:53:22
++++ b/src/worldmodel/model.py (O-2 evaluation build)	2026-11-21 10:59:43
+@@ -1027,9 +1027,12 @@
+         with self._reading() as tx:
+             chain = self._world_chain(tx, world, as_of)
+             levels = {w: (depth, vlim, klim) for depth, (w, vlim, klim) in enumerate(chain)}
++            absent = {}                                    # O-2: per _load call, i.e. within this one transaction
+             for depth, (w, vlim, klim) in enumerate(chain):
+                 for type in (types or [None]):
+                     for subj in (subjects or [None]):
++                        if self._absent(tx, type, subj, absent):
++                            continue
+                         recs, sup = self._level(tx, w, depth, vlim, klim, type, subj, at, perspective)
+                         for aid, rec in recs.items():
+                             if aid not in visible:
+@@ -1051,6 +1054,33 @@
+                     [acc for acc in accs if klim is None or acc[2] <= klim]))
+         self.stats["attestations"] += len(visible)
+         return visible
++
++    # O-2 alternatives under evaluation (LABS-1.056): "none", "database" (skip a content type with no content stored
++    # at all), "subject" (skip a type of which the subject plays a role in no content), "both".
++    ABSENT_CHECK = "none"
++
++    def _absent(self, tx, type, subject, cache):
++        """True when no stored content could match (type, subject), so `_level` cannot return anything for it in any
++        world, at any knowledge or valid time, for any perspective. Asked in `tx` (an operation's own transaction
++        included, so its uncommitted writes count), and remembered only in `cache`, which lives for one `_load`."""
++        mode = self.ABSENT_CHECK
++        if type is None or mode == "none":
++            return False
++        label = q.label(type)
++        if mode in ("database", "both"):
++            if ("db", type) not in cache:
++                cache[("db", type)] = not q.rows(tx, f"match $c isa {label}; limit 1;")
++                self.stats["queries"] += 1
++            if cache[("db", type)]:
++                return True
++        if mode in ("subject", "both") and subject is not None:
++            if ("subject", type, subject) not in cache:
++                cache[("subject", type, subject)] = not q.rows(
++                    tx, f"match $subj has wm-id == $sid; $c links ($kr: $subj); $c isa {label}; limit 1;", {"sid": subject})
++                self.stats["queries"] += 1
++            if cache[("subject", type, subject)]:
++                return True
++        return False
+ 
+     def visible(self, world, as_of=None, perspective=SYSTEM):
+         """Every attestation visible in `world` at `as_of` (the full, unfiltered load)."""

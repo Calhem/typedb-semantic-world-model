@@ -1,0 +1,4 @@
+2026-11-23 12:27:01 .. 2026-11-23 12:27:19 wm-probe-scale-worlds-1 rc=0 sleep-events=0 'AC Power'
+2026-11-23 12:27:22 .. 2026-11-23 12:27:42 wm-probe-scale-perspectives-5 rc=0 sleep-events=0 'AC Power'
+2026-11-23 12:27:45 .. 2026-11-23 12:28:10 wm-probe-scale-perspectives-10 rc=0 sleep-events=0 'AC Power'
+2026-11-23 12:28:12 .. 2026-11-23 12:28:32 wm-probe-scale-worlds-10 rc=0 sleep-events=0 'AC Power'

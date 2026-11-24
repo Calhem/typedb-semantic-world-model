@@ -1,0 +1,59 @@
+{
+ "db": "wm-probe-core03-1",
+ "reader": "core03-1 value_at x60",
+ "lookups": 61,
+ "anchors_per_lookup": 6.983606557377049,
+ "forms": {
+  "C": {
+   "median_ms_per_lookup": 5.35,
+   "sum_of_medians_ms": 356.0,
+   "rows": 206,
+   "same_rows": true
+  },
+  "N": {
+   "median_ms_per_lookup": 5.17,
+   "sum_of_medians_ms": 352.4,
+   "rows": 206,
+   "same_rows": true
+  },
+  "L": {
+   "median_ms_per_lookup": 5.47,
+   "sum_of_medians_ms": 360.6,
+   "rows": 206,
+   "same_rows": true
+  },
+  "S": {
+   "median_ms_per_lookup": 1.98,
+   "sum_of_medians_ms": 126.3,
+   "rows": 206,
+   "same_rows": true
+  },
+  "P": {
+   "median_ms_per_lookup": 8.97,
+   "sum_of_medians_ms": 625.2,
+   "rows": 206,
+   "same_rows": true
+  },
+  "H": {
+   "median_ms_per_lookup": 11.5,
+   "sum_of_medians_ms": 768.1,
+   "rows": 206,
+   "same_rows": true
+  },
+  "M": {
+   "median_ms_per_lookup": 0.82,
+   "sum_of_medians_ms": 51.8,
+   "rows": 206,
+   "same_rows": true
+  },
+  "R": {
+   "median_ms_per_lookup": 0.91,
+   "sum_of_medians_ms": 56.7,
+   "rows": 206,
+   "same_rows": true
+  }
+ },
+ "supersessions_in_database": 1050,
+ "supersessions_in_world": 1049,
+ "attestations_in_database": 3350
+}

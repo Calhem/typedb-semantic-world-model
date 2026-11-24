@@ -1,0 +1,150 @@
+
+====================================================================================================
+DI-7: formal derivation provenance is not recorded
+====================================================================================================
+
+-- setup (written)
+  world lab; sample-12, lab-2; category anhydrous; one measurement by lab-2 (result record 'm-lab2-result', not accepted)
+  laboratory profile installed
+  1. laboratory.interpret(..., classified-as(sample-12, anhydrous), lab-2, basis='inference'): refused: ValueError: an interpretation by a source is testimony or a hypothesis; basis 'inference' is reserved for rule-derived attestations (D-D3-4)
+     attestations before 5, after 5 (nothing written)
+  2. wm.attest(..., classified-as(sample-12, anhydrous), basis='inference', attester=lab-2, evidence=[m-lab2-result]) -> att-anhydrous; accepted by system
+
+-- observed: holds(lab, classified-as, sample-12/anhydrous, 2026-11-10 16:00)
+  status: INFERRED   holds: True   values: []
+  support: ['att-anhydrous']
+  conflicts: []
+  alternatives: []
+  evidence: att-anhydrous attester=lab-2 stance=asserts basis=inference polarity=True
+
+-- observed: canonical judgement (wm.judgement)
+  judgement: established   reasons: []   status: INFERRED   support_status: INFERRED
+  support: ['att-anhydrous']
+  conflicts: []
+
+-- observed: laboratory.interpretations on the record
+  mode: recorded as inference without derivation structure (G-1)
+  derivation: not a formal derivation: no named rule or premises are recorded (Stage E, DI-7)
+  content_judgement: judgement=established status=INFERRED
+
+-- observed: what the database records about att-anhydrous
+  attributes: basis=inference, end-basis=until-superseded, polarity=True, recorded-at=2030-01-01 00:00:02+00:00, stance=asserts, wm-id=att-anhydrous
+  relations it plays in: ['acceptance', 'rests-on']
+  rests-on records (evidence): ['m-lab2-result']
+  schema types whose label mentions rule / deriv / premise / reasoner: none
+
+-- expected (project documents)
+  docs/architecture/world-ontology-v0.2.md, 5.2 invariant E6: a derived attestation names its rule (id,
+  version) and premises; its attester is the reasoner that ran the rule; it is usable only while all its
+  premises are usable. INFERRED is reserved for such attestations (deferred-issues.md DI-7, 'What happens').
+  docs/core-0.4/stage-d3-design.md G-1 / D-D3-4: an analyst's interpretation is testimony or a hypothesis.
+  Here the attestation names no rule and no premises (only a rests-on evidence record), yet is INFERRED:
+  the core reads INFERRED from basis alone. laboratory.interpret refuses the same write; the core does not.
+
+-- potential corrections (deferred-issues.md DI-7, options for Stage E)
+  (a) a derivation record: the attestation names its rule (a concept) and premises (attestations); only
+      those are INFERRED, others with basis inference are reported as testimony;
+  (b) refuse basis inference on write unless a derivation record is given;
+  (c) keep it as documentation only.  Recommended there: (a) with (b) as its write-time check.
+
+  (di7: 1.0 s)
+
+====================================================================================================
+DI-17: conflict-group identity may be over-restrictive
+====================================================================================================
+
+-- setup (written; case I16 of probes/pre_e_identity_cases.py, tests/test_t_identity.py)
+  organisation profile installed (for `person`); world w; persons s1, s2, s3; attesters matcher, clerk
+  matcher asserts same-as(s1, s2) [same-s1-s2] and same-as(s2, s3) [same-s2-s3]; clerk denies same-as(s1, s3) [deny-s1-s3]; the system accepts all three
+
+-- observed: each link's canonical judgement (by its stated names, ID-1)
+  same-as(s1, s2): established [] support ['same-s1-s2']
+  same-as(s2, s3): established [] support ['same-s2-s3']
+  same-as(s1, s3): not holding ['denied'] support ['deny-s1-s3']
+
+-- observed: identity(w) for the system
+  members(s1): ['s1']
+  members(s2): ['s2']
+  members(s3): ['s3']
+  links[]: same=['s1', 's2'] judgement=established support=['same-s1-s2'] merges=False
+  links[]: same=['s2', 's3'] judgement=established support=['same-s2-s3'] merges=False
+  conflicts[]: names=['s1', 's2', 's3']
+    links: same=['s1', 's2'] judgement=established support=['same-s1-s2']
+    links: same=['s2', 's3'] judgement=established support=['same-s2-s3']
+    against: same=['s1', 's3'] judgement=denied support=['deny-s1-s3']
+  report('s2')['conflict'] is the same group: True
+  established s1~s2 kept as a merge: False  (set aside together with the chain that contradicts the denial)
+
+-- expected (project documents)
+  docs/core-0.4/pre-e-identity-design.md 3.5 ID-5 (approved, LABS-1.049): a component containing two names
+  whose own link is DISPUTED or denied is not merged at all; each name is its own class and identity()
+  reports the conflict. 'I16: s1 and s2, whose own link is established, are not merged either.'
+  So the behaviour is the approved one; DI-17 records the risk that it is stricter than needed (one
+  denial switches off every sound equivalence of the group).
+
+-- reference impact: wm-probe-stage-e (read only)
+  worlds: 11; attestations: 322; same-as attestations (any world, either polarity): 0
+  conflict groups over 78 contexts (every world x system and each attester there, now): 0
+
+-- potential corrections (deferred-issues.md DI-17; each a semantic change needing its own design)
+  merge every established link except those that would join the disputed pair (needs a rule for which
+  link to drop); merge maximal consistent subgroups; or merge and flag the answers that relied on the group.
+  Disposition there: evaluate in Stage E (count conflict groups in the evaluation data); change only by a
+  new approved design.
+
+  (di17: 4.3 s)
+
+====================================================================================================
+DI-19: a constraint dispute through holds() does not cite the constraint
+====================================================================================================
+
+-- setup (written; the site-manager part of benchmark/e1/fixtures/org-offices.json, question ORG-011)
+  world w; persons bea, cal; organisation acme; social-role site-manager; attesters hr, clerk
+  a-bea: hr appoints bea site-manager at acme from T1 (until superseded); accepted by system
+  x-sm: hr declares exclusive-office(site-manager, acme) from T1 (until superseded); accepted by system
+  a-cal: clerk appoints cal site-manager at acme from T8 (until superseded); accepted by system
+
+-- observed: holds(w, office-holding, classified=bea class=site-manager context=acme, T10)
+  status: DISPUTED   holds: None   values: []
+  support: ['a-bea']
+  conflicts: ['a-cal']
+  alternatives: []
+  evidence: a-bea attester=hr stance=asserts basis=testimony polarity=True
+  evidence: a-cal attester=clerk stance=asserts basis=testimony polarity=True
+  x-sm cited anywhere in the answer (support, conflicts, evidence): False
+  Answer fields: ['alternatives', 'conflicts', 'evidence', 'holds', 'status', 'support', 'values']
+
+-- observed: canonical judgement (wm.judgement), same question
+  judgement: disputed   reasons: ['constraint']   status: DISPUTED   support_status: ASSERTED
+  support: ['a-bea']
+  conflicts: ['a-cal']
+  constraints[]: kind=attested type=exclusive-office key_roles=['office', 'context'] value_role=classified key=[('site-manager',), ('acme',)] applies=True judgement=(established, support ['x-sm'])
+  x-sm in constraints[].judgement.support: True
+
+-- observed: organisation.office_holders(w, site-manager, acme, T10)
+  holders: ['bea', 'cal']   status: Status.DISPUTED
+  exclusive: {'holds': True, 'status': <Status.ASSERTED: 'ASSERTED'>, 'support': ['x-sm']}
+  conflict: {'constraint': {'office': 'site-manager', 'context': 'acme', 'support': ['x-sm']}, 'appointments': [{'holder': 'bea', 'attestations': ['a-bea']}, {'holder': 'cal', 'attestations': ['a-cal']}]}
+  x-sm in conflict.constraint.support: True
+
+-- benchmark record (benchmark/e1/results-revised/results.json, ORG-011)
+  expected {'judgement': 'disputed', 'status': 'DISPUTED'}, actual {'judgement': 'disputed', 'status': 'DISPUTED', 'holds': None}, correct True
+  evidence required ['a-bea', 'a-cal', 'x-sm'], found ['a-bea', 'a-cal'], recall 0.667; failure 'missing-evidence'
+
+-- expected (project documents)
+  docs/core-0.4/deferred-issues.md DI-19: the judgement is right (DISPUTED under the constraint), but the
+  provenance of a constraint dispute is incomplete through holds(): a reader cannot see from the answer
+  alone which rule caused the dispute. The canonical judgement (constraints[].judgement.support) and
+  organisation.office_holders (conflict.constraint.support) carry the constraint attestation; the
+  benchmark question ORG-011 lists x-sm as required evidence.
+
+-- potential correction (deferred-issues.md DI-19, proposed, not implemented, needs approval)
+  an additive `constraint_support` on holds() answers: the attestation ids supporting each applied
+  constraint (for an attested constraint its own deciding attestations; empty for a declared functional
+  slot). Existing fields keep their values; the 106,752-answer baseline gains the field on constraint
+  disputes only.
+
+  (di19: 1.2 s)
+
+throwaway databases deleted: 3; wm-probe-stage-e-di-* left on the server: none
+total run time: 6.7 s
