@@ -1,6 +1,6 @@
 # Stage E2 decisions (record)
 
-**Recorded:** LABS-1.060, 24 November 2026, from the owner's decisions on
+**Recorded:** LABS-1.060, 24 November 2026; finalised under LABS-1.061 (section 7), from the owner's decisions on
 [stage-e-next-review-package.md](stage-e-next-review-package.md). This record **amends**
 [stage-e2-evaluation-design.md](stage-e2-evaluation-design.md). Where they differ, this record wins.
 
@@ -30,8 +30,8 @@ the fixtures.
      would expect without ID-5 and what ID-5 hides. This is reported as a rate and as a list of cases, and is
      **never scored as a failure**. If the rate is material, it is the evidence for a later DI-17 design. No
      semantic change follows from E2 itself.
-- **Where they sit:** inside the X family or as a small identity sub-family (I). That is the design owner's choice
-  when classifying, before authoring.
+- **Where they sit:** inside the **X family** (confirmed under LABS-1.061). They count towards X's scores, and their
+  results are **also reported on their own**, as the identity subset of X (section 7).
 
 ## 3. E2-D1 to E2-D7
 
@@ -74,8 +74,7 @@ These items of design section 7 are kept as they are:
 - **Latency is measured per question as the harness runs it** (all reader calls of a multi-step plan together), on
   the selective path. The full-load reference path is recorded too.
 
-**For confirmation:** whether the 1 s p95 and the 5 s budget also bind the full-load path. The proposal is that they
-don't: full load is the reference path for answer agreement, not a serving path.
+**Confirmed (LABS-1.061):** the 1 s p95 and the 5 s budget bind the **selective path only**. See section 7.
 
 ## 5. Gap probes
 
@@ -94,4 +93,40 @@ Gap probes (class G, about 25) are **kept apart** from supported-capability conf
 - implementing DI-7;
 - changing identity semantics (DI-17 options b–d) or the ontology;
 - the DI-20 to DI-23 optimisations;
-- starting the E2 harness implementation (E2-D5).
+- authoring the E2 reader contracts, questions, fixtures or gold answers (the E2-D5 harness is authorised under
+  LABS-1.061; see stage-e2-harness-review.md).
+
+## 7. Finalised under LABS-1.061 (24 November 2026)
+
+| # | Decision |
+|---|---|
+| F-1 | The **1 s p95 target** and the **5 s hard execution budget** apply to the **selective path only**. |
+| F-2 | **Full-load latency is recorded separately**, with no target or budget. **Full-load answer agreement stays mandatory** (design section 7 item 3). A reference (full-load) execution that cannot complete is reported as **unverified agreement**: never counted as agreement, and listed. |
+| F-3 | Correctness is reported in **two ways**, and **timeouts stay in the denominator** of the second. (a) **Correctness among completed questions:** correct / questions whose selective run finished within the budget. (b) **Successful answers within budget:** correct and within budget / **all scheduled** (A and H) questions. |
+| F-4 | The approximately 12 **identity-conflict questions stay in the X family**. They count towards X's scores, and their results are **also reported separately** (the identity subset). Their desirability assessment (section 2) is never scored. |
+
+**How the harness applies F-1 to F-4** (see the harness review for details):
+- **Selective path:** a question is stopped at 5 s and recorded as `timeout`. It counts as not completed, and as not
+  successful within budget.
+- **Latency p95:** computed over all scheduled questions. A stopped question enters at the budget, so the p95 is a lower
+  bound whenever a question timed out.
+- **Full-load path:** the harness has a reference limit (default 60 s). A run that exceeds it, or could not be
+  attempted, gives agreement `unverified`, with the reason recorded.
+- **An execution error** on either path is a result, not a timeout. Since LABS-1.062, two failures never count as
+  agreement: failing the same way on both paths is `consistent-failure`, recorded but not agreement. Failing on one
+  path only, or differently, is `disagree`. Only `agree` (both answered, answers equal) satisfies F-2.
+
+## 8. Harness corrections and status (LABS-1.062, 25 November 2026)
+
+The harness architecture is approved, with three corrections. Each now holds in the harness:
+
+| Correction | Harness behaviour |
+|---|---|
+| Agreement is answer agreement, not consistent failure | `agree` only when both paths answered (a documented refusal is an answer) and the answers are equal. The same execution or plan error on both paths is `consistent-failure`. The agreement criterion passes only if every scored question agrees. |
+| Only documented refusals are refusals | each reader template lists its documented refusals, each with its source and whether that source is an approved decision. Any other exception, including an undocumented `ValueError`, is an execution error. A gap probe accepts only an **established** refusal; any other refusal is `unestablished-refusal` and fails. |
+| A fabricated derivation always fails a probe | every answer is searched for any presented `{rule, premises}` object, as well as with the template's own extractor. A probe with a fabricated derivation fails, whatever its status. |
+
+**Status:**
+- The harness is merged into `main` under LABS-1.062.
+- The reader contracts (E2-D3) are drafted for review on `feature/e2-reader-contracts`.
+- The questions, fixtures, calculation sheets and gold are **not** started.

@@ -1,0 +1,4 @@
+run1-sel1-prof0 rc=0 940 passed, 1 warning in 668.87s (0:11:08)
+run1-sel1-prof1 rc=0 940 passed, 1 warning in 695.51s (0:11:35)
+run1-sel0-prof0 rc=0 940 passed, 1 warning in 568.22s (0:09:28)
+run1-sel0-prof1 rc=0 940 passed, 1 warning in 617.11s (0:10:17)

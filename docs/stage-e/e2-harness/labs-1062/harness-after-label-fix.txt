@@ -1,0 +1,4 @@
+sel1-prof0 69 passed in 21.85s
+sel1-prof1 69 passed in 23.72s
+sel0-prof0 69 passed in 21.66s
+sel0-prof1 69 passed in 23.86s

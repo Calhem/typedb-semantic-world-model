@@ -1,0 +1,3 @@
+<worktree>/.venv/lib/python3.13/site-packages/typedb/common/promise.py:32: SyntaxWarning: invalid escape sequence '\ '
+  once the ``Promise`` is ``resolve``\ d.
+272 questions in 8 categories {'conflict-provenance': 30, 'cross-domain': 33, 'identity': 42, 'laboratory': 36, 'mechanical': 33, 'organisation': 31, 'temporal': 37, 'worlds-perspectives': 30}; 30 fixtures; 0 problems
