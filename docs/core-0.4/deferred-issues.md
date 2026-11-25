@@ -55,7 +55,7 @@ tests.
 | DI-16 | identity merges on a same-as whose canonical judgement is DISPUTED (accepted denials are ignored) | consolidation (LABS-1.045) | before Stage E (LABS-1.046) | **closed**: option (a), corrected by the identity increment (ID-2, ID-5, ID-6), reproduction a permanent test; approved and merged (LABS-1.049, `main` dd58b25; [report](pre-e-identity-increment.md)) |
 | DI-17 | a group of names joined by established same-as links that contains one disputed or denied pair is not merged at all (ID-5), so its established equivalences are set aside too: possibly over-restrictive | identity increment (LABS-1.048; registered LABS-1.049) | Stage E evaluation | open (evaluation only in E2; LABS-1.060) |
 | DI-18 | the export's `module_data` lists only the records the replay reproduces: a record held by a module version this code cannot replay is absent from the export (the attribution reports the replay as unverified) | schema export format 3 (LABS-1.050) | no deadline (export completeness) | open (non-blocking; format 2 refusal already reads the database's own records) |
-| DI-19 | `holds()` on a content disputed under an attested constraint (two holders of an exclusive office) cites the content's support and its rivals (`conflicts`), but not the attestation of the constraint it applied | Stage E1 revised evaluation, ORG-011 (LABS-1.052; registered LABS-1.053) | Stage E (provenance) | corrected at review (additive `constraint_support`, LABS-1.060) |
+| DI-19 | `holds()` on a content disputed under an attested constraint (two holders of an exclusive office) cites the content's support and its rivals (`conflicts`), but not the attestation of the constraint it applied | Stage E1 revised evaluation, ORG-011 (LABS-1.052; registered LABS-1.053) | Stage E (provenance) | **closed** (additive `constraint_support`, LABS-1.060; merged LABS-1.061) |
 | DI-20 | readers that still load a whole world (`occurrence_status`, `causes_of`, `effects_of`, `provenance`) grow with perspectives | DI-9 closure (LABS-1.058; registered LABS-1.059) | no deadline (DI9-D17 deferred) | deferred (performance) |
 | DI-21 | H1: transient slow states between fresh processes, cause unknown | DI-9 optimisation (LABS-1.056; registered LABS-1.059) | no deadline | deferred (performance) |
 | DI-22 | cross-world growth in head and parameter fetches (`where` +3.2 ms from 11 to 92 worlds; `parts`, `office_holders`) | DI-9 closure (LABS-1.058; registered LABS-1.059) | no deadline | deferred (performance) |
@@ -562,7 +562,7 @@ the attestation ids supporting each applied constraint (for an attested constrai
 empty for a declared functional slot, which is schema data). Additive, so existing fields keep their values; the
 106,752-answer baseline would gain the field on constraint disputes only.
 
-**Implemented (LABS-1.060, at review).** Branch `feature/di19-constraint-support`, commit 7cb348d:
+**Implemented (LABS-1.060); approved and merged (LABS-1.061, merge 7769ba1).** Commit 7cb348d:
 `Answer.constraint_support`, one entry for each applied attested constraint (type, key, value role, deciding attestation
 ids, evidence); always empty for declared functional slots, and so for `value_at()` and `value_of()`.
 - 15 new tests.

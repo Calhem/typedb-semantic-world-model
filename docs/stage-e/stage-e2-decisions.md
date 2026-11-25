@@ -11,7 +11,7 @@ the fixtures.
 
 | Issue | Decision | What it means for E2 |
 |---|---|---|
-| DI-19 | **Approved before E2:** additive `Answer.constraint_support` (implemented on `feature/di19-constraint-support`, at review) | the `holds()` reader contract (E2-D3) includes `constraint_support`; constraint evidence is read from it |
+| DI-19 | **Approved before E2:** additive `Answer.constraint_support` (implemented; merged into `main` under LABS-1.061) | the `holds()` reader contract (E2-D3) includes `constraint_support`; constraint evidence is read from it |
 | DI-17 | **Evaluation only.** No change to identity semantics (ID-1 to ID-9, including ID-5) | about 12 identity-conflict questions in E2 (section 2) |
 | DI-7 | **Deferred.** No derivation record, rule or premise type is designed or added before E2 | derivation questions are gap probes (G); GAP-MULTI-6, GAP-CAUSE-7, GAP-MEAS-11 |
 | D-3, D-4, D-5 (entry report) | settled by the three rows above | — |
