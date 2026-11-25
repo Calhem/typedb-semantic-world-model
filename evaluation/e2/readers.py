@@ -236,7 +236,8 @@ CROSS_DIMENSION = Refusal("cross-dimension", ValueError, r"^cannot convert ", "s
 UNKNOWN_UNIT = Refusal("not-a-unit", ValueError, r"is not a unit with a dimension$", "convert docstring and qualities "
                        "implementation only (no design statement found)", False)
 NO_SINGLE_SLOT = Refusal("no-single-slot", ValueError, r"one-role functional constraints",
-                         "value_at implementation (message); A0.3 slots design to confirm", False)
+                         "core-0.4/README.md (A0 constraints: value_at without key_role needs exactly one one-role "
+                         "constraint; otherwise the question must say which)", True)
 
 
 READERS = {r.name: r for r in [

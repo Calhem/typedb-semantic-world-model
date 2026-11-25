@@ -1,0 +1,8 @@
+17:20:50 start e64c83f
+17:21:18 e1 check rc=0 272 questions in 8 categories {'conflict-provenance': 30, 'cross-domain': 33, 'identity': 42, 'laboratory': 36, 'mechanical': 33, 'organisation': 31, 'temporal': 37, 'worlds-perspectives': 30}; 30 fixtures; 0 problems
+17:22:13 e1 original rc=0 267/272 correct in 54.9 s -> <scratch>/opt/validate-e2h-1062/e1-original
+17:23:19 e1 revised rc=0 272/272 correct in 65.7 s -> <scratch>/opt/validate-e2h-1062/e1-revised
+17:23:19 e1 compare original rc=0
+17:23:19 e1 compare revised rc=1
+18:05:51 suite done
+18:05:51 DONE

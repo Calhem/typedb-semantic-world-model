@@ -252,13 +252,14 @@ After approval, in order:
 
 **Documented refusals now in the templates.** Each is marked established or not, with its source:
 - `holds`, `explain` and `value_at` refuse unknown role names (`unknown-role`, R2): **established**.
+- `value_at` refuses a type without exactly one one-role slot when no `key_role` is given (`no-single-slot`):
+  **established** (core-0.4/README.md, A0 constraints). It was first marked not established and was corrected
+  during the contract review.
 - `convert` refuses conversion across dimensions (stage-c.md): **established**.
 - `convert` refuses a name that is not a unit (`not-a-unit`): **not established**. It is documented only in the
   implementation.
-- `value_at` refuses a type without exactly one one-role slot (`no-single-slot`): **not established**. It is documented
-  only in the implementation.
 
-The reader contracts review both of the non-established refusals, and proposes the complete refusal table.
+The reader contracts review the non-established refusal, and propose the complete refusal table.
 
 **Regression tests (48 harness tests in all):**
 - Two identical errors give `consistent-failure` and fail the agreement criterion.
@@ -268,5 +269,8 @@ The reader contracts review both of the non-established refusals, and proposes t
 - An UNKNOWN probe answer with a fabricated derivation nested inside it fails (`fabricated-derivation`), and the
   nested location is named.
 
-All pass in four configurations; see the LABS-1.062 validation records in
-[e2-harness/labs-1062/](e2-harness/labs-1062/).
+**LABS-1.062 validation** (records in [e2-harness/labs-1062/](e2-harness/labs-1062/)):
+- **Full suite at e64c83f:** 877 + 15 + **48 = 940** tests, **passed in all four configurations**.
+- **E1:** original 267/272 and revised 272/272, identical in every scored field to the runs before the harness.
+- **After the `no-single-slot` label correction:** the harness and E1 harness tests (69) pass in all four
+  configurations.
