@@ -8,12 +8,14 @@ semantics: each returns what its parameters tell it to.
 - `selftest_sleep`: sleeps params["seconds"] (only on the path params["on"] names: "selective", "full" or "both",
   the default), then returns {"slept": seconds}.
 - `selftest_path`: returns {"selective": <the path's flag>}, so the two paths always disagree.
-- `selftest_raise`: raises the exception named by params["kind"] ("refusal": ValueError, anything else: RuntimeError).
+- `selftest_raise`: raises by params["kind"]: "documented" a ValueError listed as an established refusal, "proposed" a
+  ValueError listed as a refusal whose source is not approved, "undocumented" a ValueError listed nowhere, anything
+  else a RuntimeError.
 """
 
 import time
 
-from evaluation.e2.readers import Reader
+from evaluation.e2.readers import Reader, Refusal
 
 
 def _echo(wm, p):
@@ -28,9 +30,18 @@ def _sleep(wm, p):
 
 
 def _raise(wm, p):
-    if p.get("kind") == "refusal":
-        raise ValueError("refused on purpose (self-test)")
+    kind = p.get("kind")
+    if kind == "documented":
+        raise ValueError("self-test documented refusal")
+    if kind == "proposed":
+        raise ValueError("self-test proposed refusal")
+    if kind == "undocumented":
+        raise ValueError("refused on purpose, but not documented (self-test)")
     raise RuntimeError("failed on purpose (self-test)")
+
+
+REFUSALS = (Refusal("selftest-documented", ValueError, "^self-test documented refusal$", "self-test", True),
+            Refusal("selftest-proposed", ValueError, "^self-test proposed refusal$", "self-test", False))
 
 
 READERS = {r.name: r for r in [
@@ -39,5 +50,5 @@ READERS = {r.name: r for r in [
                       for i, d in enumerate(a.get("derivations", []))], timeless=True, worldless=True),
     Reader("selftest_sleep", ("seconds",), ("on",), _sleep, lambda a: set(), timeless=True, worldless=True),
     Reader("selftest_path", (), (), lambda wm, p: {"selective": wm.selective}, lambda a: set(), timeless=True, worldless=True),
-    Reader("selftest_raise", (), ("kind",), _raise, timeless=True, worldless=True),
+    Reader("selftest_raise", (), ("kind",), _raise, refusals=REFUSALS, timeless=True, worldless=True),
 ]}

@@ -203,11 +203,11 @@ def test_score_timeout_execution_plan_and_refusal_are_distinct():
     err = {"run": {"steps": [{"step": "s1", "reader": "r", "error": "RuntimeError: x", "ms": 1}], "ms": 1,
                    "error": {"step": "s1", "message": "RuntimeError: x"}}}
     e = SC.score(sq(), err, err, NAMES, RECORDED, 5)
-    assert (e["failure"], e["completed"], e["agreement"]) == ("execution-error", True, "agree")
+    assert (e["failure"], e["completed"], e["agreement"]) == ("execution-error", True, "consistent-failure")
     pe = {"run": {"steps": [{"step": "s1", "reader": "r", "plan_error": "no x"}], "ms": 0,
                   "plan_error": {"step": "s1", "message": "no x"}}}
     assert SC.score(sq(), pe, pe, NAMES, RECORDED, 5)["failure"] == "plan-error"
-    ref = sel_run({"refused": True, "refusal": "ValueError: no"})
+    ref = sel_run({"refused": True, "refusal": "unknown-role", "established": True, "message": "UnknownRoleError"})
     assert SC.score(sq(), ref, ref, NAMES, RECORDED, 5)["failure"] == "unexpected-refusal"
     want_refusal = q("S-2", [{"step": "s1", "reader": "r", "params": {}, "expected": {"refused": True}}])
     assert SC.score(want_refusal, ref, ref, NAMES, RECORDED, 5)["correct"] is True
@@ -221,15 +221,39 @@ def test_agreement_states():
     assert SC.agreement(a, b) == ("disagree", "the answers differ")
     assert SC.agreement(a, {"timeout": 60})[0] == "unverified"
     assert SC.agreement(a, None, "not run")[0] == "unverified"
-    err = {"run": {"steps": [], "ms": 0, "error": {"step": "s1", "message": "x"}}}
-    assert SC.agreement(err, a)[0] == "disagree" and SC.agreement(err, err)[0] == "agree"
+    err = {"run": {"steps": [], "ms": 0, "error": {"step": "s1", "message": "RuntimeError: x"}}}
+    other = {"run": {"steps": [], "ms": 0, "error": {"step": "s1", "message": "KeyError: y"}}}
+    plan = {"run": {"steps": [], "ms": 0, "plan_error": {"step": "s1", "message": "no x"}}}
+    assert SC.agreement(err, a)[0] == "disagree" and SC.agreement(a, err)[0] == "disagree"
+    # LABS-1.062: two failures never count as agreement, even identical ones
+    assert SC.agreement(err, err)[0] == "consistent-failure" and SC.agreement(plan, plan)[0] == "consistent-failure"
+    assert SC.agreement(err, other)[0] == "disagree" and SC.agreement(err, plan)[0] == "disagree"
+    ref = sel_run({"refused": True, "refusal": "unknown-role", "established": True, "message": "m"})
+    assert SC.agreement(ref, ref)[0] == "agree"                       # a documented refusal is an answer
+
+
+def test_two_identical_errors_do_not_satisfy_agreement():
+    err = {"run": {"steps": [{"step": "s1", "reader": "r", "error": "RuntimeError: x", "ms": 1}], "ms": 1,
+                   "error": {"step": "s1", "message": "RuntimeError: x"}}}
+    r = SC.score(sq(), err, err, NAMES, RECORDED, 5)
+    assert (r["failure"], r["agreement"]) == ("execution-error", "consistent-failure")
+    s = REP.summarise([r])
+    row = [c for c in s["criteria"] if c["criterion"].startswith("path agreement")][0]
+    assert row["verdict"] == "fail" and row["value"] == "0 / 1 (0, 1, 0)"
 
 
 def test_probe_outcomes():
     g = lambda plan=True, **kw: q("G-1", [{"step": "s1", "reader": "r", "params": {}}] if plan else [], cls="G",
                                   gap="GAP-X", **kw)
     assert SC.score(g(), sel_run({"status": "UNKNOWN"}), None, NAMES, RECORDED, 5)["probe"] == "pass"
-    assert SC.score(g(), sel_run({"refused": True, "refusal": "ValueError"}), None, NAMES, RECORDED, 5)["passed"]
+    est = {"refused": True, "refusal": "unknown-role", "established": True, "message": "m"}
+    assert SC.score(g(), sel_run(est), None, NAMES, RECORDED, 5)["passed"]
+    # LABS-1.062: a refusal passes only when it is documented by an approved decision
+    proposed = {**est, "established": False}
+    assert SC.score(g(), sel_run(proposed), None, NAMES, RECORDED, 5)["probe"] == "unestablished-refusal"
+    err = {"run": {"steps": [{"step": "s1", "reader": "r", "error": "ValueError: x", "ms": 1}], "ms": 1,
+                   "error": {"step": "s1", "message": "ValueError: x"}}}
+    assert SC.score(g(), err, None, NAMES, RECORDED, 5)["probe"] == "execution-error"
     assert SC.score(g(), sel_run({"status": "INFERRED"}), None, NAMES, RECORDED, 5)["probe"] == "fabricated-answer"
     fab = sel_run({"status": "UNKNOWN"}, derivations=[{"rule": "x", "premises": ["att:1"]}])
     assert SC.score(g(), fab, None, NAMES, RECORDED, 5)["probe"] == "fabricated-derivation"
@@ -259,7 +283,7 @@ def test_report_keeps_timeouts_in_the_denominator_and_probes_apart():
     verdicts = {c["criterion"]: c["verdict"] for c in s["criteria"]}
     assert verdicts["correctness S (correct / scheduled, timeouts included)"] == "fail"
     assert verdicts["questions over the 5 s hard budget"] == "fail"
-    assert verdicts["path agreement (disagree / unverified)"] == "unverified"
+    assert verdicts["path agreement: agree / scheduled (disagree, consistent failure, unverified)"] == "unverified"
     md = REP.report_md(rs, {"started": "now", "commit": "c", "questions": "q", "budget": 5, "reference_limit": 60})
     assert "X, identity subset" in md and "Gap probes (class G; never part of the scores above)" in md
     assert "100 / 100+" in md
@@ -389,8 +413,10 @@ def _e2e_questions():
         q("P-after-timeout", [tb], family="P"),                           # answered by a fresh child process
         q("M-error", [{"step": "s1", "reader": "selftest_raise", "params": {"kind": "crash"}, "expected": {"x": 1}}],
           family="M"),
-        q("M-refusal-unexpected", [{"step": "s1", "reader": "selftest_raise", "params": {"kind": "refusal"},
+        q("M-refusal-unexpected", [{"step": "s1", "reader": "selftest_raise", "params": {"kind": "documented"},
                                     "expected": {"x": 1}}], family="M"),
+        q("M-undocumented-valueerror", [{"step": "s1", "reader": "selftest_raise", "params": {"kind": "undocumented"},
+                                         "expected": {"refused": True}}], family="M"),
         q("M-refusal-expected", [{"step": "s1", "reader": "convert", "params": {"value": 1.0, "unit": "kg",
                                   "to": "kelvin"}, "expected": {"refused": True}}], family="M"),
         q("X-plan-error", [{"step": "a", "reader": "measurements", "params": {**W, "bearer": "box", "quality": "mass"}},
@@ -407,6 +433,15 @@ def _e2e_questions():
         q("G-definite", [{"step": "s1", "reader": "where", "params": {**W, "thing": "box", "frame": "A", "t": "T3"}}],
           cls="G", gap="GAP-FRAME-1"),
         q("G-none", [], cls="G", gap="GAP-PROC-1"),
+        q("G-documented-refusal", [{"step": "s1", "reader": "selftest_raise", "params": {"kind": "documented"}}],
+          cls="G", gap="GAP-X-1"),
+        q("G-proposed-refusal", [{"step": "s1", "reader": "selftest_raise", "params": {"kind": "proposed"}}],
+          cls="G", gap="GAP-X-2"),
+        q("G-undocumented-valueerror", [{"step": "s1", "reader": "selftest_raise", "params": {"kind": "undocumented"}}],
+          cls="G", gap="GAP-X-3"),
+        q("G-unknown-with-fabrication", [{"step": "s1", "reader": "selftest_echo", "params": {
+            "value": {"status": "UNKNOWN", "why": {"rule": "invented/v1", "premises": ["ab"]}}}}],
+          cls="G", gap="GAP-X-4", probe={"path": "value.status"}),
     ]
 
 
@@ -424,6 +459,7 @@ def test_e2e_each_failure_kind_is_detected(e2e):
             "F-forbidden": "forbidden-evidence", "F-missing": "missing-evidence",
             "C-fabricated": "fabricated-derivation", "P-timeout": "timeout", "P-after-timeout": None,
             "M-error": "execution-error", "M-refusal-unexpected": "unexpected-refusal", "M-refusal-expected": None,
+            "M-undocumented-valueerror": "execution-error",
             "X-plan-error": "plan-error", "X-identity": None, "X-reference-slow": None, "X-disagree": None}
     assert {k: by[k]["failure"] for k in want} == want
     assert by["S-ok"]["correct"] and by["S-ok"]["evidence"]["precision"] == 1.0
@@ -449,6 +485,8 @@ def test_e2e_reference_path_states(e2e):
     assert by["X-disagree"]["agreement"] == "disagree" and by["X-disagree"]["full_steps"][0]["answer"] == {
         "selective": False}
     assert by["S-ok"]["full_ms"] is not None
+    assert by["M-error"]["agreement"] == "consistent-failure"          # the same crash on both paths
+    assert by["M-refusal-expected"]["agreement"] == "agree"            # the same documented refusal
 
 
 def test_e2e_probes_and_report(e2e):
@@ -456,8 +494,14 @@ def test_e2e_probes_and_report(e2e):
     assert by["G-unknown"]["probe"] == "pass" and by["G-unknown"]["returned"] == "UNKNOWN"
     assert by["G-definite"]["probe"] == "fabricated-answer" and by["G-definite"]["returned"] == "INFERRED"
     assert by["G-none"]["probe"] == "not-callable"
+    assert by["G-documented-refusal"]["probe"] == "pass"
+    assert by["G-proposed-refusal"]["probe"] == "unestablished-refusal"
+    assert by["G-undocumented-valueerror"]["probe"] == "execution-error"
+    fab = by["G-unknown-with-fabrication"]                      # UNKNOWN, but a derivation is fabricated
+    assert (fab["probe"], fab["passed"], fab["returned"]) == ("fabricated-derivation", False, "UNKNOWN")
+    assert fab["fabricated"][0]["at"] == "value.why"
     s = REP.summarise(results)
-    assert s["all"]["scheduled"] == 15 and s["probes"]["probes"] == 3
+    assert s["all"]["scheduled"] == 16 and s["probes"]["probes"] == 7
     assert s["x_identity"]["correct"] == 1
     assert s["families"]["P"]["success_within_budget"] == 0.5 and s["families"]["P"]["correct_among_completed"] == 1.0
     md = REP.report_md(results, {"started": "now", "commit": "c", "questions": "q", "budget": 3.0,

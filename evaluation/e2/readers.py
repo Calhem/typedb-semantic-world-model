@@ -16,10 +16,14 @@ a change to this table, not to a reader.
 Common parameters: `world` (required, except `convert`), `t`, `as_of`, `perspective`. Times are 'T<d>[h<hh>]'
 fixture times, or ISO 8601 strings (as earlier plan steps give them); `as_of` is '@mark' or an ISO string.
 
-A reader that refuses a question (a ValueError, which includes UnknownRoleError, MovementConflict and
-RoleCardinalityError) gives the answer {"refused": true, "refusal": "<type>: <message>"}: an explicit refusal, as a
-gap probe may require. Any other exception is an execution error.
+**Refusals (LABS-1.062).** Only a reader's **documented** refusals are refusals: each template lists them (`refusals`),
+each with the exception it raises, the message it matches, its source and whether that source is an approved design
+decision (`established`). A documented refusal gives the answer {"refused": true, "refusal": <name>, "established":
+bool, "message": ...}. Any other exception, including an undocumented ValueError, is an execution error. A gap probe
+accepts only an established refusal (score.probe).
 """
+
+import re
 
 from dataclasses import dataclass, field
 
@@ -28,7 +32,21 @@ from worldmodel.physical import RULE as FRAME_RULE
 
 KNOWN_RULES = {FRAME_RULE}                    # the derivation rules the model records (DI-7: no general rule record)
 COMMON = ("world", "t", "as_of", "perspective")
-REFUSALS = (ValueError,)
+@dataclass(frozen=True)
+class Refusal:
+    name: str                                  # e.g. "unknown-role"
+    exception: type
+    pattern: str                               # regex the message must match (search)
+    source: str                                # where the refusal is documented
+    established: bool                          # an approved design decision (True) or documented only by the reader
+
+
+def documented_refusal(r, exc):
+    """The template's Refusal that `exc` is, or None (then it is an execution error)."""
+    for ref in r.refusals:
+        if isinstance(exc, ref.exception) and re.search(ref.pattern, str(exc)):
+            return ref
+    return None
 # keys under which an answer lists material it does not rest on (as E1's usable_evidence, plus E2's readers)
 NOT_SUPPORT = {"pending", "alternatives", "only_in", "not_traversed", "accounts", "descriptions",
                "superseded_by_source", "incomparable", "statements"}
@@ -43,6 +61,7 @@ class Reader:
     call: object                               # (wm, p) -> raw answer; p holds the coerced parameters
     evidence: object = None                    # normalised answer -> set of attestation ids
     derivations: object = None                 # normalised answer -> [{"rule", "premises", "at"}]
+    refusals: tuple = ()                       # documented refusals (Refusal)
     timeless: bool = False                     # no t parameter
     worldless: bool = False                    # no world parameter (convert)
     notes: str = ""
@@ -124,7 +143,7 @@ def dv_where(a):
             out.append({"rule": c["rule"], "at": f"candidates[{i}]",
                         "premises": sorted(set(c.get("position_support", [])) |
                                            {x for s in c.get("chain") or [] for x in s.get("support", [])})})
-    return out + generic_derivations(a)
+    return out
 
 
 def ev_chain(a):
@@ -133,8 +152,8 @@ def ev_chain(a):
 
 def dv_transform(a):
     if a.get("transform") is None or not a.get("chain"):
-        return generic_derivations(a)
-    return [{"rule": a.get("rule"), "at": "transform", "premises": sorted(ev_chain(a))}] + generic_derivations(a)
+        return []
+    return [{"rule": a.get("rule"), "at": "transform", "premises": sorted(ev_chain(a))}]
 
 
 def ev_frame_info(a):
@@ -208,6 +227,18 @@ def _t(p):
     return p.get("t")
 
 
+from worldmodel import UnknownRoleError  # noqa: E402
+
+UNKNOWN_ROLE = Refusal("unknown-role", UnknownRoleError, "", "e1-reconciliation-design.md R2 (approved LABS-1.053)",
+                       True)
+CROSS_DIMENSION = Refusal("cross-dimension", ValueError, r"^cannot convert ", "stage-c.md (convert: refused across "
+                          "dimensions)", True)
+UNKNOWN_UNIT = Refusal("not-a-unit", ValueError, r"is not a unit with a dimension$", "convert docstring and qualities "
+                       "implementation only (no design statement found)", False)
+NO_SINGLE_SLOT = Refusal("no-single-slot", ValueError, r"one-role functional constraints",
+                         "value_at implementation (message); A0.3 slots design to confirm", False)
+
+
 READERS = {r.name: r for r in [
     # family S, F
     Reader("transform_between", ("source", "target", "t"), ("limit",),
@@ -233,14 +264,15 @@ READERS = {r.name: r for r in [
            lambda wm, p: lab.calibration_status(wm, p["world"], p["instrument"], _t(p), **_ctx(p)),
            lambda a: deciding(a, "certificates")),
     Reader("convert", ("value", "unit"), ("to",), lambda wm, p: {"value": wm.convert(p["value"], p["unit"], p.get("to"))},
-           timeless=True, worldless=True),
+           refusals=(CROSS_DIMENSION, UNKNOWN_UNIT), timeless=True, worldless=True),
     # family C
     Reader("causes_of", ("effect", "t"), (), lambda wm, p: wm.causes_of(p["world"], p["effect"], _t(p), **_ctx(p)),
            ev_claims),
     Reader("effects_of", ("event", "t"), (), lambda wm, p: wm.effects_of(p["world"], p["event"], _t(p), **_ctx(p)),
            ev_effects),
     Reader("explain", ("type", "roles", "t"), (),
-           lambda wm, p: wm.explain(p["world"], p["type"], p["roles"], _t(p), **_ctx(p)), ev_explain),
+           lambda wm, p: wm.explain(p["world"], p["type"], p["roles"], _t(p), **_ctx(p)), ev_explain,
+           refusals=(UNKNOWN_ROLE,)),
     Reader("changes", ("subject", "t1", "t2"), (),
            lambda wm, p: wm.changes(p["world"], p["subject"], p["t1"], p["t2"], **_ctx(p)), ev_changes, timeless=True),
     # family P
@@ -251,9 +283,11 @@ READERS = {r.name: r for r in [
     Reader("interval", ("description",), (), _interval, ev_interval, timeless=True),
     # readers E1 already covers, for multi-step plans (X)
     Reader("holds", ("type", "roles", "t"), (),
-           lambda wm, p: wm.holds(p["world"], p["type"], p["roles"], _t(p), **_ctx(p)), ev_answer),
+           lambda wm, p: wm.holds(p["world"], p["type"], p["roles"], _t(p), **_ctx(p)), ev_answer,
+           refusals=(UNKNOWN_ROLE,)),
     Reader("value_at", ("type", "subject", "t"), (),
-           lambda wm, p: wm.value_at(p["world"], p["type"], p["subject"], _t(p), **_ctx(p)), ev_support),
+           lambda wm, p: wm.value_at(p["world"], p["type"], p["subject"], _t(p), **_ctx(p)), ev_support,
+           refusals=(UNKNOWN_ROLE, NO_SINGLE_SLOT)),
     Reader("facts_about", ("subject", "t"), (),
            lambda wm, p: wm.facts_about(p["world"], p["subject"], _t(p), **_ctx(p)), ev_list_support),
     Reader("occurrence", ("occurrence",), (), lambda wm, p: wm.occurrence(p["world"], p["occurrence"], **_ctx(p)),

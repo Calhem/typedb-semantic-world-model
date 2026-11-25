@@ -9,7 +9,12 @@ A step ends the plan early when it cannot give an answer to feed on:
 - an execution error (an exception other than a refusal): `error`;
 - a parameter reference that names no earlier step or no part of its answer: `plan_error` (a defect of the question
   or of an earlier answer, kept apart from execution errors).
-A refusal is an answer ({"refused": true, ...}); a later step that refers into it gets a plan error.
+A **documented** refusal (the template's `refusals`) is an answer ({"refused": true, "refusal": name, ...}); a later
+step that refers into it gets a plan error. Any other exception, an undocumented ValueError included, is an execution
+error (LABS-1.062).
+
+Every answer is also searched for any presented {"rule", "premises"} object (readers.generic_derivations), whatever
+the template's own extractor finds, so that no derivation escapes the fabrication check.
 """
 
 import time
@@ -17,7 +22,7 @@ import traceback
 from datetime import datetime
 
 from evaluation.loader import T
-from evaluation.e2.readers import REFUSALS, TIME_PARAMS, generic_derivations, reader
+from evaluation.e2.readers import TIME_PARAMS, documented_refusal, generic_derivations, reader
 from evaluation.e2.values import PathError, normalise, select
 
 
@@ -85,21 +90,33 @@ def run_plan(L, question, selective, extra_readers=None):
             try:
                 out = r.call(L.wm, params)
                 ans = normalise(out)
-            except REFUSALS as e:
-                ans = {"refused": True, "refusal": f"{type(e).__name__}: {' '.join(str(e).split())[:400]}"}
-            except Exception as e:                                 # an execution error is a result of its own
-                ms = (time.perf_counter() - t0) * 1000
-                total += ms
-                rec.update(ms=round(ms, 1), error=f"{type(e).__name__}: {' '.join(str(e).split())[:400]}",
-                           trace=traceback.format_exc(limit=4)[-1200:])
-                return {"steps": steps, "ms": round(total, 1), "error": {"step": name, "message": rec["error"]}}
+            except Exception as e:
+                ref = documented_refusal(r, e)
+                if ref is None:                                    # an execution error is a result of its own
+                    ms = (time.perf_counter() - t0) * 1000
+                    total += ms
+                    rec.update(ms=round(ms, 1), error=f"{type(e).__name__}: {' '.join(str(e).split())[:400]}",
+                               trace=traceback.format_exc(limit=4)[-1200:])
+                    return {"steps": steps, "ms": round(total, 1), "error": {"step": name, "message": rec["error"]}}
+                ans = {"refused": True, "refusal": ref.name, "established": ref.established,
+                       "message": f"{type(e).__name__}: {' '.join(str(e).split())[:400]}"}
             ms = (time.perf_counter() - t0) * 1000
             total += ms
             refused = isinstance(ans, dict) and ans.get("refused") is True
             rec.update(ms=round(ms, 1), answer=ans,
                        cited=[] if refused or r.evidence is None else sorted(map(str, r.evidence(ans))),
-                       derivations=[] if refused else (r.derivations or generic_derivations)(ans))
+                       derivations=[] if refused else _derivations(r, ans))
             answers[name] = ans
         return {"steps": steps, "ms": round(total, 1)}
     finally:
         L.wm.selective = True
+
+
+def _derivations(r, ans):
+    """The template's derivations, plus any other presented {"rule", "premises"} object, without duplicates."""
+    found = list(r.derivations(ans)) if r.derivations else []
+    seen = {(d.get("rule"), tuple(d.get("premises") or ())) for d in found}
+    for d in generic_derivations(ans):
+        if (d["rule"], tuple(d["premises"])) not in seen:
+            found.append(d)
+    return found

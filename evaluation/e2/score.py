@@ -17,13 +17,19 @@ Scored questions (classes A and H). Each failure kind is recorded separately, so
 every step matches. Evidence and derivation failures are reported beside it, as separate criteria (E2-D6).
 `failure` is the first kind present in the order above; `failures` lists them all.
 
-Path agreement: `agree`, `disagree` or `unverified` (F-2). Unverified when the reference (full-load) run timed out, failed
-in the harness, or was not run (for example because the selective run timed out). An execution error on both paths at
-the same step agrees; on one path only, or at different steps, it disagrees.
+Path agreement (F-2, corrected under LABS-1.062):
+- `agree`: both paths **answered** (a documented refusal is an answer) and every step's answer is the same. Only this
+  satisfies the semantic agreement criterion.
+- `consistent-failure`: both paths failed in the same way (an execution or plan error at the same step, of the same
+  exception type). Recorded, but it is **not** agreement: no answer was compared.
+- `disagree`: the answers differ, or only one path failed, or they failed differently.
+- `unverified`: the reference (full-load) run timed out, failed in the harness, or was not run (for example because the
+  selective run timed out).
 
-Gap probes (class G) are scored apart (`probe`): pass when the reader's answer is UNKNOWN-like (a status the probe
-accepts) or an explicit refusal, and no derivation is fabricated; a probe with no plan is `not-callable` (listed, not
-run).
+Gap probes (class G) are scored apart (`probe`). A probe passes only when (a) no derivation in any step's answer is
+fabricated, whatever the status, and (b) the answer is a status the probe accepts (UNKNOWN-like) or an **established**
+documented refusal of the reader. An undocumented exception is an execution error, and a refusal whose source is not an
+approved decision is `unestablished-refusal`: neither passes. A probe with no plan is `not-callable` (listed, not run).
 """
 
 from evaluation.e2.readers import KNOWN_RULES
@@ -109,9 +115,17 @@ def agreement(sel, full, reason=None):
         return "unverified", "the selective path has no result"
     a, b = sel["run"], full["run"]
     if "error" in a or "error" in b or "plan_error" in a or "plan_error" in b:
-        same = (a.get("error", {}).get("step"), a.get("plan_error", {}).get("step")) == \
-               (b.get("error", {}).get("step"), b.get("plan_error", {}).get("step"))
-        return ("agree", None) if same else ("disagree", "an error on one path only, or at different steps")
+        def failure(r):
+            if "error" in r:
+                return ("execution", r["error"]["step"], r["error"]["message"].split(":", 1)[0])
+            if "plan_error" in r:
+                return ("plan", r["plan_error"]["step"])
+            return None
+        fa, fb = failure(a), failure(b)
+        if fa is not None and fa == fb:
+            return "consistent-failure", f"both paths failed the same way ({fa[0]} error at step {fa[1]!r}); " \
+                                         "no answer was compared"
+        return "disagree", "an error on one path only, or different errors"
     ans = lambda r: [canonical(s.get("answer")) for s in r["steps"]]
     return ("agree", None) if ans(a) == ans(b) else ("disagree", "the answers differ")
 
@@ -204,7 +218,12 @@ def probe(q, sel, names, recorded):
         return rec
     last = steps[-1]["answer"]
     if isinstance(last, dict) and last.get("refused") is True:
-        returned, ok = "refusal", "refusal" in accept
+        returned = f"refusal: {last.get('refusal')}"
+        if not last.get("established"):
+            rec.update(probe="fabricated-derivation" if fab else "unestablished-refusal", passed=False,
+                       returned=returned, fabricated=fab)
+            return rec
+        ok = "refusal" in accept
     else:
         try:
             returned = select(last, spec.get("path", "status"))

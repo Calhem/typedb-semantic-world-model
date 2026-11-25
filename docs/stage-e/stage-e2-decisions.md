@@ -112,5 +112,21 @@ Gap probes (class G, about 25) are **kept apart** from supported-capability conf
   bound whenever a question timed out.
 - **Full-load path:** the harness has a reference limit (default 60 s). A run that exceeds it, or could not be
   attempted, gives agreement `unverified`, with the reason recorded.
-- **An execution error** on either path is a result. It is not a timeout: errors on both paths agree, and an error on
-  only one path disagrees.
+- **An execution error** on either path is a result, not a timeout. Since LABS-1.062, two failures never count as
+  agreement: failing the same way on both paths is `consistent-failure`, recorded but not agreement. Failing on one
+  path only, or differently, is `disagree`. Only `agree` (both answered, answers equal) satisfies F-2.
+
+## 8. Harness corrections and status (LABS-1.062, 25 November 2026)
+
+The harness architecture is approved, with three corrections. Each now holds in the harness:
+
+| Correction | Harness behaviour |
+|---|---|
+| Agreement is answer agreement, not consistent failure | `agree` only when both paths answered (a documented refusal is an answer) and the answers are equal. The same execution or plan error on both paths is `consistent-failure`. The agreement criterion passes only if every scored question agrees. |
+| Only documented refusals are refusals | each reader template lists its documented refusals, each with its source and whether that source is an approved decision. Any other exception, including an undocumented `ValueError`, is an execution error. A gap probe accepts only an **established** refusal; any other refusal is `unestablished-refusal` and fails. |
+| A fabricated derivation always fails a probe | every answer is searched for any presented `{rule, premises}` object, as well as with the template's own extractor. A probe with a fabricated derivation fails, whatever its status. |
+
+**Status:**
+- The harness is merged into `main` under LABS-1.062.
+- The reader contracts (E2-D3) are drafted for review on `feature/e2-reader-contracts`.
+- The questions, fixtures, calculation sheets and gold are **not** started.

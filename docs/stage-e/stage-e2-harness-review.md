@@ -7,9 +7,11 @@ Records: [e2-harness/](e2-harness/).
 |---|---|
 | ee5ed38 | E2 decisions finalised (F-1 to F-4, [stage-e2-decisions.md](stage-e2-decisions.md) section 7) |
 | 38c7b41 | the harness: GAP-HARNESS-1 to 4, with 47 tests |
-| (this commit) | this review and its records; a fix in `worker.py` so that a failed reload after a stopped question is recorded as a `harness-error` on that question and doesn't abort the run |
+| 92831e6 | this review and its records; a fix in `worker.py` so that a failed reload after a stopped question is recorded as a `harness-error` on that question and doesn't abort the run |
+| (LABS-1.062) | corrections: agreement vs consistent failure, documented refusals only, derivation scan of every answer; 48 tests (section 9) |
 
-**At review. Not merged.**
+**Status (LABS-1.062):** the architecture is approved with the corrections in section 9, which are implemented. The
+harness is merged into `main`.
 
 **Not written:**
 - the E2 reader contracts;
@@ -58,7 +60,7 @@ That covers every reader in design 5.4, plus `interval` and `calibration_status`
 | Required, admissible and forbidden evidence | `score.evidence`, on the supporting evidence the reader template extracts (section 5.1). See the notes after this table. |
 | Separate A/H/G classification and reporting | the class is checked before a run (a gap id exactly when G). The report summarises A and H apart. G probes never enter a family's scores and have their own section: each probe's gap, reader(s), what was returned, and the result. |
 | Question-level latency and budget | `worker.py` runs each scenario in a child process. The parent stops a selective-path question at the **5 s budget** (it kills the child, deletes the child's database, and loads a fresh child for the next question) and records `timeout`. Latency is the readers' own time over all steps of the plan; a stopped question counts at the budget. |
-| Selective and reference-path comparison | every scored question runs on the selective path, then on the full-load path under a separate **reference limit** (default 60 s, no target). Agreement is `agree`, `disagree` or `unverified`, with the reason (section 3). |
+| Selective and reference-path comparison | every scored question runs on the selective path, then on the full-load path under a separate **reference limit** (default 60 s, no target). Agreement is `agree`, `consistent-failure`, `disagree` or `unverified`, with the reason (sections 3 and 9). |
 
 **Multi-step plans.**
 - A parameter can come from an earlier step's answer: `{"from": "<step>", "path": "<answer path>"}`.
@@ -103,8 +105,8 @@ How they combine:
 | F-3: two ways of reporting correctness | **% of completed:** correct / questions that finished within the budget. **% within budget:** correct / all scheduled A and H questions, so a timeout stays in the denominator. The per-family correctness criterion uses the second. |
 | F-4: identity questions in X, reported separately | `subset: "identity"` is allowed only in family X. Those questions count in X and are summarised again as "X, identity subset". |
 
-An execution error **completes** (it finished within the budget) but is not correct. On both paths at the same step,
-it agrees; on one path only, it disagrees.
+An execution error **completes** (it finished within the budget) but is not correct. On both paths in the same way, it
+is `consistent-failure`, which is **not** agreement (section 9). On one path only, it disagrees.
 
 ## 4. Validation
 
@@ -185,10 +187,10 @@ Questions for the contracts:
     few milliseconds of inter-process overhead.
   - The reported latency is the readers' own time.
   - Process start-up and fixture loading are outside both. A fixture is loaded again after every stopped question.
-- **Probes** run on the selective path only. They accept `UNKNOWN`, `NOT_YET_KNOWN` or an explicit refusal (a
-  `ValueError` from the reader), at the answer path the probe names (default `status`).
-- **Refusals.** Any `ValueError` (including `UnknownRoleError`) counts as an explicit refusal. A question expecting an
-  answer reports it as `unexpected-refusal`; one expecting a refusal says `{"refused": true}`.
+- **Probes** run on the selective path only. They accept `UNKNOWN`, `NOT_YET_KNOWN` or an **established documented**
+  refusal, at the answer path the probe names (default `status`). See section 9.
+- **Refusals** are only the template's documented ones (section 9). A question expecting an answer reports a refusal
+  as `unexpected-refusal`; one expecting a refusal says `{"refused": true}`, optionally with the refusal's name.
 - **Intermediate answers count.** A multi-step question is correct only if every step that states expected fields
   matches, not just the last.
 - **Not implemented here:** the authoring-phase tools. These are two-author agreement (kappa), the calculation-sheet
@@ -239,3 +241,32 @@ After approval, in order:
 - The E2 reader contracts, questions, fixtures, calculation sheets and gold answers.
 - Any reader, ontology or identity change.
 - The merge of `feature/e2-harness`.
+
+## 9. Corrections under LABS-1.062
+
+| # | Correction | Before | Now |
+|---|---|---|---|
+| 1 | Answer agreement vs consistent failure | the same execution error on both paths counted as `agree` | `consistent-failure`: recorded, not agreement. The criterion row reports agree / scheduled with the disagreements, consistent failures and unverified runs. It passes only if everything agrees. |
+| 2 | Only documented refusals | any `ValueError` was a refusal, and passed a probe | each template lists `Refusal`s (exception, message pattern, source, `established`). An undocumented `ValueError` is an execution error. A probe accepts only an established refusal; a documented but unapproved one is `unestablished-refusal` (fails). |
+| 3 | Fabricated derivations always fail a probe | a probe checked only the template's extractor | every answer is also scanned for any `{rule, premises}` object, wherever it is nested. A fabrication fails the probe even when the status is UNKNOWN. |
+
+**Documented refusals now in the templates.** Each is marked established or not, with its source:
+- `holds`, `explain` and `value_at` refuse unknown role names (`unknown-role`, R2): **established**.
+- `convert` refuses conversion across dimensions (stage-c.md): **established**.
+- `convert` refuses a name that is not a unit (`not-a-unit`): **not established**. It is documented only in the
+  implementation.
+- `value_at` refuses a type without exactly one one-role slot (`no-single-slot`): **not established**. It is documented
+  only in the implementation.
+
+The reader contracts review both of the non-established refusals, and proposes the complete refusal table.
+
+**Regression tests (48 harness tests in all):**
+- Two identical errors give `consistent-failure` and fail the agreement criterion.
+- A plan error on both paths is a consistent failure; different errors disagree; the same documented refusal agrees.
+- An undocumented `ValueError` is an execution error, both as a scored question that expects a refusal and as a probe.
+- A documented but unestablished refusal fails a probe; an established one passes.
+- An UNKNOWN probe answer with a fabricated derivation nested inside it fails (`fabricated-derivation`), and the
+  nested location is named.
+
+All pass in four configurations; see the LABS-1.062 validation records in
+[e2-harness/labs-1062/](e2-harness/labs-1062/).

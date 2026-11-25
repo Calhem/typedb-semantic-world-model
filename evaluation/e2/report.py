@@ -55,7 +55,7 @@ def summarise_group(rs):
         "timeouts": fails["timeout"], "p95_is_lower_bound": fails["timeout"] > 0,
         "full_p50_ms": percentile([r["full_ms"] for r in rs], 50),
         "full_p95_ms": percentile([r["full_ms"] for r in rs], 95),
-        "agreement": {k: agree[k] for k in ("agree", "disagree", "unverified") if agree[k]},
+        "agreement": {k: agree[k] for k in ("agree", "consistent-failure", "disagree", "unverified") if agree[k]},
     }
 
 
@@ -104,10 +104,13 @@ def criteria(s, results):
                                                                a["selective_p95_ms"] < THRESHOLDS["p95_ms"])})
         rows.append({"criterion": "questions over the 5 s hard budget", "value": a["timeouts"], "threshold": "= 0",
                      "verdict": _verdict(a["timeouts"] == 0)})
-        dis, unv = a["agreement"].get("disagree", 0), a["agreement"].get("unverified", 0)
-        rows.append({"criterion": "path agreement (disagree / unverified)", "value": f"{dis} / {unv}",
-                     "threshold": "0 / 0", "verdict": "fail" if dis else "unverified" if unv else "pass"})
-    fab = sum(len(r.get("fabricated", [])) for r in results)
+        ag = a["agreement"]
+        dis, cf, unv = ag.get("disagree", 0), ag.get("consistent-failure", 0), ag.get("unverified", 0)
+        # only answers compared equal on both paths satisfy agreement (LABS-1.062): a consistent failure does not
+        rows.append({"criterion": "path agreement: agree / scheduled (disagree, consistent failure, unverified)",
+                     "value": f"{ag.get('agree', 0)} / {a['scheduled']} ({dis}, {cf}, {unv})",
+                     "threshold": "all agree", "verdict": "fail" if dis or cf else "unverified" if unv else "pass"})
+    fab = sum(len(r.get("fabricated") or []) for r in results)
     rows.append({"criterion": "fabricated derivations (scored questions and probes)", "value": fab, "threshold": "= 0",
                  "verdict": _verdict(fab == 0)})
     return rows
@@ -128,7 +131,7 @@ def report_md(results, meta):
              f"`{meta.get('gold_commit') or '(not given)'}`. Hard budget {meta['budget']} s (selective path); "
              f"reference limit {meta['reference_limit']} s (full-load path).", ""]
     head = ("| Group | Scheduled | Completed | Correct | % of completed | % within budget (all scheduled) | Recall % | "
-            "Precision % | Timeouts | Sel. p50 / p95 ms | Full p50 / p95 ms | Agree / disagree / unverified |")
+            "Precision % | Timeouts | Sel. p50 / p95 ms | Full p50 / p95 ms | Agree / consistent failure / disagree / unverified |")
     lines += [head, "|---|" + "---:|" * 11]
 
     def row(name, g):
@@ -138,7 +141,8 @@ def report_md(results, meta):
                      f"{_pct(g['correct_among_completed'])} | {_pct(g['success_within_budget'])} | "
                      f"{_pct(g['evidence_recall'])} | {_pct(g['evidence_precision'])} | {g['timeouts']} | "
                      f"{_ms(g['selective_p50_ms'])} / {p95} | {_ms(g['full_p50_ms'])} / {_ms(g['full_p95_ms'])} | "
-                     f"{ag.get('agree', 0)} / {ag.get('disagree', 0)} / {ag.get('unverified', 0)} |")
+                     f"{ag.get('agree', 0)} / {ag.get('consistent-failure', 0)} / {ag.get('disagree', 0)} / "
+                     f"{ag.get('unverified', 0)} |")
     for f, g in s["families"].items():
         row(f, g)
     if "x_identity" in s:
