@@ -90,9 +90,10 @@ DISPUTED (model.py:95-97, physical.py:197-207).
 - **GAP-SPATIAL-4: no length/angle units on spatial content.** `positioned-in` and `frame-transform` have no unit
   role; metres and radians are fixed conventions (schema/core/core-0.4-a.tql:6-10, 21-24). `convert()` (Stage C) is
   not applied to positions or transforms.
-- **GAP-SPATIAL-5: frame chains are judged without same-as identity.** physical.py:199: "Judged without same-as
-  identity: DI-12, deferred (LABS-1.038)". DI-12 was closed for `parts`/`dependencies` only (deferred-issues.md:41).
-  Two names for one frame are two graph nodes.
+- ~~**GAP-SPATIAL-5: frame chains are judged without same-as identity.**~~ **Withdrawn (LABS-1.063, reader-contract
+  review D-TB-4):** not a gap. Same-as relates particulars only, so frames cannot be declared the same; frame chains
+  are unchanged by design (pre-e-increment-b.md point 6; pre-e-identity-design.md). The code comment this entry quoted
+  was stale and is corrected.
 - **GAP-SPATIAL-6: no shapes, extents or geometry** (no containment of a point in a volume, no distance between
   objects other than via caller arithmetic) (stage-a2.md:259; stage-a1.md:131-139).
 - **GAP-SPATIAL-7: no distance/relative-position reader.** "How far is A from B" or "pose of A relative to B" needs
@@ -342,8 +343,8 @@ Chaining several readers otherwise is done by the caller: e.g. `interval(world, 
   start earliest − 1 µs and end latest, dynamics.py:147-150). E2 gold must state which instant is meant.
 - **GAP-MULTI-3: no failed-measurement concept** to start such a chain (GAP-MEAS-1).
 - **GAP-MULTI-4: no causal chains** to traverse (GAP-CAUSE-1/2).
-- **GAP-MULTI-5: transitive parts do not carry poses** (GAP-FRAME-6) and frame chains do not use identity
-  (GAP-SPATIAL-5).
+- **GAP-MULTI-5: transitive parts do not carry poses** (GAP-FRAME-6). (Frame chains not using identity, formerly
+  GAP-SPATIAL-5, is by design and withdrawn; LABS-1.063.)
 - **GAP-MULTI-6: no derivation record for a chained answer** (DI-7): a composed answer cannot cite a named rule and
   its premises; `required_evidence` across steps must be assembled by the harness.
 - **GAP-MULTI-7: cost.** Per-item N+1 reads and cross-world slowdown (DI-9, deferred-issues.md:271-290; `where`

@@ -198,7 +198,9 @@ Writing, through ordinary attestations:
 
 Reading:
 - `effects_of(world, event, t)`: each claimed effect, the claim's judgement, and the accepted state change.
-- `changes(world, subject, t1, t2)`: what began and ended, who states it, and the events claimed for it.
+- `changes(world, subject, t1, t2)`: the judged transitions in (t1, t2] (world-state or judgement, certain or
+  possible), what began and ended, who states it, and the accepted effect claims attributed to each transition under
+  Q-B1.4 (the contract in "The changes contract" above; this line was updated in LABS-1.063).
 - `causes_of(world, effect, t)`: every causal claim, direct or lifted, with level, judgement and sources.
 - `explain(world, type, roles, t)`: the judged state, its accepted initiating events, and their causal claims.
 - `process_steps(world, process, t)`, `actions_of(world, agent)`.
@@ -467,8 +469,8 @@ records: the one event load per question returns every event of the world.
   view lists every participant per description without a dispute label (D9 stays open).
 - **Still slow in places.** The dynamics questions take hundreds of milliseconds. `changes` and `explain` no longer
   grow superlinearly (LABS-1.012), but `actions_of` and `process_steps` still grow linearly in queries.
-- **`changes` lists every claimed event.** It lists all events claimed to have initiated or terminated a state that
-  changed, including events outside the asked period (for example, later test runs). This behaviour was kept
-  unchanged and needs a ruling.
+- ~~**`changes` lists every claimed event.**~~ **Resolved by Q-B1.4 (LABS-1.015):** only accepted initiates /
+  terminates claims about a content that began or ended in a returned transition are listed, each attributed under the
+  causal timing rule. (Note added in LABS-1.063; the original limitation predates that ruling.)
 - **Out of scope:** no prediction, simulation, automatic causal inference, measurement ontology, agency or
   capabilities, domain extensions or frontend (by design).

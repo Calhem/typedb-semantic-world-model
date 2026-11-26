@@ -90,8 +90,9 @@ class PhysicalMixin:
 
     def poses(self, world, thing, t, as_of=None, perspective=SYSTEM):
         """The thing's positions that hold at t, one per frame statement: frame, per-axis (lower, upper), orientation,
-        status and supporting attestations. Several positions in one frame are all listed (conflicts between
-        positions are not judged in A1)."""
+        status and supporting attestations. Several positions in one frame are all listed, each with its own status:
+        a position in conflict with another (the positioned-in slot, A2) or disputed by an accepted denial (DI-1) is
+        DISPUTED, with its rivals in `conflicts`."""
         out = []
         for f in self._facts(world, thing, t, "positioned-in", as_of, perspective):
             if thing not in f["roles"].get("positioned", []):
@@ -196,7 +197,8 @@ class PhysicalMixin:
         from .judgement import Judgement
         edges = []
         # The canonical judgement, with the frame-transform slot applied (Q5): two accepted different transforms
-        # for one frame pair are disputed edges. Judged without same-as identity: DI-12, deferred (LABS-1.038).
+        # for one frame pair are disputed edges. No same-as identity, by design: same-as relates particulars only, so
+        # frames cannot be declared the same (increment B point 6; identity design: frame chains unchanged).
         for cls, r in self._records(list(atts.values()), Identity([], perspective, as_of), t, perspective, as_of,
                                     world=world).items():
             if r.judgement not in (Judgement.ESTABLISHED, Judgement.DISPUTED):

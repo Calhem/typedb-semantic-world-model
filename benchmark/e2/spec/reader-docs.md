@@ -200,8 +200,9 @@ Nothing is inferred about anyone not mentioned.
 
 ```text
 The thing's positions that hold at t, one per frame statement: frame, per-axis (lower, upper), orientation,
-status and supporting attestations. Several positions in one frame are all listed (conflicts between
-positions are not judged in A1).
+status and supporting attestations. Several positions in one frame are all listed, each with its own status:
+a position in conflict with another (the positioned-in slot, A2) or disputed by an accepted denial (DI-1) is
+DISPUTED, with its rivals in `conflicts`.
 ```
 
 ## `WorldModel.process_steps(world, process, t, as_of=None, perspective='system')`

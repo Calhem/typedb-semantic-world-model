@@ -149,7 +149,7 @@ The gaps found (full list with evidence in section 9):
 
 | Gap | What is missing | Families |
 |---|---|---|
-| GAP-SPATIAL-1..8 | uncertain transforms; rotations other than quaternions; units other than metres and radians; frames judged without same-as identity; no geometry; no distance reader; `holds` cannot pick out one position | S, F |
+| GAP-SPATIAL-1..8 | uncertain transforms; rotations other than quaternions; units other than metres and radians; ~~frames judged without same-as identity~~ (GAP-SPATIAL-5, withdrawn in LABS-1.063: by design); no geometry; no distance reader; `holds` cannot pick out one position | S, F |
 | GAP-FRAME-1..6 | anchoring has no geometric effect; `move()` updates places, not frames; no interpolation; no hierarchy or history reader; parts not positioned through their assembly | F |
 | GAP-MEAS-1..11 | no specification, tolerance or pass/fail; conditions as exact text; no coverage-factor harmonisation; no best estimate; single-dimension units; `has-quality` not a functional slot; no trend reader; N+1 reads; calibration reference is text; no "undermines"; no derivation record | M |
 | GAP-CAUSE-1..7 | no causal chains; no forward "what did E cause"; no intervention; no automatic causal inference; no strength or mechanism; no failure propagation; no derivation record | C |
