@@ -1,0 +1,330 @@
+{
+ "cases": [
+  {
+   "id": "DX-1",
+   "items": [
+    "D-WH-3"
+   ],
+   "expected": "A2 Provenance / v0.2 \u00a75.2 E6: a derived pose rests on its position statement as a premise; a premise disputed by an accepted denial cannot yield an INFERRED (undisputed) candidate or answer",
+   "fixture": "diag-wh3",
+   "observed": {
+    "poses_status": [
+     "DISPUTED"
+    ],
+    "where_status": "INFERRED",
+    "candidate_status": [
+     "INFERRED"
+    ]
+   },
+   "reproduced": true,
+   "paths_agree": true,
+   "full_path": null
+  },
+  {
+   "id": "DX-2",
+   "items": [
+    "D-WH-5",
+    "D-PO-3"
+   ],
+   "expected": "ID-8 (pre-e-identity-design \u00a79): a reader judges the subject with its established same-as group, so a position stated under an alias is a candidate for the canonical thing",
+   "fixture": "diag-alias-pos",
+   "observed": {
+    "canonical": "box",
+    "same group": true,
+    "where(box).candidates": 1,
+    "poses(box)": 1,
+    "where(box-alias).candidates": 0,
+    "poses(box-alias)": 0
+   },
+   "reproduced": true,
+   "paths_agree": true,
+   "full_path": null
+  },
+  {
+   "id": "DX-3",
+   "items": [
+    "D-ME-5"
+   ],
+   "expected": "v0.2 \u00a74.2 and the identity increment: measurements of an alias are measurements of the same bearer",
+   "fixture": "diag-alias-meas",
+   "observed": {
+    "canonical": "box",
+    "measurements(box)": 0,
+    "measurements(box-alias)": 1
+   },
+   "reproduced": true,
+   "paths_agree": true,
+   "full_path": null
+  },
+  {
+   "id": "DX-4",
+   "items": [
+    "D-CM-6"
+   ],
+   "expected": "v0.2 \u00a75.3 and stage-c 'Disputes': an accepted denial of a measured content disputes it; compare_measurements is DISPUTED, with or without t",
+   "fixture": "diag-meas-denial",
+   "observed": {
+    "compare.status": "ASSERTED",
+    "compare(t).status": "NOT_YET_KNOWN",
+    "denial listed as alternative": false,
+    "denial visible with t": false,
+    "measurements": 2,
+    "denied content == measured content": true
+   },
+   "reproduced": true,
+   "paths_agree": true,
+   "full_path": null
+  },
+  {
+   "id": "DX-5",
+   "items": [
+    "D-ME-6"
+   ],
+   "expected": "plan \u00a79.2 / stage-c: a measurement over an instant (no end, no persists) holds at that instant, and two measurements at the same instant are comparable",
+   "fixture": "diag-point-meas",
+   "observed": {
+    "measurements(t=T3)": 0,
+    "measurements(no t)": 2,
+    "valid": [
+     [
+      {
+       "earliest": "2026-11-03T09:00:00+00:00",
+       "latest": "2026-11-03T09:00:00+00:00"
+      },
+      {
+       "earliest": "2026-11-03T09:00:00+00:00",
+       "latest": "2026-11-03T09:00:00+00:00"
+      }
+     ]
+    ],
+    "pairs": [
+     [
+      "incomparable",
+      "valid times do not overlap"
+     ]
+    ]
+   },
+   "reproduced": true,
+   "paths_agree": true,
+   "full_path": null
+  },
+  {
+   "id": "DX-6",
+   "items": [
+    "D-VA-3"
+   ],
+   "expected": "DI-19 report \u00a71 and A0: value readers apply declared slots only and refuse a type with no declared slot; they never report an exclusive office's holders as undisputed",
+   "fixture": "diag-office",
+   "observed": {
+    "value_at.status": "ASSERTED",
+    "values": [
+     "bea",
+     "cal"
+    ],
+    "office_holders.conflict": true
+   },
+   "reproduced": true,
+   "paths_agree": true,
+   "full_path": null
+  },
+  {
+   "id": "DX-7",
+   "items": [
+    "D-FA-1"
+   ],
+   "expected": "DI-19 / increment B \u00a74: a listing of a content disputed under an attested constraint cites the constraint's deciding attestation, as holds() does",
+   "fixture": "diag-office-fa",
+   "observed": {
+    "facts_about.status": [
+     "DISPUTED"
+    ],
+    "facts_about cites x-sm": false,
+    "holds.constraint_support": [
+     [
+      "x-sm"
+     ]
+    ]
+   },
+   "reproduced": true,
+   "paths_agree": true,
+   "full_path": null
+  },
+  {
+   "id": "DX-8",
+   "items": [
+    "D-CO-1"
+   ],
+   "expected": "plan \u00a79.3: a claim stated about another description is lifted only through accepted describes links for both descriptions; a cause description with no accepted link does not apply as a cause of the occurrence",
+   "fixture": "diag-lift-one-side",
+   "observed": {
+    "claims": [
+     [
+      "ev-a",
+      "ev-b",
+      true,
+      true,
+      []
+     ]
+    ]
+   },
+   "reproduced": true,
+   "paths_agree": true,
+   "full_path": null
+  },
+  {
+   "id": "DX-9",
+   "items": [
+    "D-CO-2"
+   ],
+   "expected": "plan \u00a79.3 / stage-b 'Lifting': a lifted claim cites the describes links it was lifted through",
+   "fixture": "diag-lift-cite",
+   "observed": {
+    "lifted_via": [
+     {
+      "description": "ev-b",
+      "occurrence": "o-b"
+     }
+    ],
+    "describes ids of ev-b": 2
+   },
+   "reproduced": true,
+   "paths_agree": true,
+   "full_path": null
+  },
+  {
+   "id": "DX-10",
+   "items": [
+    "D-CO-3"
+   ],
+   "expected": "stage-b U-2: lifting uses an accepted describes link; a link disputed by an accepted denial does not lift",
+   "fixture": "diag-lift-disputed",
+   "observed": {
+    "claims": [
+     [
+      "ev-a",
+      "ev-b",
+      true,
+      true
+     ]
+    ]
+   },
+   "reproduced": true,
+   "paths_agree": true,
+   "full_path": null
+  },
+  {
+   "id": "DX-11",
+   "items": [
+    "D-EX-1",
+    "D-EX-4"
+   ],
+   "expected": "stage-b 'Schema and API': explain lists the content's accepted initiating events; B0: every claim lists its attestations",
+   "fixture": "diag-explain-init",
+   "observed": {
+    "initiated_by": [
+     [
+      "ev-ok",
+      "accepted"
+     ],
+     [
+      "ev-rumour",
+      "unreviewed"
+     ]
+    ],
+    "fields": [
+     "causes",
+     "claim",
+     "claim_status",
+     "claimed_by",
+     "end",
+     "event",
+     "occurrences",
+     "start"
+    ]
+   },
+   "reproduced": true,
+   "paths_agree": true,
+   "full_path": null
+  },
+  {
+   "id": "DX-12",
+   "items": [
+    "D-EX-3"
+   ],
+   "expected": "stage-b B-time: an explanation whose event time is unavailable is kept as timing 'unresolved', not dropped",
+   "fixture": "diag-explain-untimed",
+   "observed": {
+    "initiated_by": []
+   },
+   "reproduced": true,
+   "paths_agree": true,
+   "full_path": null
+  },
+  {
+   "id": "DX-13",
+   "items": [
+    "D-CH-1"
+   ],
+   "expected": "stage-b Q-B1.2 and the contract schema: each side of a transition has its own support; an accepted 'does not hold' side cites the attestation it rests on",
+   "fixture": "diag-neg-side",
+   "observed": {
+    "transitions (track, category, before.holds, before.support, after.holds, after.support)": [
+     [
+      "content",
+      "judgement",
+      null,
+      [],
+      true,
+      [
+       "dep"
+      ]
+     ],
+     [
+      "content",
+      "world-state",
+      true,
+      [
+       "dep"
+      ],
+      false,
+      []
+     ]
+    ],
+    "holds at T7": [
+     "ASSERTED",
+     false,
+     [
+      "dep",
+      "not-dep"
+     ]
+    ]
+   },
+   "reproduced": true,
+   "paths_agree": true,
+   "full_path": null
+  },
+  {
+   "id": "DX-14",
+   "items": [
+    "D-EF-1"
+   ],
+   "expected": "stage-b Q-B1.2: a move from UNKNOWN to held is a judgement transition, never presented as physical change; whether effects_of's accepted_change is bound by Q-B1 is not ruled",
+   "fixture": "diag-effect-unknown",
+   "observed": {
+    "effects_of.accepted_change": true,
+    "before": "UNKNOWN",
+    "after": "ASSERTED",
+    "changes categories": [
+     [
+      "judgement",
+      "UNKNOWN",
+      "ASSERTED"
+     ]
+    ]
+   },
+   "reproduced": true,
+   "paths_agree": true,
+   "full_path": null
+  }
+ ]
+}
