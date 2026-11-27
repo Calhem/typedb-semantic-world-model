@@ -1,7 +1,13 @@
-# Stage E2 reader contracts (draft for approval, E2-D3)
+# Stage E2 reader contracts (E2-D3)
 
-**LABS-1.062, 25 November 2026.** **Draft:** no E2 question may rest on these contracts until the owner approves them.
-Review package: [docs/stage-e/stage-e2-reader-contracts-review.md](../../../docs/stage-e/stage-e2-reader-contracts-review.md).
+**LABS-1.062, 25 November 2026; amended LABS-1.063, 27 November 2026.** The review is accepted with amendments, and the
+shared and reader proposals are approved with qualifications (§0.10). **Still at review for final approval.** The
+contracts branch is not merged.
+
+**Related documents:**
+- First review package: [docs/stage-e/stage-e2-reader-contracts-review.md](../../../docs/stage-e/stage-e2-reader-contracts-review.md).
+- Discrepancy adjudication (every [D] item's class, E2 eligibility and disposition):
+  [docs/stage-e/stage-e2-contract-adjudication.md](../../../docs/stage-e/stage-e2-contract-adjudication.md).
 
 **What this covers:** the 22 reader templates the E2 harness can call (`evaluation/e2/readers.py`).
 
@@ -25,13 +31,22 @@ Review package: [docs/stage-e/stage-e2-reader-contracts-review.md](../../../docs
 ### 0.1 Status of each statement
 Every statement in a contract carries one label:
 - **[E] Established:** an approved design text or semantic decision. The citation names it.
-- **[P] Proposed:** a new rule this draft proposes. It needs the owner's approval before questions rest on it. Proposals
-  are numbered (P-n) and collected in the review package.
+- **[P] Proposal:** a rule first proposed in LABS-1.062. **Every proposal is approved under LABS-1.063**, some with
+  qualifications (§0.10). A [P] statement is now part of the contract as qualified there.
 - **[D] Discrepancy:** the implementation or its docstring differs from the design, goes beyond it, or the design is
-  silent. Discrepancies are numbered (D-n) and collected in the review package.
+  silent. Discrepancies are numbered (D-n). Each is adjudicated in the register
+  (`docs/stage-e/stage-e2-contract-adjudication.md`).
 
 Where a docstring and its design text differ, the contract records the difference and **does not pick one** (design 5.2).
-No question may depend on such a point until the owner rules on it.
+
+**E2 eligibility of a [D] point (LABS-1.063, replacing the LABS-1.062 blanket exclusion):**
+- **Semantic or provenance defect** against an unambiguous approved contract: the question stays **eligible** (A/H),
+  even where the current implementation is expected to fail it.
+- **Unsupported capability:** a **G probe** (rule G-1).
+- **Unresolved semantic decision:** **blocked** until decided. `benchmark/e2/spec/blocked.json` lists the decisions, and
+  the question checker refuses dependent questions.
+- **API convention:** eligible where the contract fixes it; otherwise questions do not expect that field.
+- **Documentation discrepancy:** does not invalidate an otherwise established contract.
 
 Sources are cited by path and section. Generated reader documentation (`benchmark/e2/spec/reader-docs.md`) and the
 implementation are cited only as supplementary, never as the reason a semantic statement holds.
@@ -52,7 +67,7 @@ implementation are cited only as supplementary, never as the reason a semantic s
 - `NOT_YET_KNOWN`: nothing relevant is recorded (or visible at `as_of`).
 `OBSERVED` and `PRESUMED` are not produced (v0.2 §5.6 note).
 
-### 0.4 Evidence roles [P-1, with [E] parts]
+### 0.4 Evidence roles [P-1, approved with amendments LABS-1.063]
 A cited attestation has exactly one role in an answer:
 
 | Role | Meaning | Scored by |
@@ -64,13 +79,22 @@ A cited attestation has exactly one role in an answer:
 
 - [E] For a DISPUTED `holds` answer, the dispute rests on its own claims, the rivals and the constraint (A0 F-4,
   increment B design §2.3, DI-19). E1 counted all three as cited.
-- [P-1] The proposal is to keep them **apart**: `support` is supporting; `conflicts` and `constraint_support` are
-  conflicting. Supporting precision then measures only what the answer rests on for its value. The gold lists
-  `required_evidence` / `admissible_evidence` (supporting) and `required_conflict_evidence` /
-  `admissible_conflict_evidence` (conflicting); `forbidden_evidence` applies to both. This changes the harness (H-4); it
-  changes no reader.
+- [P-1, approved] They are kept **apart**: `support` is supporting; `conflicts` and `constraint_support` are
+  conflicting. The amendments (LABS-1.063):
+  - **Independent sets:** supporting and conflicting evidence each have **independently authored** required and
+    admissible sets: `required_evidence` / `admissible_evidence` (supporting) and `required_conflict_evidence` /
+    `admissible_conflict_evidence` (conflicting). `forbidden_evidence` applies to every role.
+  - **Scores:** recall and precision are **reported separately for each role**. E2-D6's supporting-evidence thresholds
+    are unchanged (recall ≥ 90 % per applicable family, precision 100 %). **Inadmissible conflicting evidence is an
+    explicit failure.**
+  - **What a role means:** a role describes the attestation's relationship to the answer. Conflicting evidence may
+    legitimately establish a DISPUTED judgement.
+  - **Components:** one attestation may hold different roles in different components of one answer, or in different
+    plan steps. An established holder's claims, for example, support its appointment and conflict with the rival
+    holder. It counts once in each role it holds. The one forbidden combination is an id listed as an alternative and
+    as supporting in the same component.
 
-### 0.5 Fixture-level names for evidence [P-2]
+### 0.5 Fixture-level names for evidence [P-2, approved LABS-1.063]
 Evidence is named by fixture step, never by attestation id. An attestation the library writes on a fixture step's
 behalf gets a **deterministic name derived from that step**, so it is never inadmissible merely because the library
 generated it:
@@ -78,11 +102,11 @@ generated it:
 | Written by | Name |
 |---|---|
 | the step's own claim (attest, position, relate_frames, claim_cause, …) | `<step>` |
-| `measure` | `<step>` (reported content), `<step>/activity` (the activity's account), `<step>/activity-kind` (its `measurement` classification), `<step>/produced`, `<step>/reports` |
+| `measure` | `<step>` (reported content), `<step>/activity` (the activity's account), `<step>/kind:measurement` (its classification; the uniform `<step>/kind:<category>` form, LABS-1.063), `<step>/produced`, `<step>/reports` |
 | `account`, `record_event`, `act_in_office`, `replace_part`, `take_sample` | `<step>` (the occurrence interval), `<step>/kind:<category>` (each classification), `<step>/describes` (the describes link, if `occurrence` is given), `<step>/effect:<n>` (the n-th effect, from 0, in the order the fixture lists them or the profile documents them) |
-| `move` | `<step>` (the account), `<step>/effect:<n>`, `<step>/ended:<restated step>` (each claim it ends) |
+| `move` | `<step>` (the account), `<step>/effect:<n>`; each claim it ends is a restatement named after the restated step (last row; E1 C3), with `<step>/ended:<restated step>` recorded beside it for reporting |
 | `end`, `correct` | `<step>` |
-| `destroy` | `<step>/ended:<restated step>` (each system claim ended), `<step>/denied:<restated step>` (each other attester's claim denied) |
+| `destroy` | each system claim ended: a restatement named after the restated step (E1 C3), with `<step>/ended:<restated step>` recorded beside it; each other attester's claim denied: `<step>/denied:<restated step>` |
 | a restatement of step X by the library (same attester, content and start: end(), move()) | counts as X (E1 C3 [E], approved LABS-1.053) |
 
 - Names are assigned by the loader from the writer's return values and the fixture's own order. They never depend on
@@ -90,7 +114,11 @@ generated it:
 - A cited attestation that still has no name is **unattributed**. It is reported in its own count, it is neither
   admissible nor inadmissible, and it blocks a pass of the precision criterion until it is adjudicated (H-1).
 
-### 0.6 Precision and recall with empty sets [P-3]
+### 0.6 Precision and recall with empty sets [P-3, approved with amendments LABS-1.063]
+
+Amendments:
+- **Missing required evidence is a failure** whether or not precision is defined.
+- **Unattributed evidence prevents a verified precision pass** until it is resolved.
 
 | Case | Recall | Precision | Outcome |
 |---|---|---|---|
@@ -103,7 +131,14 @@ generated it:
 Family precision is the sum, over questions, of admissible cited / cited. It is computed only over questions that cite
 something, and the number of "no evidence returned" questions is reported beside it.
 
-### 0.7 Derivations and premise admissibility [P-4, with [E] parts]
+### 0.7 Derivations and premise admissibility [P-4, approved with amendments LABS-1.063]
+
+**Amendment:** premise admissibility requires **visibility, usability and applicability**, not merely existence. A
+premise must meet all three:
+- **visible:** its fixture step is in the question world's lineage;
+- **usable:** it is listed in the question's authored `admissible_premises`, which encode its acceptance, supersession
+  and interval for the question's perspective, `as_of` and `t`;
+- **applicable:** its content type is one the rule takes.
 - [E] The model records one derivation rule, `frame-transform/v1` (stage-a2). It derives a pose or a transform from a
   frame chain and position statements. No general derivation record exists (DI-7, deferred), and basis `inference` is
   reserved for rule-derived attestations (D-D3-4).
@@ -121,7 +156,7 @@ something, and the number of "no evidence returned" questions is reported beside
   covers another world, an unaccepted claim, a claim superseded by `as_of`, or the wrong content type.
 - This replaces the harness's current existence check (H-2).
 
-### 0.8 Refusals [E, P-5]
+### 0.8 Refusals [E, P-5 approved LABS-1.063]
 - A refusal is a documented, deliberate "no answer" (an exception naming why), distinct from an execution error.
 - [E] Only refusals in this contract's refusal tables are refusals (LABS-1.062). A refusal is **established** only when
   an approved design text states it. Gap probes accept only established refusals.
@@ -132,6 +167,26 @@ something, and the number of "no evidence returned" questions is reported beside
 Unless a contract states an order [E], a list in an answer is compared as a **multiset**. A question that needs one
 item picks it by field (`[field=value]`), never by position. An order the implementation happens to produce but no
 design states is recorded as [D] and is not relied on.
+
+### 0.10 Approval record (LABS-1.063)
+
+| Proposal | Status | Qualification |
+|---|---|---|
+| P-1 | approved | independent required and admissible sets per role; recall and precision per role; supporting thresholds of E2-D6 kept; inadmissible conflicting evidence fails; roles describe the relationship to the answer, and conflicting evidence may establish DISPUTED (§0.4) |
+| P-2 | approved | unattributed evidence prevents a verified precision pass until resolved (§0.5, §0.6) |
+| P-3 | approved | missing required evidence fails whether or not precision is defined (§0.6) |
+| P-4 | approved | admissibility needs visibility, usability and applicability, not existence (§0.7) |
+| P-5 | approved | — |
+| P-HO-1, P-OC-1, P-WH-1, P-ME-1, P-CV-1, P-CS-1, P-MC-1, P-CO-1, P-PS-1, P-IV-1 | approved | as written |
+| P-VA-1 | approved, qualified | positive attestations of **mutually exclusive rival values keep their conflicting relationship**; polarity alone does not decide a role. In a dispute between several values, every value's positive claims are conflicting |
+| P-OH-1 | approved, qualified | the **conflict relationship between established holders is preserved**: each established appointment's claims support it, and in a conflict the same claims are also conflicting (the `conflict` component), with the constraint's support |
+| P-CM-1 | approved, qualified | the shared role amendment (§0.4) applies |
+| P-EF-1 | approved, qualified | **event-specific scope of `effects_of` only**; it establishes no general rule excluding causal rivals |
+| P-BE-1 | approved, qualified | interval-based evidence extraction for E2; the absence of direct provenance in `before` is recorded as a limitation |
+
+Evidence extraction must not conceal missing evidence, incorrectly presented alternatives or fabricated derivations
+(LABS-1.063 item 3). The harness implements these rules in `evaluation/e2/evidence.py` and `score.py`. Its review is
+`docs/stage-e/stage-e2-labs-1063-review.md`.
 
 
 ## Part A. Core and organisation
@@ -203,17 +258,16 @@ for the other side of a dispute.
   that holds or is polarity-disputed: all listed values and, for a polarity-disputed value, its accepted denials.
   There is no `conflicts` field. The field's contents are [D] (D-VA-1): in the implementation only; the design says
   only that `value_at` "reports DISPUTED" (A0 F-4; SB Q-B2).
-- **Proposed roles** (P-VA-1, applying P-1):
-  - an attestation in `support` with polarity true is **supporting**, because every value it supports is in
-    `values`. This holds for a functional dispute too: all rival values are listed, so no rival is "the other side"
-    of a single answered value;
-  - an attestation in `support` with polarity false (it arises only where a value is polarity-disputed) is
-    **conflicting**.
+- **Roles** (P-VA-1, approved with the LABS-1.063 qualification: polarity alone does not decide a role):
+  - **one value held, not disputed:** `support` is **supporting**;
+  - **a dispute between several (mutually exclusive) values:** every value's positive claims are **conflicting**, since
+    they are rivals establishing the DISPUTED judgement. Each value's claims are conflicting with the others';
+  - **one polarity-disputed value:** its assertions are **supporting**, and its accepted denials are **conflicting**.
 - `alternatives`: alternative [E] (v0.2 §6.2).
 - `constraint_support`: always empty [E] (DI19 §1).
 
 **E1 compatibility.** E1's harness counted all of `support` as cited for `value_at`. Under P-VA-1 the same ids are
-cited, now split into two roles.
+cited, now split into the roles above.
 
 ---
 
@@ -368,8 +422,10 @@ template (T); X plans generally (HR §1). Gap probes: GAP-MEAS-6 (`has-quality` 
 
    | Role | Where in the answer | When | Label/source |
    |---|---|---|---|
-   | supporting | `support[i]` where `evidence[attestation=i].polarity` is true | always (in a dispute, every listed value's claims) | P-VA-1; contents [D] D-VA-1 |
-   | conflicting | `support[i]` where `evidence[attestation=i].polarity` is false | a polarity-disputed value | P-VA-1 (P-1) |
+   | supporting | `support` | not DISPUTED | P-VA-1 (approved); contents [D] D-VA-1 |
+   | conflicting | `support` (every value's positive claims) | DISPUTED between several values | P-VA-1 as qualified (LABS-1.063): mutually exclusive rivals |
+   | supporting | `support[i]` where `evidence[attestation=i].polarity` is true | DISPUTED, one value (polarity dispute) | P-VA-1 |
+   | conflicting | `support[i]` where `evidence[attestation=i].polarity` is false | DISPUTED, one value (polarity dispute) | P-VA-1 (P-1) |
    | alternative | `alternatives` | always | [E] v0.2 §6.2 |
    | not cited | `constraint_support` (always empty), `evidence` | always | [E] DI19 §1 |
 
@@ -406,8 +462,9 @@ template (T); X plans generally (HR §1). Gap probes: GAP-MEAS-6 (`has-quality` 
   `_conflicts`. The answers agree (B: `value_at` unchanged); the documented code path does not.
 - D-VA-6: HR §9 lists the no-single-slot refusal as "not established, documented only in the implementation". It is
   established by A0 and DI19 §1 (recorded so here); the harness's refusal table should be corrected.
-- P-VA-1: `support` with polarity true is supporting and with polarity false is conflicting (P-1). No functional-rival
-  split is needed, because all rival values are listed in `values`.
+- P-VA-1 (approved, qualified LABS-1.063): one undisputed value: supporting. A dispute between several values: every
+  positive claim is conflicting (mutually exclusive rivals keep their conflict relationship). A polarity-disputed single
+  value: assertions supporting, denials conflicting.
 
 ---
 
@@ -654,14 +711,15 @@ template (T). Gap probes: GAP-MULTI-2 (the instant of the act), GAP-MULTI-6.
    | Role | Where in the answer | When | Label/source |
    |---|---|---|---|
    | supporting | `appointments[judgement=established].evidence[acceptance=accepted].attestation` | always | [E] D2 §3; CL C1 |
-   | supporting | `conflict.appointments[*].attestations` | a conflict | [E] D2 §3 |
+   | conflicting | `conflict.appointments[*].attestations` (component `conflict`) | a conflict | [E] D2 §3; P-OH-1 as qualified: the conflict relationship between established holders is preserved |
    | conflicting | `conflict.constraint.support` | a conflict | [E] contents D2 §3, REG DI-19; role P-1 |
    | alternative | `appointments[*].evidence[acceptance≠accepted]` | always | [E] v0.2 §6.2; D2 §3 |
    | not cited | the claims of appointments that are not established (denied, expired) | explanatory, never required | [E] CL C1 (X-003) |
 
-   - Under P-1, a conflict's appointments are each other's rivals. Supporting vs conflicting is not decidable per
-     holder, because the answer lists all of them (as for value_at, P-VA-1). They are therefore supporting.
-     [P] P-OH-1.
+   - P-OH-1 (approved, qualified LABS-1.063): each established appointment's accepted claims **support that
+     appointment** (component `appointments[i]`), conflict or not. In a conflict the **same claims are also
+     conflicting** (component `conflict`), as the holders are each other's rivals, and so is the constraint's support.
+     This is a legitimate cross-role membership (§0.4).
 7. **Derivations and admissible premises**
    - [E] None are presented. No authority from an office, no office from an act (D2D §2).
 8. **Refusals**
@@ -681,8 +739,8 @@ template (T). Gap probes: GAP-MULTI-2 (the instant of the act), GAP-MULTI-6.
 - D-OH-2: the office is matched by stated id (`e.stated("class")`) but the context by identity class; `holder` is the
   first attestation's stated name (code). Design is silent.
 - D-OH-3: the `ValueError` for a missing profile is code only. Common P-5 treats it as a precondition.
-- P-OH-1: the claims of every established holder in a conflict are supporting; only the constraint's support is
-  conflicting.
+- P-OH-1 (approved, qualified LABS-1.063): established holders' claims support their appointments and, in a conflict,
+  are also conflicting with each other, with the constraint's support.
 
 
 ## Part B. Spatial transformations and frames
@@ -903,7 +961,8 @@ F8 (GAP-FRAME-3: must stay UNKNOWN between stated poses, E2-D 3.7), F10 (GAP-FRA
      disputed by polarity (listed by `poses` since DI-1) mapped through a consistent chain yields an INFERRED
      candidate, and the answer can be INFERRED. v0.2 5.2 E6 requires every premise usable; common 0.7 admits a
      disputed premise only with a DISPUTED answer; A2 covers disputed transforms only (phys `where`, candidate
-     `status`). No question may rest on this case until ruled (D-WH-3).
+     `status`). Adjudicated as a semantic defect (proposed DI-25; reproduced DX-1). Questions expecting the contract's
+     answer (not an undisputed INFERRED pose) are **eligible** (D-WH-3).
    - WH-23 [E] Direct candidates present no derivation.
 8. **Refusals:** none documented. Unrelatable frames give `incomparable` entries, never a refusal or a guess [E]
    (A2 "Different frames"). `value_of` on a parameter-valued slot points to `where`/`poses` (implementation only,
@@ -1082,7 +1141,7 @@ Abbreviations used in citations:
      clarification C; D-D-8 (`stage-d-review.md` §6).
    - [E] It takes the common context ⟨world, perspective, as_of⟩ (common §0.2).
    - [D] **D-ME-1:** the meaning of `t` ("only attestations that hold at t") is docstring only (qualities.py
-     docstring); no design text was found. Questions should use `t=None` until the owner rules.
+     docstring); no design text was found. Blocked pending SD-MEA-1: questions pass no `t` until it is decided.
    - [E] The fixture defines a unit and a quality kind of the same dimension (stage-c C1 `measure`).
 2. **Output fields and vocabulary**
    - The answer is a list of entries, one per visible `has-quality` attestation about (bearer, quality).
@@ -1114,7 +1173,8 @@ Abbreviations used in citations:
    - [E] One measurement is visible at `as_of` all together or not at all (D-C-8, one transaction time).
    - [E] Variant worlds inherit attestations with their links (stage-c "Hypothetical worlds"; v0.2 §6.2).
    - [D] **D-ME-5:** same-as identity is not applied. Attestations about an accepted alias of the bearer are dropped
-     (src Discrepancy 10; v0.2 §4.2, ID increment). Do not author identity questions here until ruled.
+     (src Discrepancy 10; v0.2 §4.2, ID increment). Adjudicated as a semantic defect (proposed DI-24; reproduced DX-3):
+     identity questions expecting the contract's answer are **eligible**.
    - [D] **D-ME-6:** with `t` given, the filter uses the attestation's own interval, so a measurement written without
      `persists` or `end` has an empty [s, s) interval and never holds at t (src Discrepancy 2; plan §9.2 "the
      quality's valid time"). This was found by reading code; it needs a probe.
@@ -1222,7 +1282,8 @@ Abbreviations used in citations:
        `alternatives` (described as "unaccepted") and never makes the status DISPUTED;
      - with `t` given, the denial is dropped entirely (qualities.py `measurements` / `compare_measurements`).
 
-     This is a potential gap. Questions about denied measurements must not be authored until the owner rules.
+     Adjudicated as a semantic defect (proposed DI-26; reproduced DX-4): questions about denied measurements that
+     expect the contract's DISPUTED answer are **eligible**.
 4. **Visibility**
    - [E] As `measurements`; two perspectives can give different comparisons (stage-c "Disputes"; d3-design P2).
 5. **Ordering and multiplicity**
@@ -1263,8 +1324,8 @@ Abbreviations used in citations:
   stage-c "Disputes".
 - D-CM-7: pairs are attestation pairs (implementation) versus v0.2 content pairs.
 - D-CM-8: the coverage tolerance of 1e-6 is implementation only.
-- P-CM-1: in a DISPUTED answer, incompatible-pair attestations are conflicting; the other compared ones are
-  supporting.
+- P-CM-1 (approved; the shared role amendment applies): in a DISPUTED answer, incompatible-pair attestations are
+  conflicting; the other compared ones are supporting.
 
 ---
 
@@ -1433,7 +1494,7 @@ Abbreviations used in citations:
      record to certificate (D-D3-2).
    - [D] **D-MC-1:** `t=None` appears in the design signature (d3 §2), but its meaning is not stated. In the
      implementation, `t` filters the measurements as `measurements(t)`, and calibration is still judged at each
-     activity start. Use `t=None` until ruled.
+     activity start. Blocked pending SD-MEA-1: questions pass no `t` until it is decided.
    - [P] P-5 for the profile.
 2. **Output fields and vocabulary**
    - The answer is a list of rows, one per measurement record and activity instrument.
@@ -1628,7 +1689,7 @@ Short names for the sources:
 | supporting | `[i].attestations[acceptance=accepted, polarity=false].attestation` | a question about one claim's `denied` judgement | [E] IBD §2.4 (deciding denials) |
 | conflicting | `[i].attestations[acceptance=accepted].attestation` (both polarities) | `[i].judgement = disputed` | [E] IBD §2.2 (polarity dispute) |
 | alternative | `[i].attestations[acceptance≠accepted]` | any | [E] V02 §6.2 (unaccepted attestations are alternatives) |
-| not cited | entries with `applies = false` for "what caused E" | — | [P] P-CO-1 |
+| alternative | the attestations of accepted entries with `applies` false or null, for "what caused E" | — | P-CO-1 (approved) |
 | not reported | the describes-link attestations used by lifting | — | [D] D-CO-2: PLAN §9.3 requires them to be cited |
 
 7. **Derivations and admissible premises:**
@@ -1656,9 +1717,9 @@ Short names for the sources:
 - D-CO-5: `cause_occurrences` and the label `mixed` come from the docstring and code only. PLAN §9.3 describes the
   mixed form without naming it.
 - D-CO-6: the self-causation refusal exists in code only (DYN `claim_cause`), with no design text.
-- P-CO-1: for "what caused E", only accepted claims with `applies: true` are supporting. Claims with `applies: false`
-  are not cited (SB LABS-1.011 Clarification). For `applies: null`, the question states its own admissible set. HR
-  §5.1 and the harness extractor `ev_claims` currently cite every accepted claim.
+- P-CO-1 (approved): for "what caused E", only accepted claims with `applies: true` are supporting. An accepted claim
+  that does not apply (`applies` false or null) is its source's account, listed as an **alternative** (SB LABS-1.011
+  Clarification). The harness extractor implements this (LABS-1.063 supplement finding 1).
 
 ---
 
@@ -1740,7 +1801,8 @@ Short names for the sources:
 - D-EF-6: `t` judges only the claims; the states use the event's own times (DYN `effects_of`). SB "Schema and API"
   does not define `t`.
 - D-EF-7: the `claim_effect` refusals exist in code only (DYN `claim_effect`).
-- P-EF-1: claims by other events about the same outcome are neither rivals nor reported.
+- P-EF-1 (approved for the event-specific scope of `effects_of` only; it establishes no general rule excluding causal
+  rivals): claims by other events about the same outcome are neither rivals nor reported by this reader.
 
 ---
 
@@ -1799,10 +1861,11 @@ Short names for the sources:
 
    - **Citable today:** `holds.support` (with conflicts and constraint support when DISPUTED), and the attestations of
      the causal claims under `initiated_by[i].causes[j]`.
-   - **Not yet requirable:** until the owner rules on D-EX-4, no question may require (in `required_evidence`) or
-     score the attestations of the initiating claims, or the account attestation of an initiator. The requirement
-     itself is not weakened: D-EX-4 stays open as a potential gap.
-   - Until D-EX-1 to D-EX-3, D-EX-5 and D-EX-6 are ruled, no question may depend on:
+   - **Initiating-claim provenance (D-EX-4):** adjudicated as a provenance defect (proposed DI-29; reproduced DX-11). A
+     question may require the initiating claims' attestations (the established B0 requirement) and stays
+     **eligible**. The current reader is expected to fail it as missing evidence.
+   - Blocked pending SD-CAU-2 and SD-CAU-3 (D-EX-1 to D-EX-3, D-EX-5); D-EX-6 is an API convention. No question may
+     depend on:
      - whether an unaccepted initiator is listed;
      - an initiator whose account is missing or which has not ended by t;
      - a cause's `lifted` flag inside `explain`.
@@ -2040,7 +2103,8 @@ Short names for the sources:
   `before`).
 - D-BE-4: V02 §4.5 says times on different clocks compare only through an accepted alignment, otherwise UNKNOWN.
   `before` has no clock handling.
-- P-BE-1: `before` cites no evidence. A P3 question's evidence comes from `interval` in its plan.
+- P-BE-1 (approved, qualified): `before` cites no evidence. A P3 question's evidence comes from the `interval` steps of
+  its plan (interval-based extraction). **Limitation:** `before` reports no direct provenance for its answer.
 
 ---
 

@@ -13,6 +13,10 @@ Records: [e2-harness/](e2-harness/).
 **Status (LABS-1.062):** the architecture is approved with the corrections in section 9, which are implemented. The
 harness is merged into `main`.
 
+**LABS-1.063:** the harness was finalised against the approved contracts on `feature/e2-reader-contracts`: H-1 to H-8,
+evidence by role and the supplement findings. This supersedes sections 5.1 and 7 of this review. See
+[stage-e2-labs-1063-review.md](stage-e2-labs-1063-review.md).
+
 **Not written:**
 - the E2 reader contracts;
 - E2 questions, fixtures, calculation sheets or gold answers.

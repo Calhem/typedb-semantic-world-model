@@ -129,4 +129,11 @@ The harness architecture is approved, with three corrections. Each now holds in 
 **Status:**
 - The harness is merged into `main` under LABS-1.062.
 - The reader contracts (E2-D3) are drafted for review on `feature/e2-reader-contracts`.
+- **LABS-1.063:** the contract review is accepted with amendments.
+  - Shared proposals P-1 to P-5 and the 15 reader proposals are approved, with qualifications (contracts §0.10).
+  - The blanket exclusion of discrepancies is replaced by eligibility rules: an established-contract discrepancy
+    stays eligible; an unresolved decision is blocked (`benchmark/e2/spec/blocked.json`).
+  - The harness implements H-1 to H-8 as amended.
+  - See [stage-e2-labs-1063-review.md](stage-e2-labs-1063-review.md) and
+    [stage-e2-contract-adjudication.md](stage-e2-contract-adjudication.md).
 - The questions, fixtures, calculation sheets and gold are **not** started.
