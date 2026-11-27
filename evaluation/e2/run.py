@@ -54,7 +54,7 @@ def run(question_paths, fixtures, budget=BUDGET_S, reference_limit=REFERENCE_LIM
         try:
             for q in qs:
                 if not q["plan"]:
-                    results.append(score(q, {}, None, w.names, w.recorded, budget))
+                    results.append(score(q, {}, None, w.names, w.recorded, budget, fixture=fixtures[sid]))
                     continue
                 sel = w.ask(q, True, budget)
                 full, reason = None, None
@@ -62,7 +62,7 @@ def run(question_paths, fixtures, budget=BUDGET_S, reference_limit=REFERENCE_LIM
                     reason = "the selective path timed out, so the reference path was not run"
                 elif q["class"] != "G":
                     full = w.ask(q, False, reference_limit)
-                results.append(score(q, sel, full, w.names, w.recorded, budget, reason))
+                results.append(score(q, sel, full, w.names, w.recorded, budget, reason, fixture=fixtures[sid]))
                 if log:
                     log(results[-1])
         finally:

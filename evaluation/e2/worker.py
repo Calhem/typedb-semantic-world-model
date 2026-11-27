@@ -21,21 +21,10 @@ CTX = mp.get_context("spawn")
 
 
 def _recorded(L, fixture):
-    """attestation id -> step name for every attestation a reader can cite (as E1's restatement_names: a library-written
-    restatement, such as an end() or move() record, is named after the step whose claim it restates), and the set of
-    every attestation id recorded in the scenario's worlds."""
-    from evaluation.run import restatement_names
-    names = restatement_names(L, fixture)
-    recorded = set(names)
-    worlds = [s["id"] for s in fixture["steps"] if s.get("op") == "world"]
-    who = {s.get("attester", "system") for s in fixture["steps"]} | {"system"}
-    for w in worlds:
-        for p in sorted(who):
-            try:
-                recorded |= set(L.wm.visible(w, perspective=p))
-            except Exception:                                  # a perspective with nothing to see
-                continue
-    return names, recorded
+    """Fixture-level names for every attestation (names.py, H-1) and every recorded attestation id."""
+    from evaluation.e2.names import fixture_names
+    names, restatements, recorded = fixture_names(L, fixture)
+    return names, restatements, recorded
 
 
 def child_main(conn, selftest):
@@ -54,8 +43,9 @@ def child_main(conn, selftest):
                 t0 = time.perf_counter()
                 try:
                     L = load(fixture)
-                    names, recorded = _recorded(L, fixture)
-                    conn.send(("loaded", {"database": L.wm.database, "names": names, "recorded": sorted(recorded),
+                    names, restatements, recorded = _recorded(L, fixture)
+                    conn.send(("loaded", {"database": L.wm.database, "names": names, "restatements": restatements,
+                                          "recorded": sorted(recorded),
                                           "ms": round((time.perf_counter() - t0) * 1000, 1)}))
                 except Exception as e:
                     conn.send(("load-error", f"{type(e).__name__}: {' '.join(str(e).split())[:600]}",
@@ -84,6 +74,7 @@ class Worker:
         self.fixture, self.selftest, self.load_limit = fixture, selftest, load_limit
         self.proc = self.conn = self.database = None
         self.names, self.recorded, self.load_ms, self.restarts = {}, set(), [], 0
+        self.restatements = {}
 
     def start(self):
         parent, child = CTX.Pipe()
@@ -101,6 +92,7 @@ class Worker:
             raise RuntimeError(f"fixture {self.fixture['id']!r} did not load: {reply[1]}")
         info = reply[1]
         self.database, self.names, self.recorded = info["database"], info["names"], set(info["recorded"])
+        self.restatements = info["restatements"]
         self.load_ms.append(info["ms"])
 
     def ask(self, question, selective, limit):
