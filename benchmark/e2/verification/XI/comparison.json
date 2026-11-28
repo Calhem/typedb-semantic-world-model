@@ -1,0 +1,56 @@
+{
+ "agreement": {
+  "other value": {
+   "agree": 88,
+   "of": 88,
+   "rate": 1.0
+  },
+  "status": {
+   "agree": 5,
+   "of": 5,
+   "rate": 1.0
+  },
+  "evidence set": {
+   "agree": 59,
+   "of": 60,
+   "rate": 0.9833
+  },
+  "premises": {
+   "agree": 12,
+   "of": 12,
+   "rate": 1.0
+  },
+  "question": {
+   "agree": 9,
+   "of": 12,
+   "rate": 0.75
+  }
+ },
+ "disagreements": [
+  {
+   "id": "X-101",
+   "field": "contract_ambiguity",
+   "verifier": "holds 3 says DISPUTED arises from 'a polarity dispute at the nearest deciding depth', and the pack does not define 'depth'. Reading 1 (used here): depth is world nesting (nearest-world precedence, B-D 2.1), irrelevant in a single world, and all equivalent contents of the merged group are pooled (v0.2 4.2, 5.3): DISPUTED, support [m1d, m2, m4]. Reading 2: depth is identity hop distance, so d1's own claim m1d (depth 0) decides before m2 (depth 1) and m4 (depth 3): holds False, support [m1d], not DISPUTED."
+  },
+  {
+   "id": "X-107",
+   "field": "contract_ambiguity",
+   "verifier": "holds 3: 'a polarity dispute at the nearest deciding depth', with 'depth' undefined in the pack. Reading 1 (used here): world-nesting depth, irrelevant in one world; the merged group's equivalent contents are pooled: DISPUTED, support [c1, c3d]. Reading 2: identity hop depth, so c1, stated under the asked name e1 (depth 0), decides before c3d under e3 (depth 1): holds True, support [c1], not DISPUTED."
+  },
+  {
+   "id": "X-112",
+   "field": "ill_posed",
+   "verifier": "Near-duplicate (pack README rule 5): all three steps are identical in reader, parameters and expected answer to steps s4, s2 and s3 of X-102 (same scenario, same world, perspective, as_of and t), so X-112 tests nothing X-102 does not already test."
+  },
+  {
+   "id": "X-112",
+   "field": "forbidden_evidence",
+   "author": [
+    "m1d",
+    "m2",
+    "m4"
+   ],
+   "verifier": []
+  }
+ ]
+}

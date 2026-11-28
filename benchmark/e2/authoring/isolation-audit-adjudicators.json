@@ -1,0 +1,137 @@
+[
+ {
+  "role": "adjudicator-S",
+  "tool_calls": {
+   "Bash": 12,
+   "Read": 6,
+   "SubagentHandback": 1
+  },
+  "issues": [],
+  "isolated": true
+ },
+ {
+  "role": "adjudicator-P",
+  "tool_calls": {
+   "Bash": 13,
+   "SubagentHandback": 1
+  },
+  "issues": [],
+  "isolated": true
+ },
+ {
+  "role": "adjudicator-XI",
+  "tool_calls": {
+   "Bash": 9,
+   "Read": 1,
+   "Write": 1,
+   "SubagentHandback": 1
+  },
+  "issues": [],
+  "isolated": true
+ },
+ {
+  "role": "adjudicator-M",
+  "tool_calls": {
+   "Bash": 16,
+   "Read": 4,
+   "Write": 1,
+   "SubagentHandback": 1
+  },
+  "issues": [],
+  "isolated": true
+ },
+ {
+  "role": "adjudicator-C",
+  "tool_calls": {
+   "Bash": 10,
+   "Read": 4,
+   "Write": 1,
+   "SubagentHandback": 1
+  },
+  "issues": [
+   {
+    "tool": "Bash",
+    "path": "<scratch>/adjC_write.py",
+    "why": "absolute path outside the work directory"
+   },
+   {
+    "tool": "Bash",
+    "path": "<scratch>/adjC_write.py",
+    "why": "absolute path outside the work directory"
+   }
+  ],
+  "isolated": false
+ },
+ {
+  "role": "adjudicator-F",
+  "tool_calls": {
+   "Bash": 16,
+   "Read": 2,
+   "SubagentHandback": 1
+  },
+  "issues": [
+   {
+    "tool": "Bash",
+    "path": "<work>-tools",
+    "why": "absolute path outside the work directory"
+   },
+   {
+    "tool": "Bash",
+    "path": "<work>-tools/write.py",
+    "why": "absolute path outside the work directory"
+   },
+   {
+    "tool": "Bash",
+    "path": "<work>-tools/write.py",
+    "why": "absolute path outside the work directory"
+   }
+  ],
+  "isolated": false
+ },
+ {
+  "role": "adjudicator-X",
+  "tool_calls": {
+   "Bash": 15,
+   "Read": 1,
+   "SubagentHandback": 1
+  },
+  "issues": [
+   {
+    "tool": "Bash",
+    "path": "<scratch>/e2/show.py",
+    "why": "absolute path outside the work directory"
+   },
+   {
+    "tool": "Bash",
+    "command": "cd <work> && python3 -I ../show.py packet.jsonl X-012 X-013 X-014 X-015",
+    "why": "relative path may leave the work directory"
+   },
+   {
+    "tool": "Bash",
+    "command": "cd <work> && python3 -I ../show.py packet.jsonl X-020 X-021 X-022",
+    "why": "relative path may leave the work directory"
+   },
+   {
+    "tool": "Bash",
+    "command": "cd <work> && python3 -I ../show.py packet.jsonl X-024 X-025 X-026",
+    "why": "relative path may leave the work directory"
+   },
+   {
+    "tool": "Bash",
+    "command": "cd <work> && python3 -I ../show.py packet.jsonl X-027 X-028 X-029 X-030",
+    "why": "relative path may leave the work directory"
+   },
+   {
+    "tool": "Bash",
+    "path": "<scratch>/e2/mkres.py",
+    "why": "absolute path outside the work directory"
+   },
+   {
+    "tool": "Bash",
+    "command": "mkdir -p <work>/out && cat > <scratch-path>",
+    "why": "relative path may leave the work directory"
+   }
+  ],
+  "isolated": false
+ }
+]

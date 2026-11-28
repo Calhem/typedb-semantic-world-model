@@ -1,0 +1,731 @@
+{
+ "agreement": {
+  "probe acceptance": {
+   "agree": 4,
+   "of": 4,
+   "rate": 1.0
+  },
+  "question": {
+   "agree": 7,
+   "of": 34,
+   "rate": 0.2059
+  },
+  "other value": {
+   "agree": 196,
+   "of": 196,
+   "rate": 1.0
+  },
+  "numeric value": {
+   "agree": 25,
+   "of": 25,
+   "rate": 1.0
+  },
+  "status": {
+   "agree": 37,
+   "of": 38,
+   "rate": 0.9737
+  },
+  "evidence set": {
+   "agree": 103,
+   "of": 150,
+   "rate": 0.6867
+  },
+  "premises": {
+   "agree": 28,
+   "of": 30,
+   "rate": 0.9333
+  }
+ },
+ "disagreements": [
+  {
+   "id": "X-001",
+   "field": "admissible_evidence",
+   "author": [
+    "fr-lb",
+    "m1",
+    "pos-g1"
+   ],
+   "verifier": [
+    "fr-lb",
+    "m1",
+    "m2",
+    "m3",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "pos-g1"
+   ]
+  },
+  {
+   "id": "X-001",
+   "field": "forbidden_evidence",
+   "author": [
+    "pos-g2",
+    "pos-r9"
+   ],
+   "verifier": [
+    "pos-g2"
+   ]
+  },
+  {
+   "id": "X-002",
+   "field": "admissible_evidence",
+   "author": [
+    "fr-lb",
+    "m2",
+    "pos-g2"
+   ],
+   "verifier": [
+    "fr-lb",
+    "m1",
+    "m2",
+    "m3",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "pos-g2"
+   ]
+  },
+  {
+   "id": "X-003",
+   "field": "admissible_evidence",
+   "author": [
+    "m5"
+   ],
+   "verifier": [
+    "m1",
+    "m2",
+    "m5"
+   ]
+  },
+  {
+   "id": "X-003",
+   "field": "forbidden_evidence",
+   "author": [
+    "pos-g2"
+   ],
+   "verifier": [
+    "m3",
+    "m6",
+    "m7",
+    "m8",
+    "pos-g2",
+    "pos-r9"
+   ]
+  },
+  {
+   "id": "X-003",
+   "field": "admissible_premises",
+   "author": [],
+   "verifier": [
+    "fr-lb"
+   ]
+  },
+  {
+   "id": "X-004",
+   "field": "forbidden_evidence",
+   "author": [
+    "fr-lb"
+   ],
+   "verifier": [
+    "fr-lb",
+    "m1",
+    "m2",
+    "m3",
+    "m5",
+    "m7",
+    "m8"
+   ]
+  },
+  {
+   "id": "X-005",
+   "field": "admissible_evidence",
+   "author": [
+    "cal-1",
+    "cal-2",
+    "dep-1",
+    "m1"
+   ],
+   "verifier": [
+    "cal-1",
+    "cal-2",
+    "dep-1",
+    "m1",
+    "m2",
+    "m3",
+    "m5",
+    "m6",
+    "m7",
+    "m8"
+   ]
+  },
+  {
+   "id": "X-005",
+   "field": "admissible_conflict_evidence",
+   "author": [],
+   "verifier": [
+    "cal-3",
+    "deny-cal-3"
+   ]
+  },
+  {
+   "id": "X-005",
+   "field": "forbidden_evidence",
+   "author": [
+    "deny-cal-3",
+    "dep-2"
+   ],
+   "verifier": []
+  },
+  {
+   "id": "X-006",
+   "field": "contract_ambiguity",
+   "verifier": "SD-MEA-6 fixes that the judgement must hold throughout the window, but neither SD-MEA-6 nor CS \u00a73 fixes the attested.support of a window answer whose establishment changes certificate inside the window. Reading 1: support is the union of the established holdings' claims over the window ([cal-1, cal-2]), which I used for required_evidence. Reading 2: support only from the holdings established at some representative instant (e.g. one certificate), which SD-MEA-6 ('no arbitrary instant is selected') argues against but does not exclude. The judgement (established, holds True) is the same under both readings; only the required evidence for s1 differs."
+  },
+  {
+   "id": "X-006",
+   "field": "admissible_evidence",
+   "author": [
+    "cal-1",
+    "cal-2",
+    "dep-1",
+    "dep-2",
+    "m3"
+   ],
+   "verifier": [
+    "cal-1",
+    "cal-2",
+    "dep-1",
+    "dep-2",
+    "m1",
+    "m2",
+    "m3",
+    "m5",
+    "m6",
+    "m7",
+    "m8"
+   ]
+  },
+  {
+   "id": "X-006",
+   "field": "admissible_conflict_evidence",
+   "author": [],
+   "verifier": [
+    "cal-3",
+    "deny-cal-3"
+   ]
+  },
+  {
+   "id": "X-006",
+   "field": "forbidden_evidence",
+   "author": [
+    "cal-3",
+    "deny-cal-3",
+    "dep-3"
+   ],
+   "verifier": []
+  },
+  {
+   "id": "X-007",
+   "field": "admissible_evidence",
+   "author": [
+    "cal-3",
+    "dep-3",
+    "m6"
+   ],
+   "verifier": [
+    "cal-1",
+    "cal-2",
+    "cal-3",
+    "dep-3",
+    "m1",
+    "m2",
+    "m3",
+    "m5",
+    "m6",
+    "m7",
+    "m8"
+   ]
+  },
+  {
+   "id": "X-007",
+   "field": "forbidden_evidence",
+   "author": [
+    "cal-1",
+    "cal-2"
+   ],
+   "verifier": []
+  },
+  {
+   "id": "X-008",
+   "field": "forbidden_evidence",
+   "author": [
+    "cal-3"
+   ],
+   "verifier": [
+    "cal-3",
+    "m1",
+    "m2",
+    "m3",
+    "m5",
+    "m7",
+    "m8"
+   ]
+  },
+  {
+   "id": "X-009",
+   "field": "admissible_evidence",
+   "author": [
+    "acc-fit-1",
+    "acc-fit-1/describes",
+    "pos-n2"
+   ],
+   "verifier": [
+    "acc-fit-1",
+    "pos-n2"
+   ]
+  },
+  {
+   "id": "X-009",
+   "field": "forbidden_evidence",
+   "author": [
+    "pos-n3",
+    "st-loc-n2"
+   ],
+   "verifier": [
+    "st-loc-n2"
+   ]
+  },
+  {
+   "id": "X-010",
+   "field": "admissible_evidence",
+   "author": [
+    "acc-fit-1",
+    "acc-fit-1/describes",
+    "loc-n2",
+    "st-loc-n2"
+   ],
+   "verifier": [
+    "acc-fit-1",
+    "loc-n2",
+    "st-loc-n2"
+   ]
+  },
+  {
+   "id": "X-011",
+   "field": "admissible_evidence",
+   "author": [
+    "acc-fit-2",
+    "acc-fit-2/describes"
+   ],
+   "verifier": [
+    "acc-fit-2"
+   ]
+  },
+  {
+   "id": "X-011",
+   "field": "forbidden_evidence",
+   "author": [
+    "pos-n2",
+    "pos-n3"
+   ],
+   "verifier": [
+    "pos-n3"
+   ]
+  },
+  {
+   "id": "X-012",
+   "field": "required_evidence",
+   "author": [
+    "ex-fit-1",
+    "loc-n2"
+   ],
+   "verifier": [
+    "eff-fit-1",
+    "ex-fit-1",
+    "loc-n2"
+   ]
+  },
+  {
+   "id": "X-013",
+   "field": "required_evidence",
+   "author": [
+    "cls-primed",
+    "ex-flush-1"
+   ],
+   "verifier": [
+    "cls-primed",
+    "eff-flush",
+    "ex-flush-1"
+   ]
+  },
+  {
+   "id": "X-014",
+   "field": "required_evidence",
+   "author": [
+    "cls-drained",
+    "deny-ex-drain",
+    "ex-drain-1"
+   ],
+   "verifier": [
+    "cls-drained",
+    "deny-ex-drain",
+    "eff-drain",
+    "ex-drain-1"
+   ]
+  },
+  {
+   "id": "X-014",
+   "field": "forbidden_evidence",
+   "author": [
+    "ex-fit-1",
+    "ex-flush-1"
+   ],
+   "verifier": []
+  },
+  {
+   "id": "X-015",
+   "field": "required_evidence",
+   "author": [
+    "ex-fit-1",
+    "loc-n2",
+    "st-deny-fit"
+   ],
+   "verifier": [
+    "eff-fit-1",
+    "ex-fit-1",
+    "loc-n2",
+    "st-deny-fit"
+   ]
+  },
+  {
+   "id": "X-018",
+   "field": "forbidden_evidence",
+   "author": [
+    "st-nocool",
+    "st-recheck"
+   ],
+   "verifier": []
+  },
+  {
+   "id": "X-019",
+   "field": "admissible_evidence",
+   "author": [
+    "aio-sign",
+    "aio-sign/describes",
+    "ap-hale",
+    "po-sign"
+   ],
+   "verifier": [
+    "aio-sign",
+    "ap-hale",
+    "po-cool",
+    "po-heat",
+    "po-inspect",
+    "po-mix",
+    "po-pull",
+    "po-release",
+    "po-sign"
+   ]
+  },
+  {
+   "id": "X-019",
+   "field": "forbidden_evidence",
+   "author": [
+    "ap-ward",
+    "ap-yeo"
+   ],
+   "verifier": [
+    "deny-pull"
+   ]
+  },
+  {
+   "id": "X-020",
+   "field": "admissible_evidence",
+   "author": [
+    "aio-release",
+    "aio-release/describes",
+    "ap-ward",
+    "ap-yeo",
+    "po-release"
+   ],
+   "verifier": [
+    "aio-release",
+    "ap-ward",
+    "ap-yeo",
+    "po-cool",
+    "po-heat",
+    "po-inspect",
+    "po-mix",
+    "po-pull",
+    "po-release",
+    "po-sign"
+   ]
+  },
+  {
+   "id": "X-020",
+   "field": "forbidden_evidence",
+   "author": [],
+   "verifier": [
+    "deny-pull"
+   ]
+  },
+  {
+   "id": "X-021",
+   "field": "ill_posed",
+   "verifier": "The competency ('attested exclusivity never applies in value readers') and case_type 'positive' presuppose an undisputed ASSERTED answer listing both holders, which \u00a70.12 explicitly forbids for an exclusive office whose holders conflict; under the binding \u00a70.12 rule the answer is not undisputed, so the case_type should be 'disputed' and the competency premise is contradicted."
+  },
+  {
+   "id": "X-021",
+   "field": "contract_ambiguity",
+   "verifier": "value_at \u00a73 ('Only declared slots apply; attested constraints never do', DI19 \u00a71) and \u00a72 (constraint_support always empty) versus \u00a70.12 ('an exclusive office whose holders conflict is never reported as undisputed by a value reader'). Reading 1 (value_at \u00a73 alone): status ASSERTED, values [pers-ward, pers-yeo], support supporting. Reading 2 (\u00a70.12, which overrides): the answer may not be undisputed; DISPUTED with both values and both claims conflicting. \u00a70.12 does not say which status replaces the undisputed one (DISPUTED is the only status consistent with values being held), nor how the constraint is cited when constraint_support must stay empty."
+  },
+  {
+   "id": "X-021",
+   "field": "s3:status",
+   "author": "ASSERTED",
+   "verifier": "DISPUTED"
+  },
+  {
+   "id": "X-021",
+   "field": "required_evidence",
+   "author": [
+    "aio-release",
+    "ap-ward",
+    "ap-yeo",
+    "po-release"
+   ],
+   "verifier": [
+    "aio-release",
+    "po-release"
+   ]
+  },
+  {
+   "id": "X-021",
+   "field": "admissible_evidence",
+   "author": [
+    "aio-release",
+    "aio-release/describes",
+    "ap-ward",
+    "ap-yeo",
+    "po-release"
+   ],
+   "verifier": [
+    "aio-release",
+    "po-cool",
+    "po-heat",
+    "po-inspect",
+    "po-mix",
+    "po-pull",
+    "po-release",
+    "po-sign"
+   ]
+  },
+  {
+   "id": "X-021",
+   "field": "required_conflict_evidence",
+   "author": [],
+   "verifier": [
+    "ap-ward",
+    "ap-yeo"
+   ]
+  },
+  {
+   "id": "X-021",
+   "field": "admissible_conflict_evidence",
+   "author": [],
+   "verifier": [
+    "ap-ward",
+    "ap-yeo"
+   ]
+  },
+  {
+   "id": "X-021",
+   "field": "forbidden_evidence",
+   "author": [
+    "ex-ql"
+   ],
+   "verifier": [
+    "deny-pull"
+   ]
+  },
+  {
+   "id": "X-022",
+   "field": "admissible_evidence",
+   "author": [
+    "aio-inspect",
+    "aio-inspect/describes",
+    "ap-ilse",
+    "ap-noor",
+    "po-inspect"
+   ],
+   "verifier": [
+    "aio-inspect",
+    "ap-ilse",
+    "ap-noor",
+    "po-cool",
+    "po-heat",
+    "po-inspect",
+    "po-mix",
+    "po-pull",
+    "po-release",
+    "po-sign"
+   ]
+  },
+  {
+   "id": "X-022",
+   "field": "forbidden_evidence",
+   "author": [
+    "ap-hale"
+   ],
+   "verifier": [
+    "deny-pull"
+   ]
+  },
+  {
+   "id": "X-024",
+   "field": "admissible_evidence",
+   "author": [
+    "aio-sign",
+    "aio-sign/describes"
+   ],
+   "verifier": [
+    "aio-sign"
+   ]
+  },
+  {
+   "id": "X-025",
+   "field": "admissible_evidence",
+   "author": [
+    "acc-fit-1",
+    "acc-fit-1/describes"
+   ],
+   "verifier": [
+    "acc-fit-1"
+   ]
+  },
+  {
+   "id": "X-025",
+   "field": "forbidden_evidence",
+   "author": [
+    "loc-n2"
+   ],
+   "verifier": [
+    "loc-n2",
+    "st-loc-n2"
+   ]
+  },
+  {
+   "id": "X-026",
+   "field": "admissible_evidence",
+   "author": [
+    "aio-inspect",
+    "aio-inspect/describes"
+   ],
+   "verifier": [
+    "aio-inspect"
+   ]
+  },
+  {
+   "id": "X-026",
+   "field": "forbidden_evidence",
+   "author": [
+    "ap-ilse",
+    "ap-noor"
+   ],
+   "verifier": [
+    "ap-ilse"
+   ]
+  },
+  {
+   "id": "X-027",
+   "field": "admissible_evidence",
+   "author": [
+    "loc-cold",
+    "m7"
+   ],
+   "verifier": [
+    "loc-cold",
+    "m1",
+    "m2",
+    "m3",
+    "m5",
+    "m6",
+    "m7",
+    "m8"
+   ]
+  },
+  {
+   "id": "X-028",
+   "field": "admissible_evidence",
+   "author": [
+    "m8"
+   ],
+   "verifier": [
+    "m1",
+    "m2",
+    "m3",
+    "m5",
+    "m6",
+    "m7",
+    "m8"
+   ]
+  },
+  {
+   "id": "X-029",
+   "field": "admissible_evidence",
+   "author": [
+    "fr-lb",
+    "m1",
+    "pos-s1",
+    "pos-s2"
+   ],
+   "verifier": [
+    "m1",
+    "m2",
+    "m3",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "pos-s2"
+   ]
+  },
+  {
+   "id": "X-029",
+   "field": "forbidden_evidence",
+   "author": [
+    "pos-g1",
+    "pos-r9"
+   ],
+   "verifier": []
+  },
+  {
+   "id": "X-030",
+   "field": "admissible_evidence",
+   "author": [
+    "m8"
+   ],
+   "verifier": [
+    "m1",
+    "m2",
+    "m3",
+    "m5",
+    "m6",
+    "m7",
+    "m8"
+   ]
+  },
+  {
+   "id": "X-030",
+   "field": "admissible_premises",
+   "author": [],
+   "verifier": [
+    "fr-lb",
+    "pos-c2"
+   ]
+  }
+ ]
+}

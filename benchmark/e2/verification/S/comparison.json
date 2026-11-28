@@ -1,0 +1,425 @@
+{
+ "agreement": {
+  "probe acceptance": {
+   "agree": 4,
+   "of": 5,
+   "rate": 0.8
+  },
+  "question": {
+   "agree": 9,
+   "of": 30,
+   "rate": 0.3
+  },
+  "status": {
+   "agree": 25,
+   "of": 25,
+   "rate": 1.0
+  },
+  "numeric value": {
+   "agree": 22,
+   "of": 22,
+   "rate": 1.0
+  },
+  "other value": {
+   "agree": 82,
+   "of": 82,
+   "rate": 1.0
+  },
+  "evidence set": {
+   "agree": 106,
+   "of": 125,
+   "rate": 0.848
+  },
+  "premises": {
+   "agree": 11,
+   "of": 25,
+   "rate": 0.44
+  }
+ },
+ "disagreements": [
+  {
+   "id": "G-S-02",
+   "field": "probe.accept",
+   "author": [
+    "absent"
+   ],
+   "verifier": [
+    "NOT_YET_KNOWN",
+    "UNKNOWN",
+    "absent"
+   ]
+  },
+  {
+   "id": "S-001",
+   "field": "forbidden_evidence",
+   "author": [
+    "gd-v",
+    "hb",
+    "hg2"
+   ],
+   "verifier": [
+    "gd-v",
+    "hg2"
+   ]
+  },
+  {
+   "id": "S-002",
+   "field": "forbidden_evidence",
+   "author": [
+    "gd-v",
+    "hb",
+    "hg2"
+   ],
+   "verifier": [
+    "gd-v",
+    "hg2"
+   ]
+  },
+  {
+   "id": "S-004",
+   "field": "admissible_premises",
+   "author": [],
+   "verifier": [
+    "af",
+    "sm"
+   ]
+  },
+  {
+   "id": "S-005",
+   "field": "forbidden_evidence",
+   "author": [
+    "af",
+    "ru-r"
+   ],
+   "verifier": []
+  },
+  {
+   "id": "S-006",
+   "field": "forbidden_evidence",
+   "author": [
+    "gd-v",
+    "hg"
+   ],
+   "verifier": [
+    "hg"
+   ]
+  },
+  {
+   "id": "S-008",
+   "field": "forbidden_evidence",
+   "author": [
+    "gd-v",
+    "hb",
+    "hb-deny"
+   ],
+   "verifier": [
+    "hb",
+    "hb-deny"
+   ]
+  },
+  {
+   "id": "S-009",
+   "field": "admissible_premises",
+   "author": [],
+   "verifier": [
+    "j12",
+    "j13",
+    "j23",
+    "qk",
+    "rg",
+    "sm",
+    "uv",
+    "yk",
+    "yq",
+    "yr"
+   ]
+  },
+  {
+   "id": "S-010",
+   "field": "contract_ambiguity",
+   "verifier": "TB output table ('search.inconsistent: each inconsistent edge with its sources') with TB-7 ('every edge ... is checked against the composed transforms') does not fix which edge(s) of the inconsistent block are reported, nor whether 'its sources' means only that edge's attestation or also the attestations of the composed chain. Reading 1: only the non-tree edge of a source-rooted BFS (qk) is reported. Reading 2: every edge of the block (yq, qk, yk) is reported, or the BFS root is the target, giving a different single edge (yq). Gold requires qk (true under reading 1 and the all-edges form of reading 2) and admits all three; an answer reporting only yq would be legitimate under the target-rooted form of reading 2."
+  },
+  {
+   "id": "S-010",
+   "field": "required_conflict_evidence",
+   "author": [],
+   "verifier": [
+    "qk"
+   ]
+  },
+  {
+   "id": "S-010",
+   "field": "forbidden_evidence",
+   "author": [
+    "af",
+    "ru-r"
+   ],
+   "verifier": []
+  },
+  {
+   "id": "S-010",
+   "field": "admissible_premises",
+   "author": [],
+   "verifier": [
+    "j12",
+    "j13",
+    "j23",
+    "ma",
+    "rg",
+    "sm",
+    "uv",
+    "yr"
+   ]
+  },
+  {
+   "id": "S-011",
+   "field": "contract_ambiguity",
+   "verifier": "As S-010: the contract does not fix which edge(s) of the inconsistent block appear in search.inconsistent, nor what 'its sources' covers. Reading 1: only the non-tree edge of a source-rooted BFS (j12). Reading 2: all block edges (j12, j23, j13), or a target-rooted BFS giving j23 alone. Gold requires j12 and admits all three."
+  },
+  {
+   "id": "S-011",
+   "field": "required_conflict_evidence",
+   "author": [],
+   "verifier": [
+    "j12"
+   ]
+  },
+  {
+   "id": "S-011",
+   "field": "forbidden_evidence",
+   "author": [
+    "af",
+    "ru-r"
+   ],
+   "verifier": []
+  },
+  {
+   "id": "S-011",
+   "field": "admissible_premises",
+   "author": [],
+   "verifier": [
+    "ma",
+    "qk",
+    "rg",
+    "sm",
+    "uv",
+    "yk",
+    "yq",
+    "yr"
+   ]
+  },
+  {
+   "id": "S-012",
+   "field": "required_conflict_evidence",
+   "author": [],
+   "verifier": [
+    "ru",
+    "ru-r"
+   ]
+  },
+  {
+   "id": "S-012",
+   "field": "forbidden_evidence",
+   "author": [
+    "af"
+   ],
+   "verifier": []
+  },
+  {
+   "id": "S-012",
+   "field": "admissible_premises",
+   "author": [],
+   "verifier": [
+    "uv"
+   ]
+  },
+  {
+   "id": "S-013",
+   "field": "required_conflict_evidence",
+   "author": [],
+   "verifier": [
+    "ru",
+    "ru-r"
+   ]
+  },
+  {
+   "id": "S-013",
+   "field": "forbidden_evidence",
+   "author": [
+    "af"
+   ],
+   "verifier": []
+  },
+  {
+   "id": "S-013",
+   "field": "admissible_premises",
+   "author": [],
+   "verifier": [
+    "uv"
+   ]
+  },
+  {
+   "id": "S-014",
+   "field": "admissible_premises",
+   "author": [],
+   "verifier": [
+    "cp",
+    "gc",
+    "hb",
+    "hg",
+    "mq"
+   ]
+  },
+  {
+   "id": "S-015",
+   "field": "forbidden_evidence",
+   "author": [
+    "gd-v"
+   ],
+   "verifier": []
+  },
+  {
+   "id": "S-015",
+   "field": "admissible_premises",
+   "author": [],
+   "verifier": [
+    "cp",
+    "dc",
+    "gc",
+    "hb-fix",
+    "hg",
+    "mq"
+   ]
+  },
+  {
+   "id": "S-016",
+   "field": "admissible_premises",
+   "author": [],
+   "verifier": [
+    "cp",
+    "dc",
+    "gc",
+    "hb-fix",
+    "hg",
+    "mq"
+   ]
+  },
+  {
+   "id": "S-019",
+   "field": "admissible_premises",
+   "author": [],
+   "verifier": [
+    "j12",
+    "j13",
+    "j23",
+    "ma",
+    "qk",
+    "rg",
+    "sm",
+    "uv",
+    "yk",
+    "yq",
+    "yr"
+   ]
+  },
+  {
+   "id": "S-020",
+   "field": "forbidden_evidence",
+   "author": [
+    "gd-v",
+    "hg"
+   ],
+   "verifier": [
+    "hg"
+   ]
+  },
+  {
+   "id": "S-021",
+   "field": "forbidden_evidence",
+   "author": [
+    "hg",
+    "hg2"
+   ],
+   "verifier": [
+    "hg2"
+   ]
+  },
+  {
+   "id": "S-021",
+   "field": "admissible_premises",
+   "author": [],
+   "verifier": [
+    "cp",
+    "gc",
+    "hb",
+    "mq"
+   ]
+  },
+  {
+   "id": "S-022",
+   "field": "required_conflict_evidence",
+   "author": [],
+   "verifier": [
+    "hb",
+    "hb-deny"
+   ]
+  },
+  {
+   "id": "S-022",
+   "field": "forbidden_evidence",
+   "author": [
+    "gd-v",
+    "hb-fix"
+   ],
+   "verifier": [
+    "hb-fix"
+   ]
+  },
+  {
+   "id": "S-022",
+   "field": "admissible_premises",
+   "author": [],
+   "verifier": [
+    "cp",
+    "gc",
+    "hg",
+    "mq"
+   ]
+  },
+  {
+   "id": "S-024",
+   "field": "required_conflict_evidence",
+   "author": [],
+   "verifier": [
+    "ac",
+    "ac-deny"
+   ]
+  },
+  {
+   "id": "S-024",
+   "field": "admissible_premises",
+   "author": [],
+   "verifier": [
+    "ar",
+    "at",
+    "rc",
+    "t01",
+    "t12",
+    "t23"
+   ]
+  },
+  {
+   "id": "S-025",
+   "field": "admissible_premises",
+   "author": [],
+   "verifier": [
+    "ar",
+    "at",
+    "rc",
+    "t01",
+    "t12",
+    "t23"
+   ]
+  }
+ ]
+}

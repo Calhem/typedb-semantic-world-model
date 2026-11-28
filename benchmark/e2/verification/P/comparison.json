@@ -1,0 +1,494 @@
+{
+ "agreement": {
+  "probe acceptance": {
+   "agree": 1,
+   "of": 6,
+   "rate": 0.1667
+  },
+  "question": {
+   "agree": 12,
+   "of": 31,
+   "rate": 0.3871
+  },
+  "other value": {
+   "agree": 81,
+   "of": 81,
+   "rate": 1.0
+  },
+  "evidence set": {
+   "agree": 105,
+   "of": 125,
+   "rate": 0.84
+  },
+  "premises": {
+   "agree": 25,
+   "of": 25,
+   "rate": 1.0
+  },
+  "status": {
+   "agree": 6,
+   "of": 6,
+   "rate": 1.0
+  }
+ },
+ "disagreements": [
+  {
+   "id": "G-P-01",
+   "field": "probe.accept",
+   "author": [
+    "absent"
+   ],
+   "verifier": [
+    "NOT_YET_KNOWN",
+    "UNKNOWN",
+    "absent"
+   ]
+  },
+  {
+   "id": "G-P-02",
+   "field": "probe.accept",
+   "author": [
+    "NOT_YET_KNOWN",
+    "UNKNOWN",
+    "absent",
+    "refusal"
+   ],
+   "verifier": [
+    "absent"
+   ]
+  },
+  {
+   "id": "G-P-03",
+   "field": "probe.accept",
+   "author": [
+    "absent"
+   ],
+   "verifier": [
+    "NOT_YET_KNOWN",
+    "UNKNOWN",
+    "absent"
+   ]
+  },
+  {
+   "id": "G-P-04",
+   "field": "probe.accept",
+   "author": [
+    "absent"
+   ],
+   "verifier": [
+    "NOT_YET_KNOWN",
+    "UNKNOWN",
+    "absent"
+   ]
+  },
+  {
+   "id": "G-P-05",
+   "field": "probe.accept",
+   "author": [
+    "NOT_YET_KNOWN",
+    "UNKNOWN",
+    "absent",
+    "refusal"
+   ],
+   "verifier": [
+    "absent"
+   ]
+  },
+  {
+   "id": "P-001",
+   "field": "admissible_evidence",
+   "author": [
+    "acc-s1",
+    "acc-s2",
+    "acc-s3",
+    "acc-s4",
+    "acc-s6",
+    "po-s1",
+    "po-s2",
+    "po-s4",
+    "po-s6"
+   ],
+   "verifier": [
+    "po-s1",
+    "po-s2",
+    "po-s4",
+    "po-s6"
+   ]
+  },
+  {
+   "id": "P-001",
+   "field": "forbidden_evidence",
+   "author": [
+    "acc-s5",
+    "acc-s7",
+    "acc-s8",
+    "den-s4",
+    "po-s5",
+    "po-s7",
+    "po-s8"
+   ],
+   "verifier": [
+    "acc-s5",
+    "acc-s7",
+    "acc-s8",
+    "den-s2c",
+    "den-s4",
+    "po-s2a",
+    "po-s2b",
+    "po-s2c",
+    "po-s5",
+    "po-s7",
+    "po-s8"
+   ]
+  },
+  {
+   "id": "P-002",
+   "field": "admissible_evidence",
+   "author": [
+    "acc-s1",
+    "acc-s2",
+    "acc-s3",
+    "acc-s4",
+    "po-s1",
+    "po-s2",
+    "po-s4"
+   ],
+   "verifier": [
+    "po-s1",
+    "po-s2",
+    "po-s4"
+   ]
+  },
+  {
+   "id": "P-003",
+   "field": "admissible_evidence",
+   "author": [
+    "acc-s1",
+    "acc-s2",
+    "acc-s3",
+    "acc-s4",
+    "acc-s5",
+    "po-s1",
+    "po-s2",
+    "po-s4",
+    "po-s5"
+   ],
+   "verifier": [
+    "po-s1",
+    "po-s2",
+    "po-s4",
+    "po-s5"
+   ]
+  },
+  {
+   "id": "P-004",
+   "field": "admissible_evidence",
+   "author": [
+    "acc-s1",
+    "acc-s2",
+    "acc-s3",
+    "acc-s4",
+    "acc-s7",
+    "po-s1",
+    "po-s2",
+    "po-s4",
+    "po-s7"
+   ],
+   "verifier": [
+    "po-s1",
+    "po-s2",
+    "po-s4",
+    "po-s7"
+   ]
+  },
+  {
+   "id": "P-005",
+   "field": "admissible_evidence",
+   "author": [
+    "acc-s1",
+    "acc-s2",
+    "po-s1",
+    "po-s2"
+   ],
+   "verifier": [
+    "po-s1",
+    "po-s2"
+   ]
+  },
+  {
+   "id": "P-006",
+   "field": "admissible_evidence",
+   "author": [
+    "acc-s1",
+    "acc-s2",
+    "acc-s3",
+    "acc-s4",
+    "acc-s6",
+    "po-s1",
+    "po-s2",
+    "po-s4",
+    "po-s6"
+   ],
+   "verifier": [
+    "po-s1",
+    "po-s2",
+    "po-s4",
+    "po-s6"
+   ]
+  },
+  {
+   "id": "P-007",
+   "field": "admissible_evidence",
+   "author": [
+    "acc-s1",
+    "acc-s2",
+    "acc-s3",
+    "acc-s4",
+    "po-s1",
+    "po-s2",
+    "po-s3",
+    "po-s4"
+   ],
+   "verifier": [
+    "po-s1",
+    "po-s2",
+    "po-s3",
+    "po-s4"
+   ]
+  },
+  {
+   "id": "P-008",
+   "field": "required_evidence",
+   "author": [
+    "po-s4"
+   ],
+   "verifier": [
+    "po-s1",
+    "po-s2",
+    "po-s4",
+    "po-s6"
+   ]
+  },
+  {
+   "id": "P-008",
+   "field": "admissible_evidence",
+   "author": [
+    "acc-s1",
+    "acc-s2",
+    "acc-s3",
+    "acc-s4",
+    "acc-s6",
+    "po-s1",
+    "po-s2",
+    "po-s4",
+    "po-s6"
+   ],
+   "verifier": [
+    "po-s1",
+    "po-s2",
+    "po-s4",
+    "po-s6"
+   ]
+  },
+  {
+   "id": "P-008",
+   "field": "required_conflict_evidence",
+   "author": [],
+   "verifier": [
+    "den-s3",
+    "po-s3"
+   ]
+  },
+  {
+   "id": "P-009",
+   "field": "required_evidence",
+   "author": [
+    "po-s4"
+   ],
+   "verifier": [
+    "po-s1",
+    "po-s2",
+    "po-s4",
+    "po-s5",
+    "po-s6"
+   ]
+  },
+  {
+   "id": "P-009",
+   "field": "admissible_evidence",
+   "author": [
+    "acc-s1",
+    "acc-s2",
+    "acc-s3",
+    "acc-s4",
+    "acc-s5",
+    "acc-s6",
+    "po-s1",
+    "po-s2",
+    "po-s4",
+    "po-s5",
+    "po-s6"
+   ],
+   "verifier": [
+    "po-s1",
+    "po-s2",
+    "po-s4",
+    "po-s5",
+    "po-s6"
+   ]
+  },
+  {
+   "id": "P-018",
+   "field": "admissible_evidence",
+   "author": [
+    "acc-u1",
+    "acc-u2",
+    "acc-u4",
+    "acc-u5",
+    "po-u1",
+    "po-u2",
+    "po-u3",
+    "po-u4"
+   ],
+   "verifier": [
+    "po-u1",
+    "po-u2",
+    "po-u3",
+    "po-u4"
+   ]
+  },
+  {
+   "id": "P-019",
+   "field": "admissible_evidence",
+   "author": [
+    "acc-u1",
+    "acc-u2",
+    "acc-u4",
+    "acc-u5",
+    "po-u1",
+    "po-u2",
+    "po-u3",
+    "po-u4"
+   ],
+   "verifier": [
+    "po-u1",
+    "po-u2",
+    "po-u3",
+    "po-u4"
+   ]
+  },
+  {
+   "id": "P-021",
+   "field": "admissible_evidence",
+   "author": [
+    "acc-u1",
+    "acc-u2",
+    "acc-u4",
+    "acc-u5",
+    "po-u1",
+    "po-u2",
+    "po-u3",
+    "po-u4"
+   ],
+   "verifier": [
+    "po-u1",
+    "po-u2",
+    "po-u3",
+    "po-u4"
+   ]
+  },
+  {
+   "id": "P-022",
+   "field": "admissible_evidence",
+   "author": [
+    "acc-s1",
+    "acc-s2",
+    "acc-s2a",
+    "acc-s2b",
+    "acc-s2c",
+    "acc-s3",
+    "acc-s4",
+    "po-s1",
+    "po-s2",
+    "po-s2a",
+    "po-s2b",
+    "po-s2c",
+    "po-s3",
+    "po-s4"
+   ],
+   "verifier": [
+    "po-s1",
+    "po-s2",
+    "po-s2a",
+    "po-s2b",
+    "po-s2c",
+    "po-s3",
+    "po-s4"
+   ]
+  },
+  {
+   "id": "P-022",
+   "field": "forbidden_evidence",
+   "author": [
+    "acc-s5",
+    "acc-s6",
+    "acc-s7",
+    "acc-s8",
+    "den-s2c",
+    "den-s3",
+    "po-s5",
+    "po-s6",
+    "po-s7",
+    "po-s8"
+   ],
+   "verifier": [
+    "acc-s5",
+    "acc-s6",
+    "acc-s7",
+    "acc-s8",
+    "den-s2c",
+    "den-s3",
+    "den-s4",
+    "po-s5",
+    "po-s6",
+    "po-s7",
+    "po-s8"
+   ]
+  },
+  {
+   "id": "P-023",
+   "field": "admissible_evidence",
+   "author": [
+    "acc-s2a",
+    "acc-s2b",
+    "acc-s2c",
+    "po-s2a",
+    "po-s2b"
+   ],
+   "verifier": [
+    "po-s2a",
+    "po-s2b"
+   ]
+  },
+  {
+   "id": "P-023",
+   "field": "forbidden_evidence",
+   "author": [
+    "po-s1",
+    "po-s3",
+    "po-s4",
+    "po-s6"
+   ],
+   "verifier": [
+    "acc-s8",
+    "den-s3",
+    "den-s4",
+    "po-s3",
+    "po-s5",
+    "po-s6",
+    "po-s7",
+    "po-s8"
+   ]
+  }
+ ]
+}

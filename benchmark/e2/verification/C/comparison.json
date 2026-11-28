@@ -1,0 +1,319 @@
+{
+ "agreement": {
+  "other value": {
+   "agree": 159,
+   "of": 159,
+   "rate": 1.0
+  },
+  "evidence set": {
+   "agree": 130,
+   "of": 150,
+   "rate": 0.8667
+  },
+  "premises": {
+   "agree": 30,
+   "of": 30,
+   "rate": 1.0
+  },
+  "question": {
+   "agree": 23,
+   "of": 39,
+   "rate": 0.5897
+  },
+  "status": {
+   "agree": 8,
+   "of": 8,
+   "rate": 1.0
+  },
+  "probe acceptance": {
+   "agree": 9,
+   "of": 9,
+   "rate": 1.0
+  }
+ },
+ "disagreements": [
+  {
+   "id": "C-001",
+   "field": "forbidden_evidence",
+   "author": [
+    "cc-gossip",
+    "cc-rumour",
+    "cc-spike-trip",
+    "dl-spike"
+   ],
+   "verifier": [
+    "cc-gossip",
+    "cc-rumour",
+    "cc-spike-trip",
+    "dl-spike",
+    "dl-spike-deny"
+   ]
+  },
+  {
+   "id": "C-002",
+   "field": "required_evidence",
+   "author": [
+    "cc-rumour",
+    "cc-surge-trip"
+   ],
+   "verifier": [
+    "cc-rumour",
+    "cc-spike-trip",
+    "cc-surge-trip",
+    "dl-surge",
+    "dl-trip"
+   ]
+  },
+  {
+   "id": "C-002",
+   "field": "admissible_evidence",
+   "author": [
+    "cc-rumour",
+    "cc-spike-trip",
+    "cc-surge-trip"
+   ],
+   "verifier": [
+    "cc-rumour",
+    "cc-spike-trip",
+    "cc-surge-trip",
+    "dl-surge",
+    "dl-trip"
+   ]
+  },
+  {
+   "id": "C-002",
+   "field": "forbidden_evidence",
+   "author": [
+    "cc-gossip",
+    "dl-spike"
+   ],
+   "verifier": [
+    "cc-gossip",
+    "dl-spike",
+    "dl-spike-deny",
+    "dl-trip-2"
+   ]
+  },
+  {
+   "id": "C-003",
+   "field": "required_evidence",
+   "author": [
+    "cc-spike-trip",
+    "cc-surge-trip",
+    "dl-spike-deny"
+   ],
+   "verifier": [
+    "cc-spike-trip",
+    "cc-surge-trip",
+    "dl-spike",
+    "dl-spike-deny",
+    "dl-surge",
+    "dl-trip"
+   ]
+  },
+  {
+   "id": "C-003",
+   "field": "admissible_evidence",
+   "author": [
+    "cc-spike-trip",
+    "cc-surge-trip",
+    "dl-spike-deny"
+   ],
+   "verifier": [
+    "cc-spike-trip",
+    "cc-surge-trip",
+    "dl-spike",
+    "dl-spike-deny",
+    "dl-surge",
+    "dl-trip"
+   ]
+  },
+  {
+   "id": "C-003",
+   "field": "forbidden_evidence",
+   "author": [
+    "cc-gossip",
+    "cc-rumour",
+    "dl-spike"
+   ],
+   "verifier": [
+    "cc-gossip",
+    "cc-rumour",
+    "dl-trip-2"
+   ]
+  },
+  {
+   "id": "C-004",
+   "field": "forbidden_evidence",
+   "author": [
+    "cc-rumour",
+    "cc-spike-trip",
+    "cc-surge-trip",
+    "dl-trip",
+    "dl-trip-2"
+   ],
+   "verifier": [
+    "cc-rumour",
+    "cc-spike-trip",
+    "cc-surge-trip"
+   ]
+  },
+  {
+   "id": "C-008",
+   "field": "contract_ambiguity",
+   "verifier": "causes_of evidence table: P-CO-1 makes the attestations of accepted entries with applies false 'alternative' for 'what caused E'. This step is causes_of(o-flood) ('what caused E'), so I treat cc-fire as an alternative (forbidden). Other reading: the question asks how the o-fire claim itself is reported (its judgement 'accepted'), so cc-fire could be supporting evidence for that judgement, as the table's 'question about one claim's denied judgement' row does for denials. The contract does not fix the role for a question about one non-applying accepted claim."
+  },
+  {
+   "id": "C-009",
+   "field": "contract_ambiguity",
+   "verifier": "As C-008: P-CO-1 makes cc-quake (accepted, applies null) an alternative for 'what caused o-flood'; a reading in which a question about this one claim's report may cite cc-quake as supporting its 'accepted' judgement is not excluded by the contract."
+  },
+  {
+   "id": "C-011",
+   "field": "required_evidence",
+   "author": [
+    "ce-jam"
+   ],
+   "verifier": [
+    "att-jam",
+    "ce-jam",
+    "deny-jam"
+   ]
+  },
+  {
+   "id": "C-011",
+   "field": "forbidden_evidence",
+   "author": [
+    "cc-spark",
+    "ce-kick"
+   ],
+   "verifier": [
+    "ce-kick",
+    "e-kick"
+   ]
+  },
+  {
+   "id": "C-013",
+   "field": "required_evidence",
+   "author": [
+    "ce-crack"
+   ],
+   "verifier": [
+    "att-crack",
+    "ce-crack",
+    "deny-crack"
+   ]
+  },
+  {
+   "id": "C-014",
+   "field": "required_evidence",
+   "author": [
+    "ce-lock"
+   ],
+   "verifier": [
+    "att-lock",
+    "ce-lock",
+    "deny-lock"
+   ]
+  },
+  {
+   "id": "C-015",
+   "field": "required_evidence",
+   "author": [],
+   "verifier": [
+    "att-vent",
+    "deny-vent"
+   ]
+  },
+  {
+   "id": "C-016",
+   "field": "contract_ambiguity",
+   "verifier": "effects_of 6 lists '[i].state.before.support, [i].state.after.support' as supporting (state) and, for a DISPUTED side, only '.conflicts' and '.constraint_support[].support' as conflicting. In a polarity dispute, conflicts is empty and the accepted denial deny-heat-aud is in after.support, so a literal reading makes it supporting. The other reading, adopted here, applies the holds Answer rule P-HO-1 and contracts 0.4 ('accepted denials' are conflicting): att-heat supporting, deny-heat-aud conflicting."
+  },
+  {
+   "id": "C-016",
+   "field": "required_evidence",
+   "author": [
+    "ce-heat"
+   ],
+   "verifier": [
+    "att-heat",
+    "ce-heat",
+    "deny-heat"
+   ]
+  },
+  {
+   "id": "C-016",
+   "field": "admissible_conflict_evidence",
+   "author": [
+    "att-heat",
+    "deny-heat-aud"
+   ],
+   "verifier": [
+    "deny-heat-aud"
+   ]
+  },
+  {
+   "id": "C-017",
+   "field": "forbidden_evidence",
+   "author": [
+    "cc-dust",
+    "ce-kick",
+    "deny-jam"
+   ],
+   "verifier": [
+    "cc-dust",
+    "ce-kick",
+    "deny-jam",
+    "e-kick"
+   ]
+  },
+  {
+   "id": "C-020",
+   "field": "required_evidence",
+   "author": [
+    "ce-heat"
+   ],
+   "verifier": [
+    "att-heat",
+    "ce-heat"
+   ]
+  },
+  {
+   "id": "C-020",
+   "field": "admissible_conflict_evidence",
+   "author": [
+    "att-heat",
+    "deny-heat-aud"
+   ],
+   "verifier": [
+    "deny-heat-aud"
+   ]
+  },
+  {
+   "id": "C-021",
+   "field": "forbidden_evidence",
+   "author": [
+    "att-jam",
+    "cc-spark",
+    "ce-jam"
+   ],
+   "verifier": []
+  },
+  {
+   "id": "C-029",
+   "field": "forbidden_evidence",
+   "author": [
+    "att-full",
+    "ce-fill",
+    "deny-full"
+   ],
+   "verifier": []
+  },
+  {
+   "id": "G-C-09",
+   "field": "ill_posed",
+   "verifier": "The question's parenthesis presupposes 'the occurrence it is about', but e-jam is an account with no occurrence parameter and no describe_occurrence step, so it describes no known occurrence (v0.2 3.2 default). The probe still works as an absence check, but its wording rests on a false premise."
+  }
+ ]
+}

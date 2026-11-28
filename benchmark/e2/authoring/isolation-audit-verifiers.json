@@ -1,0 +1,76 @@
+[
+ {
+  "role": "verifier-S",
+  "tool_calls": {
+   "Bash": 14,
+   "Read": 6,
+   "SubagentHandback": 1
+  },
+  "issues": [],
+  "isolated": true
+ },
+ {
+  "role": "verifier-F",
+  "tool_calls": {
+   "Bash": 12,
+   "Read": 3,
+   "SubagentHandback": 1
+  },
+  "issues": [],
+  "isolated": true
+ },
+ {
+  "role": "verifier-M",
+  "tool_calls": {
+   "Bash": 9,
+   "Read": 5,
+   "Write": 2,
+   "SubagentHandback": 1
+  },
+  "issues": [],
+  "isolated": true
+ },
+ {
+  "role": "verifier-C",
+  "tool_calls": {
+   "Bash": 9,
+   "Read": 1,
+   "Write": 2,
+   "SubagentHandback": 1
+  },
+  "issues": [],
+  "isolated": true
+ },
+ {
+  "role": "verifier-P",
+  "tool_calls": {
+   "Bash": 15,
+   "Read": 4,
+   "SubagentHandback": 1
+  },
+  "issues": [],
+  "isolated": true
+ },
+ {
+  "role": "verifier-X",
+  "tool_calls": {
+   "Bash": 16,
+   "Read": 5,
+   "Write": 1,
+   "SubagentHandback": 1
+  },
+  "issues": [],
+  "isolated": true
+ },
+ {
+  "role": "verifier-XI",
+  "tool_calls": {
+   "Bash": 12,
+   "Read": 1,
+   "Write": 2,
+   "SubagentHandback": 1
+  },
+  "issues": [],
+  "isolated": true
+ }
+]

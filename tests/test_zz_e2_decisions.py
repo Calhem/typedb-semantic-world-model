@@ -336,3 +336,12 @@ def test_account_again_adds_a_second_account_to_one_description(driver):
         assert set(L.wm.account_attestations("w", "acc-x")) >= set(L.written["acc-x"]) | set(L.written["acc-y"])
     finally:
         drop(L)
+
+
+def test_angle_tolerance_applies_to_each_rotation_in_a_list():
+    """LABS-1.065: `candidates[*].orientation` with {"rad": x} compares every quaternion (q and -q alike)."""
+    from evaluation.e2.values import matches
+    tol = {"rad": 1e-9}
+    assert matches([[1.0, 0, 0, 0], [0.96, 0, 0, 0.28]], [[0.96, 0, 0, 0.28], [-1.0, 0, 0, 0]], tol)
+    assert not matches([[1.0, 0, 0, 0], [0.96, 0, 0, 0.28]], [[1.0, 0, 0, 0], [0.28, 0, 0, 0.96]], tol)
+    assert matches([1.0, 0, 0, 0], [-1.0, 0, 0, 0], tol) and not matches([[1.0, 0, 0, 0]], [], tol)

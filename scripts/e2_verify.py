@@ -116,9 +116,67 @@ def compare(author, ver):
     return {"agreement": agreement, "disagreements": rows}
 
 
+def packet(author, ver, cmp, out):
+    """Adjudication packet: every item with a disagreement, both full versions and the differing fields."""
+    a = {q["id"]: q for q in read(Path(author) / "questions.jsonl") + read(Path(author) / "probes.jsonl")}
+    v = {q["id"]: q for q in read(Path(ver) / "verified.jsonl")}
+    by = {}
+    for d in json.loads(Path(cmp).read_text())["disagreements"]:
+        by.setdefault(d["id"], []).append({k: x for k, x in d.items() if k != "id"})
+    rows = [{"id": i, "differences": ds, "author_version": a[i], "verifier_version": v.get(i)} for i, ds in by.items()]
+    Path(out).write_text("".join(json.dumps(r) + "\n" for r in rows))
+    return len(rows)
+
+
+def apply(author, cmp, resolutions, out_questions, status_out):
+    """Final gold: agreed items unchanged; resolved items take the adjudicated field values; quarantined items are
+    removed. Writes the verification status of every item."""
+    qs = read(Path(author) / "questions.jsonl") + read(Path(author) / "probes.jsonl")
+    disagreeing = {d["id"] for d in json.loads(Path(cmp).read_text())["disagreements"]}
+    res = {r["id"]: r for r in read(resolutions)} if Path(resolutions).exists() else {}
+    status, final = {}, []
+    for q in qs:
+        if q["id"] not in disagreeing:
+            status[q["id"]] = "agreed"
+            final.append(q)
+            continue
+        r = res.get(q["id"])
+        if r is None:
+            status[q["id"]] = "unresolved"
+            final.append(q)
+            continue
+        if r["decision"] == "quarantine":
+            status[q["id"]] = "quarantined"
+            continue
+        for field, val in (r.get("final") or {}).items():
+            if ":" in field:                                   # "<step>:<path>" -> an expected value
+                step, path = field.split(":", 1)
+                for st in q["plan"]:
+                    if st.get("step") == step:
+                        st.setdefault("expected", {})[path] = val
+            elif field in ("ill_posed", "contract_ambiguity"):
+                continue                                       # a verification flag: resolved in the record, not a field
+            elif field == "probe.accept":
+                q.setdefault("probe", {})["accept"] = val
+            else:
+                q[field] = val
+        status[q["id"]] = "resolved"
+        final.append(q)
+    Path(out_questions).write_text("".join(json.dumps(q) + "\n" for q in final))
+    old = json.loads(Path(status_out).read_text()) if Path(status_out).exists() else {}
+    old.update(status)
+    Path(status_out).write_text(json.dumps(old, indent=1, sort_keys=True) + "\n")
+    from collections import Counter
+    return dict(Counter(status.values()))
+
+
 if __name__ == "__main__":
     cmd = sys.argv[1]
     if cmd == "blind":
         print(blind(sys.argv[2], sys.argv[3]), "items blinded")
     elif cmd == "compare":
         print(json.dumps(compare(sys.argv[2], sys.argv[3]), indent=1))
+    elif cmd == "packet":
+        print(packet(*sys.argv[2:6]), "items for adjudication")
+    elif cmd == "apply":
+        print(apply(*sys.argv[2:7]))

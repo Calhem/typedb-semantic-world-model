@@ -1,0 +1,306 @@
+{
+ "agreement": {
+  "status": {
+   "agree": 46,
+   "of": 46,
+   "rate": 1.0
+  },
+  "other value": {
+   "agree": 108,
+   "of": 108,
+   "rate": 1.0
+  },
+  "evidence set": {
+   "agree": 158,
+   "of": 175,
+   "rate": 0.9029
+  },
+  "premises": {
+   "agree": 30,
+   "of": 33,
+   "rate": 0.9091
+  },
+  "question": {
+   "agree": 18,
+   "of": 41,
+   "rate": 0.439
+  },
+  "numeric value": {
+   "agree": 24,
+   "of": 24,
+   "rate": 1.0
+  },
+  "probe acceptance": {
+   "agree": 4,
+   "of": 6,
+   "rate": 0.6667
+  }
+ },
+ "disagreements": [
+  {
+   "id": "F-002",
+   "field": "contract_ambiguity",
+   "verifier": "Whether the same-as link is cited as evidence by where. holds' visibility rule says 'The links relied on are not added to the evidence (ID-D \u00a73.10)', but the where contract (WH-17, evidence table) is silent. Reading 1: sa-crate must not be cited (treat as not reported). Reading 2: it may be cited as supporting since the answer rests on the identity. Gold lists it admissible-not-required so neither reading fails."
+  },
+  {
+   "id": "F-006",
+   "field": "admissible_evidence",
+   "author": [
+    "deny-lamp-insp"
+   ],
+   "verifier": []
+  },
+  {
+   "id": "F-009",
+   "field": "contract_ambiguity",
+   "verifier": "As F-002: whether the same-as link sa-crate is cited by where (holds says relied-on links are not added to evidence; where is silent). Gold lists it admissible, not required."
+  },
+  {
+   "id": "F-010",
+   "field": "contract_ambiguity",
+   "verifier": "\u00a70.12 (where): 'A derived candidate from a position disputed by an accepted denial is not INFERRED: the answer is not an undisputed INFERRED.' This excludes INFERRED but does not fix the status. Reading 1: the polarity-disputed statement yields a DISPUTED candidate and the answer is DISPUTED (WH-9 'verified DISPUTED candidate'; v0.2 5.3; common 0.7 'The answer must then be DISPUTED'). Reading 2: a polarity-disputed statement does not 'hold for the perspective at t' (candidates row), so there is no candidate and WH-11 gives UNKNOWN (records visible). Gold takes reading 1."
+  },
+  {
+   "id": "F-011",
+   "field": "contract_ambiguity",
+   "verifier": "Same passage and readings as F-010 (\u00a70.12 where row fixes only 'not an undisputed INFERRED'; DISPUTED versus no candidate / UNKNOWN). Gold takes DISPUTED."
+  },
+  {
+   "id": "F-012",
+   "field": "contract_ambiguity",
+   "verifier": "SD-SPA-4: 'compatible only when every pair of positioned, verified candidates was compared and overlaps'. Reading 1 (gold): all candidates must be positioned and pairwise compared; one candidate is unpositioned, so not every pair was compared: judgement None. Reading 2 (literal): only one candidate is positioned and verified, so the set of such pairs is empty and the condition holds vacuously: 'compatible'. Reading 2 would label a DISPUTED answer compatible, which the gold rejects. Also: the role of pos-lens-arm (position_support of a candidate with x None) is not fixed by the where evidence table."
+  },
+  {
+   "id": "F-012",
+   "field": "required_conflict_evidence",
+   "author": [],
+   "verifier": [
+    "rf-room-arm-a",
+    "rf-room-arm-b"
+   ]
+  },
+  {
+   "id": "F-012",
+   "field": "admissible_conflict_evidence",
+   "author": [
+    "rf-room-arm-a",
+    "rf-room-arm-b"
+   ],
+   "verifier": [
+    "pos-lens-arm",
+    "rf-room-arm-a",
+    "rf-room-arm-b"
+   ]
+  },
+  {
+   "id": "F-013",
+   "field": "forbidden_evidence",
+   "author": [],
+   "verifier": [
+    "pos-box-shelf"
+   ]
+  },
+  {
+   "id": "F-014",
+   "field": "admissible_evidence",
+   "author": [],
+   "verifier": [
+    "pos-valve-a",
+    "pos-valve-b"
+   ]
+  },
+  {
+   "id": "F-016",
+   "field": "admissible_evidence",
+   "author": [],
+   "verifier": [
+    "pos-panel-rack",
+    "pos-panel-room",
+    "rf-room-rack"
+   ]
+  },
+  {
+   "id": "F-016",
+   "field": "admissible_premises",
+   "author": [
+    "pos-panel-rack",
+    "rf-room-rack"
+   ],
+   "verifier": [
+    "pos-panel-rack",
+    "pos-panel-room",
+    "rf-room-rack"
+   ]
+  },
+  {
+   "id": "F-017",
+   "field": "forbidden_evidence",
+   "author": [],
+   "verifier": [
+    "pos-knob-vise"
+   ]
+  },
+  {
+   "id": "F-017",
+   "field": "admissible_premises",
+   "author": [
+    "pos-knob-hall"
+   ],
+   "verifier": [
+    "pos-knob-hall",
+    "pos-knob-vise",
+    "rf-bench-vise",
+    "rf-hall-bench"
+   ]
+  },
+  {
+   "id": "F-018",
+   "field": "admissible_evidence",
+   "author": [
+    "pos-bolt-c"
+   ],
+   "verifier": [
+    "pos-bolt-a",
+    "pos-bolt-b",
+    "pos-bolt-c"
+   ]
+  },
+  {
+   "id": "F-022",
+   "field": "forbidden_evidence",
+   "author": [
+    "rf-hall-yard"
+   ],
+   "verifier": [
+    "pos-pipe",
+    "rf-hall-yard"
+   ]
+  },
+  {
+   "id": "F-022",
+   "field": "admissible_premises",
+   "author": [],
+   "verifier": [
+    "pos-pipe"
+   ]
+  },
+  {
+   "id": "F-023",
+   "field": "forbidden_evidence",
+   "author": [],
+   "verifier": [
+    "pos-cone"
+   ]
+  },
+  {
+   "id": "F-025",
+   "field": "ill_posed",
+   "verifier": "Minor: evidence sets are per question but the steps are in different worlds; fix-pump is admissible only for s2 and stip-pump only for s1, which the single per-question sets cannot express."
+  },
+  {
+   "id": "F-027",
+   "field": "forbidden_evidence",
+   "author": [
+    "stip-r9-exist"
+   ],
+   "verifier": []
+  },
+  {
+   "id": "F-029",
+   "field": "admissible_evidence",
+   "author": [],
+   "verifier": [
+    "pos-beacon-surv",
+    "pos-beacon-sys"
+   ]
+  },
+  {
+   "id": "F-031",
+   "field": "forbidden_evidence",
+   "author": [
+    "pos-drill-2"
+   ],
+   "verifier": [
+    "pos-drill-1",
+    "pos-drill-2"
+   ]
+  },
+  {
+   "id": "F-032",
+   "field": "admissible_evidence",
+   "author": [],
+   "verifier": [
+    "pos-sensor-a",
+    "pos-sensor-b"
+   ]
+  },
+  {
+   "id": "F-033",
+   "field": "contract_ambiguity",
+   "verifier": "Possible tension: \u00a70.12 'No reader reports content that is DISPUTED for the perspective as undisputed', while poses/facts_about judge the (positioned, frame) slot at the default 1e-9 rad (PO-3) and would mark these two orientations DISPUTED. Reading 1 (gold): WH-8 and SD-SPA-1 make angle_tolerance a per-question policy that decides orientation conflicts in where, so ASSERTED/compatible. Reading 2: the slot is disputed at the default tolerance regardless of the question policy, so where must stay DISPUTED. Gold follows WH-8, which is the specific rule."
+  },
+  {
+   "id": "F-034",
+   "field": "admissible_evidence",
+   "author": [
+    "af-bench",
+    "rf-bench-vise",
+    "rf-hall-bench"
+   ],
+   "verifier": [
+    "af-bench",
+    "pos-crate-1",
+    "pos-drill-1",
+    "pos-jar-sys",
+    "pos-lamp-survey",
+    "pos-plate-survey",
+    "pos-plate-sys",
+    "pos-saw",
+    "rf-bench-vise",
+    "rf-hall-bench"
+   ]
+  },
+  {
+   "id": "F-034",
+   "field": "forbidden_evidence",
+   "author": [],
+   "verifier": [
+    "deny-lamp-insp",
+    "pos-cone",
+    "pos-drill-2",
+    "pos-jar-insp",
+    "pos-plate-insp"
+   ]
+  },
+  {
+   "id": "F-035",
+   "field": "admissible_evidence",
+   "author": [],
+   "verifier": [
+    "pos-pipe"
+   ]
+  },
+  {
+   "id": "G-F-01",
+   "field": "probe.accept",
+   "author": [
+    "NOT_YET_KNOWN",
+    "UNKNOWN"
+   ],
+   "verifier": [
+    "UNKNOWN"
+   ]
+  },
+  {
+   "id": "G-F-04",
+   "field": "probe.accept",
+   "author": [
+    "NOT_YET_KNOWN",
+    "UNKNOWN"
+   ],
+   "verifier": [
+    "NOT_YET_KNOWN"
+   ]
+  }
+ ]
+}

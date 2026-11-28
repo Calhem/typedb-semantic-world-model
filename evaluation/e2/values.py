@@ -125,7 +125,14 @@ def matches(expected, actual, tol=None, ordered=False):
     """Whether `actual` matches `expected`. tol: None (exact), a number (absolute, every number below), or
     {"rad": x} (a rotation). ordered: whether lists at this level keep their order."""
     if isinstance(tol, dict) and "rad" in tol:
-        return _quat_close(expected, actual, tol["rad"])
+        if isinstance(expected, list) and len(expected) == 4 and all(map(_number, expected)):
+            return _quat_close(expected, actual, tol["rad"])
+        # LABS-1.065: a list of rotations (a path through [*]) is compared item by item under the same angle tolerance
+        if not (isinstance(expected, list) and isinstance(actual, list) and len(expected) == len(actual)):
+            return expected is None and actual is None
+        if ordered:
+            return all(matches(e, a, tol, ordered) for e, a in zip(expected, actual))
+        return _multiset(expected, actual, tol)
     if _number(expected) and _number(actual):
         return expected == actual if tol is None else abs(expected - actual) <= tol
     if isinstance(expected, list) and isinstance(actual, list):

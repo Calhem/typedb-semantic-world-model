@@ -1,0 +1,286 @@
+{
+ "agreement": {
+  "probe acceptance": {
+   "agree": 6,
+   "of": 7,
+   "rate": 0.8571
+  },
+  "question": {
+   "agree": 23,
+   "of": 42,
+   "rate": 0.5476
+  },
+  "other value": {
+   "agree": 133,
+   "of": 134,
+   "rate": 0.9925
+  },
+  "numeric value": {
+   "agree": 19,
+   "of": 19,
+   "rate": 1.0
+  },
+  "evidence set": {
+   "agree": 159,
+   "of": 175,
+   "rate": 0.9086
+  },
+  "premises": {
+   "agree": 35,
+   "of": 35,
+   "rate": 1.0
+  },
+  "status": {
+   "agree": 20,
+   "of": 20,
+   "rate": 1.0
+  }
+ },
+ "disagreements": [
+  {
+   "id": "G-M-06",
+   "field": "probe.accept",
+   "author": [
+    "NOT_YET_KNOWN",
+    "UNKNOWN",
+    "absent"
+   ],
+   "verifier": [
+    "NOT_YET_KNOWN",
+    "UNKNOWN"
+   ]
+  },
+  {
+   "id": "M-001",
+   "field": "admissible_evidence",
+   "author": [
+    "s1",
+    "t1",
+    "t2"
+   ],
+   "verifier": [
+    "t1",
+    "t2"
+   ]
+  },
+  {
+   "id": "M-002",
+   "field": "ill_posed",
+   "verifier": "Near-duplicate: step s1 is the same call as M-001 asking the same fields for a different measurement id (t2 instead of t1), and step s2's only expected field ([attestation=t2].instrument) is also asked by M-009; the question differs from M-001 + M-009 essentially only in names (pack README rule 5)."
+  },
+  {
+   "id": "M-002",
+   "field": "admissible_evidence",
+   "author": [
+    "cal-ta",
+    "cal-tb",
+    "s1",
+    "t1",
+    "t2"
+   ],
+   "verifier": [
+    "cal-ta",
+    "cal-tb",
+    "t1",
+    "t2"
+   ]
+  },
+  {
+   "id": "M-003",
+   "field": "contract_ambiguity",
+   "verifier": "ME 6 gives a role to [kind=measurement, usable=true] (supporting) and to [usable=false] (alternative) but none to a usable statement entry such as s1; reading 1: s1 is 'not reported' (neither supporting nor alternative), so its id is not admissible evidence; reading 2: s1 is an alternative as in compare_measurements' statements list (CM 6). Either way s1 is not admissible supporting evidence, so the gold sets are unaffected; the field usable itself is not in the ME 2 field table but is implied by ME 6 and MC 2 ('copied unchanged from measurements')."
+  },
+  {
+   "id": "M-003",
+   "field": "required_evidence",
+   "author": [
+    "s1"
+   ],
+   "verifier": []
+  },
+  {
+   "id": "M-003",
+   "field": "admissible_evidence",
+   "author": [
+    "s1",
+    "t1",
+    "t2"
+   ],
+   "verifier": [
+    "t1",
+    "t2"
+   ]
+  },
+  {
+   "id": "M-006",
+   "field": "forbidden_evidence",
+   "author": [
+    "s1",
+    "t2",
+    "t4"
+   ],
+   "verifier": [
+    "t2",
+    "t4"
+   ]
+  },
+  {
+   "id": "M-007",
+   "field": "forbidden_evidence",
+   "author": [
+    "s1",
+    "t3"
+   ],
+   "verifier": [
+    "t3"
+   ]
+  },
+  {
+   "id": "M-008",
+   "field": "contract_ambiguity",
+   "verifier": "CM 3 says 'UNKNOWN when something is held and NOT_YET_KNOWN when nothing is'; 'held' could mean visible records (-> UNKNOWN, matching common 0.3 which is binding) or something held by the perspective (-> NOT_YET_KNOWN). Gold follows common 0.3: UNKNOWN."
+  },
+  {
+   "id": "M-014",
+   "field": "forbidden_evidence",
+   "author": [
+    "mm2",
+    "mm3",
+    "mo1",
+    "mo2",
+    "sa1"
+   ],
+   "verifier": [
+    "mm2",
+    "mm3",
+    "mo1",
+    "mo2"
+   ]
+  },
+  {
+   "id": "M-016",
+   "field": "forbidden_evidence",
+   "author": [
+    "mm2",
+    "mo2"
+   ],
+   "verifier": [
+    "mm1",
+    "mm2",
+    "mo2"
+   ]
+  },
+  {
+   "id": "M-020",
+   "field": "contract_ambiguity",
+   "verifier": "CS 2 gives status as 'core rule over the deciding support' but no example fixes the status of an 'expired' judgement; gold reads it literally (support [cal-g7a], system testimony -> ASSERTED). A reading under which a not-holding calibration answer reports UNKNOWN is not supported by the text but not excluded by an example."
+  },
+  {
+   "id": "M-020",
+   "field": "required_evidence",
+   "author": [
+    "c7",
+    "cal-g7a"
+   ],
+   "verifier": [
+    "c7",
+    "cal-g7a",
+    "cal-g7b"
+   ]
+  },
+  {
+   "id": "M-022",
+   "field": "contract_ambiguity",
+   "verifier": "SD-MEA-6 says 'the judgements found and any dispute are kept and the answer is not \"established\"' but does not name the judgement label; gold derives 'not established' by elimination from the closed CS 2 vocabulary (reading 1). Reading 2: the overall judgement reports one of the judgements found (e.g. 'expired'), which SD-MEA-6's 'no arbitrary instant is selected' argues against."
+  },
+  {
+   "id": "M-024",
+   "field": "forbidden_evidence",
+   "author": [
+    "d1",
+    "l16",
+    "l17"
+   ],
+   "verifier": [
+    "d1",
+    "l16",
+    "l17",
+    "l3"
+   ]
+  },
+  {
+   "id": "M-027",
+   "field": "contract_ambiguity",
+   "verifier": "ME 6's alternative row lists '[usable=false].attestation (... non-supporting stance, denials)', which reads as usable = false for any denial, while 0.12 says 'An accepted denial is usable conflicting evidence' and overrides anything that seems to differ (and CM 3 adjudicates excluding polarity-false attestations from usable as a semantic defect). Reading 1 (gold): d1.usable = true. Reading 2: d1.usable = false while still being conflicting evidence. The role of d1 (conflicting) is fixed either way; the usable flag is not unambiguously fixed."
+  },
+  {
+   "id": "M-027",
+   "field": "s1:[attestation=d1].usable",
+   "author": false,
+   "verifier": true
+  },
+  {
+   "id": "M-027",
+   "field": "required_conflict_evidence",
+   "author": [],
+   "verifier": [
+    "d1"
+   ]
+  },
+  {
+   "id": "M-028",
+   "field": "required_evidence",
+   "author": [],
+   "verifier": [
+    "l10",
+    "l9"
+   ]
+  },
+  {
+   "id": "M-029",
+   "field": "ill_posed",
+   "verifier": "case_type 'unknown' fits only step s2; step s1 is a positive established answer (ASSERTED, True)."
+  },
+  {
+   "id": "M-032",
+   "field": "required_evidence",
+   "author": [],
+   "verifier": [
+    "l5",
+    "l6"
+   ]
+  },
+  {
+   "id": "M-033",
+   "field": "required_evidence",
+   "author": [],
+   "verifier": [
+    "l7",
+    "l8"
+   ]
+  },
+  {
+   "id": "M-034",
+   "field": "required_evidence",
+   "author": [],
+   "verifier": [
+    "l15"
+   ]
+  },
+  {
+   "id": "M-035",
+   "field": "forbidden_evidence",
+   "author": [
+    "d1",
+    "l16",
+    "l17"
+   ],
+   "verifier": [
+    "d1",
+    "l16",
+    "l17",
+    "l3"
+   ]
+  }
+ ]
+}
