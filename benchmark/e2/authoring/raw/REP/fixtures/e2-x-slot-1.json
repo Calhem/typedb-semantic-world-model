@@ -1,0 +1,18 @@
+{
+ "id": "e2-x-slot-1",
+ "description": "Synthetic freight yard. Crate C-7 is placed by two accepted claims on the functional location slot (located-at, key role located): the system records it at dock A from T2 until superseded, and a yard clerk records it at bay 3 from T4 until superseded, accepted by the system. A scan drone records it at gate 2 from T5 until superseded; nobody reviews that claim, so it is unreviewed for the system. From T4 on the two accepted places are rival values of one slot key; before T4 only dock A is claimed.",
+ "profiles": [],
+ "steps": [
+  {"op": "world", "id": "w", "kind": "actual"},
+  {"op": "entity", "kind": "physical-object", "id": "c-7", "name": "crate C-7"},
+  {"op": "entity", "kind": "place", "id": "dock-a", "name": "Dock A"},
+  {"op": "entity", "kind": "place", "id": "bay-3", "name": "Bay 3"},
+  {"op": "entity", "kind": "place", "id": "gate-2", "name": "Gate 2"},
+  {"op": "entity", "kind": "social-object", "id": "yard-clerk", "name": "Yard Clerk Desk"},
+  {"op": "entity", "kind": "social-object", "id": "scan-drone", "name": "Yard Scan Drone"},
+  {"op": "attest", "id": "la", "world": "w", "type": "located-at", "roles": {"located": "c-7", "place": "dock-a"}, "start": "T2", "until_superseded": true},
+  {"op": "attest", "id": "lb", "world": "w", "type": "located-at", "roles": {"located": "c-7", "place": "bay-3"}, "start": "T4", "until_superseded": true, "attester": "yard-clerk", "accepted_by": ["system"]},
+  {"op": "attest", "id": "lc", "world": "w", "type": "located-at", "roles": {"located": "c-7", "place": "gate-2"}, "start": "T5", "until_superseded": true, "attester": "scan-drone"},
+  {"op": "mark", "name": "recorded"}
+ ]
+}
