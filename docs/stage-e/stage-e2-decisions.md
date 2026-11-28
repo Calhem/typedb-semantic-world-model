@@ -136,4 +136,10 @@ The harness architecture is approved, with three corrections. Each now holds in 
   - The harness implements H-1 to H-8 as amended.
   - See [stage-e2-labs-1063-review.md](stage-e2-labs-1063-review.md) and
     [stage-e2-contract-adjudication.md](stage-e2-contract-adjudication.md).
+- **LABS-1.064:** LABS-1.063 is accepted. All 25 semantic decisions are approved with binding qualifications
+  ([stage-e2-semantic-decisions.md](stage-e2-semantic-decisions.md)); DI-24 to DI-36 and GAP-SPATIAL-9 are
+  registered, not implemented (DI-25 and DI-28 critical architectural priorities). The contracts are final (§0.11) and
+  the harness applies the decisions. The authoring plan ([coverage-matrix.md](../../benchmark/e2/spec/coverage-matrix.md))
+  and protocol ([authoring-protocol.md](../../benchmark/e2/spec/authoring-protocol.md)) are proposed for review. See
+  [stage-e2-labs-1064-review.md](stage-e2-labs-1064-review.md).
 - The questions, fixtures, calculation sheets and gold are **not** started.

@@ -1,8 +1,9 @@
 # Stage E2 reader contracts (E2-D3)
 
-**LABS-1.062, 25 November 2026; amended LABS-1.063, 27 November 2026.** The review is accepted with amendments, and the
-shared and reader proposals are approved with qualifications (§0.10). **Still at review for final approval.** The
-contracts branch is not merged.
+**LABS-1.062, 25 November 2026; amended LABS-1.063, 27 November 2026; finalised LABS-1.064, 28 November 2026.** The
+shared and reader proposals are approved with qualifications (§0.10). All 25 semantic decisions are approved with
+binding qualifications (§0.11; record: [docs/stage-e/stage-e2-semantic-decisions.md](../../../docs/stage-e/stage-e2-semantic-decisions.md)).
+These are the **final E2 reader contracts**, at review before merging; the contracts branch is not merged.
 
 **Related documents:**
 - First review package: [docs/stage-e/stage-e2-reader-contracts-review.md](../../../docs/stage-e/stage-e2-reader-contracts-review.md).
@@ -43,8 +44,11 @@ Where a docstring and its design text differ, the contract records the differenc
 - **Semantic or provenance defect** against an unambiguous approved contract: the question stays **eligible** (A/H),
   even where the current implementation is expected to fail it.
 - **Unsupported capability:** a **G probe** (rule G-1).
-- **Unresolved semantic decision:** **blocked** until decided. `benchmark/e2/spec/blocked.json` lists the decisions, and
-  the question checker refuses dependent questions.
+- **Unresolved semantic decision:** **blocked** until decided. All 25 are decided (LABS-1.064, §0.11); only ONT-SC-1
+  (self-causation, an ontology question) stays blocked. `benchmark/e2/spec/blocked.json` lists it.
+- **Approved but unimplemented** (LABS-1.064): where a decision requires a field, parameter or representation no reader
+  provides, questions on it are **G probes** under the DI named; approval does not establish the capability.
+  `blocked.json` (`unimplemented`) lists the paths, and the checker refuses them in scored questions.
 - **API convention:** eligible where the contract fixes it; otherwise questions do not expect that field.
 - **Documentation discrepancy:** does not invalidate an otherwise established contract.
 
@@ -188,6 +192,49 @@ Evidence extraction must not conceal missing evidence, incorrectly presented alt
 (LABS-1.063 item 3). The harness implements these rules in `evaluation/e2/evidence.py` and `score.py`. Its review is
 `docs/stage-e/stage-e2-labs-1063-review.md`.
 
+
+### 0.11 Approved semantic decisions (LABS-1.064) [E]
+
+Every decision of the adjudication register (§5 there) is adopted, subject to the owner's binding qualifications. The
+authoritative text, with each decision's grounds, is
+[stage-e2-semantic-decisions.md](../../../docs/stage-e/stage-e2-semantic-decisions.md); this section states what enters
+the contracts. Each [D] item a decision settles is now [E] as stated here, and its reader section says so ("Decided").
+
+**Consequence labels:** **eligible** (A/H, even where the current implementation is expected to fail); **G-unimpl**
+(the approved capability does not exist yet: a G probe under the DI named); **G-gap**; **precondition** (P-5).
+
+| Decision | Contract statement [E] | Consequence | DI |
+|---|---|---|---|
+| SD-CORE-1 | `holds()` addresses **exact content**: type, the given role bindings and the parameters. Omitted optional roles identify the content without them. A missing mandatory role makes the question malformed: a refusal. No load-order selection. | eligible; parameterised content G-gap (GAP-SPATIAL-8) | DI-31 |
+| SD-CORE-2 | `value_at` with `key_role` and no `value_role` is malformed: a refusal. | eligible | DI-27 |
+| SD-CORE-3 | `facts_about` entries disputed under an attested constraint cite it in an added `constraint_support`. | G-unimpl (`*constraint_support`) | DI-29 |
+| SD-CORE-4 | `occurrence` and `occurrence_status` take an occurrence; another kind of id is an execution precondition. | precondition | — |
+| SD-SPA-1 | Chain agreement uses 1e-9 rad; `angle_tolerance` governs candidate (position-claim) comparison only (D-A2-7 confirmed). The chain tolerance is reported in `chain_tolerance`. | eligible; `chain_tolerance` G-unimpl | DI-32 |
+| SD-SPA-2 | `source == target` with a valid, visible frame: the identity transform as a **declared convention**, status INFERRED (v0.2 §5.6), **no derivation presented and no supporting attestation cited**; no visible record of the frame: NOT_YET_KNOWN. No chain between distinct frames: NOT_YET_KNOWN when no `frame-transform` involving either is visible, UNKNOWN otherwise. A convention-derived result is distinguished from evidence-derived inference (questions mark it `"convention": "frame-identity"`); its basis is reported in `basis`. | eligible; `basis` G-unimpl | DI-32 |
+| SD-SPA-3 | A truncated search whose reached chain contains a disputed transform: DISPUTED, no transform. | eligible | DI-25 |
+| SD-SPA-4 | `where` `judgement`: `compatible` only when every pair of positioned, verified candidates was compared and overlaps; `conflicting` on a verified conflict; otherwise none; `single` / None for one / no candidate. | eligible | DI-32 |
+| SD-MEA-1 | `t` in the measurement readers is valid time: every attestation whose verdict at `t` is not silent is included, denials too, each with its acceptance and role. In `measurement_calibration`, `t` selects measurements only. | eligible | DI-26 |
+| SD-MEA-2 | An **explicit instantaneous measurement** (`measure` with a start, no end, not `persists`) holds at its instant; two at one instant may be compared subject to the other conditions. Empty half-open intervals are not redefined; instant, empty interval and persistent content stay distinct. | eligible | DI-33 |
+| SD-MEA-3 | `measurements` and `compare_measurements` cover interval-valued quantities only; categorical values are read through `holds` / `facts_about`. | eligible; categorical measurement G-gap (GAP-MEAS-12) | — |
+| SD-MEA-4 | Measurements whose valid times do not overlap are incomparable (every quantity may change). | eligible; constant quantities G-gap (GAP-MEAS-13) | — |
+| SD-MEA-5 | The accepted claim of a not-yet-effective certificate is **supporting** evidence; `support` empty means no status support. | eligible (harness extractor) | — |
+| SD-MEA-6 | Calibration is established only if established **throughout** the whole possible activity-start window, considering every internal validity and judgement transition; no arbitrary instant; otherwise the judgements found and any dispute are preserved. | eligible | DI-34 |
+| SD-CAU-1 | `effects_of` `accepted_change` uses `changes()` world-state transitions: UNKNOWN and DISPUTED transitions are not accepted changes; delayed effects count without invented precision; unique and ambiguous attribution preserved (`attribution`). An established outcome change, an accepted effect claim and an established causal attribution are distinct; an accepted claim on an ambiguous transition does not establish unique causation. | eligible; `effects_of` `attribution` G-unimpl; `changes` questions fix every inspected explanation's `attribution` (H-9) | DI-35 |
+| SD-CAU-2 | `explain` `initiated_by`: accepted `initiates` claims only; excluded only if the accepted occurrence certainly starts after t; an unavailable or uncertain time keeps the event with `timing: unresolved`; unaccepted claims in `alternatives`, never explanations. | eligible (which events); `timing`, `alternatives` G-unimpl | DI-35, DI-29 |
+| SD-CAU-3 | `explain` lists initiators beside `holds` whatever it says; `initiated_by` implies nothing about `holds`. | eligible | — |
+| SD-CAU-4 | Each `changes` explanation claim lists its attestations (`attestations`). | G-unimpl | DI-29 |
+| SD-CAU-5 | Valid-time intervals are half-open; a window is uncertainty about one instant (both bounds possible); a shared possible instant is never discarded; strict precedence (`before`) and non-later-than consistency (B-time) are different relations. Boundary examples: decision record SD-CAU-5. | eligible | DI-36 |
+| SD-CAU-6 | Each judged-state change is a judgement transition; only accepted A, UNKNOWN, accepted B ≠ A merges. | eligible | — |
+| SD-CAU-7 | Timeless claims are judged independently of valid time; knowledge-time visibility, acceptance, perspective, world and supersession still apply. | eligible | DI-35 |
+| SD-CAU-8 | `changes` with t1 > t2 is refused; t1 = t2 has no transitions. | eligible | DI-35 |
+| SD-CAU-9 | Effect claims and `changes` explanations carry each occurrence's status (`occurrence_status`) and `applies`. | G-unimpl | DI-28 |
+| SD-CAU-10 | Certainty holds only across every admissible account and combination; never from a representative or from no usable account; every usable account reported (`usable_accounts`). | eligible (certainty); `usable_accounts` G-unimpl | DI-36 |
+| SD-CAU-11 | Established writer validations: the two effect kinds; proposition ids required. Self-causation is unestablished (ONT-SC-1, blocked). | precondition | — |
+
+**Reserved field names.** `chain_tolerance`, `basis`, `constraint_support` (in `facts_about`), `attribution` (in
+`effects_of`), `timing` (in `explain`), `alternatives` (in `explain`), `attestations` (in `changes` explanations),
+`applies` and `occurrence_status` (in `effects_of` and `changes`), and `usable_accounts` name the approved but
+unimplemented capabilities for G probes. An implementation increment uses these names or amends this contract.
 
 ## Part A. Core and organisation
 
@@ -370,6 +417,8 @@ GAP-MULTI-6 (no derivation record; E2DEC §1).
 - P-HO-1: in a polarity dispute, split `support` by polarity: assertions supporting, accepted denials conflicting
   (applies common P-1).
 
+**Decided (LABS-1.064, §0.11):** SD-CORE-1 settles D-HO-1 and D-HO-2: exact content; omitted optional roles name the content without them; a missing mandatory role is a malformed-question refusal; no load-order selection; parameterised content G (GAP-SPATIAL-8). Correction: DI-31.
+
 ---
 
 ### `value_at(world, type, subject, t, as_of=None, perspective="system", key_role=None, value_role=None)`
@@ -466,6 +515,8 @@ template (T); X plans generally (HR §1). Gap probes: GAP-MEAS-6 (`has-quality` 
   positive claim is conflicting (mutually exclusive rivals keep their conflict relationship). A polarity-disputed single
   value: assertions supporting, denials conflicting.
 
+**Decided (LABS-1.064, §0.11):** SD-CORE-2 settles D-VA-2: `key_role` without `value_role` is refused as malformed (the harness passes both roles). Correction: DI-27.
+
 ---
 
 ### `facts_about(world, subject, t, as_of=None, perspective="system")`
@@ -526,6 +577,8 @@ template (T); X plans generally (HR §1). Gap probes: GAP-MEAS-6 (`has-quality` 
 - D-FA-2: the docstring adds "including rivals that do not mention the subject". B-D §4 says "any constraint rivals".
   The two are consistent, but the docstring is more specific.
 - D-FA-3: the entry order is not stated in design (see Ordering).
+
+**Decided (LABS-1.064, §0.11):** SD-CORE-3 settles D-FA-1: an added per-entry `constraint_support` (G-unimpl until DI-29); other fields eligible.
 
 ---
 
@@ -611,6 +664,8 @@ template (T); X plans generally (HR §1). Gap probes: GAP-MEAS-6 (`has-quality` 
 - P-OC-1: cite the classification's support as supporting when a kind-scoped constraint applies (ER-2 makes it part of
   the judgement).
 
+**Decided (LABS-1.064, §0.11):** SD-CORE-4 settles D-OC-3: a non-occurrence id is an execution precondition, never authored.
+
 ---
 
 ### `occurrence_status(world, occurrence, t, as_of=None, perspective="system", details=True)`
@@ -670,6 +725,8 @@ template (T); X plans generally (HR §1). Gap probes: GAP-MEAS-6 (`has-quality` 
   without saying so.
 - D-OS-3: `describes` is judged at t here, but at the account's start in `occurrence()` (D §2). D-D §3.2 calls them
   the same label.
+
+**Decided (LABS-1.064, §0.11):** SD-CORE-4 settles D-OS-1: a non-occurrence id is an execution precondition, never authored.
 
 ---
 
@@ -867,6 +924,8 @@ not the hierarchy).
 - D-TB-8: truncated-but-reached candidate through a disputed edge: design silent (A2 LABS-1.009) vs transform returned (phys `_resolve`).
 - D-TB-9: step fields `translation`, `rotation`, `disputed`, `search.edges_in_graph`, `relevant_edges`, and reason strings beyond A2 are implementation-only (phys `_describe`, `_search`).
 
+**Decided (LABS-1.064, §0.11):** SD-SPA-1 settles D-TB-1 (1e-9 rad; `chain_tolerance` G-unimpl). SD-SPA-2 settles D-TB-2 (identity as a declared convention with a visible frame, no derivation, no evidence; NOT_YET_KNOWN rules; `basis` G-unimpl; questions mark `"convention": "frame-identity"`). SD-SPA-3 settles D-TB-8 (DISPUTED, no transform). Corrections: DI-32, DI-25.
+
 ---
 
 ### `where(world, thing, frame, t, as_of=None, perspective='system', angle_tolerance=1e-9, limit=None)`
@@ -986,6 +1045,8 @@ F8 (GAP-FRAME-3: must stay UNKNOWN between stated poses, E2-D 3.7), F10 (GAP-FRA
 - D-WH-6: no designed order of candidates (A2 silent) vs frame-id order with `conflicts` as indices (phys `poses`, `where`).
 - D-WH-7: Plan 9.6 "Time" reporting absent for derived candidates (as D-TB-6).
 - P-WH-1: in a DISPUTED answer, supports of candidates outside every `conflicts` pair stay supporting.
+
+**Decided (LABS-1.064, §0.11):** SD-SPA-1 settles D-WH-1 (`angle_tolerance` decides candidate comparison only; chains at 1e-9 rad). SD-SPA-4 settles D-WH-2 (label by compared pairs). SD-SPA-3 applies to `limit`. Corrections: DI-32, DI-25.
 
 ---
 
@@ -1225,6 +1286,8 @@ Abbreviations used in citations:
   ("the reported content is in SI").
 - P-ME-1: the supporting evidence is the usable measurement attestations; everything else listed is an alternative.
 
+**Decided (LABS-1.064, §0.11):** SD-MEA-1 settles D-ME-1 (`t` is valid time, denials kept). SD-MEA-2 settles D-ME-6 (explicit instants hold at their instant). SD-MEA-3 settles D-ME-9 (categorical values out of scope; G-gap GAP-MEAS-12). Corrections: DI-26, DI-33.
+
 ---
 
 ### `compare_measurements(world, bearer, quality, t=None, as_of=None, perspective=system)`
@@ -1326,6 +1389,8 @@ Abbreviations used in citations:
 - D-CM-8: the coverage tolerance of 1e-6 is implementation only.
 - P-CM-1 (approved; the shared role amendment applies): in a DISPUTED answer, incompatible-pair attestations are
   conflicting; the other compared ones are supporting.
+
+**Decided (LABS-1.064, §0.11):** SD-MEA-4 settles D-CM-3 (disjoint valid times incomparable; constant quantities G-gap GAP-MEAS-13). SD-MEA-1 and SD-MEA-2 apply through `measurements`.
 
 ---
 
@@ -1479,6 +1544,8 @@ Abbreviations used in citations:
 - D-CS-4: the certificate list is sorted by id in the implementation; no design states an order.
 - P-CS-1: in a disputed answer, the accepted claims of the disputing holdings are conflicting evidence (common §0.4).
 
+**Decided (LABS-1.064, §0.11):** SD-MEA-5 settles D-CS-3: disputed: the accepted claims of the disputing holdings are conflicting; not yet effective: the accepted future claim is supporting (`certificates[judgement=not yet effective].evidence[acceptance=accepted].attestation`).
+
 ---
 
 ### `laboratory.measurement_calibration(wm, world, bearer, quality, t=None, as_of=None, perspective=system)`
@@ -1575,6 +1642,8 @@ Abbreviations used in citations:
 - D-MC-7: the earlier design (D-D-7, G6) placed calibration status in `measurements()`. The later approved D-D3-2
   and D-D3-3 place it in this profile function. The later decision governs; this is recorded only.
 - P-MC-1: the supporting evidence is the usable measurement attestation plus the calibration's `support`.
+
+**Decided (LABS-1.064, §0.11):** SD-MEA-1 settles D-MC-1 (`t` selects measurements as valid time). SD-MEA-6 settles D-MC-3 (established only throughout the whole start window). SD-MEA-5 applies to `attested`. Corrections: DI-26, DI-34.
 
 
 ## Part D. Causation, change and process
@@ -1721,6 +1790,8 @@ Short names for the sources:
   that does not apply (`applies` false or null) is its source's account, listed as an **alternative** (SB LABS-1.011
   Clarification). The harness extractor implements this (LABS-1.063 supplement finding 1).
 
+**Decided (LABS-1.064, §0.11):** SD-CAU-11 settles D-CO-6 only in part: writer validations established; self-causation stays open (ONT-SC-1, blocked).
+
 ---
 
 ### `effects_of(world, event, t, as_of=None, perspective=SYSTEM)`
@@ -1803,6 +1874,8 @@ Short names for the sources:
 - D-EF-7: the `claim_effect` refusals exist in code only (DYN `claim_effect`).
 - P-EF-1 (approved for the event-specific scope of `effects_of` only; it establishes no general rule excluding causal
   rivals): claims by other events about the same outcome are neither rivals nor reported by this reader.
+
+**Decided (LABS-1.064, §0.11):** SD-CAU-1 settles D-EF-1 and D-EF-2 (`accepted_change` through `changes`; `attribution` G-unimpl). SD-CAU-7 settles D-EF-6. SD-CAU-9 settles D-EF-5 (`applies`, `occurrence_status` G-unimpl). SD-CAU-10 settles D-EF-3 (certainty across every account; `usable_accounts` G-unimpl). SD-CAU-11 settles D-EF-7 (writer validations). Corrections: DI-35, DI-28, DI-36.
 
 ---
 
@@ -1893,6 +1966,8 @@ Short names for the sources:
 - D-EX-5: no check that the content holds (DYN `explain`). The design is silent; E2D C4 presupposes it holds.
 - D-EX-6: causes are gathered from the event and then its occurrences, deduplicated with the first kept and not
   re-sorted (DYN `explain`). A direct occurrence-level claim can show `lifted` (dynamics-output.md Q5).
+
+**Decided (LABS-1.064, §0.11):** SD-CAU-2 settles D-EX-1, D-EX-2, D-EX-3 (accepted claims, B-time; `timing`, `alternatives` G-unimpl). SD-CAU-3 settles D-EX-5 (listed beside `holds`). Corrections: DI-35, DI-29.
 
 ---
 
@@ -1994,6 +2069,8 @@ Short names for the sources:
 - D-CH-9: explanations carry no occurrence status or `applies`. Q-B1 and B-time do not cover it; SB Occ-2 is worded
   generally.
 
+**Decided (LABS-1.064, §0.11):** SD-CAU-4 settles D-CH-2 (`attestations` G-unimpl). SD-CAU-5 settles D-CH-3 (non-later-than: touching is consistent). SD-CAU-6 settles D-CH-4. SD-CAU-7 settles D-CH-5. SD-CAU-8 settles D-CH-8. SD-CAU-9 settles D-CH-9 (G-unimpl). Questions fix every inspected explanation's `attribution` (H-9). Corrections: DI-29, DI-35, DI-28.
+
 ---
 
 ### `process_steps(world, process, t, as_of=None, perspective=SYSTEM)`
@@ -2061,6 +2138,8 @@ Short names for the sources:
   ones.
 - P-PS-1: list order asserts no succession.
 
+**Decided (LABS-1.064, §0.11):** SD-CAU-10 settles D-PS-3 (certainty across every timed description; `usable_accounts` G-unimpl). Correction: DI-36.
+
 ---
 
 ### `before(world, a, b, as_of=None, perspective=SYSTEM)`
@@ -2106,6 +2185,8 @@ Short names for the sources:
 - P-BE-1 (approved, qualified): `before` cites no evidence. A P3 question's evidence comes from the `interval` steps of
   its plan (interval-based extraction). **Limitation:** `before` reports no direct provenance for its answer.
 
+**Decided (LABS-1.064, §0.11):** SD-CAU-5 settles D-BE-2: half-open validity intervals (touching durative intervals: True); instantaneous events never lose a shared possible instant (None). Boundary examples: decision record. Correction: DI-36.
+
 ---
 
 ### `interval(world, description, as_of=None, perspective=SYSTEM)`
@@ -2144,4 +2225,6 @@ Short names for the sources:
 - D-IV-1: SB D-B-6 says only "an account the perspective can use". The code returns the lowest-id usable attestation
   (DYN `interval`), which does not depend on time or world depth, and does not report the others.
 - P-IV-1: the account attestation used is the supporting evidence.
+
+**Decided (LABS-1.064, §0.11):** SD-CAU-10 settles D-IV-1: with several usable accounts every account is reported (`usable_accounts`, G-unimpl); one-account questions eligible. Correction: DI-36.
 
