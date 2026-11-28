@@ -1,0 +1,13 @@
+14:15:00 start 32e20ff
+14:15:24 e1 check rc=0 272 questions in 8 categories {'conflict-provenance': 30, 'cross-domain': 33, 'identity': 42, 'laboratory': 36, 'mechanical': 33, 'organisation': 31, 'temporal': 37, 'worlds-perspectives': 30}; 30 fixtures; 0 problems
+14:16:12 e1 original rc=0 267/272 correct in 47.3 s -> <scratch>/opt/validate-1064/e1-original
+14:17:04 e1 revised rc=0 272/272 correct in 52.7 s -> <scratch>/opt/validate-1064/e1-revised
+14:17:04 e1 compare original rc=0
+14:17:05 e1 compare revised rc=1
+14:57:07 suite done
+14:57:07 DONE
+14:57:08 src semantics unchanged vs main rc=0
+14:57:08 reader docs check rc=0
+14:57:08 DONE2
+14:57:08 main diff written
+14:57:08 DONE3

@@ -1,0 +1,2 @@
+base main: modules with docstring/comment-only changes: ['src/worldmodel/physical.py']
+executable or schema differences: none

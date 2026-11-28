@@ -1,0 +1,2 @@
+AUTHORITATIVE vs <worktree>/benchmark/e1/results-revised/results.json: 272 vs 272 questions; 272 vs 272 correct; differ: ['ORG-011']
+   ORG-011 {'correct': (True, True), 'failure': ('missing-evidence', None)}
