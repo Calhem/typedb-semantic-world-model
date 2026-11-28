@@ -295,3 +295,29 @@ def test_targeted_defect_coverage_is_reported_apart():
     s = REP.summarise(recs)
     assert s["targeted"]["scheduled"] == 1 and s["targeted"]["by_di"] == {"DI-25": 1}
     assert s["competency"]["scheduled"] == 1 and s["families"]["S"]["scheduled"] == 2
+
+
+# ---- LABS-1.065: uncertain time windows in fixture steps (harness only) -------------------------------------------------
+WIN_FX = {"id": "e2-windows", "description": "LABS-1.065 harness self-test: uncertain windows. Synthetic; not E2.",
+          "profiles": [], "steps": [
+              {"op": "entity", "kind": "physical-object", "id": "tech"}, {"op": "entity", "kind": "occurrence", "id": "o-1"},
+              {"op": "world", "id": "w", "kind": "actual"},
+              {"op": "account", "id": "ev-1", "world": "w", "roles": {"actor": "tech"}, "start": ["T3", "T5"],
+               "end": ["T6", "T6h12"], "occurrence": "o-1"}]}
+
+
+def test_fixture_times_accept_windows_and_refuse_malformed_ones(driver):
+    from evaluation.loader import FixtureError, T
+    lo, hi = T(["T3", "T5h10"])
+    assert (lo.day, hi.day, hi.hour) == (3, 5, 10)
+    for bad in (["T5", "T3"], ["T3"], ["T3", "T4", "T5"]):
+        with pytest.raises(FixtureError):
+            T(bad)
+    L = load(WIN_FX, driver)
+    try:
+        out = run_plan(L, {"plan": [step("interval", description="ev-1")]}, True)
+        a = out["steps"][0]["answer"]
+        assert a["start"]["earliest"].startswith("2026-11-03") and a["start"]["latest"].startswith("2026-11-05")
+        assert a["end"]["latest"].startswith("2026-11-06T12")
+    finally:
+        drop(L)

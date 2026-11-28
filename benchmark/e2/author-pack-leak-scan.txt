@@ -1,0 +1,13 @@
+# Author-pack leak scan (scripts/e2_author_pack.py)
+unreviewed hits: 0
+reviewed and kept (architectural statements, no reader behaviour): 10
+world-ontology-v0.2.md:7: ([world-ontology-v0.1.md](world-ontology-v0.1.md), kept unchanged). `main` and the Milestone 1 code are unchanged.
+world-ontology-v0.2.md:231: with values. **This is an implementation simplification, not a claim that qualities lack identity.** DOLCE's and
+world-ontology-v0.2.md:340: **Canonical key** (application function, one implementation): `type | role=id,id… (roles sorted, multi-player ids
+world-ontology-v0.2.md:342: precision (12 significant digits; open question U3). Keys are an *implementation* identity: they prevent duplicate
+world-ontology-v0.2.md:686: | T5 | inference as query-time functions and Python | no stored rules in TypeDB 3 [K] | rules are code, versioned by id |
+world-ontology-v0.2.md:714: | DR-08 | **Reference systems: frames, clocks, units; canonical units in content** | units as strings; clocks as strings (M1) | one rule for all values | entities | conversion code needed | `clock` st
+world-ontology-v0.2.md:722: | DR-16 | **Context ⟨w, p, τ, t, Π⟩; each perspective inherits its own base view** | system-only inheritance (v0.1 lean) | several agents in one hypothetical world | — | inheritance cost per perspecti
+world-ontology-v0.2.md:782: World Ontology v0.2, with clarifications A-C, is the **implementation baseline for Core 0.3**. Changes to anything
+world-ontology-v0.2.md:783: below need a new architecture version, unless implementation reveals a contradiction; implementation deviations are
+world-ontology-v0.2.md:802: only at query time or in application code.

@@ -66,7 +66,10 @@ SUBSETS = {"identity"}
 REQUIRED = {"id", "family", "class", "scenario", "plan"}
 OPTIONAL = {"subset", "gap", "required_evidence", "admissible_evidence", "forbidden_evidence", "probe", "question",
             "justification", "spec", "uncertainty", "adversarial", "difficulty", "notes", "required_conflict_evidence",
-            "admissible_conflict_evidence", "admissible_premises", "depends_on", "convention", "targets"}
+            "admissible_conflict_evidence", "admissible_premises", "depends_on", "convention", "targets",
+            # LABS-1.065 authoring metadata (author pack question-format.md); not scored
+            "competency", "case_type", "derivation", "calc", "prohibited"}
+CASE_TYPES = {"positive", "negative", "disputed", "unknown", "refusal"}
 CONVENTIONS = {"frame-identity": "transform_between"}           # SD-SPA-2: convention -> the reader it applies to
 OCCURRENCE_READERS = {"occurrence", "occurrence_status"}
 BLOCKED = Path(__file__).resolve().parents[2] / "benchmark" / "e2" / "spec" / "blocked.json"
@@ -333,6 +336,8 @@ def problems_of(q, fixtures, seen, selftest=False, blocked=None, unimplemented=N
                            "(SD-SPA-2)")
         if q.get("required_evidence") or q.get("required_conflict_evidence"):
             out.append("a convention-derived answer has no required evidence (SD-SPA-2)")
+    if "case_type" in q and q["case_type"] not in CASE_TYPES:
+        out.append(f"case_type {q['case_type']!r}: one of {sorted(CASE_TYPES)}")
     bad_targets = [x for x in q.get("targets") or [] if not (isinstance(x, str) and x.startswith("DI-"))]
     if bad_targets or ("targets" in q and not isinstance(q["targets"], list)):
         out.append(f"targets must be a list of DI ids: {bad_targets or q['targets']}")

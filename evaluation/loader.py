@@ -44,7 +44,15 @@ class Clock:
 
 
 def T(spec):
-    """'T<d>' -> 2026-11-<d> 09:00 UTC; 'T<d>h<hh>' sets the hour."""
+    """'T<d>' -> 2026-11-<d> 09:00 UTC; 'T<d>h<hh>' sets the hour. A two-item list ["T3", "T5"] is an uncertain
+    instant known to lie in that closed window (LABS-1.065: E2 fixtures; the writers take (earliest, latest))."""
+    if isinstance(spec, list):
+        if len(spec) != 2:
+            raise FixtureError(f"a time window is [earliest, latest]: {spec!r}")
+        lo, hi = T(spec[0]), T(spec[1])
+        if hi < lo:
+            raise FixtureError(f"a time window's latest bound precedes its earliest: {spec!r}")
+        return (lo, hi)
     if not isinstance(spec, str) or not spec.startswith("T"):
         raise FixtureError(f"not a valid time: {spec!r} (use 'T<d>' or 'T<d>h<hh>')")
     day, _, hour = spec[1:].partition("h")
