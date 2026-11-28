@@ -1,0 +1,7 @@
+Using CPython 3.15.1
+Creating virtual environment at: .venv
+   Building worldmodel @ file://<worktree>
+      Built worldmodel @ file://<worktree>
+Installed 8 packages in 17ms
+base 5ded39a: modules with docstring/comment-only changes: ['src/worldmodel/physical.py']
+executable or schema differences: none
