@@ -84,6 +84,14 @@ def summarise(results):
     ident = [r for r in scored if r["family"] == "X" and r.get("subset") == "identity"]
     if ident:
         out["x_identity"] = summarise_group(ident)
+    # LABS-1.064 item 26: targeted defect coverage reported apart from broad competency coverage (both stay inside
+    # their family's scores)
+    targeted = [r for r in scored if r.get("targets")]
+    if targeted:
+        out["targeted"] = {**summarise_group(targeted),
+                           "by_di": dict(Counter(d for r in targeted for d in r["targets"]))}
+        out["competency"] = summarise_group([r for r in scored if not r.get("targets")]) \
+            if len(targeted) < len(scored) else None
     out["probes"] = {"probes": len(probes), "passed": sum(r["passed"] is True for r in probes),
                      "failed": sum(r["passed"] is False for r in probes),
                      "not_callable": sum(r["passed"] is None for r in probes),

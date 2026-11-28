@@ -1,182 +1,133 @@
 {
- "about": "LABS-1.063: the unresolved semantic decisions (docs/stage-e/stage-e2-contract-adjudication.md section 5). evaluation/e2/check.py refuses a question that depends on one (H-8 as amended). An entry with a reader blocks the listed answer paths or parameters of that reader; an entry without one is blocked through a question's depends_on. Remove an entry when the owner rules on it.",
+ "about": "LABS-1.064 (semantic decision closure). `blocked`: decisions still open; evaluation/e2/check.py refuses a question that depends on one (H-8 as amended). `unimplemented`: answer paths and parameters whose semantics an approved decision fixes but which no reader provides yet (LABS-1.064 item 19: approval does not establish a capability). A scored (A/H) question may not expect or pass them; a class G probe may, under the DI or gap named. The field names are reserved by the reader contracts (reader-contracts.md 0.11); an implementation increment either uses them or amends the contract. Remove an `unimplemented` entry when its DI is implemented and approved; remove a `blocked` entry when the owner rules on it. Path patterns: a prefix (\"alternatives\"), \"*<field>\" for a field anywhere, or \"<prefix>*<field>\" for a field anywhere below a prefix.",
  "blocked": [
   {
-   "id": "SD-CORE-1",
-   "question": "what holds() asks when only some roles are bound (D-HO-1, D-HO-2)"
-  },
-  {
-   "id": "SD-CORE-2",
-   "question": "value_at with key_role but no value_role (D-VA-2)"
-  },
+   "id": "ONT-SC-1",
+   "question": "whether causes is irreflexive (self-causation), left open by SD-CAU-11 as an ontology decision"
+  }
+ ],
+ "unimplemented": [
   {
    "id": "SD-CORE-3",
-   "question": "whether listings cite the constraint behind a constraint dispute (D-FA-1)"
-  },
-  {
-   "id": "SD-CORE-4",
-   "question": "occurrence readers given an id that is not an occurrence (D-OC-3, D-OS-1)"
+   "di": "DI-29",
+   "question": "constraint_support on facts_about entries",
+   "reader": "facts_about",
+   "paths": [
+    "*constraint_support"
+   ]
   },
   {
    "id": "SD-SPA-1",
-   "question": "which angular tolerance decides frame-chain agreement (D-TB-1, D-WH-1)",
+   "di": "DI-32",
+   "question": "the chain-agreement tolerance reported",
+   "reader": "transform_between",
+   "paths": [
+    "chain_tolerance"
+   ]
+  },
+  {
+   "id": "SD-SPA-1",
+   "di": "DI-32",
+   "question": "the chain-agreement tolerance reported",
    "reader": "where",
-   "params": [
-    "angle_tolerance"
+   "paths": [
+    "*chain_tolerance"
    ]
   },
   {
    "id": "SD-SPA-2",
-   "question": "trivial (source = target) and empty chains (D-TB-2)",
+   "di": "DI-32",
+   "question": "the basis of a convention-derived identity transform",
    "reader": "transform_between",
    "paths": [
-    "status"
-   ],
-   "when": {
-    "status": "NOT_YET_KNOWN"
-   }
-  },
-  {
-   "id": "SD-SPA-3",
-   "question": "a truncated search whose reached chain has a disputed transform (D-TB-8)",
-   "reader": "transform_between",
-   "params": [
-    "limit"
-   ]
-  },
-  {
-   "id": "SD-SPA-3",
-   "question": "a truncated search whose reached chain has a disputed transform (D-TB-8)",
-   "reader": "where",
-   "params": [
-    "limit"
-   ]
-  },
-  {
-   "id": "SD-SPA-4",
-   "question": "the where() judgement label when not every pair is decided (D-WH-2)",
-   "reader": "where",
-   "paths": [
-    "judgement"
-   ]
-  },
-  {
-   "id": "SD-MEA-1",
-   "question": "what t means in the measurement readers (D-ME-1, D-MC-1)",
-   "reader": "measurements",
-   "params": [
-    "t"
-   ]
-  },
-  {
-   "id": "SD-MEA-1",
-   "question": "what t means in the measurement readers (D-ME-1, D-MC-1)",
-   "reader": "compare_measurements",
-   "params": [
-    "t"
-   ]
-  },
-  {
-   "id": "SD-MEA-1",
-   "question": "what t means in the measurement readers (D-ME-1, D-MC-1)",
-   "reader": "measurement_calibration",
-   "params": [
-    "t"
-   ]
-  },
-  {
-   "id": "SD-MEA-2",
-   "question": "the valid time of a measurement over an instant (D-ME-6)"
-  },
-  {
-   "id": "SD-MEA-3",
-   "question": "categorical qualities in measurements (D-ME-9)"
-  },
-  {
-   "id": "SD-MEA-4",
-   "question": "the valid-time reason for incomparability (D-CM-3)"
-  },
-  {
-   "id": "SD-MEA-5",
-   "question": "evidence for a not-yet-effective calibration (D-CS-3)",
-   "reader": "calibration_status",
-   "paths": [
-    "judgement"
-   ],
-   "when": {
-    "judgement": "not yet effective"
-   }
-  },
-  {
-   "id": "SD-MEA-6",
-   "question": "the instant used to judge calibration when the activity's start is uncertain (D-MC-3)",
-   "reader": "measurement_calibration",
-   "paths": [
-    "*attested"
+    "basis"
    ]
   },
   {
    "id": "SD-CAU-1",
-   "question": "what an accepted state change is in effects_of (D-EF-1, D-EF-2)",
+   "di": "DI-35",
+   "question": "the attribution of an effect claim's change (unique or ambiguous)",
    "reader": "effects_of",
    "paths": [
-    "*accepted_change",
-    "*before",
-    "*after"
+    "*attribution",
+    "*transition"
    ]
   },
   {
    "id": "SD-CAU-2",
-   "question": "which initiating events explain() lists, and with what timing (D-EX-1, D-EX-2, D-EX-3)",
+   "di": "DI-35",
+   "question": "timing: unresolved on initiators",
    "reader": "explain",
    "paths": [
-    "initiated_by"
+    "initiated_by*timing"
    ]
   },
   {
-   "id": "SD-CAU-3",
-   "question": "whether explain() lists initiators when the content does not hold (D-EX-5)",
+   "id": "SD-CAU-2",
+   "di": "DI-29",
+   "question": "unaccepted initiating claims as alternatives",
    "reader": "explain",
    "paths": [
-    "initiated_by"
+    "alternatives"
    ]
   },
   {
    "id": "SD-CAU-4",
-   "question": "whether changes() explanations list their claims' attestations (D-CH-2)",
+   "di": "DI-29",
+   "question": "attestations of changes explanation claims",
    "reader": "changes",
    "paths": [
-    "*explanations",
-    "*claimed_events"
+    "transitions*attestations",
+    "began*attestations",
+    "ended*attestations"
    ]
   },
   {
-   "id": "SD-CAU-5",
-   "question": "touching windows (D-CH-3, D-BE-2)"
-  },
-  {
-   "id": "SD-CAU-6",
-   "question": "A -> UNKNOWN -> A, and gaps through DISPUTED (D-CH-4)"
-  },
-  {
-   "id": "SD-CAU-7",
-   "question": "the valid time at which timeless claims are judged (D-CH-5, D-EF-6)"
-  },
-  {
-   "id": "SD-CAU-8",
-   "question": "changes() with t1 >= t2 (D-CH-8)"
+   "id": "SD-CAU-9",
+   "di": "DI-28",
+   "question": "occurrence status and applies on effect claims",
+   "reader": "effects_of",
+   "paths": [
+    "*applies",
+    "*occurrence_status"
+   ]
   },
   {
    "id": "SD-CAU-9",
-   "question": "occurrence applicability for effect claims and changes() explanations (D-EF-5, D-CH-9)"
+   "di": "DI-28",
+   "question": "occurrence status and applies on changes explanations",
+   "reader": "changes",
+   "paths": [
+    "*applies",
+    "*occurrence_status"
+   ]
   },
   {
    "id": "SD-CAU-10",
-   "question": "several usable accounts for one description, or several timed descriptions for one step (D-IV-1, D-EF-3, D-PS-3)"
+   "di": "DI-36",
+   "question": "every usable account reported",
+   "reader": "interval",
+   "paths": [
+    "usable_accounts"
+   ]
   },
   {
-   "id": "SD-CAU-11",
-   "question": "writer-side refusals (D-CO-6, D-EF-7)"
+   "id": "SD-CAU-10",
+   "di": "DI-36",
+   "question": "every usable account reported",
+   "reader": "process_steps",
+   "paths": [
+    "*usable_accounts"
+   ]
+  },
+  {
+   "id": "SD-CAU-10",
+   "di": "DI-36",
+   "question": "every usable account reported",
+   "reader": "effects_of",
+   "paths": [
+    "*usable_accounts"
+   ]
   }
  ]
 }

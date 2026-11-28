@@ -254,11 +254,15 @@ def test_undetermined_evidence_cannot_improve_a_score():
     assert r2["evidence"]["supporting"]["precision"] == 0.5          # b stays inadmissible; a counts once
 
 
-def test_calibration_not_yet_effective_evidence_is_undetermined():
+def test_calibration_not_yet_effective_evidence_is_supporting():
+    """SD-MEA-5 (approved LABS-1.064): the accepted future claim decides "not yet effective", so it is supporting; an
+    unaccepted one stays an alternative. Was `undetermined` while the decision was open (LABS-1.063)."""
     r = {"judgement": "not yet effective", "support": [], "certificates": [
-        {"certificate": "c1", "evidence": [{"attestation": "att:x", "acceptance": "accepted"}]}]}
+        {"certificate": "c1", "evidence": [{"attestation": "att:x", "acceptance": "accepted"},
+                                           {"attestation": "att:y", "acceptance": "unreviewed"}]}]}
     ev = EV.ev_calibration_status(r)
-    assert ev["undetermined"] == {"att:x"} and ev["supporting"] == set() and ev["conflicting"] == set()
+    assert ev["supporting"] == {"att:x"} and ev["alternative"] == {"att:y"}
+    assert ev["undetermined"] == set() and ev["conflicting"] == set()
 
 
 def test_cross_role_membership_and_alternative_as_support():
@@ -323,20 +327,22 @@ def test_checker_requires_both_role_sets_and_premises():
 
 
 def test_the_shipped_blocked_list_is_well_formed():
-    blocked = C.load_blocked()
+    """LABS-1.064: only ONT-SC-1 is still open; the approved-but-unimplemented paths name their decision and DI."""
     from evaluation.e2.readers import READERS
-    assert blocked, "benchmark/e2/spec/blocked.json lists the unresolved decisions"
-    for b in blocked:
-        assert b["id"].startswith("SD-") and b["question"] and b.get("reader") in READERS | {None: None}
+    blocked, unimpl = C.load_blocked(), C.load_unimplemented()
+    assert [b["id"] for b in blocked] == ["ONT-SC-1"]
+    assert unimpl, "benchmark/e2/spec/blocked.json lists the approved paths no reader provides yet"
+    for b in unimpl:
+        assert b["id"].startswith("SD-") and b["di"].startswith("DI-") and b["question"] and b["paths"]
+        assert b["reader"] in READERS
 
 
-def test_shipped_blocked_list_matches_fields_anywhere_and_parameters():
-    blocked = C.load_blocked()
+def test_approved_decisions_unblock_their_questions():
+    """The LABS-1.063 blocks are lifted where the approved contract is unambiguous (LABS-1.064 item 17)."""
+    blocked, unimpl = C.load_blocked(), C.load_unimplemented()
     ef = {"step": "s1", "reader": "effects_of", "params": {"world": "w", "event": "ev-s2", "t": "T9"},
           "expected": {"[0].state.accepted_change": True}}
-    assert any("SD-CAU-1" in p for p in C.problems_of(scored("C-1", [ef], family="C"), FIXTURES, set(), blocked=blocked))
     tol = {**wh({"status": "INFERRED"}), "params": {**wh({})["params"], "angle_tolerance": 0.1}}
-    assert any("SD-SPA-1" in p for p in C.problems_of(scored("F-5", [tol]), FIXTURES, set(), blocked=blocked))
-    # an established question on the same reader is not blocked
-    assert C.problems_of(scored("F-6", [wh({"status": "INFERRED", "candidates[0].x": [1.0, 1.0]})]), FIXTURES, set(),
-                         blocked=blocked) == []
+    label = wh({"judgement": "compatible"})
+    for q in (scored("C-1", [ef], family="C"), scored("F-5", [tol]), scored("F-6", [label])):
+        assert C.problems_of(q, FIXTURES, set(), blocked=blocked, unimplemented=unimpl) == [], q["id"]

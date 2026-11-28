@@ -97,7 +97,11 @@ def dv_where(a):
 
 
 def dv_transform(a):
-    if a.get("transform") is None or not a.get("chain"):
+    """A transform the answer gives under a named rule is presented as derived by that rule from its chain. With an
+    empty chain (source == target) that is a premise-less derivation, which the approved contract forbids: SD-SPA-2
+    (LABS-1.064) makes the identity a declared convention that presents no derivation, so it is extracted and scored
+    as fabricated rather than skipped."""
+    if a.get("transform") is None or not (a.get("chain") or a.get("rule")):
         return []
     return [{"rule": a.get("rule"), "at": "transform", "premises": sorted(_chain_support(a.get("chain")))}]
 
@@ -169,8 +173,10 @@ READERS = {r.name: r for r in [
     Reader("holds", ("type", "roles", "t"), (),
            lambda wm, p: wm.holds(p["world"], p["type"], p["roles"], _t(p), **_ctx(p)), None,
            refusals=(UNKNOWN_ROLE,)),
-    Reader("value_at", ("type", "subject", "t"), (),
-           lambda wm, p: wm.value_at(p["world"], p["type"], p["subject"], _t(p), **_ctx(p)), None,
+    # key_role / value_role (LABS-1.064, SD-CORE-2): passed only when the question gives them
+    Reader("value_at", ("type", "subject", "t"), ("key_role", "value_role"),
+           lambda wm, p: wm.value_at(p["world"], p["type"], p["subject"], _t(p), **_ctx(p),
+                                     **{k: p[k] for k in ("key_role", "value_role") if k in p}), None,
            refusals=(UNKNOWN_ROLE, NO_SINGLE_SLOT)),
     Reader("facts_about", ("subject", "t"), (),
            lambda wm, p: wm.facts_about(p["world"], p["subject"], _t(p), **_ctx(p)), None),

@@ -9,7 +9,9 @@ approved under LABS-1.063, and returns the attestation ids of a normalised answe
 - `alternative`: listed but not rested on (unaccepted, superseded, incomparable, unverified, statements beside
   measurements);
 - `undetermined`: listed where the contract's role depends on an unresolved semantic decision. It is scored in no role,
-  and questions depending on it are blocked (check.py, H-8).
+  and questions depending on it are blocked (check.py, H-8). Since LABS-1.064 no extractor uses it: every decision a
+  role depended on is approved (SD-MEA-5 made the not-yet-effective calibration claim supporting). The role is kept so
+  a future open decision can use it without changing the scorer.
 
 **Components and cross-role membership (LABS-1.063 supplement, finding 4).** Every extracted id is recorded with the
 answer component it came from (an answer path such as `appointments[2]`, `conflict`, `candidates[0]`), so an
@@ -265,7 +267,7 @@ def _calibration(r, ev, prefix=""):
             elif j == "disputed":
                 ev.add("conflicting", e["attestation"])                    # P-CS-1
             elif j == "not yet effective":
-                ev.add("undetermined", e["attestation"])                   # D-CS-3: unresolved
+                ev.add("supporting", e["attestation"])     # SD-MEA-5 (LABS-1.064): the accepted future claim decides it
     return ev
 
 

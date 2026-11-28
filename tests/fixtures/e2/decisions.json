@@ -1,0 +1,19 @@
+{"id": "e2-decisions", "description": "LABS-1.064 harness self-test fixture: real answers for the approved-decision checks (a frame to itself, a not-yet-effective calibration, an effect claim fitting two activations, a truncated frame search). Synthetic; not an E2 evaluation fixture and not gold.",
+ "profiles": ["organisation", "laboratory"],
+ "steps": [
+  {"op": "entity", "kind": "spatial-frame", "id": "A"}, {"op": "entity", "kind": "spatial-frame", "id": "B"},
+  {"op": "entity", "kind": "spatial-frame", "id": "C"}, {"op": "entity", "kind": "spatial-frame", "id": "D"},
+  {"op": "entity", "kind": "physical-object", "id": "gauge"}, {"op": "entity", "kind": "physical-object", "id": "box"},
+  {"op": "entity", "kind": "person", "id": "tech"}, {"op": "entity", "kind": "place", "id": "shelf"},
+  {"op": "entity", "kind": "occurrence", "id": "o-put"},
+  {"op": "world", "id": "w", "kind": "actual"},
+  {"op": "relate_frames", "id": "ab", "world": "w", "parent": "A", "child": "B", "translation": [1.0, 0.0, 0.0], "start": "T1", "until_superseded": true},
+  {"op": "relate_frames", "id": "bc", "world": "w", "parent": "B", "child": "C", "translation": [0.0, 2.0, 0.0], "start": "T1", "until_superseded": true},
+  {"op": "relate_frames", "id": "cd", "world": "w", "parent": "C", "child": "D", "translation": [0.0, 0.0, 3.0], "start": "T1", "until_superseded": true},
+  {"op": "certificate", "id": "cert-later", "name": "later certificate", "reference": "CAL-L"},
+  {"op": "calibrate", "id": "cal-later", "world": "w", "certificate": "cert-later", "instrument": "gauge", "start": "T6", "until_superseded": true},
+  {"op": "account", "id": "ev-put", "world": "w", "roles": {"actor": "tech", "patient": "box"}, "start": "T1", "end": "T1h10", "occurrence": "o-put"},
+  {"op": "attest", "id": "on-shelf-1", "world": "w", "type": "located-at", "roles": {"located": "box", "place": "shelf"}, "start": "T2", "end": "T4"},
+  {"op": "attest", "id": "on-shelf-2", "world": "w", "type": "located-at", "roles": {"located": "box", "place": "shelf"}, "start": "T6", "until_superseded": true},
+  {"op": "claim_effect", "id": "put-on-shelf", "world": "w", "event": "ev-put", "kind": "initiates", "type": "located-at", "roles": {"located": "box", "place": "shelf"}}
+ ]}

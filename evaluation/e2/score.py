@@ -11,7 +11,9 @@ Scored questions (classes A and H). Each failure kind is recorded separately, so
   is not one the model records, it has no premises, or a premise is not **visible** (its fixture step is in a world
   outside the question world's lineage), not **applicable** (not a content type the rule takes) or not **admissible**
   (not in the question's authored `admissible_premises`, which encode usability for the question's perspective,
-  `as_of` and t). Existence of the attestation alone never makes a premise admissible.
+  `as_of` and t). Existence of the attestation alone never makes a premise admissible. A question whose expected
+  answer is **convention-derived** (`convention`, SD-SPA-2, LABS-1.064) admits no derivation at all: any derivation it
+  presents is fabricated, whatever its premises, because a mathematical convention rests on no attestation.
 - `forbidden-evidence`: the answer cites a forbidden attestation, in any role.
 - `alternative-as-support`: an attestation the answer lists as an alternative is also cited as supporting in the same
   component.
@@ -43,7 +45,8 @@ Path agreement (F-2, corrected under LABS-1.062):
 
 Gap probes (class G) are scored apart (`probe`). A probe passes only when (a) no derivation in any step's answer is
 fabricated, whatever the status, and (b) the answer is a status the probe accepts (UNKNOWN-like) or an **established**
-documented refusal of the reader. An undocumented exception is an execution error, and a refusal whose source is not an
+documented refusal of the reader, or (when the probe accepts `absent`, LABS-1.064) the probed field is absent: the
+approved capability is not implemented, and nothing is fabricated in its place. An undocumented exception is an execution error, and a refusal whose source is not an
 approved decision is `unestablished-refusal`: neither passes. A probe with no plan is `not-callable` (listed, not run).
 """
 
@@ -64,7 +67,7 @@ ANSWER_FAILURES = {"timeout", "harness-error", "execution-error", "plan-error", 
 def base(q):
     return {"id": q["id"], "family": q["family"], "subset": q.get("subset"), "class": q["class"],
             "gap": q.get("gap"), "scenario": q["scenario"], "adversarial": q.get("adversarial"),
-            "difficulty": q.get("difficulty")}
+            "difficulty": q.get("difficulty"), "targets": q.get("targets") or []}
 
 
 def step_info(fixture):
@@ -99,6 +102,8 @@ def fabricated(q, steps, names, fixture=None):
         for d in st.get("derivations", []):
             why = []
             rule = d.get("rule")
+            if q.get("convention"):
+                why.append(f"a {q['convention']} result is a declared convention: it presents no derivation (SD-SPA-2)")
             if rule not in KNOWN_RULES:
                 why.append(f"rule {rule!r} is not a rule the model records")
             premises = d.get("premises") or []
@@ -326,7 +331,10 @@ def probe(q, sel, names, recorded, fixture=None):
         try:
             returned = select(last, spec.get("path", "status"))
         except PathError as e:
-            returned, ok = f"(no {spec.get('path', 'status')!r}: {e})", False
+            if "absent" in accept:
+                returned, ok = "absent", True                  # the capability is not there; nothing fabricated
+            else:
+                returned, ok = f"(no {spec.get('path', 'status')!r}: {e})", False
         else:
             ok = returned in accept
     if fab:
