@@ -1,0 +1,238 @@
+{
+ "id": "e2-m-thermal-1",
+ "description": "Synthetic kiln chamber kiln-k3 (invented). Temperature measured by two system thermocouples (t1, t2, possibly compatible), by an external lab lab-veld (t3, unreviewed by the system, accepted by nobody but lab-veld, which also accepts t1), and later by the system again (t4, recorded after mark before-t4, disjoint from t1 and t2). A stated (not measured) value s1 is given in degrees Fahrenheit. Two certificates: cert-ta matches t1's stated reference; cert-tb's reference differs from t2's stated reference. Also defines mass units for conversion questions. All times are valid times (T<d> = 2026-11-<d> 09:00 UTC).",
+ "profiles": [
+  "organisation",
+  "laboratory"
+ ],
+ "steps": [
+  {
+   "op": "world",
+   "id": "w",
+   "kind": "actual"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "kiln-k3",
+   "name": "kiln chamber K3"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "therm-a",
+   "name": "thermocouple A"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "therm-b",
+   "name": "thermocouple B"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "therm-c",
+   "name": "thermocouple C (lab-veld)"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "op-rhee",
+   "name": "operator Rhee"
+  },
+  {
+   "op": "entity",
+   "kind": "organisation",
+   "id": "lab-veld",
+   "name": "Veld test laboratory"
+  },
+  {
+   "op": "define_unit",
+   "id": "kelvin",
+   "name": "kelvin",
+   "dimension": "temperature",
+   "si_factor": 1,
+   "si_offset": 0
+  },
+  {
+   "op": "define_unit",
+   "id": "degC",
+   "name": "degC",
+   "dimension": "temperature",
+   "si_factor": 1,
+   "si_offset": 273.15
+  },
+  {
+   "op": "define_unit",
+   "id": "degF",
+   "name": "degF",
+   "dimension": "temperature",
+   "si_factor": 0.5555555555555556,
+   "si_offset": 255.3722222222222
+  },
+  {
+   "op": "define_unit",
+   "id": "kilogram",
+   "name": "kilogram",
+   "dimension": "mass",
+   "si_factor": 1,
+   "si_offset": 0
+  },
+  {
+   "op": "define_unit",
+   "id": "gram",
+   "name": "gram",
+   "dimension": "mass",
+   "si_factor": 0.001,
+   "si_offset": 0
+  },
+  {
+   "op": "define_quality_kind",
+   "id": "temperature",
+   "name": "temperature",
+   "dimension": "temperature"
+  },
+  {
+   "op": "certificate",
+   "id": "cert-ta",
+   "name": "thermocouple A certificate",
+   "reference": "CAL-TA-2026-01"
+  },
+  {
+   "op": "certificate",
+   "id": "cert-tb",
+   "name": "thermocouple B certificate",
+   "reference": "CAL-TB-78"
+  },
+  {
+   "op": "calibrate",
+   "id": "cal-ta",
+   "world": "w",
+   "certificate": "cert-ta",
+   "instrument": "therm-a",
+   "start": "T1",
+   "end": "T20"
+  },
+  {
+   "op": "calibrate",
+   "id": "cal-tb",
+   "world": "w",
+   "certificate": "cert-tb",
+   "instrument": "therm-b",
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "mark",
+   "name": "start"
+  },
+  {
+   "op": "measure",
+   "id": "t1",
+   "world": "w",
+   "bearer": "kiln-k3",
+   "quality": "temperature",
+   "value": 451.2,
+   "unit": "degC",
+   "uncertainty": 0.4,
+   "k": 2,
+   "start": "T3",
+   "end": "T6",
+   "instrument": "therm-a",
+   "operator": "op-rhee",
+   "conditions": [
+    "door closed",
+    "fan off"
+   ],
+   "calibration": "CAL-TA-2026-01"
+  },
+  {
+   "op": "measure",
+   "id": "t2",
+   "world": "w",
+   "bearer": "kiln-k3",
+   "quality": "temperature",
+   "value": 452.6,
+   "unit": "degC",
+   "uncertainty": 0.5,
+   "k": 2,
+   "start": "T4",
+   "end": "T7",
+   "instrument": "therm-b",
+   "operator": "op-rhee",
+   "conditions": [
+    "door closed",
+    "fan off"
+   ],
+   "calibration": "CAL-TB-77"
+  },
+  {
+   "op": "measure",
+   "id": "t3",
+   "world": "w",
+   "bearer": "kiln-k3",
+   "quality": "temperature",
+   "value": 458.0,
+   "unit": "degC",
+   "uncertainty": 0.5,
+   "k": 2,
+   "start": "T5",
+   "end": "T7",
+   "instrument": "therm-c",
+   "conditions": [
+    "door closed",
+    "fan off"
+   ],
+   "calibration": "VELD-C-12",
+   "attester": "lab-veld"
+  },
+  {
+   "op": "attest",
+   "id": "s1",
+   "world": "w",
+   "type": "has-quality",
+   "roles": {
+    "bearer": "kiln-k3",
+    "quality": "temperature",
+    "unit": "degF"
+   },
+   "params": {
+    "lower": 840.0,
+    "upper": 850.0
+   },
+   "start": "T4",
+   "end": "T8"
+  },
+  {
+   "op": "accept",
+   "target": "t1",
+   "holder": "lab-veld",
+   "verdict": "accepted"
+  },
+  {
+   "op": "mark",
+   "name": "before-t4"
+  },
+  {
+   "op": "measure",
+   "id": "t4",
+   "world": "w",
+   "bearer": "kiln-k3",
+   "quality": "temperature",
+   "value": 740.0,
+   "unit": "kelvin",
+   "uncertainty": 0.5,
+   "k": 2,
+   "start": "T5",
+   "end": "T6",
+   "instrument": "therm-a",
+   "operator": "op-rhee",
+   "conditions": [
+    "door closed",
+    "fan off"
+   ],
+   "calibration": "CAL-TA-2026-01"
+  }
+ ]
+}

@@ -1,0 +1,22 @@
+{"id": "e2-xi-chain-1",
+ "description": "Synthetic survey-drone registry. Four registry names for what may be one drone are linked in a chain d1=d2, d2=d3, d3=d4 by the system. Claims about fleet membership are stated under different names: the system asserts d4 and d2 are members of fleet-north; a harbour office denies d1 is a member (accepted by the system). After the mark before-denial, an auditor denies that d1 and d4 are the same (accepted by the system), so the established group {d1, d2, d3, d4} then contains a denied pair. A second perspective, fleet-desk, accepts the system's links and the two membership assertions, and nothing from the harbour office or the auditor. Same-as claims carry no valid interval (identity is timeless content, v0.2 3.4).",
+ "profiles": [],
+ "steps": [
+   {"op": "world", "id": "w", "kind": "actual"},
+   {"op": "entity", "kind": "physical-object", "id": "d1", "name": "Kestrel-4"},
+   {"op": "entity", "kind": "physical-object", "id": "d2", "name": "unit KR-4"},
+   {"op": "entity", "kind": "physical-object", "id": "d3", "name": "tail 0447"},
+   {"op": "entity", "kind": "physical-object", "id": "d4", "name": "asset 88-K"},
+   {"op": "entity", "kind": "social-object", "id": "fleet-north", "name": "North Survey Fleet"},
+   {"op": "entity", "kind": "social-object", "id": "harbour-office", "name": "Brackwater Harbour Office"},
+   {"op": "entity", "kind": "social-object", "id": "auditor-r", "name": "Registry Auditor R"},
+   {"op": "attest", "id": "s12", "world": "w", "type": "same-as", "roles": {"same": ["d1", "d2"]}, "accepted_by": ["fleet-desk"]},
+   {"op": "attest", "id": "s23", "world": "w", "type": "same-as", "roles": {"same": ["d2", "d3"]}, "accepted_by": ["fleet-desk"]},
+   {"op": "attest", "id": "s34", "world": "w", "type": "same-as", "roles": {"same": ["d3", "d4"]}, "accepted_by": ["fleet-desk"]},
+   {"op": "attest", "id": "m4", "world": "w", "type": "member-of", "roles": {"member": "d4", "group": "fleet-north"}, "start": "T2", "until_superseded": true, "accepted_by": ["fleet-desk"]},
+   {"op": "attest", "id": "m2", "world": "w", "type": "member-of", "roles": {"member": "d2", "group": "fleet-north"}, "start": "T3", "until_superseded": true, "accepted_by": ["fleet-desk"]},
+   {"op": "deny", "id": "m1d", "world": "w", "type": "member-of", "roles": {"member": "d1", "group": "fleet-north"}, "start": "T2", "until_superseded": true, "attester": "harbour-office", "accepted_by": ["system"]},
+   {"op": "mark", "name": "before-denial"},
+   {"op": "deny", "id": "x14", "world": "w", "type": "same-as", "roles": {"same": ["d1", "d4"]}, "attester": "auditor-r", "accepted_by": ["system"]},
+   {"op": "mark", "name": "after-denial"}
+ ]}

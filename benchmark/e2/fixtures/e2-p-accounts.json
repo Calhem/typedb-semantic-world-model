@@ -1,0 +1,98 @@
+{
+ "id": "e2-p-accounts",
+ "description": "Synthetic several-accounts fixture (invented names). Two sources give accounts of the same event description, the pump-3 flush of unit-9: acc-x and acc-y state identical content (no type, the same roles patient unit-9 and instrument pump-3), so by structural identity (v0.2 4.2) they are two attestations (accounts) of one description, which either step id names. The ward clerk's account says [14h09, 14h11); the duty nurse's says start in window [14h13, 14h14], end 14h15. The system accepts both. The system's own accounts: the monitor check acc-e [14h12, 14h16) and the valve change acc-f [14h17, 14h18).",
+ "profiles": [
+  "organisation"
+ ],
+ "steps": [
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "ward-clerk",
+   "name": "Ward clerk Tamsin Orrel"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "duty-nurse",
+   "name": "Duty nurse Ferro Lune"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "unit-9"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "pump-3"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "monitor-1"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "valve-f"
+  },
+  {
+   "op": "world",
+   "id": "w",
+   "kind": "actual"
+  },
+  {
+   "op": "account",
+   "id": "acc-x",
+   "world": "w",
+   "roles": {
+    "patient": "unit-9",
+    "instrument": "pump-3"
+   },
+   "start": "T14h09",
+   "end": "T14h11",
+   "attester": "ward-clerk",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "account_again",
+   "id": "acc-y",
+   "world": "w",
+   "description": "acc-x",
+   "start": [
+    "T14h13",
+    "T14h14"
+   ],
+   "end": "T14h15",
+   "attester": "duty-nurse",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "account",
+   "id": "acc-e",
+   "world": "w",
+   "roles": {
+    "patient": "unit-9",
+    "instrument": "monitor-1"
+   },
+   "start": "T14h12",
+   "end": "T14h16"
+  },
+  {
+   "op": "account",
+   "id": "acc-f",
+   "world": "w",
+   "roles": {
+    "patient": "unit-9",
+    "instrument": "valve-f"
+   },
+   "start": "T14h17",
+   "end": "T14h18"
+  }
+ ]
+}

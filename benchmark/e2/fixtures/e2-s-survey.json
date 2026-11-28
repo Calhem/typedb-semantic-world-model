@@ -1,0 +1,404 @@
+{
+ "id": "e2-s-survey",
+ "description": "Synthetic survey site. System transforms site <- mast <- antenna (the mast-antenna transform from T3); a feed transform stated only by surveyor Quill (never reviewed by the system); Quill accepts site-mast and rejects mast-antenna. A rover-unit pair with two different accepted transforms (system and surveyor Reede) and a sensor under the unit. A yard-quay-kerb triangle whose chains disagree by 0.3 m, with a ramp-gate branch hanging off the yard. A jig triangle whose chains disagree by 1e-6 rad.",
+ "profiles": [
+  "organisation"
+ ],
+ "steps": [
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "srv-quill",
+   "name": "Petra Quill"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "srv-reede",
+   "name": "Tomas Reede"
+  },
+  {
+   "op": "entity",
+   "kind": "spatial-frame",
+   "id": "fr-site"
+  },
+  {
+   "op": "entity",
+   "kind": "spatial-frame",
+   "id": "fr-mast"
+  },
+  {
+   "op": "entity",
+   "kind": "spatial-frame",
+   "id": "fr-antenna"
+  },
+  {
+   "op": "entity",
+   "kind": "spatial-frame",
+   "id": "fr-feed"
+  },
+  {
+   "op": "entity",
+   "kind": "spatial-frame",
+   "id": "fr-rover"
+  },
+  {
+   "op": "entity",
+   "kind": "spatial-frame",
+   "id": "fr-unit"
+  },
+  {
+   "op": "entity",
+   "kind": "spatial-frame",
+   "id": "fr-sensor"
+  },
+  {
+   "op": "entity",
+   "kind": "spatial-frame",
+   "id": "fr-yard"
+  },
+  {
+   "op": "entity",
+   "kind": "spatial-frame",
+   "id": "fr-quay"
+  },
+  {
+   "op": "entity",
+   "kind": "spatial-frame",
+   "id": "fr-kerb"
+  },
+  {
+   "op": "entity",
+   "kind": "spatial-frame",
+   "id": "fr-ramp"
+  },
+  {
+   "op": "entity",
+   "kind": "spatial-frame",
+   "id": "fr-gate"
+  },
+  {
+   "op": "entity",
+   "kind": "spatial-frame",
+   "id": "fr-jig1"
+  },
+  {
+   "op": "entity",
+   "kind": "spatial-frame",
+   "id": "fr-jig2"
+  },
+  {
+   "op": "entity",
+   "kind": "spatial-frame",
+   "id": "fr-jig3"
+  },
+  {
+   "op": "world",
+   "id": "w",
+   "kind": "actual"
+  },
+  {
+   "op": "relate_frames",
+   "id": "sm",
+   "world": "w",
+   "parent": "fr-site",
+   "child": "fr-mast",
+   "translation": [
+    10.0,
+    0.0,
+    2.0
+   ],
+   "rotation": [
+    0.7071067811865476,
+    0.0,
+    0.0,
+    0.7071067811865476
+   ],
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "relate_frames",
+   "id": "ma",
+   "world": "w",
+   "parent": "fr-mast",
+   "child": "fr-antenna",
+   "translation": [
+    0.0,
+    0.0,
+    3.0
+   ],
+   "rotation": [
+    0.7071067811865476,
+    0.0,
+    0.7071067811865476,
+    0.0
+   ],
+   "start": "T3",
+   "until_superseded": true
+  },
+  {
+   "op": "relate_frames",
+   "id": "af",
+   "world": "w",
+   "parent": "fr-antenna",
+   "child": "fr-feed",
+   "translation": [
+    0.5,
+    0.0,
+    0.0
+   ],
+   "rotation": [
+    0.0,
+    1.0,
+    0.0,
+    0.0
+   ],
+   "start": "T1",
+   "until_superseded": true,
+   "attester": "srv-quill"
+  },
+  {
+   "op": "accept",
+   "id": "sm-quill",
+   "target": "sm",
+   "holder": "srv-quill",
+   "verdict": "accepted"
+  },
+  {
+   "op": "accept",
+   "id": "ma-quill",
+   "target": "ma",
+   "holder": "srv-quill",
+   "verdict": "rejected"
+  },
+  {
+   "op": "relate_frames",
+   "id": "ru",
+   "world": "w",
+   "parent": "fr-rover",
+   "child": "fr-unit",
+   "translation": [
+    1.0,
+    2.0,
+    0.0
+   ],
+   "rotation": [
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "relate_frames",
+   "id": "ru-r",
+   "world": "w",
+   "parent": "fr-rover",
+   "child": "fr-unit",
+   "translation": [
+    1.0,
+    2.5,
+    0.0
+   ],
+   "rotation": [
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "start": "T1",
+   "until_superseded": true,
+   "attester": "srv-reede"
+  },
+  {
+   "op": "accept",
+   "id": "ru-r-ok",
+   "target": "ru-r",
+   "holder": "system",
+   "verdict": "accepted"
+  },
+  {
+   "op": "relate_frames",
+   "id": "uv",
+   "world": "w",
+   "parent": "fr-unit",
+   "child": "fr-sensor",
+   "translation": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "rotation": [
+    0.7071067811865476,
+    0.0,
+    0.0,
+    0.7071067811865476
+   ],
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "relate_frames",
+   "id": "yq",
+   "world": "w",
+   "parent": "fr-yard",
+   "child": "fr-quay",
+   "translation": [
+    2.0,
+    0.0,
+    0.0
+   ],
+   "rotation": [
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "relate_frames",
+   "id": "qk",
+   "world": "w",
+   "parent": "fr-quay",
+   "child": "fr-kerb",
+   "translation": [
+    0.0,
+    3.0,
+    0.0
+   ],
+   "rotation": [
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "relate_frames",
+   "id": "yk",
+   "world": "w",
+   "parent": "fr-yard",
+   "child": "fr-kerb",
+   "translation": [
+    2.0,
+    3.3,
+    0.0
+   ],
+   "rotation": [
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "relate_frames",
+   "id": "yr",
+   "world": "w",
+   "parent": "fr-yard",
+   "child": "fr-ramp",
+   "translation": [
+    0.0,
+    -1.0,
+    0.0
+   ],
+   "rotation": [
+    0.7071067811865476,
+    0.0,
+    0.0,
+    0.7071067811865476
+   ],
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "relate_frames",
+   "id": "rg",
+   "world": "w",
+   "parent": "fr-ramp",
+   "child": "fr-gate",
+   "translation": [
+    0.5,
+    0.0,
+    0.0
+   ],
+   "rotation": [
+    0.7071067811865476,
+    0.0,
+    -0.7071067811865476,
+    0.0
+   ],
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "relate_frames",
+   "id": "j12",
+   "world": "w",
+   "parent": "fr-jig1",
+   "child": "fr-jig2",
+   "translation": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "rotation": [
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "relate_frames",
+   "id": "j23",
+   "world": "w",
+   "parent": "fr-jig2",
+   "child": "fr-jig3",
+   "translation": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "rotation": [
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "relate_frames",
+   "id": "j13",
+   "world": "w",
+   "parent": "fr-jig1",
+   "child": "fr-jig3",
+   "translation": [
+    2.0,
+    0.0,
+    0.0
+   ],
+   "rotation": [
+    0.999999999999875,
+    0.0,
+    0.0,
+    4.999999999999791e-07
+   ],
+   "start": "T1",
+   "until_superseded": true
+  }
+ ]
+}

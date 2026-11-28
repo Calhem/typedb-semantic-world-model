@@ -1,0 +1,412 @@
+{
+ "id": "e2-p-timing",
+ "description": "Synthetic timing fixture (invented names). Day 12: stand-alone system event descriptions (accounts, no occurrence) built on the SD-CAU-5 boundary examples, with hour h standing for the example's number (ev-a1 [12h10,12h12); ev-b1 [12h12,12h14); ev-a2 start 12h09, end window [12h11,12h12]; ev-b2 start window [12h12,12h13], end 12h15; instantaneous ev-i3 and ev-j3 at 12h12; instantaneous ev-i4 in window [12h10,12h12] and ev-j4 in window [12h12,12h14]); ev-k is a bench technician's instantaneous account at 12h16 that the system accepts only after mark m-k. Day 13: process R2 with steps u1-u5 (system part-of from 13h00): u1 and u2 overlap; u3's only account is by the night porter (not accepted by the system; the night porter accepts u1's account); u4's end window overlaps u5's start window; the bench supervisor denies that u5 is part of R2 and the system accepts the denial. All account role sets differ.",
+ "profiles": [
+  "organisation"
+ ],
+ "steps": [
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "night-porter",
+   "name": "Night porter Cael Ruddock"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "bench-supervisor",
+   "name": "Bench supervisor Imra Tolle"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "bench-tech",
+   "name": "Bench technician Pell Arno"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "R2",
+   "name": "Calibration-bench shift 2 at the Fennick test hall"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "u1",
+   "name": "Warm-up"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "u2",
+   "name": "Zero adjust"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "u3",
+   "name": "Bench clean"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "u4",
+   "name": "Load run"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "u5",
+   "name": "Unload"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "bench-a"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "bench-b"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "tool-a1"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "tool-b1"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "tool-a2"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "tool-b2"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "tool-i3"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "tool-j3"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "tool-i4"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "tool-j4"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "probe-k"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "tool-u1"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "tool-u2"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "tool-u3"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "tool-u4"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "tool-u5"
+  },
+  {
+   "op": "world",
+   "id": "w",
+   "kind": "actual"
+  },
+  {
+   "op": "account",
+   "id": "ev-a1",
+   "world": "w",
+   "roles": {
+    "patient": "bench-a",
+    "instrument": "tool-a1"
+   },
+   "start": "T12h10",
+   "end": "T12h12"
+  },
+  {
+   "op": "account",
+   "id": "ev-b1",
+   "world": "w",
+   "roles": {
+    "patient": "bench-a",
+    "instrument": "tool-b1"
+   },
+   "start": "T12h12",
+   "end": "T12h14"
+  },
+  {
+   "op": "account",
+   "id": "ev-a2",
+   "world": "w",
+   "roles": {
+    "patient": "bench-a",
+    "instrument": "tool-a2"
+   },
+   "start": "T12h09",
+   "end": [
+    "T12h11",
+    "T12h12"
+   ]
+  },
+  {
+   "op": "account",
+   "id": "ev-b2",
+   "world": "w",
+   "roles": {
+    "patient": "bench-a",
+    "instrument": "tool-b2"
+   },
+   "start": [
+    "T12h12",
+    "T12h13"
+   ],
+   "end": "T12h15"
+  },
+  {
+   "op": "account",
+   "id": "ev-i3",
+   "world": "w",
+   "roles": {
+    "patient": "bench-a",
+    "instrument": "tool-i3"
+   },
+   "start": "T12h12"
+  },
+  {
+   "op": "account",
+   "id": "ev-j3",
+   "world": "w",
+   "roles": {
+    "patient": "bench-a",
+    "instrument": "tool-j3"
+   },
+   "start": "T12h12"
+  },
+  {
+   "op": "account",
+   "id": "ev-i4",
+   "world": "w",
+   "roles": {
+    "patient": "bench-a",
+    "instrument": "tool-i4"
+   },
+   "start": [
+    "T12h10",
+    "T12h12"
+   ]
+  },
+  {
+   "op": "account",
+   "id": "ev-j4",
+   "world": "w",
+   "roles": {
+    "patient": "bench-a",
+    "instrument": "tool-j4"
+   },
+   "start": [
+    "T12h12",
+    "T12h14"
+   ]
+  },
+  {
+   "op": "account",
+   "id": "ev-k",
+   "world": "w",
+   "roles": {
+    "patient": "bench-a",
+    "instrument": "probe-k"
+   },
+   "start": "T12h16",
+   "attester": "bench-tech"
+  },
+  {
+   "op": "mark",
+   "name": "m-k"
+  },
+  {
+   "op": "accept",
+   "id": "acc-ev-k",
+   "target": "ev-k",
+   "holder": "system",
+   "verdict": "accepted"
+  },
+  {
+   "op": "attest",
+   "id": "po-u1",
+   "world": "w",
+   "type": "part-of",
+   "roles": {
+    "part": "u1",
+    "whole": "R2"
+   },
+   "start": "T13h00",
+   "until_superseded": true
+  },
+  {
+   "op": "attest",
+   "id": "po-u2",
+   "world": "w",
+   "type": "part-of",
+   "roles": {
+    "part": "u2",
+    "whole": "R2"
+   },
+   "start": "T13h00",
+   "until_superseded": true
+  },
+  {
+   "op": "attest",
+   "id": "po-u3",
+   "world": "w",
+   "type": "part-of",
+   "roles": {
+    "part": "u3",
+    "whole": "R2"
+   },
+   "start": "T13h00",
+   "until_superseded": true
+  },
+  {
+   "op": "attest",
+   "id": "po-u4",
+   "world": "w",
+   "type": "part-of",
+   "roles": {
+    "part": "u4",
+    "whole": "R2"
+   },
+   "start": "T13h00",
+   "until_superseded": true
+  },
+  {
+   "op": "attest",
+   "id": "po-u5",
+   "world": "w",
+   "type": "part-of",
+   "roles": {
+    "part": "u5",
+    "whole": "R2"
+   },
+   "start": "T13h00",
+   "until_superseded": true
+  },
+  {
+   "op": "account",
+   "id": "acc-u1",
+   "world": "w",
+   "roles": {
+    "patient": "bench-b",
+    "instrument": "tool-u1"
+   },
+   "start": "T13h10",
+   "end": "T13h12",
+   "occurrence": "u1",
+   "accepted_by": [
+    "night-porter"
+   ]
+  },
+  {
+   "op": "account",
+   "id": "acc-u2",
+   "world": "w",
+   "roles": {
+    "patient": "bench-b",
+    "instrument": "tool-u2"
+   },
+   "start": "T13h11",
+   "end": "T13h13",
+   "occurrence": "u2"
+  },
+  {
+   "op": "account",
+   "id": "acc-u3",
+   "world": "w",
+   "roles": {
+    "patient": "bench-b",
+    "instrument": "tool-u3"
+   },
+   "start": "T13h07",
+   "end": "T13h09",
+   "occurrence": "u3",
+   "attester": "night-porter"
+  },
+  {
+   "op": "account",
+   "id": "acc-u4",
+   "world": "w",
+   "roles": {
+    "patient": "bench-b",
+    "instrument": "tool-u4"
+   },
+   "start": "T13h14",
+   "end": [
+    "T13h15",
+    "T13h17"
+   ],
+   "occurrence": "u4"
+  },
+  {
+   "op": "account",
+   "id": "acc-u5",
+   "world": "w",
+   "roles": {
+    "patient": "bench-b",
+    "instrument": "tool-u5"
+   },
+   "start": [
+    "T13h16",
+    "T13h18"
+   ],
+   "end": "T13h19",
+   "occurrence": "u5"
+  },
+  {
+   "op": "deny",
+   "id": "den-u5",
+   "world": "w",
+   "type": "part-of",
+   "roles": {
+    "part": "u5",
+    "whole": "R2"
+   },
+   "start": "T13h00",
+   "until_superseded": true,
+   "attester": "bench-supervisor",
+   "accepted_by": [
+    "system"
+   ]
+  }
+ ]
+}

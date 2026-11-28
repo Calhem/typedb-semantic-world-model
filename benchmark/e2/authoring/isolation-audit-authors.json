@@ -1,0 +1,77 @@
+[
+ {
+  "role": "author-S",
+  "tool_calls": {
+   "Bash": 17,
+   "Write": 8,
+   "SubagentHandback": 1
+  },
+  "issues": [],
+  "isolated": true
+ },
+ {
+  "role": "author-F",
+  "tool_calls": {
+   "Bash": 22,
+   "Read": 3,
+   "SubagentHandback": 1
+  },
+  "issues": [],
+  "isolated": true
+ },
+ {
+  "role": "author-M",
+  "tool_calls": {
+   "Bash": 13,
+   "Read": 15,
+   "Write": 9,
+   "SubagentHandback": 1
+  },
+  "issues": [],
+  "isolated": true
+ },
+ {
+  "role": "author-C",
+  "tool_calls": {
+   "Bash": 12,
+   "Read": 18,
+   "Write": 9,
+   "Edit": 2,
+   "SubagentHandback": 1
+  },
+  "issues": [],
+  "isolated": true
+ },
+ {
+  "role": "author-P",
+  "tool_calls": {
+   "Bash": 11,
+   "Read": 3,
+   "SubagentHandback": 1
+  },
+  "issues": [],
+  "isolated": true
+ },
+ {
+  "role": "author-X",
+  "tool_calls": {
+   "Bash": 13,
+   "Read": 5,
+   "Write": 5,
+   "SubagentHandback": 1
+  },
+  "issues": [],
+  "isolated": true
+ },
+ {
+  "role": "author-XI",
+  "tool_calls": {
+   "Bash": 9,
+   "Read": 7,
+   "Write": 3,
+   "SubagentHandback": 1
+  },
+  "issues": [],
+  "isolated": true
+ }
+]

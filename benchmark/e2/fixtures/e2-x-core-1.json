@@ -1,0 +1,60 @@
+{
+ "id": "e2-x-core-1",
+ "description": "Synthetic depot certification register for exact-content questions. One person's classification is recorded with a context (a depot); another's is recorded without any context. All names are invented.",
+ "profiles": [
+  "organisation"
+ ],
+ "steps": [
+  {
+   "op": "world",
+   "id": "w",
+   "kind": "actual"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "pers-arno",
+   "name": "Arno Teel"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "pers-bex",
+   "name": "Bex Lorrin"
+  },
+  {
+   "op": "entity",
+   "kind": "organisation",
+   "id": "org-depot",
+   "name": "Kestrel Depot"
+  },
+  {
+   "op": "entity",
+   "kind": "category",
+   "id": "forklift-certified"
+  },
+  {
+   "op": "grant",
+   "id": "gr-arno",
+   "world": "w",
+   "holder": "pers-arno",
+   "concept": "forklift-certified",
+   "context": "org-depot",
+   "start": "T3",
+   "until_superseded": true
+  },
+  {
+   "op": "grant",
+   "id": "gr-bex",
+   "world": "w",
+   "holder": "pers-bex",
+   "concept": "forklift-certified",
+   "start": "T3",
+   "until_superseded": true
+  },
+  {
+   "op": "mark",
+   "name": "core-end"
+  }
+ ]
+}

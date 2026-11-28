@@ -292,7 +292,7 @@ def problems_of(q, fixtures, seen, selftest=False, blocked=None, unimplemented=N
         if name == "changes":
             out += [f"{where}: {x}" for x in _attribution_problems(st)]
         if name == "transform_between" and isinstance(p.get("source"), str) and p.get("source") == p.get("target") \
-                and q.get("convention") != "frame-identity":
+                and q.get("convention") != "frame-identity" and q["class"] != "G":
             out.append(f"{where}: a frame to itself is a convention-derived result: the question must say "
                        "\"convention\": \"frame-identity\" (SD-SPA-2)")
         names.add(st.get("step"))

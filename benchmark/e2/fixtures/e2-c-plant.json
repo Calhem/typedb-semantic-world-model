@@ -1,0 +1,510 @@
+{
+ "id": "e2-c-plant",
+ "description": "Synthetic pumping plant (invented names). Causal claims about event descriptions and occurrences: lifting through describes links (accepted, missing, later rejected and denied), sibling descriptions, occurrence existence statuses (accepted, denied, disputed, not established), causal-claim judgements (accepted, disputed, unreviewed, denied) and one causal claim written with a valid interval (SD-CAU-7 test only). Causal claims carry no valid interval except cc-sleet.",
+ "profiles": [
+  "organisation"
+ ],
+ "steps": [
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "inspector",
+   "name": "Inspector Velma Oakridge"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "auditor",
+   "name": "Auditor Pell Marrow"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "contractor",
+   "name": "Contractor Juno Fallow"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "matcher",
+   "name": "Record matcher Tib"
+  },
+  {
+   "op": "entity",
+   "kind": "place",
+   "id": "plant-hall",
+   "name": "Pump hall"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-trip"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-surge"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-spike"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-flood"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-leak"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-fire"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-quake"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-drift"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-outage"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-gen"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-pipe"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-valve"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-rat"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-frost"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "o-sleet"
+  },
+  {
+   "op": "world",
+   "id": "w",
+   "kind": "actual"
+  },
+  {
+   "op": "account",
+   "id": "a-trip",
+   "world": "w",
+   "roles": {
+    "location": "plant-hall"
+   },
+   "start": "T10h09",
+   "end": "T10h10"
+  },
+  {
+   "op": "account",
+   "id": "a-trip-2",
+   "world": "w",
+   "roles": {
+    "location": "plant-hall"
+   },
+   "start": "T10h09",
+   "end": "T10h11"
+  },
+  {
+   "op": "account",
+   "id": "a-surge",
+   "world": "w",
+   "roles": {
+    "location": "plant-hall"
+   },
+   "start": "T10h07",
+   "end": "T10h08"
+  },
+  {
+   "op": "account",
+   "id": "a-spike",
+   "world": "w",
+   "roles": {
+    "location": "plant-hall"
+   },
+   "start": "T10h06",
+   "end": "T10h07"
+  },
+  {
+   "op": "account",
+   "id": "a-rumour",
+   "world": "w",
+   "roles": {
+    "location": "plant-hall"
+   },
+   "start": "T9",
+   "end": "T9h10"
+  },
+  {
+   "op": "account",
+   "id": "a-gossip",
+   "world": "w",
+   "roles": {
+    "location": "plant-hall"
+   },
+   "start": "T8",
+   "end": "T8h10"
+  },
+  {
+   "op": "describe_occurrence",
+   "id": "dl-trip",
+   "world": "w",
+   "description": "a-trip",
+   "occurrence": "o-trip",
+   "polarity": true,
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "describe_occurrence",
+   "id": "dl-trip-2",
+   "world": "w",
+   "description": "a-trip-2",
+   "occurrence": "o-trip",
+   "polarity": true,
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "describe_occurrence",
+   "id": "dl-surge",
+   "world": "w",
+   "description": "a-surge",
+   "occurrence": "o-surge",
+   "polarity": true,
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "describe_occurrence",
+   "id": "dl-spike",
+   "world": "w",
+   "description": "a-spike",
+   "occurrence": "o-spike",
+   "polarity": true,
+   "start": "T1",
+   "until_superseded": true,
+   "attester": "matcher",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "declare_existence",
+   "id": "ex-trip",
+   "world": "w",
+   "thing": "o-trip",
+   "start": "T1",
+   "end": "T30"
+  },
+  {
+   "op": "declare_existence",
+   "id": "ex-surge",
+   "world": "w",
+   "thing": "o-surge",
+   "start": "T1",
+   "end": "T30"
+  },
+  {
+   "op": "declare_existence",
+   "id": "ex-spike",
+   "world": "w",
+   "thing": "o-spike",
+   "start": "T1",
+   "end": "T30"
+  },
+  {
+   "op": "declare_existence",
+   "id": "ex-flood",
+   "world": "w",
+   "thing": "o-flood",
+   "start": "T1",
+   "end": "T30"
+  },
+  {
+   "op": "declare_existence",
+   "id": "ex-leak",
+   "world": "w",
+   "thing": "o-leak",
+   "start": "T1",
+   "end": "T30"
+  },
+  {
+   "op": "deny",
+   "id": "ex-fire-deny",
+   "world": "w",
+   "type": "existence",
+   "roles": {
+    "existent": "o-fire"
+   },
+   "start": "T1",
+   "end": "T30",
+   "attester": "auditor",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "declare_existence",
+   "id": "ex-quake",
+   "world": "w",
+   "thing": "o-quake",
+   "start": "T1",
+   "end": "T30"
+  },
+  {
+   "op": "deny",
+   "id": "ex-quake-deny",
+   "world": "w",
+   "type": "existence",
+   "roles": {
+    "existent": "o-quake"
+   },
+   "start": "T1",
+   "end": "T30",
+   "attester": "auditor",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "declare_existence",
+   "id": "ex-outage",
+   "world": "w",
+   "thing": "o-outage",
+   "start": "T1",
+   "end": "T30"
+  },
+  {
+   "op": "declare_existence",
+   "id": "ex-gen",
+   "world": "w",
+   "thing": "o-gen",
+   "start": "T1",
+   "end": "T30"
+  },
+  {
+   "op": "declare_existence",
+   "id": "ex-pipe",
+   "world": "w",
+   "thing": "o-pipe",
+   "start": "T1",
+   "end": "T30"
+  },
+  {
+   "op": "declare_existence",
+   "id": "ex-valve",
+   "world": "w",
+   "thing": "o-valve",
+   "start": "T1",
+   "end": "T30"
+  },
+  {
+   "op": "declare_existence",
+   "id": "ex-rat",
+   "world": "w",
+   "thing": "o-rat",
+   "start": "T1",
+   "end": "T30"
+  },
+  {
+   "op": "declare_existence",
+   "id": "ex-frost",
+   "world": "w",
+   "thing": "o-frost",
+   "start": "T1",
+   "end": "T30"
+  },
+  {
+   "op": "declare_existence",
+   "id": "ex-sleet",
+   "world": "w",
+   "thing": "o-sleet",
+   "start": "T1",
+   "end": "T30"
+  },
+  {
+   "op": "claim_cause",
+   "id": "cc-surge-trip",
+   "world": "w",
+   "cause": "a-surge",
+   "effect": "a-trip",
+   "polarity": true
+  },
+  {
+   "op": "claim_cause",
+   "id": "cc-rumour",
+   "world": "w",
+   "cause": "a-rumour",
+   "effect": "a-trip",
+   "polarity": true
+  },
+  {
+   "op": "claim_cause",
+   "id": "cc-spike-trip",
+   "world": "w",
+   "cause": "a-spike",
+   "effect": "a-trip",
+   "polarity": true
+  },
+  {
+   "op": "claim_cause",
+   "id": "cc-gossip",
+   "world": "w",
+   "cause": "a-gossip",
+   "effect": "a-trip-2",
+   "polarity": true
+  },
+  {
+   "op": "claim_cause",
+   "id": "cc-leak",
+   "world": "w",
+   "cause": "o-leak",
+   "effect": "o-flood",
+   "polarity": true
+  },
+  {
+   "op": "claim_cause",
+   "id": "cc-fire",
+   "world": "w",
+   "cause": "o-fire",
+   "effect": "o-flood",
+   "polarity": true
+  },
+  {
+   "op": "claim_cause",
+   "id": "cc-quake",
+   "world": "w",
+   "cause": "o-quake",
+   "effect": "o-flood",
+   "polarity": true
+  },
+  {
+   "op": "claim_cause",
+   "id": "cc-drift",
+   "world": "w",
+   "cause": "o-drift",
+   "effect": "o-flood",
+   "polarity": true
+  },
+  {
+   "op": "claim_cause",
+   "id": "cc-gen",
+   "world": "w",
+   "cause": "o-gen",
+   "effect": "o-outage",
+   "polarity": true
+  },
+  {
+   "op": "claim_cause",
+   "id": "cc-pipe",
+   "world": "w",
+   "cause": "o-pipe",
+   "effect": "o-outage",
+   "polarity": true
+  },
+  {
+   "op": "claim_cause",
+   "id": "cc-pipe-deny",
+   "world": "w",
+   "cause": "o-pipe",
+   "effect": "o-outage",
+   "polarity": false,
+   "attester": "auditor",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "claim_cause",
+   "id": "cc-valve",
+   "world": "w",
+   "cause": "o-valve",
+   "effect": "o-outage",
+   "polarity": true,
+   "attester": "inspector"
+  },
+  {
+   "op": "claim_cause",
+   "id": "cc-rat",
+   "world": "w",
+   "cause": "o-rat",
+   "effect": "o-outage",
+   "polarity": true,
+   "attester": "contractor"
+  },
+  {
+   "op": "claim_cause",
+   "id": "cc-rat-deny",
+   "world": "w",
+   "cause": "o-rat",
+   "effect": "o-outage",
+   "polarity": false
+  },
+  {
+   "op": "claim_cause",
+   "id": "cc-sleet",
+   "world": "w",
+   "cause": "o-sleet",
+   "effect": "o-frost",
+   "polarity": true,
+   "start": "T20",
+   "end": "T22"
+  },
+  {
+   "op": "mark",
+   "name": "pre-review"
+  },
+  {
+   "op": "accept",
+   "id": "rej-dl-spike",
+   "target": "dl-spike",
+   "holder": "system",
+   "verdict": "rejected"
+  },
+  {
+   "op": "describe_occurrence",
+   "id": "dl-spike-deny",
+   "world": "w",
+   "description": "a-spike",
+   "occurrence": "o-spike",
+   "polarity": false,
+   "start": "T1",
+   "until_superseded": true,
+   "attester": "auditor",
+   "accepted_by": [
+    "system"
+   ]
+  }
+ ]
+}

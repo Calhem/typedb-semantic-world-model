@@ -1,0 +1,58 @@
+{"id": "e2-c-press",
+ "description": "Synthetic stamping press (invented names). Effect claims (initiates / terminates) by event descriptions about classified-as states of press-4: an accepted change, a judgement-only change out of UNKNOWN, a delayed effect, a contractor's unaccepted claim, a disputed claim, a change into DISPUTED, an unaccepted initiator, an initiator with an uncertain start window, and one-step causal claims about an initiating event. Effect and causal claims carry no valid interval. press-4 plays no role in any event description.",
+ "profiles": ["organisation"],
+ "steps": [
+  {"op": "entity", "kind": "person", "id": "contractor", "name": "Contractor Juno Fallow"},
+  {"op": "entity", "kind": "person", "id": "auditor", "name": "Auditor Pell Marrow"},
+  {"op": "entity", "kind": "physical-object", "id": "press-4", "name": "Stamping press 4"},
+  {"op": "entity", "kind": "place", "id": "press-bay", "name": "Press bay"},
+  {"op": "entity", "kind": "category", "id": "cat-jammed"},
+  {"op": "entity", "kind": "category", "id": "cat-oiled"},
+  {"op": "entity", "kind": "category", "id": "cat-cracked"},
+  {"op": "entity", "kind": "category", "id": "cat-locked"},
+  {"op": "entity", "kind": "category", "id": "cat-vented"},
+  {"op": "entity", "kind": "category", "id": "cat-overheated"},
+  {"op": "world", "id": "w", "kind": "actual"},
+
+  {"op": "account", "id": "e-jam", "world": "w", "roles": {"location": "press-bay"}, "start": "T5h20", "end": "T6"},
+  {"op": "account", "id": "a-spark", "world": "w", "roles": {"location": "press-bay"}, "start": "T5h10", "end": "T5h15"},
+  {"op": "account", "id": "a-dust", "world": "w", "roles": {"location": "press-bay"}, "start": "T5h00", "end": "T5h05"},
+  {"op": "claim_cause", "id": "cc-spark", "world": "w", "cause": "a-spark", "effect": "e-jam", "polarity": true},
+  {"op": "claim_cause", "id": "cc-dust", "world": "w", "cause": "a-dust", "effect": "a-spark", "polarity": true},
+  {"op": "claim_effect", "id": "ce-jam", "world": "w", "event": "e-jam", "kind": "initiates", "type": "classified-as", "roles": {"classified": "press-4", "class": "cat-jammed"}, "polarity": true},
+  {"op": "deny", "id": "deny-jam", "world": "w", "type": "classified-as", "roles": {"classified": "press-4", "class": "cat-jammed"}, "start": "T1", "end": "T6"},
+  {"op": "account", "id": "e-kick", "world": "w", "roles": {"location": "press-bay"}, "start": "T5", "end": "T5h05", "attester": "contractor"},
+  {"op": "claim_effect", "id": "ce-kick", "world": "w", "event": "e-kick", "kind": "initiates", "type": "classified-as", "roles": {"classified": "press-4", "class": "cat-jammed"}, "polarity": true, "attester": "contractor"},
+
+  {"op": "mark", "name": "pre-obs"},
+
+  {"op": "attest", "id": "att-jam", "world": "w", "type": "classified-as", "roles": {"classified": "press-4", "class": "cat-jammed"}, "start": "T6", "until_superseded": true},
+
+  {"op": "account", "id": "e-oil", "world": "w", "roles": {"location": "press-bay"}, "start": "T7", "end": "T8"},
+  {"op": "claim_effect", "id": "ce-oil", "world": "w", "event": "e-oil", "kind": "initiates", "type": "classified-as", "roles": {"classified": "press-4", "class": "cat-oiled"}, "polarity": true},
+  {"op": "attest", "id": "att-oil", "world": "w", "type": "classified-as", "roles": {"classified": "press-4", "class": "cat-oiled"}, "start": "T8", "until_superseded": true},
+
+  {"op": "account", "id": "e-crack", "world": "w", "roles": {"location": "press-bay"}, "start": "T10", "end": "T11"},
+  {"op": "claim_effect", "id": "ce-crack", "world": "w", "event": "e-crack", "kind": "initiates", "type": "classified-as", "roles": {"classified": "press-4", "class": "cat-cracked"}, "polarity": true},
+  {"op": "account", "id": "e-tremor", "world": "w", "roles": {"location": "press-bay"}, "start": ["T8", "T10"], "end": "T11"},
+  {"op": "claim_effect", "id": "ce-tremor", "world": "w", "event": "e-tremor", "kind": "initiates", "type": "classified-as", "roles": {"classified": "press-4", "class": "cat-cracked"}, "polarity": true},
+  {"op": "deny", "id": "deny-crack", "world": "w", "type": "classified-as", "roles": {"classified": "press-4", "class": "cat-cracked"}, "start": "T1", "end": "T14"},
+  {"op": "attest", "id": "att-crack", "world": "w", "type": "classified-as", "roles": {"classified": "press-4", "class": "cat-cracked"}, "start": "T14", "until_superseded": true},
+
+  {"op": "account", "id": "e-lock", "world": "w", "roles": {"location": "press-bay"}, "start": "T11", "end": "T12", "attester": "contractor", "accepted_by": ["system"]},
+  {"op": "claim_effect", "id": "ce-lock", "world": "w", "event": "e-lock", "kind": "initiates", "type": "classified-as", "roles": {"classified": "press-4", "class": "cat-locked"}, "polarity": true, "attester": "contractor"},
+  {"op": "deny", "id": "deny-lock", "world": "w", "type": "classified-as", "roles": {"classified": "press-4", "class": "cat-locked"}, "start": "T1", "end": "T12"},
+  {"op": "attest", "id": "att-lock", "world": "w", "type": "classified-as", "roles": {"classified": "press-4", "class": "cat-locked"}, "start": "T12", "until_superseded": true},
+
+  {"op": "account", "id": "e-vent", "world": "w", "roles": {"location": "press-bay"}, "start": "T13", "end": "T14"},
+  {"op": "claim_effect", "id": "ce-vent", "world": "w", "event": "e-vent", "kind": "initiates", "type": "classified-as", "roles": {"classified": "press-4", "class": "cat-vented"}, "polarity": true},
+  {"op": "claim_effect", "id": "ce-vent-deny", "world": "w", "event": "e-vent", "kind": "initiates", "type": "classified-as", "roles": {"classified": "press-4", "class": "cat-vented"}, "polarity": false, "attester": "auditor", "accepted_by": ["system"]},
+  {"op": "deny", "id": "deny-vent", "world": "w", "type": "classified-as", "roles": {"classified": "press-4", "class": "cat-vented"}, "start": "T1", "end": "T14"},
+  {"op": "attest", "id": "att-vent", "world": "w", "type": "classified-as", "roles": {"classified": "press-4", "class": "cat-vented"}, "start": "T14", "until_superseded": true},
+
+  {"op": "account", "id": "e-heat", "world": "w", "roles": {"location": "press-bay"}, "start": "T15", "end": "T16"},
+  {"op": "claim_effect", "id": "ce-heat", "world": "w", "event": "e-heat", "kind": "initiates", "type": "classified-as", "roles": {"classified": "press-4", "class": "cat-overheated"}, "polarity": true},
+  {"op": "deny", "id": "deny-heat", "world": "w", "type": "classified-as", "roles": {"classified": "press-4", "class": "cat-overheated"}, "start": "T1", "end": "T16"},
+  {"op": "attest", "id": "att-heat", "world": "w", "type": "classified-as", "roles": {"classified": "press-4", "class": "cat-overheated"}, "start": "T16", "until_superseded": true},
+  {"op": "deny", "id": "deny-heat-aud", "world": "w", "type": "classified-as", "roles": {"classified": "press-4", "class": "cat-overheated"}, "start": "T16", "until_superseded": true, "attester": "auditor", "accepted_by": ["system"]}
+ ]}

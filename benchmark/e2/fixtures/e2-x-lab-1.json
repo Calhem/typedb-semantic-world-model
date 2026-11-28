@@ -1,0 +1,489 @@
+{
+ "id": "e2-x-lab-1",
+ "description": "Synthetic calibration laboratory. A sample's temperature is measured by three instruments positioned on a bench frame (child of a room frame, rotated 180 degrees about z). Two certificates hand over calibration of gauge-q4 at T15; gauge-r9's calibration is denied by a QA office whose denial the system accepts. Positions, a perspective-only position, a disputed sample position and an unrelatable cart frame support chained measurement-and-frame questions. All names are invented.",
+ "profiles": [
+  "organisation",
+  "laboratory"
+ ],
+ "steps": [
+  {
+   "op": "world",
+   "id": "w",
+   "kind": "actual"
+  },
+  {
+   "op": "entity",
+   "kind": "sample",
+   "id": "sample-s21"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "gauge-q4",
+   "name": "bench thermometer Q4"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "gauge-r9",
+   "name": "reference thermometer R9"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "gauge-c2",
+   "name": "cart thermometer C2"
+  },
+  {
+   "op": "entity",
+   "kind": "place",
+   "id": "cold-room"
+  },
+  {
+   "op": "entity",
+   "kind": "spatial-frame",
+   "id": "f-lab"
+  },
+  {
+   "op": "entity",
+   "kind": "spatial-frame",
+   "id": "f-bench"
+  },
+  {
+   "op": "entity",
+   "kind": "spatial-frame",
+   "id": "f-cart"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "op-rin",
+   "name": "Rin Valdo"
+  },
+  {
+   "op": "entity",
+   "kind": "organisation",
+   "id": "qa-office",
+   "name": "Quality Office Meridel"
+  },
+  {
+   "op": "entity",
+   "kind": "organisation",
+   "id": "cal-house-ostra",
+   "name": "Ostra Calibration House"
+  },
+  {
+   "op": "entity",
+   "kind": "organisation",
+   "id": "cal-house-varn",
+   "name": "Varn Metrology"
+  },
+  {
+   "op": "entity",
+   "kind": "category",
+   "id": "issued-by"
+  },
+  {
+   "op": "define_quality_kind",
+   "id": "temperature",
+   "name": "temperature",
+   "dimension": "temperature"
+  },
+  {
+   "op": "define_unit",
+   "id": "kelvin",
+   "name": "kelvin",
+   "dimension": "temperature",
+   "si_factor": 1,
+   "si_offset": 0
+  },
+  {
+   "op": "define_unit",
+   "id": "celsius",
+   "name": "celsius",
+   "dimension": "temperature",
+   "si_factor": 1,
+   "si_offset": 273.15
+  },
+  {
+   "op": "define_unit",
+   "id": "fahrenheit",
+   "name": "fahrenheit",
+   "dimension": "temperature",
+   "si_factor": 0.5555555555555556,
+   "si_offset": 255.3722222222222
+  },
+  {
+   "op": "define_unit",
+   "id": "metre",
+   "name": "metre",
+   "dimension": "length",
+   "si_factor": 1,
+   "si_offset": 0
+  },
+  {
+   "op": "relate_frames",
+   "id": "fr-lb",
+   "world": "w",
+   "parent": "f-lab",
+   "child": "f-bench",
+   "translation": [
+    2.0,
+    1.0,
+    0.0
+   ],
+   "rotation": [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ],
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "position",
+   "id": "pos-g1",
+   "world": "w",
+   "thing": "gauge-q4",
+   "frame": "f-bench",
+   "x": 0.5,
+   "y": 0.25,
+   "z": 1.0,
+   "start": "T3",
+   "end": "T10"
+  },
+  {
+   "op": "certificate",
+   "id": "cert-1",
+   "name": "Ostra certificate 2207",
+   "reference": "OST-2207"
+  },
+  {
+   "op": "certificate",
+   "id": "cert-2",
+   "name": "Varn certificate 0915",
+   "reference": "VRN-0915"
+  },
+  {
+   "op": "certificate",
+   "id": "cert-3",
+   "name": "Ostra certificate 3110",
+   "reference": "OST-3110"
+  },
+  {
+   "op": "calibrate",
+   "id": "cal-1",
+   "world": "w",
+   "certificate": "cert-1",
+   "instrument": "gauge-q4",
+   "start": "T1",
+   "end": "T15"
+  },
+  {
+   "op": "calibrate",
+   "id": "cal-2",
+   "world": "w",
+   "certificate": "cert-2",
+   "instrument": "gauge-q4",
+   "start": "T15",
+   "until_superseded": true
+  },
+  {
+   "op": "calibrate",
+   "id": "cal-3",
+   "world": "w",
+   "certificate": "cert-3",
+   "instrument": "gauge-r9",
+   "start": "T2",
+   "until_superseded": true
+  },
+  {
+   "op": "depend",
+   "id": "dep-1",
+   "world": "w",
+   "dependent": "cert-1",
+   "dependee": "cal-house-ostra",
+   "kind": "issued-by",
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "depend",
+   "id": "dep-2",
+   "world": "w",
+   "dependent": "cert-2",
+   "dependee": "cal-house-varn",
+   "kind": "issued-by",
+   "start": "T13",
+   "until_superseded": true
+  },
+  {
+   "op": "depend",
+   "id": "dep-3",
+   "world": "w",
+   "dependent": "cert-3",
+   "dependee": "cal-house-ostra",
+   "kind": "issued-by",
+   "start": "T2",
+   "until_superseded": true,
+   "accepted_by": [
+    "qa-office"
+   ]
+  },
+  {
+   "op": "measure",
+   "id": "m1",
+   "world": "w",
+   "bearer": "sample-s21",
+   "quality": "temperature",
+   "value": 21.4,
+   "unit": "celsius",
+   "uncertainty": 0.05,
+   "k": 2,
+   "start": "T6",
+   "instrument": "gauge-q4",
+   "operator": "op-rin",
+   "conditions": [
+    "ambient 101 kPa"
+   ],
+   "calibration": "OST-2207"
+  },
+  {
+   "op": "measure",
+   "id": "m2",
+   "world": "w",
+   "bearer": "sample-s21",
+   "quality": "temperature",
+   "value": 21.9,
+   "unit": "celsius",
+   "uncertainty": 0.05,
+   "k": 2,
+   "start": "T10",
+   "instrument": "gauge-q4",
+   "operator": "op-rin",
+   "conditions": [
+    "ambient 101 kPa"
+   ],
+   "calibration": "OST-2207"
+  },
+  {
+   "op": "measure",
+   "id": "m5",
+   "world": "w",
+   "bearer": "sample-s21",
+   "quality": "temperature",
+   "value": 22.0,
+   "unit": "celsius",
+   "uncertainty": 0.05,
+   "k": 2,
+   "start": "T12",
+   "instrument": "gauge-q4",
+   "operator": "op-rin",
+   "conditions": [
+    "ambient 101 kPa"
+   ],
+   "calibration": "OST-2207"
+  },
+  {
+   "op": "mark",
+   "name": "before-g2"
+  },
+  {
+   "op": "position",
+   "id": "pos-g2",
+   "world": "w",
+   "thing": "gauge-q4",
+   "frame": "f-bench",
+   "x": [
+    1.0,
+    1.5
+   ],
+   "y": 0.25,
+   "z": 1.0,
+   "start": "T10",
+   "until_superseded": true
+  },
+  {
+   "op": "position",
+   "id": "pos-r9",
+   "world": "w",
+   "thing": "gauge-r9",
+   "frame": "f-bench",
+   "x": 0.8,
+   "y": 0.1,
+   "z": 1.0,
+   "start": "T7",
+   "end": "T9",
+   "attester": "op-rin"
+  },
+  {
+   "op": "measure",
+   "id": "m3",
+   "world": "w",
+   "bearer": "sample-s21",
+   "quality": "temperature",
+   "value": 22.3,
+   "unit": "celsius",
+   "uncertainty": 0.05,
+   "k": 2,
+   "start": [
+    "T14",
+    "T16"
+   ],
+   "instrument": "gauge-q4",
+   "operator": "op-rin",
+   "conditions": [
+    "ambient 101 kPa"
+   ],
+   "calibration": "VRN-0915"
+  },
+  {
+   "op": "measure",
+   "id": "m6",
+   "world": "w",
+   "bearer": "sample-s21",
+   "quality": "temperature",
+   "value": 21.6,
+   "unit": "celsius",
+   "uncertainty": 0.02,
+   "k": 2,
+   "start": "T8",
+   "instrument": "gauge-r9",
+   "operator": "op-rin",
+   "conditions": [
+    "ambient 101 kPa"
+   ],
+   "calibration": "OST-3110",
+   "accepted_by": [
+    "op-rin",
+    "qa-office"
+   ]
+  },
+  {
+   "op": "mark",
+   "name": "before-deny"
+  },
+  {
+   "op": "deny",
+   "id": "deny-cal-3",
+   "world": "w",
+   "type": "calibration-of",
+   "roles": {
+    "certificate": "cert-3",
+    "calibrated": "gauge-r9"
+   },
+   "start": "T7",
+   "until_superseded": true,
+   "attester": "qa-office"
+  },
+  {
+   "op": "accept",
+   "id": "acc-deny-cal-3",
+   "target": "deny-cal-3",
+   "holder": "system",
+   "verdict": "accepted"
+  },
+  {
+   "op": "position",
+   "id": "pos-s1",
+   "world": "w",
+   "thing": "sample-s21",
+   "frame": "f-lab",
+   "x": [
+    3.0,
+    3.1
+   ],
+   "y": [
+    0.5,
+    0.6
+   ],
+   "z": 0.9,
+   "start": "T5",
+   "end": "T7"
+  },
+  {
+   "op": "position",
+   "id": "pos-s2",
+   "world": "w",
+   "thing": "sample-s21",
+   "frame": "f-bench",
+   "x": 0.2,
+   "y": 0.3,
+   "z": 0.9,
+   "start": "T5",
+   "end": "T7",
+   "attester": "op-rin"
+  },
+  {
+   "op": "accept",
+   "id": "acc-pos-s2",
+   "target": "pos-s2",
+   "holder": "system",
+   "verdict": "accepted"
+  },
+  {
+   "op": "attest",
+   "id": "loc-cold",
+   "world": "w",
+   "type": "located-at",
+   "roles": {
+    "located": "sample-s21",
+    "place": "cold-room"
+   },
+   "start": "T15",
+   "end": "T18"
+  },
+  {
+   "op": "measure",
+   "id": "m7",
+   "world": "w",
+   "bearer": "sample-s21",
+   "quality": "temperature",
+   "value": 39.2,
+   "unit": "fahrenheit",
+   "uncertainty": 0.1,
+   "k": 2,
+   "start": "T20",
+   "instrument": "gauge-q4",
+   "operator": "op-rin",
+   "conditions": [
+    "ambient 101 kPa"
+   ],
+   "calibration": "VRN-0915"
+  },
+  {
+   "op": "position",
+   "id": "pos-c2",
+   "world": "w",
+   "thing": "gauge-c2",
+   "frame": "f-cart",
+   "x": 0.0,
+   "y": 0.0,
+   "z": 0.5,
+   "start": "T20",
+   "until_superseded": true
+  },
+  {
+   "op": "measure",
+   "id": "m8",
+   "world": "w",
+   "bearer": "sample-s21",
+   "quality": "temperature",
+   "value": 22.1,
+   "unit": "celsius",
+   "uncertainty": 0.05,
+   "k": 2,
+   "start": "T21",
+   "instrument": "gauge-c2",
+   "operator": "op-rin",
+   "conditions": [
+    "ambient 101 kPa"
+   ]
+  },
+  {
+   "op": "mark",
+   "name": "end-a"
+  }
+ ]
+}

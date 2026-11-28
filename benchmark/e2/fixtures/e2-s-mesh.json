@@ -1,0 +1,263 @@
+{
+ "id": "e2-s-mesh",
+ "description": "Synthetic work cell for resource limits. The cell has exactly two transforms: to the arm (denied by auditor Lark, the denial accepted by the system) and to the rail; the rail is also related to the arm, and a tool hangs off the arm. Separately, a straight four-frame track chain track0 <- track1 <- track2 <- track3 with no branches. Two bolts are positioned (used only by a gap probe).",
+ "profiles": [
+  "organisation"
+ ],
+ "steps": [
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "aud-lark",
+   "name": "Imre Lark"
+  },
+  {
+   "op": "entity",
+   "kind": "spatial-frame",
+   "id": "fr-cell"
+  },
+  {
+   "op": "entity",
+   "kind": "spatial-frame",
+   "id": "fr-arm"
+  },
+  {
+   "op": "entity",
+   "kind": "spatial-frame",
+   "id": "fr-rail"
+  },
+  {
+   "op": "entity",
+   "kind": "spatial-frame",
+   "id": "fr-tool"
+  },
+  {
+   "op": "entity",
+   "kind": "spatial-frame",
+   "id": "fr-track0"
+  },
+  {
+   "op": "entity",
+   "kind": "spatial-frame",
+   "id": "fr-track1"
+  },
+  {
+   "op": "entity",
+   "kind": "spatial-frame",
+   "id": "fr-track2"
+  },
+  {
+   "op": "entity",
+   "kind": "spatial-frame",
+   "id": "fr-track3"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "bolt-a"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "bolt-b"
+  },
+  {
+   "op": "world",
+   "id": "w",
+   "kind": "actual"
+  },
+  {
+   "op": "relate_frames",
+   "id": "ac",
+   "world": "w",
+   "parent": "fr-arm",
+   "child": "fr-cell",
+   "translation": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "rotation": [
+    0.7071067811865476,
+    0.0,
+    0.0,
+    0.7071067811865476
+   ],
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "deny",
+   "id": "ac-deny",
+   "world": "w",
+   "type": "frame-transform",
+   "roles": {
+    "parent": "fr-arm",
+    "child": "fr-cell"
+   },
+   "params": {
+    "tx": 0.0,
+    "ty": 1.0,
+    "tz": 0.0,
+    "qw": 0.7071067811865476,
+    "qx": 0.0,
+    "qy": 0.0,
+    "qz": 0.7071067811865476
+   },
+   "start": "T1",
+   "until_superseded": true,
+   "attester": "aud-lark"
+  },
+  {
+   "op": "accept",
+   "id": "ac-deny-ok",
+   "target": "ac-deny",
+   "holder": "system",
+   "verdict": "accepted"
+  },
+  {
+   "op": "relate_frames",
+   "id": "rc",
+   "world": "w",
+   "parent": "fr-rail",
+   "child": "fr-cell",
+   "translation": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "rotation": [
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "relate_frames",
+   "id": "ar",
+   "world": "w",
+   "parent": "fr-arm",
+   "child": "fr-rail",
+   "translation": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotation": [
+    0.7071067811865476,
+    0.0,
+    0.0,
+    0.7071067811865476
+   ],
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "relate_frames",
+   "id": "at",
+   "world": "w",
+   "parent": "fr-arm",
+   "child": "fr-tool",
+   "translation": [
+    0.0,
+    0.0,
+    0.3
+   ],
+   "rotation": [
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "relate_frames",
+   "id": "t01",
+   "world": "w",
+   "parent": "fr-track0",
+   "child": "fr-track1",
+   "translation": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "rotation": [
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "relate_frames",
+   "id": "t12",
+   "world": "w",
+   "parent": "fr-track1",
+   "child": "fr-track2",
+   "translation": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "rotation": [
+    0.7071067811865476,
+    0.0,
+    0.0,
+    0.7071067811865476
+   ],
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "relate_frames",
+   "id": "t23",
+   "world": "w",
+   "parent": "fr-track2",
+   "child": "fr-track3",
+   "translation": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "rotation": [
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "position",
+   "id": "pos-a",
+   "world": "w",
+   "thing": "bolt-a",
+   "frame": "fr-track0",
+   "x": 0.2,
+   "y": 0.1,
+   "z": 0.0,
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "position",
+   "id": "pos-b",
+   "world": "w",
+   "thing": "bolt-b",
+   "frame": "fr-track1",
+   "x": 0.5,
+   "y": 0.0,
+   "z": 0.0,
+   "start": "T1",
+   "until_superseded": true
+  }
+ ]
+}

@@ -1,0 +1,384 @@
+{
+ "id": "e2-m-length-1",
+ "description": "Synthetic masts mast-m5 and mast-m6 (invented). Length measured by laser-1 in separated valid-time windows so each question sees a known set: l16/l17 over T8-T11 with an accepted system denial d1 of l16's exact content over [T9, T10); l1/l2 explicit instantaneous at T12 (disjoint ranges; l1 written in millimetres); l3/l4 over [T16,T18)/[T17,T19) with ranges touching at 12.25 m; l5/l6 with coverage factors 2 and 3; l7/l8 whose condition texts differ only in capitalisation; l13/l14/l15 at T28 with l15 under different conditions. mast-m6: l9 and l10 explicit instantaneous at T3 and T4 (disjoint valid times, disjoint ranges). Categorical surface finish: cat1 (galvanised, system) and cat2 (anodised, insp-hale, accepted by the system). d1 is written to deny exactly the content measure l16 writes: has-quality(mast-m5, length, unit metre) with the SI range [11.75, 12.25] and the coverage level of k = 2 (written here as erf(2/sqrt 2)).",
+ "profiles": [
+  "organisation",
+  "laboratory"
+ ],
+ "steps": [
+  {
+   "op": "world",
+   "id": "w",
+   "kind": "actual"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "mast-m5",
+   "name": "mast M5"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "mast-m6",
+   "name": "mast M6"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "laser-1",
+   "name": "laser rangefinder 1"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "insp-hale",
+   "name": "inspector Hale"
+  },
+  {
+   "op": "entity",
+   "kind": "category",
+   "id": "finish-galvanised",
+   "name": "galvanised"
+  },
+  {
+   "op": "entity",
+   "kind": "category",
+   "id": "finish-anodised",
+   "name": "anodised"
+  },
+  {
+   "op": "entity",
+   "kind": "category",
+   "id": "finish-painted",
+   "name": "painted"
+  },
+  {
+   "op": "define_unit",
+   "id": "metre",
+   "name": "metre",
+   "dimension": "length",
+   "si_factor": 1,
+   "si_offset": 0
+  },
+  {
+   "op": "define_unit",
+   "id": "millimetre",
+   "name": "millimetre",
+   "dimension": "length",
+   "si_factor": 0.001,
+   "si_offset": 0
+  },
+  {
+   "op": "define_quality_kind",
+   "id": "length",
+   "name": "length",
+   "dimension": "length"
+  },
+  {
+   "op": "define_quality_kind",
+   "id": "surface-finish",
+   "name": "surface finish",
+   "dimension": "surface-finish"
+  },
+  {
+   "op": "attest",
+   "id": "cat1",
+   "world": "w",
+   "type": "has-quality",
+   "roles": {
+    "bearer": "mast-m5",
+    "quality": "surface-finish",
+    "value": "finish-galvanised"
+   },
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "attest",
+   "id": "cat2",
+   "world": "w",
+   "type": "has-quality",
+   "roles": {
+    "bearer": "mast-m5",
+    "quality": "surface-finish",
+    "value": "finish-anodised"
+   },
+   "start": "T1",
+   "until_superseded": true,
+   "attester": "insp-hale",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "measure",
+   "id": "l9",
+   "world": "w",
+   "bearer": "mast-m6",
+   "quality": "length",
+   "value": 12.0,
+   "unit": "metre",
+   "uncertainty": 0.01,
+   "k": 2,
+   "start": "T3",
+   "instrument": "laser-1",
+   "conditions": [
+    "wind below 2 m/s"
+   ]
+  },
+  {
+   "op": "measure",
+   "id": "l10",
+   "world": "w",
+   "bearer": "mast-m6",
+   "quality": "length",
+   "value": 12.4,
+   "unit": "metre",
+   "uncertainty": 0.01,
+   "k": 2,
+   "start": "T4",
+   "instrument": "laser-1",
+   "conditions": [
+    "wind below 2 m/s"
+   ]
+  },
+  {
+   "op": "measure",
+   "id": "l16",
+   "world": "w",
+   "bearer": "mast-m5",
+   "quality": "length",
+   "value": 12.0,
+   "unit": "metre",
+   "uncertainty": 0.125,
+   "k": 2,
+   "start": "T8",
+   "end": "T11",
+   "instrument": "laser-1",
+   "conditions": [
+    "wind below 2 m/s"
+   ]
+  },
+  {
+   "op": "measure",
+   "id": "l17",
+   "world": "w",
+   "bearer": "mast-m5",
+   "quality": "length",
+   "value": 12.25,
+   "unit": "metre",
+   "uncertainty": 0.125,
+   "k": 2,
+   "start": "T9",
+   "end": "T11",
+   "instrument": "laser-1",
+   "conditions": [
+    "wind below 2 m/s"
+   ]
+  },
+  {
+   "op": "deny",
+   "id": "d1",
+   "world": "w",
+   "type": "has-quality",
+   "roles": {
+    "bearer": "mast-m5",
+    "quality": "length",
+    "unit": "metre"
+   },
+   "params": {
+    "lower": 11.75,
+    "upper": 12.25,
+    "coverage-level": 0.9544997361036416
+   },
+   "start": "T9",
+   "end": "T10"
+  },
+  {
+   "op": "measure",
+   "id": "l1",
+   "world": "w",
+   "bearer": "mast-m5",
+   "quality": "length",
+   "value": 12000,
+   "unit": "millimetre",
+   "uncertainty": 10,
+   "k": 2,
+   "start": "T12",
+   "instrument": "laser-1",
+   "conditions": [
+    "wind below 2 m/s"
+   ]
+  },
+  {
+   "op": "measure",
+   "id": "l2",
+   "world": "w",
+   "bearer": "mast-m5",
+   "quality": "length",
+   "value": 12.1,
+   "unit": "metre",
+   "uncertainty": 0.02,
+   "k": 2,
+   "start": "T12",
+   "instrument": "laser-1",
+   "conditions": [
+    "wind below 2 m/s"
+   ]
+  },
+  {
+   "op": "measure",
+   "id": "l3",
+   "world": "w",
+   "bearer": "mast-m5",
+   "quality": "length",
+   "value": 12.0,
+   "unit": "metre",
+   "uncertainty": 0.125,
+   "k": 2,
+   "start": "T16",
+   "end": "T18",
+   "instrument": "laser-1",
+   "conditions": [
+    "wind below 2 m/s"
+   ]
+  },
+  {
+   "op": "measure",
+   "id": "l4",
+   "world": "w",
+   "bearer": "mast-m5",
+   "quality": "length",
+   "value": 12.5,
+   "unit": "metre",
+   "uncertainty": 0.125,
+   "k": 2,
+   "start": "T17",
+   "end": "T19",
+   "instrument": "laser-1",
+   "conditions": [
+    "wind below 2 m/s"
+   ]
+  },
+  {
+   "op": "measure",
+   "id": "l5",
+   "world": "w",
+   "bearer": "mast-m5",
+   "quality": "length",
+   "value": 12.0,
+   "unit": "metre",
+   "uncertainty": 0.01,
+   "k": 2,
+   "start": "T20",
+   "end": "T22",
+   "instrument": "laser-1",
+   "conditions": [
+    "wind below 2 m/s"
+   ]
+  },
+  {
+   "op": "measure",
+   "id": "l6",
+   "world": "w",
+   "bearer": "mast-m5",
+   "quality": "length",
+   "value": 12.3,
+   "unit": "metre",
+   "uncertainty": 0.01,
+   "k": 3,
+   "start": "T21",
+   "end": "T23",
+   "instrument": "laser-1",
+   "conditions": [
+    "wind below 2 m/s"
+   ]
+  },
+  {
+   "op": "measure",
+   "id": "l7",
+   "world": "w",
+   "bearer": "mast-m5",
+   "quality": "length",
+   "value": 12.0,
+   "unit": "metre",
+   "uncertainty": 0.01,
+   "k": 2,
+   "start": "T24",
+   "end": "T26",
+   "instrument": "laser-1",
+   "conditions": [
+    "wind below 2 m/s"
+   ]
+  },
+  {
+   "op": "measure",
+   "id": "l8",
+   "world": "w",
+   "bearer": "mast-m5",
+   "quality": "length",
+   "value": 12.3,
+   "unit": "metre",
+   "uncertainty": 0.01,
+   "k": 2,
+   "start": "T25",
+   "end": "T27",
+   "instrument": "laser-1",
+   "conditions": [
+    "Wind below 2 m/s"
+   ]
+  },
+  {
+   "op": "measure",
+   "id": "l13",
+   "world": "w",
+   "bearer": "mast-m5",
+   "quality": "length",
+   "value": 12.0,
+   "unit": "metre",
+   "uncertainty": 0.01,
+   "k": 2,
+   "start": "T28",
+   "end": "T29",
+   "instrument": "laser-1",
+   "conditions": [
+    "wind below 2 m/s"
+   ]
+  },
+  {
+   "op": "measure",
+   "id": "l14",
+   "world": "w",
+   "bearer": "mast-m5",
+   "quality": "length",
+   "value": 12.2,
+   "unit": "metre",
+   "uncertainty": 0.01,
+   "k": 2,
+   "start": "T28",
+   "end": "T29",
+   "instrument": "laser-1",
+   "conditions": [
+    "wind below 2 m/s"
+   ]
+  },
+  {
+   "op": "measure",
+   "id": "l15",
+   "world": "w",
+   "bearer": "mast-m5",
+   "quality": "length",
+   "value": 12.1,
+   "unit": "metre",
+   "uncertainty": 0.01,
+   "k": 2,
+   "start": "T28",
+   "end": "T29",
+   "instrument": "laser-1",
+   "conditions": [
+    "wind gusting 8 m/s"
+   ]
+  }
+ ]
+}

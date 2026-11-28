@@ -1,6 +1,6 @@
 # E2 author pack
 
-**LABS-1.065.** This pack is everything an E2 question author or gold verifier receives. It is frozen: `MANIFEST.json`
+**LABS-1.065, pack v1.1.** This pack is everything an E2 question author or gold verifier receives. It is frozen: `MANIFEST.json`
 holds the SHA-256 of every file, and the pack's commit is named in the corpus freeze record.
 
 **What kind of evaluation this is.** E2 is a development-tier, specification-conformance evaluation of a world-model
@@ -16,6 +16,7 @@ library's public readers. It is not externally independent or sealed.
 | `question-format.md` | how to write a question, its expected answer, its evidence sets, a gap probe and a calculation sheet |
 | `competency-questions.md` | the approved competency-question forms per family |
 | `gaps.md` | the gap ids, and the approved-but-unimplemented fields (probe only) |
+| `answer-form.md` | (v1.1) how answers are written for comparison: ISO times, windows, wrapped answers, `account_again` |
 
 Your **assignment** (a separate file given with this pack) says:
 - your families;
@@ -41,3 +42,12 @@ Your **assignment** (a separate file given with this pack) says:
 5. **Make each question exercise an identifiable competency or boundary condition.** Do not write near-duplicates
    that differ only in names.
 6. **Never depend on self-causation** (ONT-SC-1 is blocked).
+
+## Versions
+
+| Version | Commit | Given to | Changes |
+|---|---|---|---|
+| v1.0 | `8dafcd5` | the seven authors | — |
+| v1.1 | this commit | verifiers and adjudicators | contracts edition: indented tables no longer truncated, and interrupted sentences closed (author reports found two cut sentences); §0.12 restates the established rules that v1.0 removed with their entries; `answer-form.md` added (notation only); `account_again` step |
+
+Questions authored under v1.0 are verified, and any disagreement resolved, against v1.1.

@@ -1,0 +1,302 @@
+{
+ "id": "e2-c-yard",
+ "description": "Synthetic container yard (invented names). State histories for the changes reader: tank-9 (accepted denial, then held, then disputed by an accepted denial), crane-1 and crane-2 (held, then an end known only within the window [T6, T9]), gate-3 (denied, held, ended, held again later: one initiates claim fits two beginnings). Terminating and initiating events with exact and uncertain start windows. None of the four subjects plays a role in any event description; effect claims carry no valid interval.",
+ "profiles": [
+  "organisation"
+ ],
+ "steps": [
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "auditor",
+   "name": "Auditor Pell Marrow"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "contractor",
+   "name": "Contractor Juno Fallow"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "tank-9",
+   "name": "Ballast tank 9"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "crane-1",
+   "name": "Gantry crane 1"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "crane-2",
+   "name": "Gantry crane 2"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "gate-3",
+   "name": "Yard gate 3"
+  },
+  {
+   "op": "entity",
+   "kind": "place",
+   "id": "yard",
+   "name": "Container yard"
+  },
+  {
+   "op": "entity",
+   "kind": "category",
+   "id": "cat-full"
+  },
+  {
+   "op": "entity",
+   "kind": "category",
+   "id": "cat-working"
+  },
+  {
+   "op": "entity",
+   "kind": "category",
+   "id": "cat-open"
+  },
+  {
+   "op": "world",
+   "id": "w",
+   "kind": "actual"
+  },
+  {
+   "op": "account",
+   "id": "e-fill",
+   "world": "w",
+   "roles": {
+    "location": "yard"
+   },
+   "start": "T4",
+   "end": "T5"
+  },
+  {
+   "op": "claim_effect",
+   "id": "ce-fill",
+   "world": "w",
+   "event": "e-fill",
+   "kind": "initiates",
+   "type": "classified-as",
+   "roles": {
+    "classified": "tank-9",
+    "class": "cat-full"
+   },
+   "polarity": true
+  },
+  {
+   "op": "deny",
+   "id": "deny-full",
+   "world": "w",
+   "type": "classified-as",
+   "roles": {
+    "classified": "tank-9",
+    "class": "cat-full"
+   },
+   "start": "T1",
+   "end": "T5"
+  },
+  {
+   "op": "attest",
+   "id": "att-full",
+   "world": "w",
+   "type": "classified-as",
+   "roles": {
+    "classified": "tank-9",
+    "class": "cat-full"
+   },
+   "start": "T5",
+   "until_superseded": true
+  },
+  {
+   "op": "deny",
+   "id": "deny-full-aud",
+   "world": "w",
+   "type": "classified-as",
+   "roles": {
+    "classified": "tank-9",
+    "class": "cat-full"
+   },
+   "start": "T8",
+   "until_superseded": true,
+   "attester": "auditor",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "att-work1",
+   "world": "w",
+   "type": "classified-as",
+   "roles": {
+    "classified": "crane-1",
+    "class": "cat-working"
+   },
+   "start": "T2",
+   "end": [
+    "T6",
+    "T9"
+   ]
+  },
+  {
+   "op": "account",
+   "id": "e-halt",
+   "world": "w",
+   "roles": {
+    "location": "yard"
+   },
+   "start": [
+    "T5",
+    "T6"
+   ],
+   "end": "T6h12"
+  },
+  {
+   "op": "claim_effect",
+   "id": "ce-halt",
+   "world": "w",
+   "event": "e-halt",
+   "kind": "terminates",
+   "type": "classified-as",
+   "roles": {
+    "classified": "crane-1",
+    "class": "cat-working"
+   },
+   "polarity": true
+  },
+  {
+   "op": "attest",
+   "id": "att-work2",
+   "world": "w",
+   "type": "classified-as",
+   "roles": {
+    "classified": "crane-2",
+    "class": "cat-working"
+   },
+   "start": "T2",
+   "end": [
+    "T6",
+    "T9"
+   ]
+  },
+  {
+   "op": "account",
+   "id": "e-cut",
+   "world": "w",
+   "roles": {
+    "location": "yard"
+   },
+   "start": [
+    "T7",
+    "T8"
+   ],
+   "end": "T8h12"
+  },
+  {
+   "op": "claim_effect",
+   "id": "ce-cut",
+   "world": "w",
+   "event": "e-cut",
+   "kind": "terminates",
+   "type": "classified-as",
+   "roles": {
+    "classified": "crane-2",
+    "class": "cat-working"
+   },
+   "polarity": true
+  },
+  {
+   "op": "deny",
+   "id": "deny-open",
+   "world": "w",
+   "type": "classified-as",
+   "roles": {
+    "classified": "gate-3",
+    "class": "cat-open"
+   },
+   "start": "T1",
+   "end": "T4"
+  },
+  {
+   "op": "attest",
+   "id": "att-open-1",
+   "world": "w",
+   "type": "classified-as",
+   "roles": {
+    "classified": "gate-3",
+    "class": "cat-open"
+   },
+   "start": "T4",
+   "end": "T6"
+  },
+  {
+   "op": "account",
+   "id": "e-unlock",
+   "world": "w",
+   "roles": {
+    "location": "yard"
+   },
+   "start": "T3",
+   "end": "T3h10"
+  },
+  {
+   "op": "claim_effect",
+   "id": "ce-unlock",
+   "world": "w",
+   "event": "e-unlock",
+   "kind": "initiates",
+   "type": "classified-as",
+   "roles": {
+    "classified": "gate-3",
+    "class": "cat-open"
+   },
+   "polarity": true
+  },
+  {
+   "op": "account",
+   "id": "e-shut",
+   "world": "w",
+   "roles": {
+    "location": "yard"
+   },
+   "start": "T5",
+   "end": "T5h10"
+  },
+  {
+   "op": "claim_effect",
+   "id": "ce-shut",
+   "world": "w",
+   "event": "e-shut",
+   "kind": "terminates",
+   "type": "classified-as",
+   "roles": {
+    "classified": "gate-3",
+    "class": "cat-open"
+   },
+   "polarity": true
+  },
+  {
+   "op": "mark",
+   "name": "pre-reopen"
+  },
+  {
+   "op": "attest",
+   "id": "att-open-2",
+   "world": "w",
+   "type": "classified-as",
+   "roles": {
+    "classified": "gate-3",
+    "class": "cat-open"
+   },
+   "start": "T9",
+   "until_superseded": true
+  }
+ ]
+}

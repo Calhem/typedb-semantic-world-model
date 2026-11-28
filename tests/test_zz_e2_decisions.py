@@ -321,3 +321,18 @@ def test_fixture_times_accept_windows_and_refuse_malformed_ones(driver):
         assert a["end"]["latest"].startswith("2026-11-06T12")
     finally:
         drop(L)
+
+
+def test_account_again_adds_a_second_account_to_one_description(driver):
+    """LABS-1.065 loader step (harness only): two usable accounts of one description (SD-CAU-10)."""
+    fx = {"id": "e2-accounts-selftest", "description": "synthetic", "profiles": [], "steps": [
+        {"op": "entity", "kind": "physical-object", "id": "unit"}, {"op": "world", "id": "w", "kind": "actual"},
+        {"op": "account", "id": "acc-x", "world": "w", "roles": {"patient": "unit"}, "start": "T3", "end": "T4"},
+        {"op": "account_again", "id": "acc-y", "world": "w", "description": "acc-x", "start": ["T5", "T6"],
+         "end": "T7"}]}
+    L = load(fx, driver)
+    try:
+        assert len(L.written["acc-y"]) == 1 and L.written["acc-y"] != L.written["acc-x"]
+        assert set(L.wm.account_attestations("w", "acc-x")) >= set(L.written["acc-x"]) | set(L.written["acc-y"])
+    finally:
+        drop(L)

@@ -1,0 +1,562 @@
+{
+ "id": "e2-p-batch",
+ "description": "Synthetic pilot-line batch run R (invented names) with steps s1-s8 as occurrences. Membership is part-of(part, whole=R) from each step's start, until superseded; each step's times come from an account with a describes link to the step. Curing (s2) has sub-steps s2a-s2c. The auditor accepts every system step and denies that Inspection (s3) and Vent check (s2c) are part of their wholes; the system accepts both denials. A contractor claims a Sampling step (s8, rejected by the system) and denies Packing (s4) (unreviewed). A temporary crew lead states Labelling (s5), accepted by the auditor only. Release (s6) is instantaneous and recorded after mark m2. Variant world v (plan) branches at T10h16 with knowledge at m2 and stipulates a Rework step (s7) as part of R from T10h12. All account role sets differ, so every account is its own event description.",
+ "profiles": [
+  "organisation"
+ ],
+ "steps": [
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "auditor",
+   "name": "Ovel Marsh (line auditor)"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "contractor",
+   "name": "Brindle Works contractor"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "temp-crew",
+   "name": "Temporary crew lead Asha Penrow"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "R",
+   "name": "Batch run 7 at the Quillon pilot line"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "s1",
+   "name": "Mixing"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "s2",
+   "name": "Curing"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "s2a",
+   "name": "Heat ramp"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "s2b",
+   "name": "Hold"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "s2c",
+   "name": "Vent check"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "s3",
+   "name": "Inspection"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "s4",
+   "name": "Packing"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "s5",
+   "name": "Labelling"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "s6",
+   "name": "Release"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "s7",
+   "name": "Rework"
+  },
+  {
+   "op": "entity",
+   "kind": "occurrence",
+   "id": "s8",
+   "name": "Sampling"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "batch-7"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "mixer-1"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "oven-2"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "gauge-3"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "packer-4"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "heater-5"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "labeller-6"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "vent-valve"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "sample-probe"
+  },
+  {
+   "op": "entity",
+   "kind": "place",
+   "id": "hold-chamber"
+  },
+  {
+   "op": "entity",
+   "kind": "place",
+   "id": "dispatch-bay"
+  },
+  {
+   "op": "entity",
+   "kind": "place",
+   "id": "rework-cell"
+  },
+  {
+   "op": "world",
+   "id": "w",
+   "kind": "actual"
+  },
+  {
+   "op": "attest",
+   "id": "po-s1",
+   "world": "w",
+   "type": "part-of",
+   "roles": {
+    "part": "s1",
+    "whole": "R"
+   },
+   "start": "T10h09",
+   "until_superseded": true,
+   "accepted_by": [
+    "auditor"
+   ]
+  },
+  {
+   "op": "account",
+   "id": "acc-s1",
+   "world": "w",
+   "roles": {
+    "patient": "batch-7",
+    "instrument": "mixer-1"
+   },
+   "start": "T10h09",
+   "end": "T10h11",
+   "occurrence": "s1",
+   "accepted_by": [
+    "auditor"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "po-s2",
+   "world": "w",
+   "type": "part-of",
+   "roles": {
+    "part": "s2",
+    "whole": "R"
+   },
+   "start": "T10h11",
+   "until_superseded": true,
+   "accepted_by": [
+    "auditor"
+   ]
+  },
+  {
+   "op": "account",
+   "id": "acc-s2",
+   "world": "w",
+   "roles": {
+    "patient": "batch-7",
+    "instrument": "oven-2"
+   },
+   "start": "T10h11",
+   "end": "T10h14",
+   "occurrence": "s2",
+   "accepted_by": [
+    "auditor"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "po-s2a",
+   "world": "w",
+   "type": "part-of",
+   "roles": {
+    "part": "s2a",
+    "whole": "s2"
+   },
+   "start": "T10h11",
+   "until_superseded": true,
+   "accepted_by": [
+    "auditor"
+   ]
+  },
+  {
+   "op": "account",
+   "id": "acc-s2a",
+   "world": "w",
+   "roles": {
+    "patient": "batch-7",
+    "instrument": "heater-5"
+   },
+   "start": "T10h11",
+   "end": "T10h12",
+   "occurrence": "s2a",
+   "accepted_by": [
+    "auditor"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "po-s2b",
+   "world": "w",
+   "type": "part-of",
+   "roles": {
+    "part": "s2b",
+    "whole": "s2"
+   },
+   "start": "T10h12",
+   "until_superseded": true,
+   "accepted_by": [
+    "auditor"
+   ]
+  },
+  {
+   "op": "account",
+   "id": "acc-s2b",
+   "world": "w",
+   "roles": {
+    "patient": "batch-7",
+    "instrument": "oven-2",
+    "location": "hold-chamber"
+   },
+   "start": "T10h12",
+   "end": "T10h14",
+   "occurrence": "s2b",
+   "accepted_by": [
+    "auditor"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "po-s2c",
+   "world": "w",
+   "type": "part-of",
+   "roles": {
+    "part": "s2c",
+    "whole": "s2"
+   },
+   "start": "T10h13",
+   "until_superseded": true,
+   "accepted_by": [
+    "auditor"
+   ]
+  },
+  {
+   "op": "account",
+   "id": "acc-s2c",
+   "world": "w",
+   "roles": {
+    "patient": "oven-2",
+    "instrument": "vent-valve"
+   },
+   "start": "T10h13",
+   "occurrence": "s2c",
+   "accepted_by": [
+    "auditor"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "po-s3",
+   "world": "w",
+   "type": "part-of",
+   "roles": {
+    "part": "s3",
+    "whole": "R"
+   },
+   "start": "T10h14",
+   "until_superseded": true,
+   "accepted_by": [
+    "auditor"
+   ]
+  },
+  {
+   "op": "account",
+   "id": "acc-s3",
+   "world": "w",
+   "roles": {
+    "patient": "batch-7",
+    "instrument": "gauge-3"
+   },
+   "start": "T10h14",
+   "end": "T10h15",
+   "occurrence": "s3",
+   "accepted_by": [
+    "auditor"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "po-s4",
+   "world": "w",
+   "type": "part-of",
+   "roles": {
+    "part": "s4",
+    "whole": "R"
+   },
+   "start": "T10h15",
+   "until_superseded": true,
+   "accepted_by": [
+    "auditor"
+   ]
+  },
+  {
+   "op": "account",
+   "id": "acc-s4",
+   "world": "w",
+   "roles": {
+    "patient": "batch-7",
+    "instrument": "packer-4"
+   },
+   "start": "T10h15",
+   "end": "T10h17",
+   "occurrence": "s4",
+   "accepted_by": [
+    "auditor"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "po-s8",
+   "world": "w",
+   "type": "part-of",
+   "roles": {
+    "part": "s8",
+    "whole": "R"
+   },
+   "start": "T10h10",
+   "until_superseded": true,
+   "attester": "contractor"
+  },
+  {
+   "op": "account",
+   "id": "acc-s8",
+   "world": "w",
+   "roles": {
+    "patient": "batch-7",
+    "instrument": "sample-probe"
+   },
+   "start": "T10h10",
+   "end": "T10h11",
+   "occurrence": "s8",
+   "attester": "contractor"
+  },
+  {
+   "op": "accept",
+   "id": "rej-po-s8",
+   "target": "po-s8",
+   "holder": "system",
+   "verdict": "rejected"
+  },
+  {
+   "op": "accept",
+   "id": "rej-acc-s8",
+   "target": "acc-s8",
+   "holder": "system",
+   "verdict": "rejected"
+  },
+  {
+   "op": "mark",
+   "name": "m1"
+  },
+  {
+   "op": "deny",
+   "id": "den-s3",
+   "world": "w",
+   "type": "part-of",
+   "roles": {
+    "part": "s3",
+    "whole": "R"
+   },
+   "start": "T10h14",
+   "until_superseded": true,
+   "attester": "auditor",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "deny",
+   "id": "den-s2c",
+   "world": "w",
+   "type": "part-of",
+   "roles": {
+    "part": "s2c",
+    "whole": "s2"
+   },
+   "start": "T10h13",
+   "until_superseded": true,
+   "attester": "auditor",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "deny",
+   "id": "den-s4",
+   "world": "w",
+   "type": "part-of",
+   "roles": {
+    "part": "s4",
+    "whole": "R"
+   },
+   "start": "T10h15",
+   "until_superseded": true,
+   "attester": "contractor"
+  },
+  {
+   "op": "attest",
+   "id": "po-s5",
+   "world": "w",
+   "type": "part-of",
+   "roles": {
+    "part": "s5",
+    "whole": "R"
+   },
+   "start": "T10h17",
+   "until_superseded": true,
+   "attester": "temp-crew",
+   "accepted_by": [
+    "auditor"
+   ]
+  },
+  {
+   "op": "account",
+   "id": "acc-s5",
+   "world": "w",
+   "roles": {
+    "patient": "batch-7",
+    "instrument": "labeller-6"
+   },
+   "start": "T10h17",
+   "end": "T10h18",
+   "occurrence": "s5",
+   "attester": "temp-crew",
+   "accepted_by": [
+    "auditor"
+   ]
+  },
+  {
+   "op": "mark",
+   "name": "m2"
+  },
+  {
+   "op": "attest",
+   "id": "po-s6",
+   "world": "w",
+   "type": "part-of",
+   "roles": {
+    "part": "s6",
+    "whole": "R"
+   },
+   "start": "T10h18",
+   "until_superseded": true,
+   "accepted_by": [
+    "auditor"
+   ]
+  },
+  {
+   "op": "account",
+   "id": "acc-s6",
+   "world": "w",
+   "roles": {
+    "patient": "batch-7",
+    "location": "dispatch-bay"
+   },
+   "start": "T10h18",
+   "occurrence": "s6",
+   "accepted_by": [
+    "auditor"
+   ]
+  },
+  {
+   "op": "world",
+   "id": "v",
+   "kind": "hypothetical",
+   "base": "w",
+   "branch_at": "T10h16",
+   "knowledge_at": "@m2"
+  },
+  {
+   "op": "attest",
+   "id": "po-s7",
+   "world": "v",
+   "type": "part-of",
+   "roles": {
+    "part": "s7",
+    "whole": "R"
+   },
+   "start": "T10h12",
+   "until_superseded": true,
+   "stance": "stipulates"
+  },
+  {
+   "op": "account",
+   "id": "acc-s7",
+   "world": "v",
+   "roles": {
+    "patient": "batch-7",
+    "instrument": "oven-2",
+    "location": "rework-cell"
+   },
+   "start": "T10h16",
+   "end": "T10h19",
+   "occurrence": "s7"
+  }
+ ]
+}

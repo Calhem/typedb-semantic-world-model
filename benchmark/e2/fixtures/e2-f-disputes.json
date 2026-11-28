@@ -1,0 +1,541 @@
+{
+ "id": "e2-f-disputes",
+ "description": "Synthetic equipment room (concept data, invented names). f-room is parent of f-rack (translation [1,0,0]) and of f-arm, for which two accepted transforms disagree (a disputed frame-transform slot). Several sources place things in f-room or f-rack: disjoint, touching, three-way, direct-versus-derived, corrected, orientation-only, polarity-disputed and perspective-only-disputed cases.",
+ "profiles": [
+  "organisation"
+ ],
+ "steps": [
+  {
+   "op": "entity",
+   "kind": "spatial-frame",
+   "id": "f-room"
+  },
+  {
+   "op": "entity",
+   "kind": "spatial-frame",
+   "id": "f-rack"
+  },
+  {
+   "op": "entity",
+   "kind": "spatial-frame",
+   "id": "f-arm"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "valve-4",
+   "name": "valve 4"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "hinge-2",
+   "name": "hinge 2"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "panel-1",
+   "name": "panel 1"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "bolt-3",
+   "name": "bolt 3"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "beacon-6",
+   "name": "beacon 6"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "sensor-5",
+   "name": "sensor 5"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "rod-8",
+   "name": "rod 8"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "disc-9",
+   "name": "disc 9"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "lens-2",
+   "name": "lens 2"
+  },
+  {
+   "op": "entity",
+   "kind": "organisation",
+   "id": "survey-team",
+   "name": "Survey Team Q"
+  },
+  {
+   "op": "entity",
+   "kind": "organisation",
+   "id": "inspect-co",
+   "name": "Inspection Unit R"
+  },
+  {
+   "op": "entity",
+   "kind": "organisation",
+   "id": "audit-co",
+   "name": "Audit Group S"
+  },
+  {
+   "op": "entity",
+   "kind": "person",
+   "id": "ops-lead",
+   "name": "Operations Lead P"
+  },
+  {
+   "op": "world",
+   "id": "w",
+   "kind": "actual"
+  },
+  {
+   "op": "relate_frames",
+   "id": "rf-room-rack",
+   "world": "w",
+   "parent": "f-room",
+   "child": "f-rack",
+   "translation": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "rotation": [
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "accept",
+   "id": "acc-rack-ops",
+   "target": "rf-room-rack",
+   "holder": "ops-lead",
+   "verdict": "accepted"
+  },
+  {
+   "op": "relate_frames",
+   "id": "rf-room-arm-a",
+   "world": "w",
+   "parent": "f-room",
+   "child": "f-arm",
+   "translation": [
+    0.0,
+    2.0,
+    0.0
+   ],
+   "rotation": [
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "start": "T1",
+   "until_superseded": true
+  },
+  {
+   "op": "relate_frames",
+   "id": "rf-room-arm-b",
+   "world": "w",
+   "parent": "f-room",
+   "child": "f-arm",
+   "translation": [
+    0.0,
+    2.5,
+    0.0
+   ],
+   "rotation": [
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "start": "T1",
+   "until_superseded": true,
+   "attester": "survey-team",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "position",
+   "id": "pos-valve-a",
+   "world": "w",
+   "thing": "valve-4",
+   "frame": "f-room",
+   "x": [
+    0.0,
+    0.2
+   ],
+   "y": 0.0,
+   "z": 0.0,
+   "start": "T2",
+   "until_superseded": true
+  },
+  {
+   "op": "position",
+   "id": "pos-valve-b",
+   "world": "w",
+   "thing": "valve-4",
+   "frame": "f-room",
+   "x": [
+    1.0,
+    1.2
+   ],
+   "y": 0.0,
+   "z": 0.0,
+   "start": "T2",
+   "until_superseded": true,
+   "attester": "survey-team",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "position",
+   "id": "pos-hinge-a",
+   "world": "w",
+   "thing": "hinge-2",
+   "frame": "f-room",
+   "x": [
+    0.0,
+    0.5
+   ],
+   "y": 0.0,
+   "z": 0.0,
+   "start": "T2",
+   "until_superseded": true
+  },
+  {
+   "op": "position",
+   "id": "pos-hinge-b",
+   "world": "w",
+   "thing": "hinge-2",
+   "frame": "f-room",
+   "x": [
+    0.5,
+    0.9
+   ],
+   "y": 0.0,
+   "z": 0.0,
+   "start": "T2",
+   "until_superseded": true,
+   "attester": "survey-team",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "position",
+   "id": "pos-panel-room",
+   "world": "w",
+   "thing": "panel-1",
+   "frame": "f-room",
+   "x": 5.0,
+   "y": 0.0,
+   "z": 0.0,
+   "start": "T2",
+   "until_superseded": true
+  },
+  {
+   "op": "position",
+   "id": "pos-panel-rack",
+   "world": "w",
+   "thing": "panel-1",
+   "frame": "f-rack",
+   "x": 0.0,
+   "y": 0.0,
+   "z": 0.0,
+   "start": "T2",
+   "until_superseded": true,
+   "attester": "survey-team",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "position",
+   "id": "pos-bolt-a",
+   "world": "w",
+   "thing": "bolt-3",
+   "frame": "f-room",
+   "x": [
+    0.0,
+    1.0
+   ],
+   "y": 0.0,
+   "z": 0.0,
+   "start": "T2",
+   "until_superseded": true
+  },
+  {
+   "op": "position",
+   "id": "pos-bolt-b",
+   "world": "w",
+   "thing": "bolt-3",
+   "frame": "f-room",
+   "x": [
+    3.0,
+    4.0
+   ],
+   "y": 0.0,
+   "z": 0.0,
+   "start": "T2",
+   "until_superseded": true,
+   "attester": "survey-team",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "position",
+   "id": "pos-bolt-c",
+   "world": "w",
+   "thing": "bolt-3",
+   "frame": "f-room",
+   "x": [
+    0.5,
+    3.5
+   ],
+   "y": 0.0,
+   "z": 0.0,
+   "start": "T2",
+   "until_superseded": true,
+   "attester": "inspect-co",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "position",
+   "id": "pos-beacon-sys",
+   "world": "w",
+   "thing": "beacon-6",
+   "frame": "f-room",
+   "x": [
+    0.0,
+    0.1
+   ],
+   "y": 0.0,
+   "z": 0.0,
+   "start": "T2",
+   "until_superseded": true
+  },
+  {
+   "op": "position",
+   "id": "pos-beacon-surv",
+   "world": "w",
+   "thing": "beacon-6",
+   "frame": "f-room",
+   "x": [
+    5.0,
+    5.1
+   ],
+   "y": 0.0,
+   "z": 0.0,
+   "start": "T2",
+   "until_superseded": true,
+   "attester": "survey-team",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "mark",
+   "name": "m-before-fix"
+  },
+  {
+   "op": "correct",
+   "id": "fix-beacon",
+   "world": "w",
+   "target": "pos-beacon-sys",
+   "type": "positioned-in",
+   "roles": {
+    "positioned": "beacon-6",
+    "frame": "f-room"
+   },
+   "params": {
+    "x-min": 5.0,
+    "x-max": 5.05,
+    "y-min": 0.0,
+    "y-max": 0.0,
+    "z-min": 0.0,
+    "z-max": 0.0
+   },
+   "start": "T2",
+   "until_superseded": true
+  },
+  {
+   "op": "position",
+   "id": "pos-sensor-a",
+   "world": "w",
+   "thing": "sensor-5",
+   "frame": "f-room",
+   "x": 1.0,
+   "y": 1.0,
+   "z": 1.0,
+   "orientation": [
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "start": "T2",
+   "until_superseded": true
+  },
+  {
+   "op": "position",
+   "id": "pos-sensor-b",
+   "world": "w",
+   "thing": "sensor-5",
+   "frame": "f-room",
+   "x": 1.0,
+   "y": 1.0,
+   "z": 1.0,
+   "orientation": [
+    0.96,
+    0.0,
+    0.0,
+    0.28
+   ],
+   "start": "T2",
+   "until_superseded": true,
+   "attester": "survey-team",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "position",
+   "id": "pos-rod",
+   "world": "w",
+   "thing": "rod-8",
+   "frame": "f-rack",
+   "x": 0.2,
+   "y": 0.3,
+   "z": 0.4,
+   "start": "T2",
+   "until_superseded": true,
+   "attester": "survey-team",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "deny",
+   "id": "deny-rod",
+   "world": "w",
+   "type": "positioned-in",
+   "roles": {
+    "positioned": "rod-8",
+    "frame": "f-rack"
+   },
+   "params": {
+    "x-min": 0.2,
+    "x-max": 0.2,
+    "y-min": 0.3,
+    "y-max": 0.3,
+    "z-min": 0.4,
+    "z-max": 0.4
+   },
+   "start": "T2",
+   "until_superseded": true,
+   "attester": "inspect-co",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "position",
+   "id": "pos-disc",
+   "world": "w",
+   "thing": "disc-9",
+   "frame": "f-rack",
+   "x": [
+    0.1,
+    0.2
+   ],
+   "y": 0.0,
+   "z": 0.0,
+   "start": "T2",
+   "until_superseded": true,
+   "attester": "survey-team",
+   "accepted_by": [
+    "system",
+    "ops-lead"
+   ]
+  },
+  {
+   "op": "deny",
+   "id": "deny-disc",
+   "world": "w",
+   "type": "positioned-in",
+   "roles": {
+    "positioned": "disc-9",
+    "frame": "f-rack"
+   },
+   "params": {
+    "x-min": 0.1,
+    "x-max": 0.2,
+    "y-min": 0.0,
+    "y-max": 0.0,
+    "z-min": 0.0,
+    "z-max": 0.0
+   },
+   "start": "T2",
+   "until_superseded": true,
+   "attester": "audit-co",
+   "accepted_by": [
+    "ops-lead"
+   ]
+  },
+  {
+   "op": "position",
+   "id": "pos-lens-rack",
+   "world": "w",
+   "thing": "lens-2",
+   "frame": "f-rack",
+   "x": [
+    0.0,
+    0.4
+   ],
+   "y": 0.0,
+   "z": 0.0,
+   "start": "T2",
+   "until_superseded": true
+  },
+  {
+   "op": "position",
+   "id": "pos-lens-arm",
+   "world": "w",
+   "thing": "lens-2",
+   "frame": "f-arm",
+   "x": 0.0,
+   "y": 0.0,
+   "z": 0.0,
+   "start": "T2",
+   "until_superseded": true,
+   "attester": "survey-team",
+   "accepted_by": [
+    "system"
+   ]
+  }
+ ]
+}

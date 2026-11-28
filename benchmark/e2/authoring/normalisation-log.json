@@ -1,0 +1,652 @@
+[
+ {
+  "rule": "N4",
+  "at": "S-014",
+  "from": "T-S2",
+  "to": [
+   "DI-32"
+  ]
+ },
+ {
+  "rule": "N4",
+  "at": "S-023",
+  "from": "T-S1",
+  "to": [
+   "DI-32"
+  ]
+ },
+ {
+  "rule": "N4",
+  "at": "S-024",
+  "from": "T-S3",
+  "to": [
+   "DI-25"
+  ]
+ },
+ {
+  "rule": "N4",
+  "at": "F-002",
+  "from": null,
+  "to": [
+   "DI-24"
+  ]
+ },
+ {
+  "rule": "N4",
+  "at": "F-010",
+  "from": null,
+  "to": [
+   "DI-25"
+  ]
+ },
+ {
+  "rule": "N4",
+  "at": "F-011",
+  "from": null,
+  "to": [
+   "DI-25"
+  ]
+ },
+ {
+  "rule": "N4",
+  "at": "F-012",
+  "from": null,
+  "to": [
+   "DI-32"
+  ]
+ },
+ {
+  "rule": "N4",
+  "at": "M-003",
+  "from": null,
+  "to": [
+   "DI-30"
+  ]
+ },
+ {
+  "rule": "N4",
+  "at": "M-014",
+  "from": null,
+  "to": [
+   "DI-24"
+  ]
+ },
+ {
+  "rule": "N4",
+  "at": "M-022",
+  "from": null,
+  "to": [
+   "DI-34"
+  ]
+ },
+ {
+  "rule": "N4",
+  "at": "M-024",
+  "from": null,
+  "to": [
+   "DI-33"
+  ]
+ },
+ {
+  "rule": "N4",
+  "at": "M-027",
+  "from": null,
+  "to": [
+   "DI-26"
+  ]
+ },
+ {
+  "rule": "N4",
+  "at": "M-030",
+  "from": null,
+  "to": [
+   "DI-26"
+  ]
+ },
+ {
+  "rule": "N4",
+  "at": "C-001",
+  "from": "T-C3",
+  "to": [
+   "DI-28"
+  ]
+ },
+ {
+  "rule": "N4",
+  "at": "C-002",
+  "from": "T-C1",
+  "to": [
+   "DI-28"
+  ]
+ },
+ {
+  "rule": "N4",
+  "at": "C-003",
+  "from": "T-C2",
+  "to": [
+   "DI-28"
+  ]
+ },
+ {
+  "rule": "N4",
+  "at": "C-007",
+  "from": "T-C6",
+  "to": [
+   "DI-35"
+  ]
+ },
+ {
+  "rule": "N4",
+  "at": "C-012",
+  "from": "T-C4",
+  "to": [
+   "DI-35"
+  ]
+ },
+ {
+  "rule": "N4",
+  "at": "C-013",
+  "from": "T-C5",
+  "to": [
+   "DI-35"
+  ]
+ },
+ {
+  "rule": "N1",
+  "at": "C-022:s1:transitions[*].window",
+  "from": "T5",
+  "to": "2026-11-05T09:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "C-022:s1:transitions[*].window",
+  "from": "T5",
+  "to": "2026-11-05T09:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "C-023:s1:transitions[*].window",
+  "from": "T8",
+  "to": "2026-11-08T09:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "C-023:s1:transitions[*].window",
+  "from": "T8",
+  "to": "2026-11-08T09:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "C-024:s1:transitions[*].window",
+  "from": "T6",
+  "to": "2026-11-06T09:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "C-024:s1:transitions[*].window",
+  "from": "T9",
+  "to": "2026-11-09T09:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "C-025:s1:transitions[*].window",
+  "from": "T6",
+  "to": "2026-11-06T09:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "C-025:s1:transitions[*].window",
+  "from": "T9",
+  "to": "2026-11-09T09:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "C-026:s1:transitions[*].window",
+  "from": "T4",
+  "to": "2026-11-04T09:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "C-026:s1:transitions[*].window",
+  "from": "T4",
+  "to": "2026-11-04T09:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "C-026:s2:transitions[*].window",
+  "from": "T4",
+  "to": "2026-11-04T09:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "C-026:s2:transitions[*].window",
+  "from": "T4",
+  "to": "2026-11-04T09:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "C-027:s1:transitions[*].window",
+  "from": "T6",
+  "to": "2026-11-06T09:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "C-027:s1:transitions[*].window",
+  "from": "T6",
+  "to": "2026-11-06T09:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "C-027:s2:transitions[*].window",
+  "from": "T9",
+  "to": "2026-11-09T09:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "C-027:s2:transitions[*].window",
+  "from": "T9",
+  "to": "2026-11-09T09:00:00+00:00"
+ },
+ {
+  "rule": "R1",
+  "at": "e2-p-accounts:acc-y",
+  "from": {
+   "op": "account",
+   "id": "acc-y",
+   "world": "w",
+   "roles": {
+    "patient": "unit-9",
+    "instrument": "pump-3"
+   },
+   "start": [
+    "T14h13",
+    "T14h14"
+   ],
+   "end": "T14h15",
+   "attester": "duty-nurse",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  "to": {
+   "op": "account_again",
+   "id": "acc-y",
+   "world": "w",
+   "description": "acc-x",
+   "start": [
+    "T14h13",
+    "T14h14"
+   ],
+   "end": "T14h15",
+   "attester": "duty-nurse",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  "reason": "two accounts of one description need `account_again` (v1.1 step)"
+ },
+ {
+  "rule": "N1",
+  "at": "P-006:s1:[occurrence=s3].start.earliest",
+  "from": "T10h14",
+  "to": "2026-11-10T14:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "P-006:s1:[occurrence=s3].start.latest",
+  "from": "T10h14",
+  "to": "2026-11-10T14:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "P-006:s1:[occurrence=s3].end.earliest",
+  "from": "T10h15",
+  "to": "2026-11-10T15:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "P-006:s1:[occurrence=s3].end.latest",
+  "from": "T10h15",
+  "to": "2026-11-10T15:00:00+00:00"
+ },
+ {
+  "rule": "N2",
+  "at": "P-010:s1",
+  "from": "answer",
+  "to": "before"
+ },
+ {
+  "rule": "N1",
+  "at": "P-011:s1:start.earliest",
+  "from": "T12h09",
+  "to": "2026-11-12T09:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "P-011:s1:start.latest",
+  "from": "T12h09",
+  "to": "2026-11-12T09:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "P-011:s1:end.earliest",
+  "from": "T12h11",
+  "to": "2026-11-12T11:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "P-011:s1:end.latest",
+  "from": "T12h12",
+  "to": "2026-11-12T12:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "P-011:s2:start.earliest",
+  "from": "T12h12",
+  "to": "2026-11-12T12:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "P-011:s2:start.latest",
+  "from": "T12h13",
+  "to": "2026-11-12T13:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "P-011:s2:end.earliest",
+  "from": "T12h15",
+  "to": "2026-11-12T15:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "P-011:s2:end.latest",
+  "from": "T12h15",
+  "to": "2026-11-12T15:00:00+00:00"
+ },
+ {
+  "rule": "N2",
+  "at": "P-011:s3",
+  "from": "answer",
+  "to": "before"
+ },
+ {
+  "rule": "N2",
+  "at": "P-012:s1",
+  "from": "answer",
+  "to": "before"
+ },
+ {
+  "rule": "N2",
+  "at": "P-012:s2",
+  "from": "answer",
+  "to": "before"
+ },
+ {
+  "rule": "N2",
+  "at": "P-013:s1",
+  "from": "answer",
+  "to": "before"
+ },
+ {
+  "rule": "N4",
+  "at": "P-013",
+  "from": "T-P1",
+  "to": [
+   "DI-36"
+  ]
+ },
+ {
+  "rule": "N2",
+  "at": "P-014:s1",
+  "from": "answer",
+  "to": "before"
+ },
+ {
+  "rule": "N4",
+  "at": "P-014",
+  "from": "T-P3",
+  "to": [
+   "DI-36"
+  ]
+ },
+ {
+  "rule": "N2",
+  "at": "P-015:s1",
+  "from": "answer",
+  "to": "before"
+ },
+ {
+  "rule": "N2",
+  "at": "P-016:s1",
+  "from": "answer",
+  "to": "before"
+ },
+ {
+  "rule": "N2",
+  "at": "P-017:s1",
+  "from": "answer",
+  "to": "before"
+ },
+ {
+  "rule": "N2",
+  "at": "P-017:s2",
+  "from": "answer",
+  "to": "before"
+ },
+ {
+  "rule": "N1",
+  "at": "P-018:s1:[occurrence=u1].start.earliest",
+  "from": "T13h10",
+  "to": "2026-11-13T10:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "P-018:s1:[occurrence=u1].end.latest",
+  "from": "T13h12",
+  "to": "2026-11-13T12:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "P-018:s1:[occurrence=u2].start.earliest",
+  "from": "T13h11",
+  "to": "2026-11-13T11:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "P-018:s1:[occurrence=u2].end.latest",
+  "from": "T13h13",
+  "to": "2026-11-13T13:00:00+00:00"
+ },
+ {
+  "rule": "N2",
+  "at": "P-018:s2",
+  "from": "answer",
+  "to": "before"
+ },
+ {
+  "rule": "N2",
+  "at": "P-018:s3",
+  "from": "answer",
+  "to": "before"
+ },
+ {
+  "rule": "N3",
+  "at": "P-019:s2",
+  "from": "answer",
+  "to": "."
+ },
+ {
+  "rule": "N1",
+  "at": "P-020:s1:start.earliest",
+  "from": "T13h07",
+  "to": "2026-11-13T07:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "P-020:s1:start.latest",
+  "from": "T13h07",
+  "to": "2026-11-13T07:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "P-020:s1:end.earliest",
+  "from": "T13h09",
+  "to": "2026-11-13T09:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "P-020:s1:end.latest",
+  "from": "T13h09",
+  "to": "2026-11-13T09:00:00+00:00"
+ },
+ {
+  "rule": "N2",
+  "at": "P-020:s2",
+  "from": "answer",
+  "to": "before"
+ },
+ {
+  "rule": "N1",
+  "at": "P-021:s1:[occurrence=u5].start.earliest",
+  "from": "T13h16",
+  "to": "2026-11-13T16:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "P-021:s1:[occurrence=u5].start.latest",
+  "from": "T13h18",
+  "to": "2026-11-13T18:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "P-021:s1:[occurrence=u4].end.earliest",
+  "from": "T13h15",
+  "to": "2026-11-13T15:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "P-021:s1:[occurrence=u4].end.latest",
+  "from": "T13h17",
+  "to": "2026-11-13T17:00:00+00:00"
+ },
+ {
+  "rule": "N2",
+  "at": "P-021:s2",
+  "from": "answer",
+  "to": "before"
+ },
+ {
+  "rule": "N1",
+  "at": "P-023:s1:[occurrence=s2c].start.earliest",
+  "from": "T10h13",
+  "to": "2026-11-10T13:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "P-023:s1:[occurrence=s2c].start.latest",
+  "from": "T10h13",
+  "to": "2026-11-10T13:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "P-024:s1:start.earliest",
+  "from": "T14h12",
+  "to": "2026-11-14T12:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "P-024:s1:start.latest",
+  "from": "T14h12",
+  "to": "2026-11-14T12:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "P-024:s1:end.earliest",
+  "from": "T14h16",
+  "to": "2026-11-14T16:00:00+00:00"
+ },
+ {
+  "rule": "N1",
+  "at": "P-024:s1:end.latest",
+  "from": "T14h16",
+  "to": "2026-11-14T16:00:00+00:00"
+ },
+ {
+  "rule": "N2",
+  "at": "P-024:s2",
+  "from": "answer",
+  "to": "before"
+ },
+ {
+  "rule": "N4",
+  "at": "P-024",
+  "from": "T-P2",
+  "to": [
+   "DI-36"
+  ]
+ },
+ {
+  "rule": "N2",
+  "at": "P-025:s1",
+  "from": "answer",
+  "to": "before"
+ },
+ {
+  "rule": "R1",
+  "at": "P-025:s1",
+  "from": {
+   "b": "acc-y"
+  },
+  "to": {
+   "b": "acc-x"
+  }
+ },
+ {
+  "rule": "N4",
+  "at": "X-006",
+  "from": "T-X5",
+  "to": [
+   "DI-34"
+  ]
+ },
+ {
+  "rule": "N4",
+  "at": "X-013",
+  "from": "T-X6",
+  "to": [
+   "DI-35"
+  ]
+ },
+ {
+  "rule": "N4",
+  "at": "X-021",
+  "from": "T-X4",
+  "to": [
+   "DI-27"
+  ]
+ },
+ {
+  "rule": "N4",
+  "at": "X-023",
+  "from": "T-X1",
+  "to": [
+   "DI-31"
+  ]
+ },
+ {
+  "rule": "N4",
+  "at": "X-024",
+  "from": "T-X2",
+  "to": [
+   "DI-31"
+  ]
+ },
+ {
+  "rule": "N4",
+  "at": "X-025",
+  "from": "T-X3",
+  "to": [
+   "DI-27"
+  ]
+ }
+]

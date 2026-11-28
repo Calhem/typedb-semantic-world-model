@@ -1,0 +1,193 @@
+{
+ "id": "e2-m-mass-1",
+ "description": "Synthetic ingot ingot-n4 (invented), also recorded under the alias bar-0417 (same-as accepted by the system). mm1 is measured against the alias. The system's persistent measurement mm2 is corrected by mm3 (same attester, supersedes mm2) after mark before-correction. External lab lab-orsa measures mo1 (accepted by the system), then corrects it with mo2 (supersedes mo1), which the system has not accepted.",
+ "profiles": [
+  "organisation",
+  "laboratory"
+ ],
+ "steps": [
+  {
+   "op": "world",
+   "id": "w",
+   "kind": "actual"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "ingot-n4",
+   "name": "ingot N4"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "bar-0417",
+   "name": "bar 0417"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "balance-1",
+   "name": "balance 1"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "balance-2",
+   "name": "balance 2"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "balance-3",
+   "name": "balance 3 (lab-orsa)"
+  },
+  {
+   "op": "entity",
+   "kind": "organisation",
+   "id": "lab-orsa",
+   "name": "Orsa materials laboratory"
+  },
+  {
+   "op": "define_unit",
+   "id": "kilogram",
+   "name": "kilogram",
+   "dimension": "mass",
+   "si_factor": 1,
+   "si_offset": 0
+  },
+  {
+   "op": "define_unit",
+   "id": "gram",
+   "name": "gram",
+   "dimension": "mass",
+   "si_factor": 0.001,
+   "si_offset": 0
+  },
+  {
+   "op": "define_quality_kind",
+   "id": "mass",
+   "name": "mass",
+   "dimension": "mass"
+  },
+  {
+   "op": "attest",
+   "id": "sa1",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "ingot-n4",
+     "bar-0417"
+    ]
+   }
+  },
+  {
+   "op": "measure",
+   "id": "mm1",
+   "world": "w",
+   "bearer": "bar-0417",
+   "quality": "mass",
+   "value": 2503.0,
+   "unit": "gram",
+   "uncertainty": 1.5,
+   "k": 2,
+   "start": "T2",
+   "end": "T4",
+   "instrument": "balance-1",
+   "conditions": [
+    "20 C"
+   ],
+   "calibration": "BAL1-C"
+  },
+  {
+   "op": "measure",
+   "id": "mm2",
+   "world": "w",
+   "bearer": "ingot-n4",
+   "quality": "mass",
+   "value": 2.512,
+   "unit": "kilogram",
+   "uncertainty": 0.002,
+   "k": 2,
+   "start": "T6",
+   "persists": true,
+   "instrument": "balance-2",
+   "conditions": [
+    "20 C"
+   ],
+   "calibration": "BAL2-C"
+  },
+  {
+   "op": "mark",
+   "name": "before-correction"
+  },
+  {
+   "op": "measure",
+   "id": "mm3",
+   "world": "w",
+   "bearer": "ingot-n4",
+   "quality": "mass",
+   "value": 2.509,
+   "unit": "kilogram",
+   "uncertainty": 0.002,
+   "k": 2,
+   "start": "T6",
+   "persists": true,
+   "supersedes": "mm2",
+   "instrument": "balance-2",
+   "conditions": [
+    "20 C"
+   ],
+   "calibration": "BAL2-C"
+  },
+  {
+   "op": "measure",
+   "id": "mo1",
+   "world": "w",
+   "bearer": "ingot-n4",
+   "quality": "mass",
+   "value": 2.53,
+   "unit": "kilogram",
+   "uncertainty": 0.003,
+   "k": 2,
+   "start": "T10",
+   "end": "T12",
+   "instrument": "balance-3",
+   "conditions": [
+    "20 C"
+   ],
+   "calibration": "ORSA-9",
+   "attester": "lab-orsa"
+  },
+  {
+   "op": "accept",
+   "target": "mo1",
+   "holder": "system",
+   "verdict": "accepted"
+  },
+  {
+   "op": "mark",
+   "name": "before-orsa-correction"
+  },
+  {
+   "op": "measure",
+   "id": "mo2",
+   "world": "w",
+   "bearer": "ingot-n4",
+   "quality": "mass",
+   "value": 2.511,
+   "unit": "kilogram",
+   "uncertainty": 0.003,
+   "k": 2,
+   "start": "T10",
+   "end": "T12",
+   "supersedes": "mo1",
+   "instrument": "balance-3",
+   "conditions": [
+    "20 C"
+   ],
+   "calibration": "ORSA-9",
+   "attester": "lab-orsa"
+  }
+ ]
+}

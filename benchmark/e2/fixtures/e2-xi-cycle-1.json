@@ -1,0 +1,469 @@
+{
+ "id": "e2-xi-cycle-1",
+ "description": "Synthetic museum-archive catalogue with four separate identity clusters. (1) Cycle e1=e2, e2=e3 (system) and e3=e1 (asserted by survey-lead, accepted by the system and by survey-lead's own view); e1 is asserted a member of collection coll-k, e3 is denied a member by archive-clerk (accepted by the system). After mark before-dispute, archive-clerk denies e3=e1 (accepted by the system), making that pair disputed for the system; after mark disputed, the system rejects that denial; then mark rejected. (2) A five-name tree f1=f2, f1=f3, f3=f4, f3=f5 (system), with an unreviewed proposed link f5=f6 by intake-bot; f4 is asserted a member of coll-2, f6 is denied a member of coll-2 by the system. (3) A four-name star g1=g2, g1=g3, g1=g4 (system); g4 asserted a member of coll-3, g2 denied a member of coll-3 by archive-clerk (accepted by the system). (4) A three-name chain h1=h2, h2=h3 (system); h3 denied a member of coll-4 by archive-clerk (accepted by the system); an unlinked name h4 is asserted a member of coll-4 by the system. Same-as claims carry no valid interval (identity is timeless content, v0.2 3.4).",
+ "profiles": [],
+ "steps": [
+  {
+   "op": "world",
+   "id": "w",
+   "kind": "actual"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "e1",
+   "name": "jar fragment A-17"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "e2",
+   "name": "accession 1962/440"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "e3",
+   "name": "loan item LV-9"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "f1",
+   "name": "lamp base Q"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "f2",
+   "name": "drawer 12 object 3"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "f3",
+   "name": "photo ref P-881"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "f4",
+   "name": "accession 1970/018"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "f5",
+   "name": "conservation lot C-5"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "f6",
+   "name": "intake scan 5501"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "g1",
+   "name": "bead string B"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "g2",
+   "name": "accession 1955/203"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "g3",
+   "name": "exhibit label 77"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "g4",
+   "name": "box 9 item 2"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "h1",
+   "name": "seal impression S"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "h2",
+   "name": "accession 1981/066"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "h3",
+   "name": "cast copy K-3"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "h4",
+   "name": "seal impression T"
+  },
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "coll-k",
+   "name": "Kiln Hill Collection"
+  },
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "coll-2",
+   "name": "Lamplight Study Collection"
+  },
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "coll-3",
+   "name": "Bead Trade Collection"
+  },
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "coll-4",
+   "name": "Seals Reference Collection"
+  },
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "survey-lead",
+   "name": "Field Survey Lead"
+  },
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "archive-clerk",
+   "name": "Archive Clerk"
+  },
+  {
+   "op": "entity",
+   "kind": "social-object",
+   "id": "intake-bot",
+   "name": "Intake Matcher"
+  },
+  {
+   "op": "attest",
+   "id": "l12",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "e1",
+     "e2"
+    ]
+   },
+   "accepted_by": [
+    "survey-lead"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "l23",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "e2",
+     "e3"
+    ]
+   },
+   "accepted_by": [
+    "survey-lead"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "l31",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "e3",
+     "e1"
+    ]
+   },
+   "attester": "survey-lead",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "c1",
+   "world": "w",
+   "type": "member-of",
+   "roles": {
+    "member": "e1",
+    "group": "coll-k"
+   },
+   "start": "T2",
+   "until_superseded": true,
+   "accepted_by": [
+    "survey-lead"
+   ]
+  },
+  {
+   "op": "deny",
+   "id": "c3d",
+   "world": "w",
+   "type": "member-of",
+   "roles": {
+    "member": "e3",
+    "group": "coll-k"
+   },
+   "start": "T2",
+   "until_superseded": true,
+   "attester": "archive-clerk",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "lf12",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "f1",
+     "f2"
+    ]
+   }
+  },
+  {
+   "op": "attest",
+   "id": "lf13",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "f1",
+     "f3"
+    ]
+   }
+  },
+  {
+   "op": "attest",
+   "id": "lf34",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "f3",
+     "f4"
+    ]
+   }
+  },
+  {
+   "op": "attest",
+   "id": "lf35",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "f3",
+     "f5"
+    ]
+   }
+  },
+  {
+   "op": "attest",
+   "id": "lf56",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "f5",
+     "f6"
+    ]
+   },
+   "attester": "intake-bot"
+  },
+  {
+   "op": "attest",
+   "id": "cf4",
+   "world": "w",
+   "type": "member-of",
+   "roles": {
+    "member": "f4",
+    "group": "coll-2"
+   },
+   "start": "T2",
+   "until_superseded": true
+  },
+  {
+   "op": "deny",
+   "id": "cf6d",
+   "world": "w",
+   "type": "member-of",
+   "roles": {
+    "member": "f6",
+    "group": "coll-2"
+   },
+   "start": "T2",
+   "until_superseded": true
+  },
+  {
+   "op": "attest",
+   "id": "lg12",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "g1",
+     "g2"
+    ]
+   }
+  },
+  {
+   "op": "attest",
+   "id": "lg13",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "g1",
+     "g3"
+    ]
+   }
+  },
+  {
+   "op": "attest",
+   "id": "lg14",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "g1",
+     "g4"
+    ]
+   }
+  },
+  {
+   "op": "attest",
+   "id": "cg4",
+   "world": "w",
+   "type": "member-of",
+   "roles": {
+    "member": "g4",
+    "group": "coll-3"
+   },
+   "start": "T2",
+   "until_superseded": true
+  },
+  {
+   "op": "deny",
+   "id": "cg2d",
+   "world": "w",
+   "type": "member-of",
+   "roles": {
+    "member": "g2",
+    "group": "coll-3"
+   },
+   "start": "T2",
+   "until_superseded": true,
+   "attester": "archive-clerk",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "lh12",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "h1",
+     "h2"
+    ]
+   }
+  },
+  {
+   "op": "attest",
+   "id": "lh23",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "h2",
+     "h3"
+    ]
+   }
+  },
+  {
+   "op": "deny",
+   "id": "ch3d",
+   "world": "w",
+   "type": "member-of",
+   "roles": {
+    "member": "h3",
+    "group": "coll-4"
+   },
+   "start": "T2",
+   "until_superseded": true,
+   "attester": "archive-clerk",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "attest",
+   "id": "ch4",
+   "world": "w",
+   "type": "member-of",
+   "roles": {
+    "member": "h4",
+    "group": "coll-4"
+   },
+   "start": "T2",
+   "until_superseded": true
+  },
+  {
+   "op": "mark",
+   "name": "before-dispute"
+  },
+  {
+   "op": "deny",
+   "id": "d31",
+   "world": "w",
+   "type": "same-as",
+   "roles": {
+    "same": [
+     "e3",
+     "e1"
+    ]
+   },
+   "attester": "archive-clerk",
+   "accepted_by": [
+    "system"
+   ]
+  },
+  {
+   "op": "mark",
+   "name": "disputed"
+  },
+  {
+   "op": "accept",
+   "id": "r31",
+   "target": "d31",
+   "holder": "system",
+   "verdict": "rejected"
+  },
+  {
+   "op": "mark",
+   "name": "rejected"
+  }
+ ]
+}

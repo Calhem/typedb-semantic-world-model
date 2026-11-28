@@ -1,0 +1,42 @@
+[
+ {
+  "role": "selftest",
+  "tool_calls": {
+   "Read": 2,
+   "Bash": 5,
+   "Grep": 1,
+   "WebFetch": 1
+  },
+  "issues": [
+   {
+    "tool": "Read",
+    "path": "/Users/x/repo/src/worldmodel/model.py",
+    "why": "outside the work directory"
+   },
+   {
+    "tool": "Bash",
+    "command": "cd /private<work> && cat ../../repo/src/a.py",
+    "why": "relative path may leave the work directory"
+   },
+   {
+    "tool": "Bash",
+    "command": "cd /private<work> && git log",
+    "why": "command reaches outside the pack"
+   },
+   {
+    "tool": "Grep",
+    "why": "no path (searches the session's cwd, outside the work directory)"
+   },
+   {
+    "tool": "WebFetch",
+    "why": "tool not allowed for an isolated session"
+   },
+   {
+    "tool": "Bash",
+    "path": "/private<work>/../other/secret",
+    "why": "absolute path outside the work directory"
+   }
+  ],
+  "isolated": false
+ }
+]

@@ -393,7 +393,19 @@ def _op_interpret(L, s, attester):
                           id=s["id"], **_interval(s))]
 
 
-E2_OPS = {"position": _op_position, "relate_frames": _op_relate_frames, "anchor_frame": _op_anchor_frame,
+def _op_account_again(L, s, attester):
+    """LABS-1.065: another account of an existing event description (an earlier `account` or `record_event` step):
+    the description's occurrence attested again by `attester` over its own interval (SD-CAU-10 needs several usable
+    accounts of one description). Uses the public writer `attest(world, event=...)`."""
+    _check_keys(s, ("world", "description", "start", "end", "attester"))
+    if s["description"] not in L.written:
+        raise FixtureError(f"step {s['id']!r}: description {s['description']!r} names no earlier step")
+    start = T(s["start"])
+    return [L.wm.attest(s["world"], event=s["description"], start=start,
+                        end=T(s["end"]) if "end" in s else start, attester=attester, id=s["id"])]
+
+
+E2_OPS = {"account_again": _op_account_again, "position": _op_position, "relate_frames": _op_relate_frames, "anchor_frame": _op_anchor_frame,
           "define_unit": _op_define_unit, "define_quality_kind": _op_define_quality_kind, "measure": _op_measure,
           "claim_cause": _op_claim_cause, "claim_effect": _op_claim_effect,
           "describe_occurrence": _op_describe_occurrence, "record_event": _op_record_event,

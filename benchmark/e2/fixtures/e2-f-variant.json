@@ -1,0 +1,182 @@
+{
+ "id": "e2-f-variant",
+ "description": "Synthetic site (concept data, invented names). Actual world w places pump-5 in f-site from T5; the hypothetical plan world v branches at T10 with knowledge at m-branch and stipulates a different pump position, a crane frame with a hook, and a spare robot r-9 that has no actual-world record. After the branch, the actual world corrects the pump position.",
+ "profiles": [],
+ "steps": [
+  {
+   "op": "entity",
+   "kind": "spatial-frame",
+   "id": "f-site"
+  },
+  {
+   "op": "entity",
+   "kind": "spatial-frame",
+   "id": "f-crane"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "pump-5",
+   "name": "pump 5"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "hook-2",
+   "name": "hook 2"
+  },
+  {
+   "op": "entity",
+   "kind": "physical-object",
+   "id": "r-9",
+   "name": "spare robot 9"
+  },
+  {
+   "op": "world",
+   "id": "w",
+   "kind": "actual"
+  },
+  {
+   "op": "position",
+   "id": "pos-pump",
+   "world": "w",
+   "thing": "pump-5",
+   "frame": "f-site",
+   "x": 4.0,
+   "y": 1.0,
+   "z": 0.0,
+   "start": "T5",
+   "until_superseded": true
+  },
+  {
+   "op": "mark",
+   "name": "m-branch"
+  },
+  {
+   "op": "world",
+   "id": "v",
+   "kind": "hypothetical",
+   "base": "w",
+   "branch_at": "T10",
+   "knowledge_at": "@m-branch"
+  },
+  {
+   "op": "attest",
+   "id": "stip-pump",
+   "world": "v",
+   "type": "positioned-in",
+   "roles": {
+    "positioned": "pump-5",
+    "frame": "f-site"
+   },
+   "params": {
+    "x-min": 20.0,
+    "x-max": 20.0,
+    "y-min": 1.0,
+    "y-max": 1.0,
+    "z-min": 0.0,
+    "z-max": 0.0
+   },
+   "start": "T12",
+   "until_superseded": true,
+   "stance": "stipulates"
+  },
+  {
+   "op": "attest",
+   "id": "stip-crane",
+   "world": "v",
+   "type": "frame-transform",
+   "roles": {
+    "parent": "f-site",
+    "child": "f-crane"
+   },
+   "params": {
+    "tx": 0.0,
+    "ty": 0.0,
+    "tz": 3.0,
+    "qw": 1.0,
+    "qx": 0.0,
+    "qy": 0.0,
+    "qz": 0.0
+   },
+   "start": "T12",
+   "until_superseded": true,
+   "stance": "stipulates"
+  },
+  {
+   "op": "attest",
+   "id": "stip-hook",
+   "world": "v",
+   "type": "positioned-in",
+   "roles": {
+    "positioned": "hook-2",
+    "frame": "f-crane"
+   },
+   "params": {
+    "x-min": 1.0,
+    "x-max": 1.0,
+    "y-min": 1.0,
+    "y-max": 1.0,
+    "z-min": 0.0,
+    "z-max": 0.5
+   },
+   "start": "T12",
+   "until_superseded": true,
+   "stance": "stipulates"
+  },
+  {
+   "op": "attest",
+   "id": "stip-r9-exist",
+   "world": "v",
+   "type": "existence",
+   "roles": {
+    "existent": "r-9"
+   },
+   "start": "T11",
+   "until_superseded": true,
+   "stance": "stipulates"
+  },
+  {
+   "op": "attest",
+   "id": "stip-r9-pos",
+   "world": "v",
+   "type": "positioned-in",
+   "roles": {
+    "positioned": "r-9",
+    "frame": "f-site"
+   },
+   "params": {
+    "x-min": 7.0,
+    "x-max": 7.0,
+    "y-min": 7.0,
+    "y-max": 7.0,
+    "z-min": 0.0,
+    "z-max": 0.0
+   },
+   "start": "T12",
+   "until_superseded": true,
+   "stance": "stipulates"
+  },
+  {
+   "op": "correct",
+   "id": "fix-pump",
+   "world": "w",
+   "target": "pos-pump",
+   "type": "positioned-in",
+   "roles": {
+    "positioned": "pump-5",
+    "frame": "f-site"
+   },
+   "params": {
+    "x-min": 4.5,
+    "x-max": 4.5,
+    "y-min": 1.0,
+    "y-max": 1.0,
+    "z-min": 0.0,
+    "z-max": 0.0
+   },
+   "start": "T5",
+   "until_superseded": true
+  }
+ ]
+}

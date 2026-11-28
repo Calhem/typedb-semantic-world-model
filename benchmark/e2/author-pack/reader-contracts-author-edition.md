@@ -133,7 +133,7 @@ premise must meet all three:
 
 ### 0.9 Ordering and multiplicity
 Unless a contract states an order [E], a list in an answer is compared as a **multiset**. A question that needs one
-design states is recorded as
+design states is recorded as (not fixed by the contract).
 
 ### 0.10 Approval record (LABS-1.063)
 
@@ -220,6 +220,32 @@ establish unique causation.
 `effects_of`), `timing` (in `explain`), `alternatives` (in `explain`), `attestations` (in `changes` explanations),
 `applies` and `occurrence_status` (in `effects_of` and `changes`), and `usable_accounts` name the approved but
 
+### 0.12 Established rules restated (pack v1.1) [E]
+
+These approved rules were stated inside entries this edition otherwise removes, so they are restated here. Each is
+established; it overrides any other text in this edition that seems to differ.
+
+| Reader | Rule | Source |
+|---|---|---|
+| `value_at` | A dispute keeps its conflicting relationship between rival values; polarity alone is not enough. | A0 F-4; SB Q-B2; P-VA-1 as qualified |
+| every reader, incl. `value_at` | No reader reports content that is DISPUTED for the perspective as undisputed. Value readers apply declared slots only; an exclusive office whose holders conflict is never reported as undisputed by a value reader. | B-D §2, §3; DI19 report §1; D2 §3; v0.2 §5.3 |
+| `transform_between` | A disputed transform on any route gives DISPUTED, with the disputed transform's attestations reported as conflicting evidence. | A2 "Outcomes"; v0.2 §5.3 |
+| `transform_between` | Unreviewed transforms bearing on the answer are listed as alternatives. | v0.2 §6.2 |
+| `where` | A derived candidate from a position disputed by an accepted denial is not INFERRED: the answer is not an undisputed INFERRED. | A2 "Provenance"; v0.2 §5.2 E6; common 0.7 |
+| `where`, `poses` | The thing is judged with its established same-as group: asking by any member gives the same candidates. | ID-D 9, ID-8 |
+| `poses` | Disputed entries cite both sides. | IB-D 4 |
+| `frame_info` | Disputed transforms, anchors and positions are marked and cited on both sides. | IB-D 4 |
+| `measurements` | An accepted denial is usable conflicting evidence. | v0.2 §6.2, §5.3; common §0.4 P-1 |
+| `measurements` | Measurements of an alias are measurements of the bearer (selection by the whole identity class). | ID §3.8 ID-8 |
+| `measurements` | `has-quality` content is reported in the SI unit. | D-C-1; v0.2 §3.3 |
+| `compare_measurements` | An accepted assertion and an accepted denial of the measured content give DISPUTED, citing both, with or without `t`. | v0.2 §5.3; stage-c "Disputes" |
+| `measurement_calibration` | The reference check "no certificate recorded" applies only when the instrument has no certificates. | d3 §3 |
+| `causes_of` | A description-level claim answers an occurrence question only when both descriptions have usable describes links. | PLAN §9.3 "Lifting"; SB U-2 |
+| `causes_of` | A lifted answer cites the describes links' attestations. | PLAN §9.3; SB "Lifting" |
+| `causes_of` | A describes link whose judgement is DISPUTED is not accepted and does not lift. | SB U-2; V02 §3.2 |
+| `explain` | Each initiating claim lists its attestations (required evidence may name them). | SB B0 |
+| `changes` | An accepted "does not hold" side cites its deciding attestations. | SB Q-B1.2 |
+
 ## Part A. Core and organisation
 
 ### Reader contracts, core and organisation: `holds`, `value_at`, `facts_about`, `occurrence`, `occurrence_status`, `office_holders`
@@ -287,7 +313,7 @@ for the other side of a dispute.
 **`value_at()` and `value_of()`, by field:**
 - **`support` holds every side of a dispute.** It contains the deciding attestations of every content in the slot
   that holds or is polarity-disputed: all listed values and, for a polarity-disputed value, its accepted denials.
-  There is no `conflicts` field. The field's contents are
+  There is no `conflicts` field. The field's contents are (not fixed by the contract).
   only that `value_at` "reports DISPUTED" (A0 F-4; SB Q-B2).
 - **Roles** (P-VA-1, approved with the LABS-1.063 qualification: polarity alone does not decide a role):
   - **one value held, not disputed:** `support` is **supporting**;
@@ -401,7 +427,6 @@ template (T); X plans generally (HR §1). Gap probes: GAP-MEAS-6 (`has-quality` 
    |---|---|---|---|
    | `status` | Status | STIPULATED, ASSERTED, INFERRED (the core rule over the values held), DISPUTED, UNKNOWN (records visible, no value), NOT_YET_KNOWN | [E] C-D §3.3, §4; C03 |
    | `values` | ids | canonical ids under the perspective's identity; empty when none | [E] B-D §2.3; A0 F-5; T |
-   | `support` | ids | deciding attestations of every value held or disputed |
    | `alternatives` | ids | unreviewed, not superseded keyed attestations with a verdict at t | [E] v0.2 §6.2; C03 example |
    | `constraint_support` | list | always empty | [E] DI19 §1 |
    | `evidence` | list of dicts | as for `holds` | [E] C03 |
@@ -426,7 +451,6 @@ template (T); X plans generally (HR §1). Gap probes: GAP-MEAS-6 (`has-quality` 
 
    | Role | Where in the answer | When | Label/source |
    |---|---|---|---|
-   | supporting | `support` | not DISPUTED | P-VA-1 (approved); contents
    | conflicting | `support` (every value's positive claims) | DISPUTED between several values | P-VA-1 as qualified (LABS-1.063): mutually exclusive rivals |
    | supporting | `support[i]` where `evidence[attestation=i].polarity` is true | DISPUTED, one value (polarity dispute) | P-VA-1 |
    | conflicting | `support[i]` where `evidence[attestation=i].polarity` is false | DISPUTED, one value (polarity dispute) | P-VA-1 (P-1) |
@@ -824,7 +848,7 @@ F8 (GAP-FRAME-3: must stay UNKNOWN between stated poses, E2-D 3.7), F10 (GAP-FRA
    - WH-16 [E] As known before an acceptance or supersession (`as_of`), the earlier answer stands (A2 demonstration;
      v0.2 C8).
    - WH-17 [E] The thing is judged with its established same-as group (ID-D ID-8); frame chains are not (TB-15).
-
+ (not fixed by the contract).
 5. **Ordering and multiplicity:**
    - WH-19 [E] Several statements in different frames are separate candidates even when they map to the same range
      (A2 "Candidates": each statement is a candidate).
@@ -850,7 +874,7 @@ F8 (GAP-FRAME-3: must stay UNKNOWN between stated poses, E2-D 3.7), F10 (GAP-FRA
      candidate has no position and is DISPUTED (A2 "Ambiguous"; "Results").
    - WH-23 [E] Direct candidates present no derivation.
 8. **Refusals:** none documented. Unrelatable frames give `incomparable` entries, never a refusal or a guess [E]
-   not a `where` refusal)
+   not a `where` refusal) (not fixed by the contract).
 
 | Name | Condition | Exception / message | Established? | Source |
 |---|---|---|---|---|
@@ -886,13 +910,13 @@ GAP-FRAME-6.
 3. **Judgement and uncertainty:**
    - PO-3 [E] Disjoint positions of one thing in one frame (or orientations differing beyond the default 1e-9 rad)
      are DISPUTED with their rivals in `conflicts` (A2 "The same rule everywhere", "Where it applies"; IB-D 6 table).
-
-   - PO-4 [E] Polarity-disputed positions are listed in place, marked DISPUTED.
+ (not fixed by the contract).
+   - PO-4 [E] Polarity-disputed positions are listed in place, marked DISPUTED. (not fixed by the contract).
    - PO-5 [E] Ranges are reported as stated; nothing reconciled (A2 "Nothing is reconciled").
 4. **Visibility:**
    - PO-6 [E] As `facts_about`: holding or disputed at t, with world inheritance, acceptance and supersession (A1
      "API"; IB-D 2.1). An ended position does not hold after its end (A1 "The reference world / Time").
-   - PO-7 [E] `facts_about` uses the context's identity (ID-D 3.8).
+   - PO-7 [E] `facts_about` uses the context's identity (ID-D 3.8). (not fixed by the contract).
      `positioned`; effect on aliases unverified.
 5. **Ordering and multiplicity:**
    - PO-8 [E] Several positions in one frame are all listed (A1 D-A1-2; A2 "Identical": identical ranges are one
@@ -938,7 +962,7 @@ GAP-FRAME-1, -5.
      same rule everywhere"). A second accepted anchor is DISPUTED (A1 "Tests"; IB-D 2.3).
    - FI-4 [E] Polarity-disputed content is listed and marked DISPUTED (IB-D 4; IB "Readers").
 4. **Visibility:** FI-6 [E] as `facts_about` (A1 "API"; IB-D 2.1): inheritance, acceptance, supersession, `as_of`.
-5. **Ordering and multiplicity:** FI-7
+5. **Ordering and multiplicity:** FI-7 (not fixed by the contract).
    `facts_about` order; no design order. Compared as multisets (common 0.9).
 6. **Evidence:**
 
@@ -965,7 +989,7 @@ GAP-FRAME-1, -5.
 These are the reader contracts for `measurements` (ME), `compare_measurements` (CM), `convert` (CV),
 `laboratory.calibration_status` (CS) and `laboratory.measurement_calibration` (MC).
 
-- **Status of statements:** labels [E], [P] and
+- **Status of statements:** labels [E], [P] and (not fixed by the contract).
 - **Evidence:** the full citations and line numbers are in `docs/stage-e/e2-reader-contracts/evidence-measurement.md` (cited below as "src §n").
 - **Shared context:** common §0.2 to §0.9 apply throughout.
 - **Repository paths:** relative to `typedb-semantic-world-model`.
@@ -1004,13 +1028,11 @@ Abbreviations used in citations:
    | `[*].kind` | str | `measurement` (rests on records) / `statement` (no record) | [E] stage-c C0 "stay separate"; C1 API |
    | `[*].range` | (float, float) | [v − ku, v + ku] in the dimension's SI unit | [E] v0.2 §3.3; D-C-1 |
    | `[*].unit` | id | the SI unit | [E] D-C-1; stage-c C0 units |
-   | `[*].coverage_level` | float | a function of k (k = 2 ≈ 0.954) | [E] v0.2 §3.3, C4 (the formula is
+   | `[*].coverage_level` | float | a function of k (k = 2 ≈ 0.954) | [E] v0.2 §3.3, C4|
    | `[*].acceptance` | str | accepted / unreviewed / rejected / retracted / superseded | [E] v0.2 §5.6; incB §2.2 |
    | `[*].records[*].raw_value`, `raw_unit`, `standard_uncertainty`, `coverage_factor`, `conditions`, `calibration` | — | as written; conditions as exact text | [E] D-C-1, D-C-7; v0.2 clarification B |
    | `[*].records[*].report` | str | whether the `reports` claim is accepted | [E] stage-c (judged parts) |
-   | `[*].records[*].activities[*].start`, `end`, `operator`, `instrument` | Window / ids | from the activity's account | [E] stage-c provenance read;
-   | `[*].usable` | bool | accepted, not superseded, supporting stance, polarity true |
-   | `[*].attester`, `basis`, `valid`, `content` | — | — |
+   | `[*].records[*].activities[*].start`, `end`, `operator`, `instrument` | Window / ids | from the activity's account | [E] stage-c provenance read|
 
    - [E] No answer status is given: this is a collection, and rule C folds nothing (incC §4, `measurements` row).
 3. **Judgement and uncertainty**
@@ -1027,14 +1049,13 @@ Abbreviations used in citations:
 5. **Ordering and multiplicity**
    - [E] One entry per attestation, not per content (stage-c D-C-2 probe case 1).
    - [E] Records and attestations are many-to-many (stage-c).
-   - The list is a multiset (common §0.9).
+   - The list is a multiset (common §0.9). (not fixed by the contract).
      Validation: random ids).
 6. **Evidence**
 
    | Role | Where in the answer | When | Label/source |
    |---|---|---|---|
    | supporting | `[kind=measurement, usable=true].attestation` | always | [P] P-ME-1, from v0.2 §6.2 (usable attestations support); harness §5.1 |
-   | supporting or alternative | `[kind=statement, usable=true].attestation` | a "values stated" question |
    | alternative | `[usable=false].attestation` (unaccepted, superseded, rejected, retracted, non-supporting stance, denials) | always | [E] v0.2 §6.2 |
    | not cited | `records[*].record`, `activities[*].activity` (not attestations); `produced` and `reports` ids (not returned) | — | [E] stage-c D-C-2 (structural link, not an attestation) |
 
@@ -1045,7 +1066,7 @@ Abbreviations used in citations:
      (D-C-1). no derivation record exists (deferred): no derivation record exists.
    - [E] Any `{rule, premises}` in the answer is fabricated (harness §9.3).
 8. **Refusals**
-   - None documented. An unknown bearer or quality returns an empty list.
+   - None documented. An unknown bearer or quality returns an empty list. (not fixed by the contract).
 9. **Limitations and gaps**
    - GAP-MEAS-6: `has-quality` is not a slot.
    - GAP-MEAS-7: no current-value or trend reader.
@@ -1071,9 +1092,9 @@ Abbreviations used in citations:
    | `status` | Status | DISPUTED / ASSERTED / STIPULATED / INFERRED / UNKNOWN / NOT_YET_KNOWN | [E] v0.2 clarification B; incC §4 (`compare_measurements` row); D-C-5 |
    | `pairs[*].relation` | str | `possibly compatible` / `incompatible` / `incomparable` | [E] v0.2 clarification B table; DR-07; stage-c C0 |
    | `pairs[*].a`, `pairs[*].b` | attestation ids | the two compared measurements | [E] v0.2 ("both ranges, each with its evidence") |
-   | `pairs[*].reason` | str or None | the reason for incomparability (units, coverage levels, conditions, valid times) | [E] that a reason is given (v0.2);
+   | `pairs[*].reason` | str or None | the reason for incomparability (units, coverage levels, conditions, valid times) | [E] that a reason is given (v0.2)|
    | `measurements` | list of `measurements` entries | the compared (usable) measurements | [E] stage-c C1; fields as ME §2 |
-   | `alternatives` | list | unaccepted measurements | [E] v0.2 §6.2;
+   | `alternatives` | list | unaccepted measurements | [E] v0.2 §6.2|
    | `statements` | list | entries with no result record | [E] stage-c C0 ("listed apart, never compared") |
 
 3. **Judgement and uncertainty**
@@ -1152,7 +1173,7 @@ Abbreviations used in citations:
    - [E] Round trips are an acceptance criterion (plan §5 C).
    - No uncertainty is propagated: the input is a value, not a range.
 4. **Visibility**
-   - [E] None. Reference data is timeless.
+   - [E] None. Reference data is timeless. (not fixed by the contract).
 5. **Ordering and multiplicity**
    - Not applicable.
 6. **Evidence**
@@ -1198,7 +1219,7 @@ Abbreviations used in citations:
    | `status` | Status | core rule over the deciding support; DISPUTED; UNKNOWN (something found) / NOT_YET_KNOWN (nothing found) | [E] incC §3.1, C-1 to C-3; D-C-5 |
    | `support` | sorted ids | the deciding claims; empty for disputed and undecided answers | [E] C-4; incC-report "Points decided" 2 |
    | `certificates[*].certificate`, `reference`, `judgement`, `status`, `holds`, `evidence` | — | every certificate naming the instrument; reference as exact text (None never matches) | [E] d3 §2, §3 |
-   | `in_force` | ids | certificates whose own judgement is established | [E] as a field (d3 §2);
+   | `in_force` | ids | certificates whose own judgement is established | [E] as a field (d3 §2)|
 
 3. **Judgement and uncertainty**
    - [E] Rule Q is applied in this order (incC §3.1; C-1, C-2, C-3):
@@ -1223,14 +1244,13 @@ Abbreviations used in citations:
 5. **Ordering and multiplicity**
    - [E] One entry per calibration content (certificate).
    - [E] The answer is independent of order and of ids (incC-report tests E7/E7b). `support` is sorted (C-4).
-   - `certificates` is a multiset; the sort by certificate id is
+   - `certificates` is a multiset; the sort by certificate id is (not fixed by the contract).
 6. **Evidence**
 
    | Role | Where in the answer | When | Label/source |
    |---|---|---|---|
    | supporting | `support[*]` | judgement established, expired or denied | [E] C-4; incC §3.1 |
-   | conflicting | `certificates[*].evidence[acceptance=accepted].attestation` of the holdings that make the answer disputed (the accepted assertion and the accepted denial) | judgement disputed (support empty) | [P] P-CS-1 (common §0.4);
-   | supporting? | `certificates[judgement=not yet effective].evidence[acceptance=accepted].attestation` | judgement not yet effective (support empty) |
+   | conflicting | `certificates[*].evidence[acceptance=accepted].attestation` of the holdings that make the answer disputed (the accepted assertion and the accepted denial) | judgement disputed (support empty) | [P] P-CS-1 (common §0.4)|
    | alternative | `certificates[*].evidence[acceptance≠accepted].attestation` (unreviewed, rejected, retracted, superseded) | always | [E] v0.2 §6.2; C-3 |
    | not cited | `certificates[*].certificate` (an information object, not an attestation) | — | [E] d3 §1; D-D-7 |
 
@@ -1266,13 +1286,13 @@ Abbreviations used in citations:
 
    | Field | Type | Values | Label/source |
    |---|---|---|---|
-   | `[*].record`, `[*].attestation`, `[*].instrument`, `[*].activity` | ids | — | [E] d3 §2 ("per measurement record and activity instrument");
+   | `[*].record`, `[*].attestation`, `[*].instrument`, `[*].activity` | ids | — | [E] d3 §2 ("per measurement record and activity instrument")|
    | `[*].acceptance`, `[*].usable` | — | copied unchanged from `measurements` | [E] d3 §2, §3 "Never invalidating" |
    | `[*].stated_reference` | str or None | the record's `calibration-ref`, as exact text | [E] D-D3-2; G-6 |
-   | `[*].attested` | `calibration_status` answer, or None | judged at the activity's start; includes `support` | [E] d3 §2; incC-report "Readers";
+   | `[*].attested` | `calibration_status` answer, or None | judged at the activity's start; includes `support` | [E] d3 §2; incC-report "Readers"|
    | `[*].reference_check.check` | str | `matches a certificate` / `no certificate with the stated reference` / `no reference stated` / `no certificate recorded for the instrument` / `no instrument recorded` | [E] d3 §3 reference checks; d3 §6a item 3 |
    | `[*].reference_check.certificates[*]` | certificate and judgement | the matching certificates, each with its own judgement | [E] d3 §3 ("with that certificate's judgement") |
-   | `[*].at` | time | the instant at which calibration is judged | [E] the activity's start (D-D3-2);
+   | `[*].at` | time | the instant at which calibration is judged | [E] the activity's start (D-D3-2)|
 
 3. **Judgement and uncertainty**
    - [E] Calibration never invalidates, discards or downgrades a measurement. The stated reference and the attested
@@ -1297,8 +1317,7 @@ Abbreviations used in citations:
    |---|---|---|---|
    | supporting | `[usable=true].attestation` | always | [P] P-MC-1 (as ME P-ME-1); harness §5.1 |
    | supporting | `[*].attested.support[*]` | attested judgement established, expired or denied | [E] C-4 (inherited) |
-   | conflicting | as CS row "conflicting", under `[*].attested.certificates` | attested judgement disputed | [P] P-CS-1;
-   | as CS | `[*].attested.certificates[...]` | attested judgement not yet effective |
+   | conflicting | as CS row "conflicting", under `[*].attested.certificates` | attested judgement disputed | [P] P-CS-1|
    | alternative | `[usable=false].attestation`; unaccepted certificate claims | always | [E] v0.2 §6.2 |
    | not cited | `reference_check.certificates[*].certificate`, `stated_reference` (text, not evidence); records and activities | — | [E] G-6 (reported, never reconciled) |
 
@@ -1441,7 +1460,7 @@ Short names for the sources:
    - `event` is an event description [E] (V02 §3.2: `initiates(event, proposition)`; SB B0 "about a description").
    - The outcome is a proposition identified by its A0.1 id [E] (SB "Schema and API"; PLAN Stage A0).
    - Effects are written by `claim_effect` or `account` [E as recorded] (SB D-B-1).
-   - `t` judges the claim contents
+   - `t` judges the claim contents (not fixed by the contract).
 2. **Output fields and vocabulary** (one entry per effect claim):
 
 | Field | Type | Values | Label/source |
@@ -1563,7 +1582,7 @@ Short names for the sources:
      contract", Q-B1.1).
    - `subject` is any thing [E] (SB contract, `track`).
    - Context as in common 0.2.
-   - t1 ≥ t2 is unspecified
+   - t1 ≥ t2 is unspecified (not fixed by the contract).
 2. **Output fields and vocabulary** [E] (SB "The changes contract", LABS-1.015, unless marked):
 
 | Field | Type | Values | Label/source |
@@ -1587,7 +1606,7 @@ Short names for the sources:
      - accepted A, then only UNKNOWN, then accepted B ≠ A is one world-state transition whose window is the gap;
      - no instant is invented;
      - certain if the window lies inside the interval, possible if it overlaps, omitted if outside.
-     - The design does not cover A → UNKNOWN → A, or gaps through DISPUTED:
+     - The design does not cover A → UNKNOWN → A, or gaps through DISPUTED: (not fixed by the contract).
    - [E] **Q-B2:** one functional-conflict judgement, the same as `value_at`, rivals included. Attested constraints
      are applied at each boundary (IB "Answer changes").
    - [E] **C-6:** a slot's status rests on the values held only (ICD §3.3; IC "Readers").
@@ -1596,7 +1615,7 @@ Short names for the sources:
      - one temporal constraint applies: an effect cannot precede its event's start (B-time);
      - proximity is never evidence;
      - a claim that fits several activations on the whole timeline is `ambiguous` on each and never chosen;
-     - unresolved times are kept with `timing: unresolved` (B-time). The boundary is
+     - unresolved times are kept with `timing: unresolved` (B-time). The boundary is (not fixed by the contract).
    - [E] The SB probe cases 1-6 are the worked examples.
 4. **Visibility:**
    - [E] Event time, transition valid time, knowledge time and explanations are kept apart (SB Q-B1, the requested
@@ -1623,7 +1642,7 @@ Short names for the sources:
 8. **Refusals:** none documented.
 9. **Limitations and gaps:**
    - GAP-CAUSE-1 to -4; GAP-MULTI-2 [E].
-   - Stale design text:
+   - Stale design text: (not fixed by the contract).
 
 ---
 
@@ -1682,7 +1701,7 @@ Short names for the sources:
 
 1. **Inputs and conditions:**
    - `a` and `b` are event descriptions [E] (SB B0: "`before()` compares intervals").
-   - P3's steps (occurrences) are mapped to descriptions by the question's plan
+   - P3's steps (occurrences) are mapped to descriptions by the question's plan (not fixed by the contract).
    - Context as in common 0.2 (no `t`: the intervals are valid times).
 2. **Output fields and vocabulary:**
 
@@ -1727,7 +1746,7 @@ Short names for the sources:
    - [E] This is occurrence time, never record time (SB B-time).
 4. **Visibility:** [E] per perspective and `as_of`. In a variant, the account is inherited within the snapshot (V02
    §6.2); otherwise null.
-5. **Ordering and multiplicity:** one result.
+5. **Ordering and multiplicity:** one result. (not fixed by the contract).
 6. **Evidence:**
 
 | Role | Where in the answer | When | Label/source |

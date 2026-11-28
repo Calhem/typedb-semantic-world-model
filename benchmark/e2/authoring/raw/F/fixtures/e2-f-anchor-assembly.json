@@ -1,0 +1,18 @@
+{"id": "e2-f-anchor-assembly",
+ "description": "Synthetic floor (concept data, invented names), used by gap probes only. Tool frame f-tool is anchored to robot-1, which is positioned in f-floor and later stated at a new position; there is no frame-transform between f-tool and f-floor. wheel-1 is part of cart-assy, which is positioned in f-floor; wheel-1 has no position statement of its own.",
+ "profiles": [],
+ "steps": [
+  {"op": "entity", "kind": "spatial-frame", "id": "f-floor"},
+  {"op": "entity", "kind": "spatial-frame", "id": "f-tool"},
+  {"op": "entity", "kind": "physical-object", "id": "robot-1", "name": "robot 1"},
+  {"op": "entity", "kind": "physical-object", "id": "tip-1", "name": "tool tip 1"},
+  {"op": "entity", "kind": "physical-object", "id": "cart-assy", "name": "cart assembly"},
+  {"op": "entity", "kind": "physical-object", "id": "wheel-1", "name": "wheel 1"},
+  {"op": "world", "id": "w", "kind": "actual"},
+  {"op": "anchor_frame", "id": "anchor-tool", "world": "w", "frame": "f-tool", "anchor": "robot-1", "start": "T1", "until_superseded": true},
+  {"op": "position", "id": "pos-robot-1", "world": "w", "thing": "robot-1", "frame": "f-floor", "x": 1.0, "y": 0.0, "z": 0.0, "start": "T1", "end": "T5"},
+  {"op": "position", "id": "pos-robot-2", "world": "w", "thing": "robot-1", "frame": "f-floor", "x": 6.0, "y": 0.0, "z": 0.0, "start": "T5", "until_superseded": true},
+  {"op": "position", "id": "pos-tip", "world": "w", "thing": "tip-1", "frame": "f-tool", "x": 0.5, "y": 0.0, "z": 0.0, "start": "T1", "until_superseded": true},
+  {"op": "attest", "id": "part-wheel", "world": "w", "type": "part-of", "roles": {"part": "wheel-1", "whole": "cart-assy"}, "start": "T1", "until_superseded": true},
+  {"op": "position", "id": "pos-cart", "world": "w", "thing": "cart-assy", "frame": "f-floor", "x": [3.0, 4.0], "y": [0.0, 1.0], "z": 0.0, "start": "T1", "until_superseded": true}
+ ]}

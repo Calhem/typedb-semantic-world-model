@@ -30,7 +30,7 @@ REVIEWED = {
 
 def strip_d_fragments(line):
     """Remove '[D] ...' fragments from a kept line: inside a table cell up to the cell end; otherwise to the end."""
-    if line.startswith("|"):
+    if line.lstrip().startswith("|"):                    # also tables indented inside numbered lists (v1.1 fix)
         cells = line.split("|")
         new = []
         for c in cells:
@@ -38,7 +38,37 @@ def strip_d_fragments(line):
                 c = re.sub(r";?\s*\(?[^;|()]*\[D\][^|]*", "", c).rstrip(" ;,(")
             new.append(c)
         return "|".join(new)
-    return re.sub(r"\s*\[D\].*$", "", line)
+    # v1.1: a sentence interrupted by the removed fragment is closed, not left dangling
+    return re.sub(r"\s*\(?\[D\].*$", " (not fixed by the contract).", line)
+
+
+S012 = """### 0.12 Established rules restated (pack v1.1) [E]
+
+These approved rules were stated inside entries this edition otherwise removes, so they are restated here. Each is
+established; it overrides any other text in this edition that seems to differ.
+
+| Reader | Rule | Source |
+|---|---|---|
+| `value_at` | A dispute keeps its conflicting relationship between rival values; polarity alone is not enough. | A0 F-4; SB Q-B2; P-VA-1 as qualified |
+| every reader, incl. `value_at` | No reader reports content that is DISPUTED for the perspective as undisputed. Value readers apply declared slots only; an exclusive office whose holders conflict is never reported as undisputed by a value reader. | B-D §2, §3; DI19 report §1; D2 §3; v0.2 §5.3 |
+| `transform_between` | A disputed transform on any route gives DISPUTED, with the disputed transform's attestations reported as conflicting evidence. | A2 "Outcomes"; v0.2 §5.3 |
+| `transform_between` | Unreviewed transforms bearing on the answer are listed as alternatives. | v0.2 §6.2 |
+| `where` | A derived candidate from a position disputed by an accepted denial is not INFERRED: the answer is not an undisputed INFERRED. | A2 "Provenance"; v0.2 §5.2 E6; common 0.7 |
+| `where`, `poses` | The thing is judged with its established same-as group: asking by any member gives the same candidates. | ID-D 9, ID-8 |
+| `poses` | Disputed entries cite both sides. | IB-D 4 |
+| `frame_info` | Disputed transforms, anchors and positions are marked and cited on both sides. | IB-D 4 |
+| `measurements` | An accepted denial is usable conflicting evidence. | v0.2 §6.2, §5.3; common §0.4 P-1 |
+| `measurements` | Measurements of an alias are measurements of the bearer (selection by the whole identity class). | ID §3.8 ID-8 |
+| `measurements` | `has-quality` content is reported in the SI unit. | D-C-1; v0.2 §3.3 |
+| `compare_measurements` | An accepted assertion and an accepted denial of the measured content give DISPUTED, citing both, with or without `t`. | v0.2 §5.3; stage-c "Disputes" |
+| `measurement_calibration` | The reference check "no certificate recorded" applies only when the instrument has no certificates. | d3 §3 |
+| `causes_of` | A description-level claim answers an occurrence question only when both descriptions have usable describes links. | PLAN §9.3 "Lifting"; SB U-2 |
+| `causes_of` | A lifted answer cites the describes links' attestations. | PLAN §9.3; SB "Lifting" |
+| `causes_of` | A describes link whose judgement is DISPUTED is not accepted and does not lift. | SB U-2; V02 §3.2 |
+| `explain` | Each initiating claim lists its attestations (required evidence may name them). | SB B0 |
+| `changes` | An accepted "does not hold" side cites its deciding attestations. | SB Q-B1.2 |
+
+"""
 
 
 S01 = """### 0.1 Status of each statement
@@ -115,7 +145,7 @@ def contracts():
                   or re.match(r"^[A-Z]{2}-\d+\s*$", m.group(3))):
             skip_cont = len(m.group(1))
             continue
-        if l.startswith("|"):
+        if l.lstrip().startswith("|"):
             label_cells = l.split("|")
             if "[D]" in l and not re.search(r"\[(E|P)[^\]]*\]|\[P-", l):
                 continue                                   # a row resting only on a discrepancy
@@ -137,6 +167,8 @@ def contracts():
     a = text.index("Every decision of the adjudication register")
     b = text.index("| Decision | Contract statement [E] | Consequence |")
     text = text[:a] + S011 + text[b:]
+    k = text.index("\n## Part A.")
+    text = text[:k + 1] + S012 + text[k + 1:]
     i = text.index("| Decision | Contract statement [E] | Consequence |")
     j = text.index("\n", i)
     text = text[:j + 1] + text[j + 1:].replace("|---|---|---|---|", "|---|---|---|", 1)
