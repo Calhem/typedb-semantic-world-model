@@ -1,6 +1,6 @@
 # Deferred correctness issues (register)
 
-**Opened 2026-11-11 under LABS-1.025; DI-5 added under LABS-1.026, DI-6 under LABS-1.027, DI-7 under LABS-1.028, DI-8 and DI-9 under LABS-1.030, DI-10 and DI-11 under LABS-1.034, DI-12 under LABS-1.038, DI-14 under LABS-1.042, DI-13 under LABS-1.043, DI-15 and DI-16 under LABS-1.045, DI-17 under LABS-1.049, DI-18 under LABS-1.050, DI-19 under LABS-1.053, DI-20 to DI-23 under LABS-1.059.** The pre-Stage E consolidation ([pre-stage-e-consolidation.md](pre-stage-e-consolidation.md), LABS-1.045, at review) recommends a disposition for every open issue. These are known correctness issues (DI-1 to DI-8, DI-11), one
+**Opened 2026-11-11 under LABS-1.025; DI-5 added under LABS-1.026, DI-6 under LABS-1.027, DI-7 under LABS-1.028, DI-8 and DI-9 under LABS-1.030, DI-10 and DI-11 under LABS-1.034, DI-12 under LABS-1.038, DI-14 under LABS-1.042, DI-13 under LABS-1.043, DI-15 and DI-16 under LABS-1.045, DI-17 under LABS-1.049, DI-18 under LABS-1.050, DI-19 under LABS-1.053, DI-20 to DI-23 under LABS-1.059, DI-24 to DI-36 under LABS-1.064.** The pre-Stage E consolidation ([pre-stage-e-consolidation.md](pre-stage-e-consolidation.md), LABS-1.045, at review) recommends a disposition for every open issue. These are known correctness issues (DI-1 to DI-8, DI-11), one
 tracked performance concern (DI-9) and one maintenance item (DI-10), kept apart from the stage documents.
 None of them has had its semantics changed yet. The pre-Stage E correctness review
 ([pre-stage-e-correctness-review.md](pre-stage-e-correctness-review.md), LABS-1.034) reproduces DI-1 to DI-6 and DI-8,
@@ -32,6 +32,12 @@ widens the scope of DI-5 and DI-8, and found DI-11.
   - **DI-7:** deferred until after E2. Derivation questions are E2 gap probes.
   - Decisions are recorded in [stage-e2-decisions.md](../stage-e/stage-e2-decisions.md).
 
+- **LABS-1.064 (E2 semantic decision closure):** DI-24 to DI-30 (from the E2 contract adjudication) and DI-31 to
+  DI-36 (implementation consequences of the 25 approved semantic decisions) are **registered, not implemented**.
+  **DI-25 and DI-28 are critical architectural priorities.** E2 questions on them stay eligible where the reader
+  provides the capability, and are G probes where it does not (decision record:
+  [stage-e2-semantic-decisions.md](../stage-e/stage-e2-semantic-decisions.md)). Each entry separates reproduced
+  defects, inspection-only findings and newly established requirements.
 Each entry gives a concrete case, what it affects, and the options. A resolution needs its own approved decision and
 tests.
 
@@ -55,11 +61,24 @@ tests.
 | DI-16 | identity merges on a same-as whose canonical judgement is DISPUTED (accepted denials are ignored) | consolidation (LABS-1.045) | before Stage E (LABS-1.046) | **closed**: option (a), corrected by the identity increment (ID-2, ID-5, ID-6), reproduction a permanent test; approved and merged (LABS-1.049, `main` dd58b25; [report](pre-e-identity-increment.md)) |
 | DI-17 | a group of names joined by established same-as links that contains one disputed or denied pair is not merged at all (ID-5), so its established equivalences are set aside too: possibly over-restrictive | identity increment (LABS-1.048; registered LABS-1.049) | Stage E evaluation | open (evaluation only in E2; LABS-1.060) |
 | DI-18 | the export's `module_data` lists only the records the replay reproduces: a record held by a module version this code cannot replay is absent from the export (the attribution reports the replay as unverified) | schema export format 3 (LABS-1.050) | no deadline (export completeness) | open (non-blocking; format 2 refusal already reads the database's own records) |
-| DI-19 | `holds()` on a content disputed under an attested constraint (two holders of an exclusive office) cites the content's support and its rivals (`conflicts`), but not the attestation of the constraint it applied | Stage E1 revised evaluation, ORG-011 (LABS-1.052; registered LABS-1.053) | Stage E (provenance) | corrected at review (additive `constraint_support`, LABS-1.060) |
+| DI-19 | `holds()` on a content disputed under an attested constraint (two holders of an exclusive office) cites the content's support and its rivals (`conflicts`), but not the attestation of the constraint it applied | Stage E1 revised evaluation, ORG-011 (LABS-1.052; registered LABS-1.053) | Stage E (provenance) | **closed** (additive `constraint_support`, LABS-1.060; merged LABS-1.061) |
 | DI-20 | readers that still load a whole world (`occurrence_status`, `causes_of`, `effects_of`, `provenance`) grow with perspectives | DI-9 closure (LABS-1.058; registered LABS-1.059) | no deadline (DI9-D17 deferred) | deferred (performance) |
 | DI-21 | H1: transient slow states between fresh processes, cause unknown | DI-9 optimisation (LABS-1.056; registered LABS-1.059) | no deadline | deferred (performance) |
 | DI-22 | cross-world growth in head and parameter fetches (`where` +3.2 ms from 11 to 92 worlds; `parts`, `office_holders`) | DI-9 closure (LABS-1.058; registered LABS-1.059) | no deadline | deferred (performance) |
 | DI-23 | performance depends on TypeDB 3.14.1's planner; the first query after a bulk load may not finish | F6 (LABS-1.058; registered LABS-1.059) | recheck on any TypeDB upgrade | deferred (engine; private handover at review, DI9-D18) |
+| DI-24 | subject-keyed readers (`where`, `poses`, `measurements`) ignore the subject's same-as group | E2 contract adjudication (LABS-1.063; registered LABS-1.064) | after E2 baseline | open, high (not implemented) |
+| DI-25 | a derived pose can be INFERRED from a disputed position premise; a truncated search through a disputed transform returns a transform | E2 contract adjudication (LABS-1.063; registered LABS-1.064); SD-SPA-3 | after E2 baseline | open, **critical architectural priority** (not implemented) |
+| DI-26 | accepted denials of measured content are not judged; the measurement `t` filter drops the other side of a dispute | E2 contract adjudication (LABS-1.063; registered LABS-1.064); SD-MEA-1 | after E2 baseline | open, high (not implemented) |
+| DI-27 | value readers answer for roles that form no declared slot; `value_at` does not separate dispute sides; `key_role` without `value_role` is not refused | E2 contract adjudication (LABS-1.063; registered LABS-1.064); SD-CORE-2 | after E2 baseline | open, high / medium (not implemented) |
+| DI-28 | causal claims lift through missing or disputed describes links and do not cite the links; effect claims and `changes` explanations carry no occurrence applicability | E2 contract adjudication (LABS-1.063; registered LABS-1.064); SD-CAU-9 | after E2 baseline | open, **critical architectural priority** (not implemented) |
+| DI-29 | provenance completeness: dispute sides, initiating claims, transition sides, alternatives, listing constraint support, explanation attestations | E2 contract adjudication (LABS-1.063; registered LABS-1.064); SD-CORE-3, SD-CAU-2, SD-CAU-4 | after E2 baseline | open, medium (not implemented) |
+| DI-30 | measurement reporting: (a) canonical units, (b) the calibration reference check when the activity has no accepted time | E2 contract adjudication (LABS-1.063; registered LABS-1.064) | after E2 baseline | open, medium; parts a and b independently testable (not implemented) |
+| DI-31 | `holds()` matches a subset of roles and picks the first record in load order, instead of addressing exact content | E2 semantic decisions (LABS-1.064), SD-CORE-1 | after E2 baseline | open, medium (not implemented) |
+| DI-32 | frame-chain answer conventions: chain tolerance not reported, identity presented as a premise-less derivation, NOT_YET_KNOWN never given, count-based `where` label | E2 semantic decisions (LABS-1.064), SD-SPA-1, -2, -4 | after E2 baseline | open, medium (not implemented) |
+| DI-33 | an explicit instantaneous measurement holds at no instant: the writer cannot represent an instant (representation and migration) | E2 semantic decisions (LABS-1.064), SD-MEA-2 | after E2 baseline | open, high (not implemented) |
+| DI-34 | calibration is judged at the earliest bound of an uncertain activity start, not throughout the window | E2 semantic decisions (LABS-1.064), SD-MEA-6 | after E2 baseline | open, medium (not implemented) |
+| DI-35 | `effects_of`, `explain` and `changes` do not follow the approved change, inclusion, timing and claim-time semantics | E2 semantic decisions (LABS-1.064), SD-CAU-1, -2, -7, -8 | after E2 baseline | open, high (not implemented) |
+| DI-36 | temporal ordering under uncertainty: instantaneous events in `before`; one account picked by id instead of every account | E2 semantic decisions (LABS-1.064), SD-CAU-5, -10 | after E2 baseline | open, medium (not implemented) |
 
 ## DI-1: `facts_about` omits content disputed by polarity
 **What happens.** `facts_about(world, subject, t)` lists only content whose judgement at t is "holds". Two kinds of
@@ -562,7 +581,7 @@ the attestation ids supporting each applied constraint (for an attested constrai
 empty for a declared functional slot, which is schema data). Additive, so existing fields keep their values; the
 106,752-answer baseline would gain the field on constraint disputes only.
 
-**Implemented (LABS-1.060, at review).** Branch `feature/di19-constraint-support`, commit 7cb348d:
+**Implemented (LABS-1.060); approved and merged (LABS-1.061, merge 7769ba1).** Commit 7cb348d:
 `Answer.constraint_support`, one entry for each applied attested constraint (type, key, value role, deciding attestation
 ids, evidence); always empty for declared functional slots, and so for `value_at()` and `value_of()`.
 - 15 new tests.
@@ -621,3 +640,197 @@ reproduction. It answered in milliseconds a few minutes later. This could affect
 **Action:**
 - Rerun `probes/stage_e_f6_ablate.py` and `probes/stage_e_f6_supersession.py` on any TypeDB upgrade.
 - The private reproduction and an engineering handover are at review (DI9-D18). Nothing has been reported to TypeDB.
+
+## DI-24 to DI-36: E2 contract defects and decision consequences (LABS-1.064)
+
+**Registered LABS-1.064.** DI-24 to DI-30 consolidate the semantic and provenance defects of the E2 contract
+adjudication ([stage-e2-contract-adjudication.md](../stage-e/stage-e2-contract-adjudication.md) §4). DI-31 to DI-36
+are the implementation consequences of the 25 approved semantic decisions
+([stage-e2-semantic-decisions.md](../stage-e/stage-e2-semantic-decisions.md)), consolidated with the earlier entries
+where they share a mechanism.
+
+**None is implemented.** Each needs its own approved increment, with tests and an E1 and reference-answer regression
+check. Until then, E2 questions on these issues are **eligible** where the reader reports the governed field (the
+reader is expected to fail them, and the failure is adjudicated as this DI), and **G probes** where the field,
+parameter or representation does not exist yet.
+
+**Kinds of component:**
+- **reproduced:** reproduced on an isolated diagnostic fixture (`docs/stage-e/e2-contract-adjudication/diagnostics.json`,
+  `probes/e2_contract_diagnostics.py`). Diagnostic outputs never become E2 gold.
+- **inspection:** found by reading code against the design; not reproduced.
+- **new requirement:** follows from a LABS-1.064 decision. The previous behaviour was not wrong against an approved
+  text, because no text decided the case.
+
+## DI-24: subject-keyed readers ignore the subject's same-as group
+**Priority: high.** Items D-WH-5, D-PO-3, D-ME-5 (notes: D-OH-2, D-CS-2).
+
+| Component | Kind | Evidence |
+|---|---|---|
+| `where` and `poses` by an alias find nothing for a position stated under the canonical name, and the reverse | reproduced | DX-2 |
+| `measurements` of an alias are not the bearer's | reproduced | DX-3 |
+
+**Correction (later):** apply ID-8 to subject selection in `where`, `poses` and `measurements`, as DI-12 did for
+traversals. ID-5 groups (a disputed or denied pair) stay unmerged.
+
+## DI-25: derivations resting on disputed premises or edges (critical architectural priority)
+**Priority: critical (architectural).** Items D-WH-3, D-TB-8.
+
+| Component | Kind | Evidence |
+|---|---|---|
+| a derived pose is INFERRED from a position premise disputed by an accepted denial | reproduced | DX-1 |
+| a truncated search whose reached chain has a disputed transform returns UNKNOWN with a transform; SD-SPA-3 requires DISPUTED and no transform | new requirement | SD-SPA-3 (inspection: D-TB-8) |
+
+**Why it is architectural:** a derivation's status must never be better than the worst of its premises and edges (v0.2
+E6; A2 "Outcomes"). Both components break that invariant at the point where `frame-transform/v1` composes; any later
+derivation rule (DI-7) needs the same rule.
+
+**Correction (later):** a derived candidate takes the worse of its chain's and its position's status; a disputed edge on
+a found route decides DISPUTED whatever the search's completeness.
+
+## DI-26: measured content and its denials
+**Priority: high.** Items D-CM-6, D-ME-3, D-ME-1, D-MC-1 (related: D-CM-2).
+
+| Component | Kind | Evidence |
+|---|---|---|
+| an accepted denial of the measured content leaves `compare_measurements` ASSERTED, the denial unlisted | reproduced | DX-4 |
+| with `t` given, the measurement disappears | reproduced | DX-4 |
+| `t` keeps only positive verdicts of each attestation's own interval; SD-MEA-1 makes it valid time with denials kept | new requirement | SD-MEA-1 (inspection: D-ME-1, D-MC-1) |
+
+**Correction (later):** judge the reported content with its denials (DISPUTED or not holding), list the denial, and
+read `t` as valid time for every attestation whose verdict at `t` is not silent.
+
+## DI-27: value readers and their slots
+**Priority: high (D-VA-3) / medium.** Items D-VA-3, D-VA-1, D-VA-2.
+
+| Component | Kind | Evidence |
+|---|---|---|
+| `value_at` with explicit roles forming no declared slot reports an exclusive office's two holders as ASSERTED | reproduced | DX-6 |
+| `value_at` does not separate the sides of a value dispute | inspection | D-VA-1 |
+| `key_role` without `value_role` answers UNKNOWN; SD-CORE-2 requires a malformed-question refusal | new requirement | SD-CORE-2 (inspection: D-VA-2) |
+
+**Correction (later):** refuse explicit roles that form no declared slot (DI-19 report §1); report rivals apart from
+support; refuse a half-specified role pair. The refusals are added to the reader's documented, established refusals.
+
+## DI-28: causal claim applicability (critical architectural priority)
+**Priority: critical (architectural).** Items D-CO-1, D-CO-3, D-CO-2, D-EF-5, D-CH-9.
+
+| Component | Kind | Evidence |
+|---|---|---|
+| a claim lifts through a description with no describes link (`applies: true`, no occurrence) | reproduced | DX-8 |
+| a claim lifts through a describes link disputed by an accepted denial | reproduced | DX-10 |
+| a lifted claim does not cite the describes links it used | reproduced | DX-9 |
+| effect claims and `changes` explanations carry no occurrence status or `applies` | new requirement | SD-CAU-9 (inspection: D-EF-5, D-CH-9) |
+
+**Why it is architectural:** whether a claim about a description applies to an occurrence is the one bridge between
+accounts and what happened (SB Occ-2, U-2). Every causal reader crosses it, so it needs one implementation, applied in
+`causes_of`, `effects_of`, `explain` and `changes`, rather than four.
+
+**Correction (later):** require accepted (ESTABLISHED) describes links on both sides; cite the links; add each
+occurrence's status and `applies` to effect claims and explanations (additive fields).
+
+## DI-29: provenance completeness
+**Priority: medium.** Items D-EX-4, D-CH-1, D-TB-3, D-PO-2, D-FI-1, D-TB-7, D-FA-1, D-CH-2 and the `alternatives` part
+of D-EX-1.
+
+| Component | Kind | Evidence |
+|---|---|---|
+| `explain` initiating claims list no attestations | reproduced | DX-11 |
+| a negative transition side has an empty `support` while its status rests on a denial | reproduced | DX-13 |
+| off-chain disputed edges, both dispute sides in listings, unaccepted transforms as alternatives | inspection | D-TB-3, D-PO-2, D-FI-1, D-TB-7 |
+| `facts_about` entries cite the constraint behind a constraint dispute (`constraint_support`) | new requirement | SD-CORE-3 |
+| `changes` explanations list their claims' attestations | new requirement | SD-CAU-4 |
+| `explain` lists unaccepted initiating claims as `alternatives`, never as explanations | new requirement | SD-CAU-2 |
+
+**Correction (later):** additive fields only, as DI-19: no existing field changes value.
+
+## DI-30: measurement reporting
+**Priority: medium.** Items D-ME-10, D-MC-5. The two parts are **independently testable** and may be corrected in
+separate increments.
+
+| Part | Component | Kind | Evidence |
+|---|---|---|---|
+| DI-30a | generic statements are not normalised to SI (canonical units) | inspection | D-ME-10 |
+| DI-30b | the calibration reference check reports "no certificate" instead of "time unknown" when the activity has no accepted time | inspection | D-MC-5 |
+
+## DI-31: `holds()` addresses exact content
+**Priority: medium.** Items D-HO-1, D-HO-2. Decision SD-CORE-1.
+
+| Component | Kind | Evidence |
+|---|---|---|
+| given roles are a subset filter; omitted optional roles match contents that have them | inspection; new requirement | D-HO-1; SD-CORE-1 |
+| several matching contents: the first decided record in load order is returned | inspection | D-HO-2 |
+| a question missing a mandatory role is answered, not refused as malformed | new requirement | SD-CORE-1 |
+
+**Correction (later):** exact content identity (type, given role bindings, parameters); a missing mandatory role is an
+established refusal; no load-order selection. Parameterised content stays GAP-SPATIAL-8.
+
+## DI-32: frame-chain answer conventions
+**Priority: medium.** Items D-TB-1, D-WH-1, D-TB-2, D-WH-2. Decisions SD-SPA-1, SD-SPA-2, SD-SPA-4.
+
+| Component | Kind | Evidence |
+|---|---|---|
+| the chain-agreement tolerance (1e-9 rad) is applied but not reported | new requirement | SD-SPA-1 |
+| `source == target` presents a premise-less derivation; it must be a declared convention with no derivation and no supporting evidence, given a valid, visible frame | inspection; new requirement | D-TB-2; SD-SPA-2 |
+| NOT_YET_KNOWN is never returned when nothing about either frame is visible | inspection | D-TB-2 |
+| the `where` judgement label is count-based (`compatible` for uncompared pairs) | inspection | D-WH-2; SD-SPA-4 |
+
+**Correction (later):** report the chain tolerance; mark identity results as convention-derived (a field such as a
+basis) and drop the derivation; apply v0.2 §5.6's visible / not-visible distinction; label by compared pairs.
+
+## DI-33: explicit instantaneous measurements
+**Priority: high.** Item D-ME-6. Decision SD-MEA-2.
+
+| Component | Kind | Evidence |
+|---|---|---|
+| a measurement written at an instant is attested over `[s, s)`, so `measurements(t=s)` omits it and two at one instant are "incomparable" | reproduced | DX-5 |
+| the writer stores `measure(start=s)` and `measure(start=s, end=s)` identically (`end = end or start`), so no reader can tell an explicit instant from an empty interval | inspection (representation) | qualities.py `measure` |
+
+**Correction (later):**
+- **Representation:** an explicit instant marker on the reported content of a measurement (or the stored observation
+  instant). Empty half-open intervals elsewhere keep their meaning; this is not a global change to `in_interval`.
+- **Migration:** existing measurement contents written without an end become explicit instants; measurement contents
+  with an explicit end equal to the start, and all other attestations, are not migrated. The migration is reported per
+  record, and the 106,752 reference answers are rechecked.
+- **Reader:** an instant content holds at its instant; two observations at one instant are compared subject to the
+  other comparability conditions.
+
+## DI-34: calibration judged throughout the start window
+**Priority: medium.** Item D-MC-3. Decision SD-MEA-6.
+
+| Component | Kind | Evidence |
+|---|---|---|
+| `measurement_calibration` judges at the earliest bound of an uncertain activity start | inspection; new requirement | D-MC-3; SD-MEA-6 |
+
+**Correction (later):** established only if established throughout the whole window, considering every internal
+validity and judgement transition; never an arbitrary instant; otherwise report the judgements found and any dispute.
+
+## DI-35: change, inclusion, timing and claim-time semantics of the causal readers
+**Priority: high.** Items D-EF-1, D-EF-2, D-EX-1, D-EX-2, D-EX-3, D-CH-5, D-EF-6, D-CH-8. Decisions SD-CAU-1, SD-CAU-2,
+SD-CAU-7, SD-CAU-8.
+
+| Component | Kind | Evidence |
+|---|---|---|
+| `effects_of` counts UNKNOWN → held as an accepted change | reproduced | DX-14 |
+| `effects_of` samples two instants and misses delayed effects; it must use `changes()` world-state transitions with attribution | inspection; new requirement | D-EF-2; SD-CAU-1 |
+| `effects_of` reports no attribution (unique / ambiguous) | new requirement | SD-CAU-1 |
+| `explain` lists unreviewed initiating claims | reproduced | DX-11 |
+| `explain` drops an initiator with no accepted account instead of keeping it as `timing: unresolved` | reproduced | DX-12 |
+| `explain` filters by "ended by t" instead of B-time | inspection | D-EX-2 |
+| claims are judged at the reader's `t` / `t2` instead of independently of valid time | inspection; new requirement | D-CH-5, D-EF-6; SD-CAU-7 |
+| `changes` with t1 > t2 is not refused | inspection; new requirement | D-CH-8; SD-CAU-8 |
+
+**Correction (later):** one definition of change for every reader (`changes`), keeping the established outcome change,
+the accepted claim and the causal attribution apart; B-time inclusion in `explain`; timeless claim judgement with
+knowledge time, acceptance, perspective, world and supersession still applied; an established refusal for t1 > t2.
+
+## DI-36: temporal ordering under uncertainty
+**Priority: medium.** Items D-BE-2, D-CH-3, D-IV-1, D-EF-3, D-PS-3. Decisions SD-CAU-5, SD-CAU-10.
+
+| Component | Kind | Evidence |
+|---|---|---|
+| `before` treats touching windows of instantaneous events as certain precedence, discarding a shared possible instant | new requirement | SD-CAU-5 (inspection: D-BE-2; the writer has no explicit instant marker for accounts, as DI-33) |
+| one account is picked by lowest id; the others are not reported, and certainty is read from the representative | inspection; new requirement | D-IV-1, D-EF-3, D-PS-3; SD-CAU-10 |
+
+**Correction (later):** strict precedence never discards a shared possible instant; certainty only across every
+admissible account and combination; every usable account reported with its attestation. Touching durative intervals
+stay "before" and B-time touching stays "consistent" (current behaviour conforms there).

@@ -95,7 +95,8 @@ def test_checker_accepts_a_well_formed_plan():
     good = q("X-1", [step("measurements", {"bearer": "box", "quality": "mass"}, name="m"),
                      step("where", {"thing": "box", "frame": "A", "t": {"from": "m", "path": "[0].valid[0].earliest"}},
                           {"status": "INFERRED"}, name="w")], family="X",
-             required_evidence=["box-in-c"], admissible_evidence=["box-in-c", "ab", "bc", "m1"],
+             required_evidence=["box-in-c"], admissible_evidence=["box-in-c", "ab", "bc", "m1", "m1/activity"],
+             admissible_conflict_evidence=[], admissible_premises=["box-in-c", "ab", "bc"],
              forbidden_evidence=["crate-in-a-1"])
     probe = q("G-1", [], cls="G", gap="GAP-FRAME-3")
     assert _problems(good, probe) == []
@@ -119,14 +120,18 @@ def test_checker_accepts_a_well_formed_plan():
     ({"gap": "GAP-X"}, "gap id is given exactly when"),
     ({"subset": "identity"}, "only 'identity', in family X"),
     ({"family": "Q"}, "unknown family"),
-    ({"required_evidence": ["ab"], "admissible_evidence": ["bc"]}, "required evidence must be admissible"),
+    ({"required_evidence": ["ab"], "admissible_evidence": ["bc"]}, "required_evidence must be in admissible_evidence"),
+    ({"required_conflict_evidence": ["ab"], "admissible_conflict_evidence": []},
+     "required_conflict_evidence must be in admissible_conflict_evidence"),
     ({"admissible_evidence": ["ab"], "forbidden_evidence": ["ab"]}, "both forbidden and"),
     ({"required_evidence": ["no-such-step"]}, "names no fixture step"),
+    ({"admissible_premises": ["nope/x"]}, "admissible_premises names no fixture step"),
     ({"plan": [step("selftest_echo", {"value": 1}, {"value": 1})]}, "self-test reader"),
     ({"plan": []}, "needs a plan"),
 ])
 def test_checker_refuses(change, problem):
-    base = q("S-1", [step("where", {"thing": "box", "frame": "A", "t": "T3"}, {"status": "INFERRED"})])
+    base = q("S-1", [step("where", {"thing": "box", "frame": "A", "t": "T3"}, {"status": "INFERRED"})],
+             admissible_evidence=[], admissible_conflict_evidence=[], admissible_premises=[])
     got = _problems({**base, **change})
     assert any(problem in p for p in got), got
 
@@ -162,7 +167,8 @@ def test_score_correct_answer_and_agreement():
     sel = sel_run({"status": "INFERRED"}, ["att:1"])
     r = SC.score(sq(required_evidence=["ab"], admissible_evidence=["ab", "bc"]), sel, sel, NAMES, RECORDED, 5)
     assert (r["correct"], r["failures"], r["agreement"]) == (True, [], "agree")
-    assert r["evidence"]["recall"] == 1.0 and r["evidence"]["precision"] == 1.0
+    sup = r["evidence"]["supporting"]
+    assert sup["recall"] == 1.0 and sup["precision"] == 1.0 and sup["precision_verified"]
 
 
 def test_score_incorrect_answer():
@@ -173,13 +179,16 @@ def test_score_incorrect_answer():
 
 
 def test_score_evidence_failures_are_distinct_and_do_not_hide_each_other():
-    sel = sel_run({"status": "INFERRED"}, ["att:1", "att:3", "forbidden-step"])
+    names = {**NAMES, "att:4": "forbidden-step"}
+    sel = sel_run({"status": "INFERRED"}, ["att:1", "att:3", "att:4"])
     r = SC.score(sq(required_evidence=["bc"], admissible_evidence=["ab", "bc"], forbidden_evidence=["forbidden-step"]),
-                 sel, sel, NAMES, RECORDED, 5)
+                 sel, sel, names, RECORDED, 5)
     assert r["correct"] is True                                       # evidence is scored beside correctness
-    assert r["failures"] == ["forbidden-evidence", "inadmissible-evidence", "missing-evidence"]
-    assert r["evidence"]["inadmissible"] == ["att:3", "forbidden-step"]   # an unnamed id is never admissible
-    assert r["evidence"]["precision"] == round(1 - 2 / 3, 3) and r["evidence"]["recall"] == 0.0
+    assert r["failures"] == ["forbidden-evidence", "inadmissible-evidence", "missing-evidence", "unattributed-evidence"]
+    sup = r["evidence"]["supporting"]
+    assert sup["inadmissible"] == ["forbidden-step"] and sup["unattributed"] == ["att:3"]
+    # precision over named citations only, and not verified while one is unattributed (LABS-1.063)
+    assert sup["precision"] == 0.5 and sup["precision_verified"] is False and sup["recall"] == 0.0
 
 
 def test_score_fabricated_derivations():
@@ -188,11 +197,37 @@ def test_score_fabricated_derivations():
         {"rule": "frame-transform/v1", "premises": ["att:999"], "at": "b"},
         {"rule": "frame-transform/v1", "premises": [], "at": "c"},
         {"rule": "frame-transform/v1", "premises": ["att:1", "att:2"], "at": "ok"}])
-    r = SC.score(sq(), sel, sel, NAMES, RECORDED, 5)
+    r = SC.score(sq(admissible_premises=["ab", "bc"]), sel, sel, NAMES, RECORDED, 5, fixture=FX)
     assert r["correct"] is True and r["failures"] == ["fabricated-derivation"]
     assert [f["at"] for f in r["fabricated"]] == ["a", "b", "c"]
     assert "not a rule the model records" in r["fabricated"][0]["why"]
-    assert "not recorded" in r["fabricated"][1]["why"] and "no premises" in r["fabricated"][2]["why"]
+    assert "unattributed" in r["fabricated"][1]["why"] and "no premises" in r["fabricated"][2]["why"]
+
+
+PREMISE_FX = {"id": "premises", "steps": [
+    {"op": "world", "id": "w"}, {"op": "world", "id": "plan", "kind": "hypothetical", "base": "w"},
+    {"op": "world", "id": "other"},
+    {"op": "relate_frames", "id": "ab", "world": "w"}, {"op": "position", "id": "p-plan", "world": "plan"},
+    {"op": "position", "id": "p-other", "world": "other"}, {"op": "anchor_frame", "id": "anc", "world": "w"},
+    {"op": "position", "id": "p-unaccepted", "world": "w"}]}
+
+
+def test_invisible_unusable_or_inadmissible_premises_are_rejected():
+    """P-4 as amended: visibility, usability and applicability, not existence (LABS-1.063)."""
+    names = {f"att:{n}": n for n in ("ab", "p-plan", "p-other", "anc", "p-unaccepted")}
+    qq = q("F-9", [{"step": "s1", "reader": "where", "params": {"world": "plan"}, "expected": {"status": "INFERRED"}}],
+           family="F", admissible_premises=["ab", "p-plan", "p-other", "anc"])   # p-unaccepted: not usable, so not listed
+
+    def why(premises, world="plan"):
+        run = sel_run({"status": "INFERRED"}, derivations=[{"rule": "frame-transform/v1", "premises": premises}])
+        run["run"]["steps"][0]["params"] = {"world": world}
+        r = SC.score(qq, run, run, names, set(names), 5, fixture=PREMISE_FX)
+        return (r.get("fabricated") or [{"why": ""}])[0]["why"]
+    assert why(["att:ab", "att:p-plan"]) == ""                         # base world's transform, the plan's position
+    assert "not visible in world 'plan'" in why(["att:p-other"])        # another world: invisible
+    assert "not applicable" in why(["att:anc"])                         # anchored-to: not a rule input
+    assert "not an admissible premise" in why(["att:p-unaccepted"])     # exists, visible, applicable, not usable
+    assert "not visible in world 'w'" in why(["att:p-plan"], world="w")  # a variant's claim is invisible to its base
 
 
 def test_score_timeout_execution_plan_and_refusal_are_distinct():
@@ -256,7 +291,7 @@ def test_probe_outcomes():
     assert SC.score(g(), err, None, NAMES, RECORDED, 5)["probe"] == "execution-error"
     assert SC.score(g(), sel_run({"status": "INFERRED"}), None, NAMES, RECORDED, 5)["probe"] == "fabricated-answer"
     fab = sel_run({"status": "UNKNOWN"}, derivations=[{"rule": "x", "premises": ["att:1"]}])
-    assert SC.score(g(), fab, None, NAMES, RECORDED, 5)["probe"] == "fabricated-derivation"
+    assert SC.score(g(), fab, None, NAMES, RECORDED, 5, fixture=FX)["probe"] == "fabricated-derivation"
     assert SC.score(g(plan=False), {}, None, NAMES, RECORDED, 5)["probe"] == "not-callable"
     assert SC.score(g(), {"timeout": 5}, None, NAMES, RECORDED, 5)["probe"] == "timeout"
 
@@ -325,7 +360,8 @@ def test_where_extractors_on_a_derived_pose(L):
     st = out["steps"][0]
     assert st["answer"]["status"] == "INFERRED"
     names = L.evidence_names()
-    assert {names[a] for a in st["cited"]} == {"box-in-c", "ab", "bc"}
+    assert {names[a] for a in st["cited"]["supporting"]} == {"box-in-c", "ab", "bc"}
+    assert st["cited"]["conflicting"] == [] and st["cited"]["alternative"] == []
     assert st["derivations"][0]["rule"] == "frame-transform/v1"
     assert {names[a] for a in st["derivations"][0]["premises"]} == {"box-in-c", "ab", "bc"}
     # box at (1, 0, 0) in C; C is rotated 90 degrees about z and offset (0, 2, 0) in B; B offset (1, 0, 0) in A
@@ -445,10 +481,22 @@ def _e2e_questions():
     ]
 
 
+def authored(qs):
+    """Give each question the evidence and premise sets H-3 requires, where the test does not set them itself."""
+    usual = {"ab", "bc", "box-in-c"}
+    for x in qs:
+        x.setdefault("admissible_premises", sorted(usual))
+        if x["class"] != "G":
+            x.setdefault("admissible_evidence", sorted((usual - set(x.get("forbidden_evidence", [])))
+                                                       | set(x.get("required_evidence", []))))
+            x.setdefault("admissible_conflict_evidence", [])
+    return qs
+
+
 @pytest.fixture(scope="module")
 def e2e(tmp_path_factory, driver):
     path = tmp_path_factory.mktemp("e2") / "questions.jsonl"
-    path.write_text("\n".join(json.dumps(x) for x in _e2e_questions()) + "\n")
+    path.write_text("\n".join(json.dumps(x) for x in authored(_e2e_questions())) + "\n")
     results, workers = run([path], FIXTURES, budget=3.0, reference_limit=3.0, selftest=True)
     return {r["id"]: r for r in results}, workers, results
 
@@ -462,8 +510,8 @@ def test_e2e_each_failure_kind_is_detected(e2e):
             "M-undocumented-valueerror": "execution-error",
             "X-plan-error": "plan-error", "X-identity": None, "X-reference-slow": None, "X-disagree": None}
     assert {k: by[k]["failure"] for k in want} == want
-    assert by["S-ok"]["correct"] and by["S-ok"]["evidence"]["precision"] == 1.0
-    assert set(by["F-inadmissible"]["evidence"]["inadmissible"]) == {"ab", "bc"}
+    assert by["S-ok"]["correct"] and by["S-ok"]["evidence"]["supporting"]["precision"] == 1.0
+    assert set(by["F-inadmissible"]["evidence"]["supporting"]["inadmissible"]) == {"ab", "bc"}
     assert by["F-inadmissible"]["correct"] is True                   # the answer itself is right
     assert len(by["C-fabricated"]["fabricated"]) == 2
 
@@ -527,7 +575,8 @@ def test_command_line_writes_results_and_report(tmp_path, driver):
     from evaluation.e2.run import main
     qs = tmp_path / "q.jsonl"
     qs.write_text(json.dumps(q("S-1", [step("transform_between", {"source": "C", "target": "A", "t": "T3"},
-                                            {"status": "INFERRED"})])) + "\n")
+                                            {"status": "INFERRED"})], admissible_evidence=["ab", "bc"],
+                               admissible_conflict_evidence=[], admissible_premises=["ab", "bc"])) + "\n")
     fx = tmp_path / "fixtures"
     fx.mkdir()
     (fx / "f.json").write_text(json.dumps(FX))

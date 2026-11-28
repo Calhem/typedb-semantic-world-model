@@ -23,6 +23,7 @@ from datetime import datetime
 
 from evaluation.loader import T
 from evaluation.e2.readers import TIME_PARAMS, documented_refusal, generic_derivations, reader
+from evaluation.e2.evidence import Ev, as_lists
 from evaluation.e2.values import PathError, normalise, select
 
 
@@ -104,7 +105,7 @@ def run_plan(L, question, selective, extra_readers=None):
             total += ms
             refused = isinstance(ans, dict) and ans.get("refused") is True
             rec.update(ms=round(ms, 1), answer=ans,
-                       cited=[] if refused or r.evidence is None else sorted(map(str, r.evidence(ans))),
+                       cited=as_lists(Ev() if refused or r.evidence is None else r.evidence(ans)),
                        derivations=[] if refused else _derivations(r, ans))
             answers[name] = ans
         return {"steps": steps, "ms": round(total, 1)}

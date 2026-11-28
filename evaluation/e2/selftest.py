@@ -3,8 +3,9 @@ tests can show each failure is detected and kept distinct. They are available on
 `selftest=True` (tests, `--selftest`); the question checker refuses them otherwise. They never touch the model's
 semantics: each returns what its parameters tell it to.
 
-- `selftest_echo`: returns {"value": params["value"]}, citing params["cite"] as supporting evidence and presenting
-  params["derivations"] ([{"rule", "premises"}]) as its derivations.
+- `selftest_echo`: returns {"value": params["value"]}, citing params["cite"] (a list: supporting; or {role: [ids]}, or
+  {component: {role: [ids]}} for several answer components) and presenting params["derivations"]
+  ([{"rule", "premises"}]) as its derivations.
 - `selftest_sleep`: sleeps params["seconds"] (only on the path params["on"] names: "selective", "full" or "both",
   the default), then returns {"slept": seconds}.
 - `selftest_path`: returns {"selective": <the path's flag>}, so the two paths always disagree.
@@ -15,11 +16,25 @@ semantics: each returns what its parameters tell it to.
 
 import time
 
+from evaluation.e2.evidence import Ev
 from evaluation.e2.readers import Reader, Refusal
 
 
 def _echo(wm, p):
     return {"value": p.get("value"), "cite": p.get("cite", []), "derivations": p.get("derivations", [])}
+
+
+def _echo_evidence(a):
+    ev, cite = Ev(), a.get("cite") or []
+    if isinstance(cite, list):
+        return ev.add("supporting", cite)
+    for k, v in cite.items():
+        if isinstance(v, dict):                               # {component: {role: ids}}
+            for role, ids in v.items():
+                ev.at(k).add(role, ids)
+        else:                                                 # {role: ids}
+            ev.at("answer").add(k, v)
+    return ev
 
 
 def _sleep(wm, p):
@@ -45,10 +60,11 @@ REFUSALS = (Refusal("selftest-documented", ValueError, "^self-test documented re
 
 
 READERS = {r.name: r for r in [
-    Reader("selftest_echo", (), ("value", "cite", "derivations"), _echo, lambda a: set(a.get("cite", [])),
+    Reader("selftest_echo", (), ("value", "cite", "derivations"), _echo, _echo_evidence,
            lambda a: [{"rule": d.get("rule"), "premises": list(d.get("premises", [])), "at": f"derivations[{i}]"}
                       for i, d in enumerate(a.get("derivations", []))], timeless=True, worldless=True),
-    Reader("selftest_sleep", ("seconds",), ("on",), _sleep, lambda a: set(), timeless=True, worldless=True),
-    Reader("selftest_path", (), (), lambda wm, p: {"selective": wm.selective}, lambda a: set(), timeless=True, worldless=True),
+    Reader("selftest_sleep", ("seconds",), ("on",), _sleep, lambda a: Ev(), timeless=True, worldless=True),
+    Reader("selftest_path", (), (), lambda wm, p: {"selective": wm.selective}, lambda a: Ev(), timeless=True,
+           worldless=True),
     Reader("selftest_raise", (), ("kind",), _raise, refusals=REFUSALS, timeless=True, worldless=True),
 ]}

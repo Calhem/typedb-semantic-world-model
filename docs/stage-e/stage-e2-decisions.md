@@ -11,7 +11,7 @@ the fixtures.
 
 | Issue | Decision | What it means for E2 |
 |---|---|---|
-| DI-19 | **Approved before E2:** additive `Answer.constraint_support` (implemented on `feature/di19-constraint-support`, at review) | the `holds()` reader contract (E2-D3) includes `constraint_support`; constraint evidence is read from it |
+| DI-19 | **Approved before E2:** additive `Answer.constraint_support` (implemented; merged into `main` under LABS-1.061) | the `holds()` reader contract (E2-D3) includes `constraint_support`; constraint evidence is read from it |
 | DI-17 | **Evaluation only.** No change to identity semantics (ID-1 to ID-9, including ID-5) | about 12 identity-conflict questions in E2 (section 2) |
 | DI-7 | **Deferred.** No derivation record, rule or premise type is designed or added before E2 | derivation questions are gap probes (G); GAP-MULTI-6, GAP-CAUSE-7, GAP-MEAS-11 |
 | D-3, D-4, D-5 (entry report) | settled by the three rows above | — |
@@ -129,4 +129,17 @@ The harness architecture is approved, with three corrections. Each now holds in 
 **Status:**
 - The harness is merged into `main` under LABS-1.062.
 - The reader contracts (E2-D3) are drafted for review on `feature/e2-reader-contracts`.
+- **LABS-1.063:** the contract review is accepted with amendments.
+  - Shared proposals P-1 to P-5 and the 15 reader proposals are approved, with qualifications (contracts §0.10).
+  - The blanket exclusion of discrepancies is replaced by eligibility rules: an established-contract discrepancy
+    stays eligible; an unresolved decision is blocked (`benchmark/e2/spec/blocked.json`).
+  - The harness implements H-1 to H-8 as amended.
+  - See [stage-e2-labs-1063-review.md](stage-e2-labs-1063-review.md) and
+    [stage-e2-contract-adjudication.md](stage-e2-contract-adjudication.md).
+- **LABS-1.064:** LABS-1.063 is accepted. All 25 semantic decisions are approved with binding qualifications
+  ([stage-e2-semantic-decisions.md](stage-e2-semantic-decisions.md)); DI-24 to DI-36 and GAP-SPATIAL-9 are
+  registered, not implemented (DI-25 and DI-28 critical architectural priorities). The contracts are final (§0.11) and
+  the harness applies the decisions. The authoring plan ([coverage-matrix.md](../../benchmark/e2/spec/coverage-matrix.md))
+  and protocol ([authoring-protocol.md](../../benchmark/e2/spec/authoring-protocol.md)) are proposed for review. See
+  [stage-e2-labs-1064-review.md](stage-e2-labs-1064-review.md).
 - The questions, fixtures, calculation sheets and gold are **not** started.

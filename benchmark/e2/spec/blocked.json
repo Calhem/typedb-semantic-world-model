@@ -1,0 +1,133 @@
+{
+ "about": "LABS-1.064 (semantic decision closure). `blocked`: decisions still open; evaluation/e2/check.py refuses a question that depends on one (H-8 as amended). `unimplemented`: answer paths and parameters whose semantics an approved decision fixes but which no reader provides yet (LABS-1.064 item 19: approval does not establish a capability). A scored (A/H) question may not expect or pass them; a class G probe may, under the DI or gap named. The field names are reserved by the reader contracts (reader-contracts.md 0.11); an implementation increment either uses them or amends the contract. Remove an `unimplemented` entry when its DI is implemented and approved; remove a `blocked` entry when the owner rules on it. Path patterns: a prefix (\"alternatives\"), \"*<field>\" for a field anywhere, or \"<prefix>*<field>\" for a field anywhere below a prefix.",
+ "blocked": [
+  {
+   "id": "ONT-SC-1",
+   "question": "whether causes is irreflexive (self-causation), left open by SD-CAU-11 as an ontology decision"
+  }
+ ],
+ "unimplemented": [
+  {
+   "id": "SD-CORE-3",
+   "di": "DI-29",
+   "question": "constraint_support on facts_about entries",
+   "reader": "facts_about",
+   "paths": [
+    "*constraint_support"
+   ]
+  },
+  {
+   "id": "SD-SPA-1",
+   "di": "DI-32",
+   "question": "the chain-agreement tolerance reported",
+   "reader": "transform_between",
+   "paths": [
+    "chain_tolerance"
+   ]
+  },
+  {
+   "id": "SD-SPA-1",
+   "di": "DI-32",
+   "question": "the chain-agreement tolerance reported",
+   "reader": "where",
+   "paths": [
+    "*chain_tolerance"
+   ]
+  },
+  {
+   "id": "SD-SPA-2",
+   "di": "DI-32",
+   "question": "the basis of a convention-derived identity transform",
+   "reader": "transform_between",
+   "paths": [
+    "basis"
+   ]
+  },
+  {
+   "id": "SD-CAU-1",
+   "di": "DI-35",
+   "question": "the attribution of an effect claim's change (unique or ambiguous)",
+   "reader": "effects_of",
+   "paths": [
+    "*attribution",
+    "*transition"
+   ]
+  },
+  {
+   "id": "SD-CAU-2",
+   "di": "DI-35",
+   "question": "timing: unresolved on initiators",
+   "reader": "explain",
+   "paths": [
+    "initiated_by*timing"
+   ]
+  },
+  {
+   "id": "SD-CAU-2",
+   "di": "DI-29",
+   "question": "unaccepted initiating claims as alternatives",
+   "reader": "explain",
+   "paths": [
+    "alternatives"
+   ]
+  },
+  {
+   "id": "SD-CAU-4",
+   "di": "DI-29",
+   "question": "attestations of changes explanation claims",
+   "reader": "changes",
+   "paths": [
+    "transitions*attestations",
+    "began*attestations",
+    "ended*attestations"
+   ]
+  },
+  {
+   "id": "SD-CAU-9",
+   "di": "DI-28",
+   "question": "occurrence status and applies on effect claims",
+   "reader": "effects_of",
+   "paths": [
+    "*applies",
+    "*occurrence_status"
+   ]
+  },
+  {
+   "id": "SD-CAU-9",
+   "di": "DI-28",
+   "question": "occurrence status and applies on changes explanations",
+   "reader": "changes",
+   "paths": [
+    "*applies",
+    "*occurrence_status"
+   ]
+  },
+  {
+   "id": "SD-CAU-10",
+   "di": "DI-36",
+   "question": "every usable account reported",
+   "reader": "interval",
+   "paths": [
+    "usable_accounts"
+   ]
+  },
+  {
+   "id": "SD-CAU-10",
+   "di": "DI-36",
+   "question": "every usable account reported",
+   "reader": "process_steps",
+   "paths": [
+    "*usable_accounts"
+   ]
+  },
+  {
+   "id": "SD-CAU-10",
+   "di": "DI-36",
+   "question": "every usable account reported",
+   "reader": "effects_of",
+   "paths": [
+    "*usable_accounts"
+   ]
+  }
+ ]
+}

@@ -30,25 +30,39 @@ def percentile(xs, p):
     return xs[max(0, math.ceil(p / 100 * len(xs)) - 1)]
 
 
+def role_summary(rs, role):
+    """One evidence role over a group (P-1 and P-3 as amended): recall over questions requiring it (nothing returned
+    counts, recall 0); precision over questions with an admissible set that cite something named; unattributed
+    citations make precision unverified; questions requiring evidence but citing nothing are counted apart."""
+    evs = [r["evidence"][role] for r in rs if r.get("evidence")]
+    req = [e for e in evs if e["required"]]
+    adm = [e for e in evs if "admissible" in e]
+    found, required = sum(len(e["found"]) for e in req), sum(len(e["required"]) for e in req)
+    cited = sum(len(e["cited"]) for e in adm)
+    inadmissible = sum(len(e["inadmissible"]) for e in adm)
+    unattributed = sum(len(e["unattributed"]) for e in evs)
+    return {"recall": round(found / required, 4) if required else None, "recall_questions": len(req),
+            "precision": round(1 - inadmissible / cited, 4) if cited else None, "precision_questions": len(adm),
+            "inadmissible": inadmissible, "unattributed": unattributed, "precision_verified": unattributed == 0,
+            "no_evidence_returned": sum(1 for e in req if not e["cited"] and not e["unattributed"])}
+
+
 def summarise_group(rs):
     n = len(rs)
     completed = [r for r in rs if r["completed"]]
     correct = sum(r["correct"] for r in rs)
     fails = Counter(f for r in rs for f in r["failures"])
-    req = [r["evidence"] for r in rs if r.get("evidence") and r["evidence"]["required"]]
-    adm = [r["evidence"] for r in rs if r.get("evidence") and "admissible" in r["evidence"]]
-    found, required = sum(len(e["found"]) for e in req), sum(len(e["required"]) for e in req)
-    cited = sum(len(e["cited"]) for e in adm)
-    inadmissible = sum(len(e["inadmissible"]) for e in adm)
+    roles = {role: role_summary(rs, role) for role in ("supporting", "conflicting")}
     agree = Counter(r["agreement"] for r in rs)
     return {
         "scheduled": n, "completed": len(completed), "correct": correct,
         "correct_among_completed": round(correct / len(completed), 4) if completed else None,
         "success_within_budget": round(correct / n, 4) if n else None,
         "failures": {k: fails[k] for k in ORDER if fails[k]},
-        "evidence_recall": round(found / required, 4) if required else None, "recall_questions": len(req),
-        "evidence_precision": round(1 - inadmissible / cited, 4) if cited else None, "precision_questions": len(adm),
+        "evidence_recall": roles["supporting"]["recall"], "evidence_precision": roles["supporting"]["precision"],
+        "evidence": roles,
         "forbidden_hits": sum(len(r["evidence"]["forbidden_cited"]) for r in rs if r.get("evidence")),
+        "alternatives_as_support": sum(len(r["evidence"]["alternative_as_support"]) for r in rs if r.get("evidence")),
         "fabricated_derivations": sum(len(r.get("fabricated", [])) for r in rs),
         "selective_p50_ms": percentile([r["latency_ms"] for r in rs], 50),
         "selective_p95_ms": percentile([r["latency_ms"] for r in rs], 95),
@@ -70,6 +84,14 @@ def summarise(results):
     ident = [r for r in scored if r["family"] == "X" and r.get("subset") == "identity"]
     if ident:
         out["x_identity"] = summarise_group(ident)
+    # LABS-1.064 item 26: targeted defect coverage reported apart from broad competency coverage (both stay inside
+    # their family's scores)
+    targeted = [r for r in scored if r.get("targets")]
+    if targeted:
+        out["targeted"] = {**summarise_group(targeted),
+                           "by_di": dict(Counter(d for r in targeted for d in r["targets"]))}
+        out["competency"] = summarise_group([r for r in scored if not r.get("targets")]) \
+            if len(targeted) < len(scored) else None
     out["probes"] = {"probes": len(probes), "passed": sum(r["passed"] is True for r in probes),
                      "failed": sum(r["passed"] is False for r in probes),
                      "not_callable": sum(r["passed"] is None for r in probes),
@@ -90,13 +112,29 @@ def criteria(s, results):
                      g["success_within_budget"], "threshold": ">= 0.95",
                      "verdict": _verdict(g["success_within_budget"] >= THRESHOLDS["correctness"])})
         if g["evidence_recall"] is not None:
-            rows.append({"criterion": f"evidence recall {f}", "value": g["evidence_recall"], "threshold": ">= 0.90",
-                         "verdict": _verdict(g["evidence_recall"] >= THRESHOLDS["recall"])})
+            rows.append({"criterion": f"supporting evidence recall {f}", "value": g["evidence_recall"],
+                         "threshold": ">= 0.90", "verdict": _verdict(g["evidence_recall"] >= THRESHOLDS["recall"])})
+        con = g["evidence"]["conflicting"]
+        if con["recall"] is not None:
+            rows.append({"criterion": f"conflicting evidence recall {f} (reported)", "value": con["recall"],
+                         "threshold": "reported", "verdict": "n/a"})
     a = s["all"]
     if a:
-        prec = a["evidence_precision"]
+        prec, sup, con = a["evidence_precision"], a["evidence"]["supporting"], a["evidence"]["conflicting"]
+        verdict = _verdict(None if prec is None else prec >= THRESHOLDS["precision"])
+        if verdict == "pass" and not sup["precision_verified"]:
+            verdict = "unverified"                    # unattributed evidence prevents a verified pass (LABS-1.063)
         rows.append({"criterion": "evidence precision (supporting evidence)", "value": prec, "threshold": "= 1.0",
-                     "verdict": _verdict(None if prec is None else prec >= THRESHOLDS["precision"])})
+                     "verdict": verdict})
+        rows.append({"criterion": "inadmissible conflicting evidence", "value": con["inadmissible"],
+                     "threshold": "= 0", "verdict": _verdict(con["inadmissible"] == 0)})
+        rows.append({"criterion": "conflicting evidence precision (reported)", "value": con["precision"],
+                     "threshold": "reported", "verdict": "n/a" if con["precision_verified"] else "unverified"})
+        rows.append({"criterion": "unattributed evidence (blocks a verified precision pass)",
+                     "value": sup["unattributed"] + con["unattributed"], "threshold": "= 0",
+                     "verdict": _verdict(sup["unattributed"] + con["unattributed"] == 0)})
+        rows.append({"criterion": "alternatives presented as support", "value": a["alternatives_as_support"],
+                     "threshold": "= 0", "verdict": _verdict(a["alternatives_as_support"] == 0)})
         rows.append({"criterion": "forbidden evidence cited", "value": a["forbidden_hits"], "threshold": "= 0",
                      "verdict": _verdict(a["forbidden_hits"] == 0)})
         rows.append({"criterion": "selective p95 latency (ms; lower bound if timeouts)", "value": a["selective_p95_ms"],
@@ -164,8 +202,8 @@ def report_md(results, meta):
         if r["class"] != "G" and r["failures"]:
             detail = (r.get("error") or r.get("plan_error") or r.get("harness_error") or
                       r.get("wrong_fields") or r.get("fabricated") or
-                      {k: (r.get("evidence") or {}).get(k) for k in ("forbidden_cited", "inadmissible", "found",
-                                                                     "required")})
+                      {k: v for k, v in (r.get("evidence") or {}).items() if k in ("supporting", "conflicting",
+                                                                                     "forbidden_cited")})
             lines.append(f"| {r['id']} | {r['family']} | {r['class']} | {', '.join(r['failures'])} | "
                          f"`{json.dumps(detail, default=str)[:300]}` |")
     unv = [r for r in results if r["class"] != "G" and r["agreement"] != "agree"]

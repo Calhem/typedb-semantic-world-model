@@ -2,16 +2,14 @@
 
 Each template names a public reader, the parameters a question gives it, how it is called, and two extractors that
 work on the reader's normalised answer (values.normalise):
-- `evidence`: the attestation ids the answer cites as **supporting** evidence. Material the answer lists without
-  resting on it (alternatives, pending or unreviewed claims, incomparable statements, unaccepted measurements) is not
-  supporting, so it is never cited.
+- `evidence`: the answer's attestation ids **by role** (supporting, conflicting, alternative, undetermined), built from
+  part 6 of the reader's contract (evaluation/e2/evidence.py; H-4, H-5, LABS-1.063).
 - `derivations`: the derivations the answer **presents**: a named rule with its premises (for example a pose derived
   through a frame chain under `frame-transform/v1`). The scorer checks that every one is recorded (rule known,
   premises recorded attestations): a derivation that is not is fabricated (E2-D6, "no fabricated derivations").
 
-**Provisional:** these extractors are the harness's reading of the readers' documented outputs. The E2 reader
-contracts (E2-D3, not written yet) must confirm or correct each one before any question is authored; a change there is
-a change to this table, not to a reader.
+The extractors follow the E2 reader contracts (benchmark/e2/spec/reader-contracts.md, LABS-1.062/1.063). A change to a
+contract's evidence table is a change to evidence.py, never to a reader.
 
 Common parameters: `world` (required, except `convert`), `t`, `as_of`, `perspective`. Times are 'T<d>[h<hh>]'
 fixture times, or ISO 8601 strings (as earlier plan steps give them); `as_of` is '@mark' or an ISO string.
@@ -47,19 +45,13 @@ def documented_refusal(r, exc):
         if isinstance(exc, ref.exception) and re.search(ref.pattern, str(exc)):
             return ref
     return None
-# keys under which an answer lists material it does not rest on (as E1's usable_evidence, plus E2's readers)
-NOT_SUPPORT = {"pending", "alternatives", "only_in", "not_traversed", "accounts", "descriptions",
-               "superseded_by_source", "incomparable", "statements"}
-UNUSABLE = {"unreviewed", "rejected", "retracted", "superseded"}
-
-
 @dataclass(frozen=True)
 class Reader:
     name: str
     required: tuple
     optional: tuple
     call: object                               # (wm, p) -> raw answer; p holds the coerced parameters
-    evidence: object = None                    # normalised answer -> set of attestation ids
+    evidence: object = None                    # normalised answer -> {role: set of attestation ids} (evidence.py)
     derivations: object = None                 # normalised answer -> [{"rule", "premises", "at"}]
     refusals: tuple = ()                       # documented refusals (Refusal)
     timeless: bool = False                     # no t parameter
@@ -76,33 +68,6 @@ def _ids(v):
     return {x for x in (v or []) if isinstance(x, str)}
 
 
-def usable_evidence(x):
-    """Evidence entries ({"attestation": id, "acceptance": ...}) a perspective can use, anywhere under x, except under
-    keys that list non-supporting material."""
-    out = set()
-
-    def walk(v, key=None):
-        if key in NOT_SUPPORT:
-            return
-        if isinstance(v, dict):
-            if isinstance(v.get("attestation"), str) and v.get("acceptance") not in UNUSABLE:
-                out.add(v["attestation"])
-            for k, w in v.items():
-                walk(w, k)
-        elif isinstance(v, list):
-            for w in v:
-                walk(w, key)
-    walk(x)
-    return out
-
-
-def deciding(r, entries_key):
-    """As E1: an applicability answer's `support`, or the usable evidence of the entries it reports as applicable."""
-    if r.get("support"):
-        return set(r["support"])
-    return set().union(set(), *(usable_evidence(e) for e in r.get(entries_key, [])))
-
-
 def generic_derivations(x, at=""):
     """Any object presenting {"rule": <name>, "premises": [...]} (the shape a recorded derivation would take)."""
     out = []
@@ -117,23 +82,9 @@ def generic_derivations(x, at=""):
     return out
 
 
-# ---- evidence and derivation extractors ------------------------------------------------------------------------------
-def ev_answer(a):                             # an Answer: holds()
-    return _ids(a.get("support")) | _ids(a.get("conflicts")) | {
-        x for c in a.get("constraint_support") or [] for x in c.get("support", [])}
-
-
-def ev_support(a):
-    return _ids(a.get("support"))
-
-
-def ev_list_support(a):
-    return {x for e in a for x in e.get("support", [])}
-
-
-def ev_where(a):
-    return {x for c in a["candidates"] for x in c.get("position_support", [])} | {
-        x for c in a["candidates"] for s in c.get("chain") or [] for x in s.get("support", [])}
+# ---- derivations a reader presents (evidence by role is in evidence.py) ---------------------------------------------
+def _chain_support(chain):
+    return {x for st in chain or [] for x in _ids(st.get("support"))}
 
 
 def dv_where(a):
@@ -141,81 +92,18 @@ def dv_where(a):
     for i, c in enumerate(a["candidates"]):
         if c.get("rule"):
             out.append({"rule": c["rule"], "at": f"candidates[{i}]",
-                        "premises": sorted(set(c.get("position_support", [])) |
-                                           {x for s in c.get("chain") or [] for x in s.get("support", [])})})
+                        "premises": sorted(set(c.get("position_support", [])) | _chain_support(c.get("chain")))})
     return out
-
-
-def ev_chain(a):
-    return {x for s in a.get("chain") or [] for x in s.get("support", [])}
 
 
 def dv_transform(a):
-    if a.get("transform") is None or not a.get("chain"):
+    """A transform the answer gives under a named rule is presented as derived by that rule from its chain. With an
+    empty chain (source == target) that is a premise-less derivation, which the approved contract forbids: SD-SPA-2
+    (LABS-1.064) makes the identity a declared convention that presents no derivation, so it is extracted and scored
+    as fabricated rather than skipped."""
+    if a.get("transform") is None or not (a.get("chain") or a.get("rule")):
         return []
-    return [{"rule": a.get("rule"), "at": "transform", "premises": sorted(ev_chain(a))}]
-
-
-def ev_frame_info(a):
-    return {x for k in ("parents", "children") for e in a.get(k, []) for x in e.get("support", [])}
-
-
-def ev_measurements(a):
-    return {m["attestation"] for m in a if m.get("usable")}
-
-
-def ev_compare(a):
-    return {m["attestation"] for m in a.get("measurements", [])}
-
-
-def ev_measurement_calibration(rows):
-    out = set()
-    for r in rows:
-        if r.get("usable"):
-            out.add(r["attestation"])
-        if r.get("attested"):
-            out |= deciding(r["attested"], "certificates")
-    return out
-
-
-def ev_claims(claims, accepted="judgement"):
-    return set().union(set(), *(usable_evidence(c.get("attestations", [])) for c in claims
-                                if c.get(accepted) == "accepted"))
-
-
-def ev_effects(a):
-    out = ev_claims(a, "claim")
-    for e in a:
-        for side in ("before", "after"):
-            out |= _ids(((e.get("state") or {}).get(side) or {}).get("support"))
-    return out
-
-
-def ev_explain(a):
-    return _ids((a.get("holds") or {}).get("support")) | set().union(
-        set(), *(ev_claims(i.get("causes", [])) for i in a.get("initiated_by", [])))
-
-
-def ev_changes(a):
-    return {x for tr in a.get("transitions", []) for side in ("before", "after")
-            for x in (tr.get(side) or {}).get("support", [])}
-
-
-def ev_occurrence_status(a):
-    return _ids((a.get("answer") or {}).get("support"))
-
-
-def ev_office_holders(r):
-    cited = set().union(set(), *(usable_evidence(a) for a in r.get("appointments", [])
-                                 if a.get("judgement") == "established"))
-    for a in (r.get("conflict") or {}).get("appointments", []):
-        cited |= _ids(a.get("attestations"))
-    cited |= _ids(((r.get("conflict") or {}).get("constraint") or {}).get("support"))
-    return cited
-
-
-def ev_interval(a):
-    return {a["attestation"]} if a and a.get("attestation") else set()
+    return [{"rule": a.get("rule"), "at": "transform", "premises": sorted(_chain_support(a.get("chain")))}]
 
 
 def _interval(wm, p):
@@ -233,8 +121,7 @@ UNKNOWN_ROLE = Refusal("unknown-role", UnknownRoleError, "", "e1-reconciliation-
                        True)
 CROSS_DIMENSION = Refusal("cross-dimension", ValueError, r"^cannot convert ", "stage-c.md (convert: refused across "
                           "dimensions)", True)
-UNKNOWN_UNIT = Refusal("not-a-unit", ValueError, r"is not a unit with a dimension$", "convert docstring and qualities "
-                       "implementation only (no design statement found)", False)
+# not-a-unit is a precondition failure, not a refusal (P-5, P-CV-1, approved LABS-1.063): an execution error (H-6)
 NO_SINGLE_SLOT = Refusal("no-single-slot", ValueError, r"one-role functional constraints",
                          "core-0.4/README.md (A0 constraints: value_at without key_role needs exactly one one-role "
                          "constraint; otherwise the question must say which)", True)
@@ -244,62 +131,69 @@ READERS = {r.name: r for r in [
     # family S, F
     Reader("transform_between", ("source", "target", "t"), ("limit",),
            lambda wm, p: wm.transform_between(p["world"], p["source"], p["target"], _t(p), limit=p.get("limit"),
-                                              **_ctx(p)), ev_chain, dv_transform),
+                                              **_ctx(p)), None, dv_transform),
     Reader("where", ("thing", "frame", "t"), ("angle_tolerance", "limit"),
            lambda wm, p: wm.where(p["world"], p["thing"], p["frame"], _t(p), limit=p.get("limit"), **_ctx(p),
                                   **({"angle_tolerance": p["angle_tolerance"]} if "angle_tolerance" in p else {})),
-           ev_where, dv_where),
+           None, dv_where),
     Reader("poses", ("thing", "t"), (), lambda wm, p: wm.poses(p["world"], p["thing"], _t(p), **_ctx(p)),
-           ev_list_support),
+           None),
     Reader("frame_info", ("frame", "t"), (), lambda wm, p: wm.frame_info(p["world"], p["frame"], _t(p), **_ctx(p)),
-           ev_frame_info),
+           None),
     # family M
     Reader("measurements", ("bearer", "quality"), ("t",),
-           lambda wm, p: wm.measurements(p["world"], p["bearer"], p["quality"], _t(p), **_ctx(p)), ev_measurements),
+           lambda wm, p: wm.measurements(p["world"], p["bearer"], p["quality"], _t(p), **_ctx(p)), None),
     Reader("compare_measurements", ("bearer", "quality"), ("t",),
-           lambda wm, p: wm.compare_measurements(p["world"], p["bearer"], p["quality"], _t(p), **_ctx(p)), ev_compare),
+           lambda wm, p: wm.compare_measurements(p["world"], p["bearer"], p["quality"], _t(p), **_ctx(p)), None),
     Reader("measurement_calibration", ("bearer", "quality"), ("t",),
            lambda wm, p: lab.measurement_calibration(wm, p["world"], p["bearer"], p["quality"], _t(p), **_ctx(p)),
-           ev_measurement_calibration),
+           None),
     Reader("calibration_status", ("instrument", "t"), (),
            lambda wm, p: lab.calibration_status(wm, p["world"], p["instrument"], _t(p), **_ctx(p)),
-           lambda a: deciding(a, "certificates")),
+           None),
     Reader("convert", ("value", "unit"), ("to",), lambda wm, p: {"value": wm.convert(p["value"], p["unit"], p.get("to"))},
-           refusals=(CROSS_DIMENSION, UNKNOWN_UNIT), timeless=True, worldless=True),
+           refusals=(CROSS_DIMENSION,), timeless=True, worldless=True),
     # family C
     Reader("causes_of", ("effect", "t"), (), lambda wm, p: wm.causes_of(p["world"], p["effect"], _t(p), **_ctx(p)),
-           ev_claims),
+           None),
     Reader("effects_of", ("event", "t"), (), lambda wm, p: wm.effects_of(p["world"], p["event"], _t(p), **_ctx(p)),
-           ev_effects),
+           None),
     Reader("explain", ("type", "roles", "t"), (),
-           lambda wm, p: wm.explain(p["world"], p["type"], p["roles"], _t(p), **_ctx(p)), ev_explain,
+           lambda wm, p: wm.explain(p["world"], p["type"], p["roles"], _t(p), **_ctx(p)), None,
            refusals=(UNKNOWN_ROLE,)),
     Reader("changes", ("subject", "t1", "t2"), (),
-           lambda wm, p: wm.changes(p["world"], p["subject"], p["t1"], p["t2"], **_ctx(p)), ev_changes, timeless=True),
+           lambda wm, p: wm.changes(p["world"], p["subject"], p["t1"], p["t2"], **_ctx(p)), None, timeless=True),
     # family P
     Reader("process_steps", ("process", "t"), (),
-           lambda wm, p: wm.process_steps(p["world"], p["process"], _t(p), **_ctx(p)), ev_list_support),
+           lambda wm, p: wm.process_steps(p["world"], p["process"], _t(p), **_ctx(p)), None),
     Reader("before", ("a", "b"), (), lambda wm, p: {"before": wm.before(p["world"], p["a"], p["b"], **_ctx(p))},
            timeless=True),
-    Reader("interval", ("description",), (), _interval, ev_interval, timeless=True),
+    Reader("interval", ("description",), (), _interval, None, timeless=True),
     # readers E1 already covers, for multi-step plans (X)
     Reader("holds", ("type", "roles", "t"), (),
-           lambda wm, p: wm.holds(p["world"], p["type"], p["roles"], _t(p), **_ctx(p)), ev_answer,
+           lambda wm, p: wm.holds(p["world"], p["type"], p["roles"], _t(p), **_ctx(p)), None,
            refusals=(UNKNOWN_ROLE,)),
-    Reader("value_at", ("type", "subject", "t"), (),
-           lambda wm, p: wm.value_at(p["world"], p["type"], p["subject"], _t(p), **_ctx(p)), ev_support,
+    # key_role / value_role (LABS-1.064, SD-CORE-2): passed only when the question gives them
+    Reader("value_at", ("type", "subject", "t"), ("key_role", "value_role"),
+           lambda wm, p: wm.value_at(p["world"], p["type"], p["subject"], _t(p), **_ctx(p),
+                                     **{k: p[k] for k in ("key_role", "value_role") if k in p}), None,
            refusals=(UNKNOWN_ROLE, NO_SINGLE_SLOT)),
     Reader("facts_about", ("subject", "t"), (),
-           lambda wm, p: wm.facts_about(p["world"], p["subject"], _t(p), **_ctx(p)), ev_list_support),
+           lambda wm, p: wm.facts_about(p["world"], p["subject"], _t(p), **_ctx(p)), None),
     Reader("occurrence", ("occurrence",), (), lambda wm, p: wm.occurrence(p["world"], p["occurrence"], **_ctx(p)),
-           lambda a: set(), timeless=True,
+           None, timeless=True,
            notes="the merged occurrence view (event roles); E1 scores roles through it; cites nothing by default"),
     Reader("occurrence_status", ("occurrence", "t"), (),
-           lambda wm, p: wm.occurrence_status(p["world"], p["occurrence"], _t(p), **_ctx(p)), ev_occurrence_status),
+           lambda wm, p: wm.occurrence_status(p["world"], p["occurrence"], _t(p), **_ctx(p)), None),
     Reader("office_holders", ("office", "context", "t"), (),
            lambda wm, p: org.office_holders(wm, p["world"], p["office"], p["context"], _t(p), **_ctx(p)),
-           ev_office_holders),
+           None),
 ]}
+from dataclasses import replace as _replace  # noqa: E402
+
+from evaluation.e2.evidence import EXTRACTORS  # noqa: E402
+
+READERS = {n: _replace(r, evidence=EXTRACTORS[n]) for n, r in READERS.items()}
 TIME_PARAMS = {"t", "t1", "t2"}
 
 

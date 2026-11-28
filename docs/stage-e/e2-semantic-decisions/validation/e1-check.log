@@ -1,0 +1,8 @@
+Using CPython 3.15.1
+Creating virtual environment at: .venv
+   Building worldmodel @ file://<worktree>
+      Built worldmodel @ file://<worktree>
+Installed 8 packages in 19ms
+<worktree>/.venv/lib/python3.15/site-packages/typedb/common/promise.py:32: SyntaxWarning: "\ " is an invalid escape sequence. Such sequences will not work in the future. Did you mean "\\ "? A raw string is also an option.
+  once the ``Promise`` is ``resolve``\ d.
+272 questions in 8 categories {'conflict-provenance': 30, 'cross-domain': 33, 'identity': 42, 'laboratory': 36, 'mechanical': 33, 'organisation': 31, 'temporal': 37, 'worlds-perspectives': 30}; 30 fixtures; 0 problems

@@ -1,7 +1,7 @@
 # DI-19: constraint provenance in answers (`Answer.constraint_support`)
 
 **LABS-1.060, 24 November 2026.** Branch `feature/di19-constraint-support`, from `main` 9fb7bc9.
-Implementation commit 7cb348d. **At review; not merged.**
+Implementation commit 7cb348d. **Approved and merged into `main` (LABS-1.061; merge 7769ba1).**
 Records: [di19-constraint-support/](di19-constraint-support/).
 
 ## 1. What changed
@@ -32,8 +32,11 @@ The entries are sorted by constraint and key, so the order is stable across load
   is not applied, so it is not cited.
 - **Attested only:** a declared functional slot (`located-at`, `anchored-to`, `positioned-in`, `frame-transform`) is
   schema data, so it adds **no entry**. No attestation evidence is fabricated for it.
-- **Same judgement, same field.** `_answer` builds the field from the record it projects, so `holds()`, `value_at()`
-  and `value_of()` all go through the same code (`WorldModel._constraint_support`).
+- **Same judgement, same field.** One function (`WorldModel._constraint_support`) builds the field from the judged
+  record of every `Answer`. *Correction (LABS-1.062, reader contracts D-VA-5):* the original text said `value_at()`
+  and `value_of()` project the same record through `_answer`. They do not: they judge with `_judge` and `_conflicts`
+  (declared slots only), and their field is the empty default. The answers and the field's value are as described
+  below; only that sentence about the code path was wrong.
   - `value_at()` and `value_of()` apply declared slots only (`_value` → `_conflicts`).
   - They refuse a type with no declared slot, such as `office-holding`.
   - So their `constraint_support` is always `()`. This is documented in `_value` and tested.

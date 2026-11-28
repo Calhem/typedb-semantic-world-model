@@ -90,15 +90,20 @@ DISPUTED (model.py:95-97, physical.py:197-207).
 - **GAP-SPATIAL-4: no length/angle units on spatial content.** `positioned-in` and `frame-transform` have no unit
   role; metres and radians are fixed conventions (schema/core/core-0.4-a.tql:6-10, 21-24). `convert()` (Stage C) is
   not applied to positions or transforms.
-- **GAP-SPATIAL-5: frame chains are judged without same-as identity.** physical.py:199: "Judged without same-as
-  identity: DI-12, deferred (LABS-1.038)". DI-12 was closed for `parts`/`dependencies` only (deferred-issues.md:41).
-  Two names for one frame are two graph nodes.
+- ~~**GAP-SPATIAL-5: frame chains are judged without same-as identity.**~~ **Withdrawn (LABS-1.063, reader-contract
+  review D-TB-4):** not a gap. Same-as relates particulars only, so frames cannot be declared the same; frame chains
+  are unchanged by design (pre-e-increment-b.md point 6; pre-e-identity-design.md). The code comment this entry quoted
+  was stale and is corrected.
 - **GAP-SPATIAL-6: no shapes, extents or geometry** (no containment of a point in a volume, no distance between
   objects other than via caller arithmetic) (stage-a2.md:259; stage-a1.md:131-139).
 - **GAP-SPATIAL-7: no distance/relative-position reader.** "How far is A from B" or "pose of A relative to B" needs
   the caller to combine two `where` answers; there is no reader for it (no matching method in physical.py).
 - **GAP-SPATIAL-8: `holds` cannot single out one position** (D-A2-5, stage-a2.md:86 and 248); `where` is the only
   position interface.
+
+- **GAP-SPATIAL-9: derived poses and transforms report no validity interval or knowledge time** (registered
+  LABS-1.064, from D-TB-6; Plan 9.6). A derived answer says what holds at `t`, not over which interval it holds or
+  from when it was known. Questions on it are G probes.
 
 ### E1 coverage
 None. No E1 question, fixture or template uses `positioned-in`, `frame-transform`, `where` or `transform_between`
@@ -205,6 +210,13 @@ a new proposition: U-3, stage-a2.md:245).
 - **GAP-MEAS-10: no "undermines" evidence relation** (stage-d3-design.md:90 G-3): rests-on records support only.
 - **GAP-MEAS-11: formal derivation provenance missing** (DI-7, deferred-issues.md:205-235): a derived quantity (e.g.
   computed from two measurements) cannot name its rule and premises.
+
+- **GAP-MEAS-12: categorical measurements** (newly identified LABS-1.064, from SD-MEA-3). `measurements` and
+  `compare_measurements` cover interval-valued quantities only; categorical `has-quality` values ("open", a colour)
+  are read through `holds` and `facts_about`, with no measurement record, comparison or coverage semantics.
+- **GAP-MEAS-13: no declaration of a constant quantity** (newly identified LABS-1.064, from SD-MEA-4). Measurements at
+  disjoint valid times are always incomparable, because nothing can declare a quantity constant (for example the rest
+  mass of a sealed reference).
 
 ### E1 coverage
 - No question on `measure`, `measurements`, `compare_measurements`, `has-quality` or units (0 hits).
@@ -342,8 +354,8 @@ Chaining several readers otherwise is done by the caller: e.g. `interval(world, 
   start earliest − 1 µs and end latest, dynamics.py:147-150). E2 gold must state which instant is meant.
 - **GAP-MULTI-3: no failed-measurement concept** to start such a chain (GAP-MEAS-1).
 - **GAP-MULTI-4: no causal chains** to traverse (GAP-CAUSE-1/2).
-- **GAP-MULTI-5: transitive parts do not carry poses** (GAP-FRAME-6) and frame chains do not use identity
-  (GAP-SPATIAL-5).
+- **GAP-MULTI-5: transitive parts do not carry poses** (GAP-FRAME-6). (Frame chains not using identity, formerly
+  GAP-SPATIAL-5, is by design and withdrawn; LABS-1.063.)
 - **GAP-MULTI-6: no derivation record for a chained answer** (DI-7): a composed answer cannot cite a named rule and
   its premises; `required_evidence` across steps must be assembled by the harness.
 - **GAP-MULTI-7: cost.** Per-item N+1 reads and cross-world slowdown (DI-9, deferred-issues.md:271-290; `where`
