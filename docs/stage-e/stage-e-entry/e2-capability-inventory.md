@@ -101,6 +101,10 @@ DISPUTED (model.py:95-97, physical.py:197-207).
 - **GAP-SPATIAL-8: `holds` cannot single out one position** (D-A2-5, stage-a2.md:86 and 248); `where` is the only
   position interface.
 
+- **GAP-SPATIAL-9: derived poses and transforms report no validity interval or knowledge time** (registered
+  LABS-1.064, from D-TB-6; Plan 9.6). A derived answer says what holds at `t`, not over which interval it holds or
+  from when it was known. Questions on it are G probes.
+
 ### E1 coverage
 None. No E1 question, fixture or template uses `positioned-in`, `frame-transform`, `where` or `transform_between`
 (grep of `benchmark/e1/questions` and `fixtures`: 0 hits). Listed as not reached in
@@ -206,6 +210,13 @@ a new proposition: U-3, stage-a2.md:245).
 - **GAP-MEAS-10: no "undermines" evidence relation** (stage-d3-design.md:90 G-3): rests-on records support only.
 - **GAP-MEAS-11: formal derivation provenance missing** (DI-7, deferred-issues.md:205-235): a derived quantity (e.g.
   computed from two measurements) cannot name its rule and premises.
+
+- **GAP-MEAS-12: categorical measurements** (newly identified LABS-1.064, from SD-MEA-3). `measurements` and
+  `compare_measurements` cover interval-valued quantities only; categorical `has-quality` values ("open", a colour)
+  are read through `holds` and `facts_about`, with no measurement record, comparison or coverage semantics.
+- **GAP-MEAS-13: no declaration of a constant quantity** (newly identified LABS-1.064, from SD-MEA-4). Measurements at
+  disjoint valid times are always incomparable, because nothing can declare a quantity constant (for example the rest
+  mass of a sealed reference).
 
 ### E1 coverage
 - No question on `measure`, `measurements`, `compare_measurements`, `has-quality` or units (0 hits).
